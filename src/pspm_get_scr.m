@@ -74,7 +74,8 @@ end;
 
 % convert data
 inputdata = double(import.data);
-data.data = pspm_transfer_function(inputdata, c, Rs, offset, recsys);
+[tsts, data.data] = pspm_transfer_function(inputdata, c, Rs, offset, recsys);
+if tsts < 1, return, end
 data.data = data.data(:);
 
 % add header

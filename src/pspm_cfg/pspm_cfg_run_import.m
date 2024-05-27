@@ -92,4 +92,4 @@ if isfield(job.datatype, 'acq_python')
   settings.python_path = job.datatype.acq_python.python_path{1};
 end
 
-out = pspm_import(datafiles, datatype, import, options);
+[sts, out] = pspm_import(datafiles, datatype, import, options);

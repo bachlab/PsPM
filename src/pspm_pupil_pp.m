@@ -1,4 +1,4 @@
-function [sts, out_chan] = pspm_pupil_pp (fn, options)
+function [sts, outchannel] = pspm_pupil_pp (fn, options)
 % ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
 %   measurement. It performs the steps described in [1]. This function uses
@@ -36,8 +36,8 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %       it will either replace an existing preprocessed pupil channel or
 %       add it as new channel to the provided file.
 % ● Format
-%   [sts, out_channel] = pspm_pupil_pp(fn)
-%   [sts, out_channel] = pspm_pupil_pp(fn, options)
+%   [sts, channel_index] = pspm_pupil_pp(fn)
+%   [sts, channel_index] = pspm_pupil_pp(fn, options)
 % ● Arguments
 %          fn:  [string]
 %               Path to the PsPM file which contains the pupil data.
@@ -95,6 +95,8 @@ function [sts, out_chan] = pspm_pupil_pp (fn, options)
 %   │           than this percentage of missing values, then only this channel will be
 %   │           used and no combination will be performed.
 %   └.out_chan: Channel ID of the preprocessed output.
+% ● Outputs
+%      channel_index: index of channel containing the processed data
 % ● References
 %   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
 %       data: Guidelines and code." Behavior research methods (2018): 1-7.
@@ -111,7 +113,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-out_chan = [];
+outchannel = [];
 
 %% 2 Create default arguments
 if nargin == 1
@@ -144,12 +146,12 @@ action_combine = ~strcmp(options.channel_combine, 'none');
 alldata = struct();
 [sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
 if sts_load < 1, return, end
-[sts_load, data,] = pspm_load_channel(alldata, options.channel, 'pupil');
+[sts_load, data,infos, pos_of_channel(1)] = pspm_load_channel(alldata, options.channel, 'pupil');
 if sts_load ~= 1, return, end
 flag_valid_data    = sum(isnan(data.data))/length(data.data) < options.chan_valid_cutoff;
 
 if action_combine
-  [sts_load, data_combine] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
+  [sts_load, data_combine, infos, pos_of_channel(2)] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
   if sts_load ~= 1
     return
   end
@@ -182,6 +184,7 @@ if action_combine
       'thus it will not be used for combining.'], ...
       num2str(options.chan_valid_cutoff*100));
     data_combine.data = [];
+    pos_of_channel = pos_of_channel(1);
   elseif ~flag_valid_data && flag_valid_combine
     warning('ID:invalid_input', ...
       ['channel_combine channel is good, ',...
@@ -190,6 +193,7 @@ if action_combine
       num2str(options.chan_valid_cutoff*100));
     data = data_combine; % exchange data and data_combine including fields
     data_combine.data = []; % to only use the value stored in data_combine
+    pos_of_channel = pos_of_channel(2);
   elseif ~flag_valid_data && ~flag_valid_combine
         warning('ID:invalid_input', ...
       'Both channels have more than %s percent missing values. No combination will be peformed.\nOnly the data channel will be used. Please double-check your output.', num2str(options.chan_valid_cutoff*100));
@@ -219,8 +223,13 @@ o.msg.prefix = sprintf(...
   channel_str, ...
   old_channeltype, ...
   smooth_signal.header.chantype);
+% if no new channel type is created, pass channel number to
+% pspm_write_channel
+if ~strcmpi(smooth_signal.header.chantype, 'pupil_c')
+    o.channel = pos_of_channel(1);
+end
 [sts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
-out_chan = out_id.channel;
+outchannel = out_id.channel;
 
 return
 

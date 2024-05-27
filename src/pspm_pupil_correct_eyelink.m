@@ -1,4 +1,4 @@
-function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
+function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Description
 %   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE)
 %   correction specifically for Eyelink recorded and imported data following
@@ -15,7 +15,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %   'channel_action', it will either replace an existing preprocessed pupil
 %   channel or add it as new channel to the provided file.
 % ● Format
-%   [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
+%   [sts, channel_index] = pspm_pupil_correct_eyelink(fn, options)
 % ● Arguments
 %              fn:  Path to a PsPM imported Eyelink data.
 %   ┌─────options:
@@ -61,7 +61,7 @@ function [sts, out_channel] = pspm_pupil_correct_eyelink(fn, options)
 %                     be added or the corresponding preprocessed channel
 %                     should be replaced. (Default: 'add')
 % ● Outputs
-%       out_channel:  Channel index of the stored output channel.
+%      channel_index: index of channel containing the processed data
 % ● Reference
 %   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
 %       influence of gaze position on pupil size measurements." Behavior
@@ -77,7 +77,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-out_channel = 0;
+outchannel = 0;
 
 %% Default values
 
@@ -129,7 +129,7 @@ alldata = struct();
 if sts_load < 1, return, end
 
 % get pupil and gaze channels
-[lsts, pupil_data] = pspm_load_channel(alldata, options.channel, 'pupil');
+[lsts, pupil_data, infos, pos_of_channel] = pspm_load_channel(alldata, options.channel, 'pupil');
 if lsts ~= 1, return, end
 [lsts, gaze_x_data, gaze_y_data] = pspm_load_gaze(alldata, pupil_data.header.chantype);
 if lsts ~= 1; return; end
@@ -187,10 +187,11 @@ o.msg.prefix = sprintf(...
   channel_str, ...
   old_channeltype, ...
   pupil_data.header.chantype);
+o.channel = pos_of_channel;
 [lsts, out_id] = pspm_write_channel(fn, pupil_data, options.channel_action, o);
 if lsts ~= 1; return; end
 
-out_channel = out_id.channel;
+outchannel = out_id.channel;
 sts = 1;
 return
 
