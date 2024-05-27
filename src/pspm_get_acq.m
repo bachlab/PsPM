@@ -16,10 +16,11 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 %        .sr:
 %      .data:
 %    .marker:
+%    .method:
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Updated in 2024 by Teddy
 
 %% Initialise
 global settings
@@ -33,7 +34,12 @@ addpath(pspm_path('Import','acq'));
 
 % load data but suppress output
 % -------------------------------------------------------------------------
-[T, header, inputdata] = evalc('acqread(datafile)');
+switch import{1}.method
+  case 'classic'
+    [header, inputdata] = evalc('acqread(datafile)');
+  case 'python'
+    [header, inputdata] = acqread_python(datafile);
+end
 
 
 % extract individual channels

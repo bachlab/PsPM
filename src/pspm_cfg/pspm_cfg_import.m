@@ -315,10 +315,20 @@ for datatype_i=1:length(fileoptions)
     importchan.help    = {'Define all channels that you want to import.'};
   end
 
+  python_path_help_text = [{'Specify the path of python installation in the computer. '}; ...
+                          {''};...
+                          {'Possible locations: '}; ...
+                          {'Windows: ~/AppData/Local/Programs/Python/Python311'}; ...
+                          {'Mac: /usr/local/bin/python'}; ...
+                          {'Linux: /usr/bin/python'}; ...
+                          {''};...
+                          {'Reference:'}; ...
+                          {'https://www.mathworks.com/help/matlab/matlab_external/install-supported-python-implementation.html'}; ...
+                          {'https://docs.python.org/3/installing/index.html'}];
   python_path         = cfg_files;
-  python_path.name    = ['Set the path of python'];
+  python_path.name    = ['Python path'];
   python_path.tag     = 'python_path';
-  python_path.help    = {'Specify the path of python installation in the computer.'};
+  python_path.help    = {python_path_help_text{:}};
 
   % Data File
   datafile         = cfg_files;
@@ -394,10 +404,10 @@ for datatype_i=1:length(fileoptions)
       [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
   end
 
-  if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq_python'))
-    datatype_item{datatype_i}.val = ...
-      [datatype_item{datatype_i}.val, {python_path}];
-  end
+   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq_python'))
+     datatype_item{datatype_i}.val = ...
+       [datatype_item{datatype_i}.val, {python_path}];
+   end
 end
 
 %% Data type
