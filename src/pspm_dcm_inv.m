@@ -518,9 +518,15 @@ if ~options.getrf
 
     % estimate trial-by-trial
     % =======================================================================
+    if isinf(options.depth)
+        trlindx = 1;
+    else
+        trlindx = 1:trlno;
+    end
 
-    for trl = 1:trlno
+    for trl = trlindx
       c = clock;
+      tic;
       fprintf('----------------------------------------------------------\n');
       fprintf('%02.0f:%02.0f:%02.0f: Session %1.0f - Trial %1.0f\n', c(4:6), sn, trl);
 
@@ -803,6 +809,7 @@ if ~options.getrf
       indata{trl}    = y(:)';
       inwin{trl}     = win;
       ut{trl}        = u;
+      mdl_time(trl)  = toc;
       % - tidy up
       clear sf sft post out trls start stop ub lb sig scllb sclub scla sclt
 
@@ -891,6 +898,7 @@ if ~options.getrf
     dcm.sn{sn}.eSCR_unit = eSCR_unit;
     dcm.sn{sn}.options = options;
     dcm.sn{sn}.model = model;
+    dcm.sn{sn}.time = sum(mdl_time);
 
     clear aTheta eTheta sfTheta SCLtheta Xt yhat posterior output ut indata inwin
   end

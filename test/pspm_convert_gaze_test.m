@@ -32,7 +32,6 @@ classdef pspm_convert_gaze_test < pspm_testcase
       import{end + 1}.type = 'marker';
       options = struct();
       [sts, this.fn] = pspm_import(this.raw_input_filename, 'eyelink', import, options);
-      this.fn = this.fn;
     end
   end
   methods (Test)
