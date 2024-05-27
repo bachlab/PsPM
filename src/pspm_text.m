@@ -3,9 +3,12 @@ function pspm_text(path)
 %   pspm_text handles the text for GUI display.
 % ● History
 %   Introduced in PsPM 6.0
-%   Written and maintained in 2022 by Teddy Chao (UCL)
-helptext_import_acq = '';
-helptext_import_acq_python = 'Load acq files directly to PsPM with Python';
+%   Written in 2022 by Teddy
+
+helptext_import_acq = ['Biopac Acknowledge (.acq) files can be imported with this feature. ',...
+                      'Acq files that are of a version equal to or lower than 3.9.0 can be ',...
+                      'imported with the classic method, whilst any version gets supported with the Python method.', ...
+                      'Please make sure python and the python package "bioread" have been installed if python is the preferred method.'];
 helptext_import_acqmat = '';
 helptext_import_bioread = 'Loads mat files which have been converted using the bioread tool acq2mat. Bioread can be installed using pip (installed by python) or can be downloaded and installed manually from here https://github.com/njvack/bioread. It requires python and the python libraries numpy and scipy.';
 helptext_import_csv = 'Read using comma as a delimiter.';
