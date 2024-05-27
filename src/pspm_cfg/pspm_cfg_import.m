@@ -315,6 +315,15 @@ for datatype_i=1:length(fileoptions)
     importchan.help    = {'Define all channels that you want to import.'};
   end
 
+
+  %% ACQ related
+
+  acq_import_classic         = cfg_const;
+  acq_import_classic.name    = 'Classic';
+  acq_import_classic.val     = {true};
+  acq_import_classic.tag     = 'acq_import_classic';
+  acq_import_classic.help    = {'Import ACQ files with the classic method. Only ACQ lower than 3.9.0 is supported.'};
+
   python_path_help_text = [{'Specify the path of python installation in the computer. '}; ...
                           {''};...
                           {'Possible locations: '}; ...
@@ -326,9 +335,22 @@ for datatype_i=1:length(fileoptions)
                           {'https://www.mathworks.com/help/matlab/matlab_external/install-supported-python-implementation.html'}; ...
                           {'https://docs.python.org/3/installing/index.html'}];
   python_path         = cfg_files;
-  python_path.name    = ['Python path'];
+  python_path.name    = 'Path';
   python_path.tag     = 'python_path';
   python_path.help    = {python_path_help_text{:}};
+
+  acq_import_python           = cfg_choice;
+  acq_import_python.name      = 'Python';
+  acq_import_python.tag       = 'acq_import_python';
+  acq_import_python.values    = {python_path};
+  acq_import_python.help      = {'Import ACQ files with the python. Any ACQ version is supported.'};
+
+  acq_import_method         = cfg_choice;
+  acq_import_method.name    = 'Import Method';
+  acq_import_method.tag     = 'acq_import_method';
+  acq_import_method.values  = {acq_import_classic,acq_import_python};
+  acq_import_method.help    = {'Select how to import ACQ.'};
+
 
   % Data File
   datafile         = cfg_files;
@@ -404,9 +426,9 @@ for datatype_i=1:length(fileoptions)
       [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
   end
 
-   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq_python'))
+   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq'))
      datatype_item{datatype_i}.val = ...
-       [datatype_item{datatype_i}.val, {python_path}];
+       [datatype_item{datatype_i}.val, {acq_import_method}];
    end
 end
 

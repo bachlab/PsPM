@@ -86,14 +86,12 @@ for i = 1:n
       import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
     end
     if isfield(job.datatype, 'acq')
-      import{i}.method = 'classic';
-    end % this part must be before 'acq_python'
-    if isfield(job.datatype, 'acq_python')
-      settings.python_path = job.datatype.acq_python.python_path{1};
-      job.datatype.acq = job.datatype.acq_python;
-      job.datatype = rmfield(job.datatype, 'acq_python');
-      datatype = 'acq';
-      import{i}.method = 'python';
+      if isfield(job.datatype.(datatype).acq_import_method, 'acq_import_classic')
+        import{i}.method = 'classic';
+      else
+        import{i}.method = 'python';
+        settings.python_path = job.datatype.(datatype).acq_import_method.acq_import_python.python_path{1};
+      end
     end
     import{i} = pspm_update_struct(import{i}, ...
                                    job.datatype.(datatype), ...

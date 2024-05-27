@@ -30,33 +30,27 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','acq'));
-
-
-% load data but suppress output
-% -------------------------------------------------------------------------
+%% Load data 
+% According to user selection
 switch import{1}.method
   case 'classic'
-    [header, inputdata] = evalc('acqread(datafile)');
+    [~, header, inputdata] = evalc('acqread(datafile)');
   case 'python'
-    [header, inputdata] = acqread_python(datafile);
+    [~, header, inputdata] = acqread_python(datafile);
 end
-
-
-% extract individual channels
-% -------------------------------------------------------------------------
+%% Extract individual channels
 for k = 1:numel(import)
   % define channel number ---
   if import{k}.channel > 0
     channel = import{k}.channel;
   else
     channel = pspm_find_channel(header.szCommentText, import{k}.type);
-    if channel < 1, return; end;
-  end;
-
-  if channel > numel(header.szCommentText), warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return; end;
-
+    if channel < 1, return; end
+  end
+  if channel > numel(header.szCommentText)
+    warning('ID:channel_not_contained_in_file', 'Channel %02.0f not contained in file %s.\n', channel, datafile); return
+  end
   sourceinfo.channel{k, 1} = sprintf('Channel %02.0f: %s', channel, header.szCommentText{channel});
-
   % retrieve sample rate ---
   % we might need to change this if different sample rates are used for
   % each channel
@@ -67,20 +61,16 @@ for k = 1:numel(import)
     import{k}.sr = double(1000 * (1./header.dSampleTime) ./ header.nVarSampleDivider(channel)); % acqread returns the sample rate in milliseconds
   else
     import{k}.sr = double(1000 * 1./header.dSampleTime); % acqread returns the sampling time in milliseconds
-  end;
-
+  end
   % acqread function returns the signal without any processing. scale and offset parameters
   % provided an .acq files are meant to apply a linear transformation to each x_i.
   % See https://www.mathworks.com/matlabcentral/fileexchange/16023-acqread
   import{k}.data = header.dAmplScale(channel) * double(inputdata{channel}) + header.dAmplOffset(channel);
-
   if strcmpi(settings.channeltypes(import{k}.typeno).data, 'events')
     import{k}.marker = 'continuous';
-  end;
-end;
-
-% clear path and return
-% -------------------------------------------------------------------------
+  end
+end
+%% Clear path and return
 rmpath(pspm_path('Import','acq'));
 sts = 1;
 return
