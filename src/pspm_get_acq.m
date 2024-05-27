@@ -31,12 +31,15 @@ sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','acq'));
 %% Load data 
+if ~isfield(import{1}, 'method')
+  import{1}.method = 'classic';
+end
 % According to user selection
 switch import{1}.method
   case 'classic'
-    [~, header, inputdata] = evalc('acqread(datafile)');
+    [sts, header, inputdata] = evalc('acqread(datafile)');
   case 'python'
-    [~, header, inputdata] = acqread_python(datafile);
+    [sts, header, inputdata] = acqread_python(datafile);
 end
 %% Extract individual channels
 for k = 1:numel(import)
