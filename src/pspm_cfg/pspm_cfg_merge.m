@@ -16,7 +16,7 @@ if isempty(settings), pspm_init; end;
 
 %% First file
 first_file          = cfg_files;
-first_file.name     = 'First file(s)';
+first_file.name     = 'First file';
 first_file.tag      = 'first_file';
 first_file.num      = [1 1];
 first_file.help     = {['Specify the first of the two files to be ', ...
@@ -26,7 +26,7 @@ first_file.help     = {['Specify the first of the two files to be ', ...
 
 %% Second file
 second_file         = cfg_files;
-second_file.name    = 'Second file(s)';
+second_file.name    = 'Second file';
 second_file.tag     = 'second_file';
 second_file.num     = [1 1];
 second_file.help    = {['Specify the second of the two files to be merged. '], ...

@@ -16,7 +16,6 @@ function v = pspm_version(varargin)
 
 %% 0 start
 % do not include pspm_init, because pspm_version is called by pspm_init!!!
-sts = -1;
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
 tk =regexp(msg{1},'^Version ([0-9A-Za-z\.]*) .*', 'tokens');
