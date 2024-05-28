@@ -11,7 +11,7 @@ classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
   end
   methods(TestClassSetup)
     function add(this)
-      addpath(pspm_path('backroom'));
+      addpath(pspm_path('Import', 'eyelink'));
     end
   end
   methods(Test)
@@ -71,7 +71,7 @@ classdef set_blinks_saccades_to_nan_test < matlab.unittest.TestCase
   end
   methods(TestClassTeardown)
     function remove(this)
-      addpath(pspm_path('backroom'));
+      addpath(pspm_path('Import', 'eyelink'));
     end
   end
 end

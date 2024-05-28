@@ -15,7 +15,7 @@ function index = pspm_epochs2logical(epochs, datalength, sr)
 % ● Output
 %          index: [logical] index
 % ● History
-%   Introduced in PsPM 6.2
+%   Introduced in PsPM 6.1.2
 %   Written in 2024 by Dominik Bach (Uni Bonn)
 
 if nargin > 2 && sr ~= 1
