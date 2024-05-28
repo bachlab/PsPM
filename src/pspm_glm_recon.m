@@ -1,4 +1,4 @@
-function varargout = pspm_glm_recon(modelfile)
+function [sts, glm] = pspm_glm_recon(modelfile)
 % ● Description
 %   pspm_glm_recon reconstructs the estimated responses and measures its peak.
 %   Reconstructed responses are written into the field glm.resp, and
@@ -22,13 +22,6 @@ if isempty(settings)
 end
 sts = -1;
 glm = [];
-switch nargout
-  case 1
-    varargout{1} = glm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = glm;
-end
 
 % get GLM & basis functions
 % -------------------------------------------------------------------------
@@ -82,11 +75,4 @@ glm.resp  = resp;
 glm.reconnames = condname(:);
 save(modelfile, 'glm');
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = glm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = glm;
-end
-return
+

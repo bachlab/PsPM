@@ -330,12 +330,12 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
                     delete(outdata);
                 end
             else
-                % data should be the same
-                this.verifyEqual(data, outdata);
+                % channel index should be correct
+                this.verifyEqual(numel(c_info{1}) + 1, outdata);
                 % check if last channels match the size of the announced channels
                 % verify nan is already done by datatype
-                [sts, infos, data] = pspm_load_data(outdata);
-                this.verifyEqual(numel(c_info{1}) + 1, numel(data));
+                [sts, infos, data] = pspm_load_data(data);
+                this.verifyEqual(outdata, numel(data));
             end
         end
         function test_overwrite(this)

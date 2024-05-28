@@ -4,14 +4,14 @@ function index = pspm_time2index(time, sr, varargin)
 %   to a sample index.
 % ● Format (optional arguments in []; all arguments up the last specified
 %           one need to be specified)
-%   index = pspm_time2index(time, sr [, data_length, zero_permitted, events])
+%   index = pspm_time2index(time, sr [, data_length, is_duration, events])
 % ● Arguments
 %           time: [vector or matrix] time stamps in second.
 %             sr: [numeric] sampling rate or frequency
 %    data_length: [integer] the length of data, which the index should
 %                 should not exceed
-%  zero_permitted: [0/1] whether zero is permitted (set to 0 for index and
-%                  to 1 for durations; default 0)
+%    is_duration: [0/1] whether an index or a duration is required, default
+%                 is 0
 %          events: vector of timestamps from a marker channel, will be considered if
 %                  given as input
 % ● Output
@@ -28,9 +28,9 @@ else
 end
 
 if nargin < 4
-    zero_permitted = 0;
+    is_duration = 0;
 else 
-    zero_permitted = 1;
+    is_duration = varargin{2};
 end
 
 if nargin > 4
@@ -38,10 +38,13 @@ if nargin > 4
     time = events(time);
 end
 
-index = double(int64(round(time * sr))); % round can sometimes result in non-integer values
+% 'round' can sometimes result in non-integer values
+index = double(int64(round(time * sr))); 
 
-if zero_permitted < 1
-    index(index == 0) = 1;
+% The first sample of the file corresponds to index 1 and time 0, i.e. we
+% assume the first sample was recorded in the interval [0, dt[ 
+if is_duration < 1
+    index = index + 1;
 end
 
 flag = index > ones(size(index)) * data_length;

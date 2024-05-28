@@ -214,7 +214,7 @@ switch FunName
     options = fill_extract_segments(options);
   case 'find_sounds'
     % 2.23 pspm_find_sounds --
-    options = autofill_channel_action(options,            'none',     {'add','replace'} );
+    options = autofill_channel_action(options,            'add',     {'replace'} );
     options = autofill(options, 'channel_output',         'all',      'corrected'       );
     options = autofill(options, 'diagnostics',            1,          0                 );
     options = autofill(options, 'expectedSoundCount',     0,          '*Int'            );
@@ -344,6 +344,9 @@ switch FunName
   case 'remove_epochs'
     % 2.38 pspm_remove_epochs --
     options = autofill_channel_action(options);
+  case 'ren'
+    % pspm_ren
+    options = autofill(options, 'overwrite',              0,          1                 );
   case 'resp_pp'
     % 2.39 pspm_resp_pp --
     options = autofill_channel_action(options);
@@ -358,11 +361,9 @@ switch FunName
     options = autofill(options, 'systemtype',             'bellows',  'cushion'         );
   case 'scr_pp'
     % 2.40 pspm_scr_pp --
-    options = autofill_channel_action(options,            'add',      {'replace', ...
-        'withdraw'}      );
+    options = autofill_channel_action(options,            'add',      {'replace'}       );
     options = autofill(options, 'channel',                'scr',      '*Int*Char'       );
     options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
-    options = autofill(options, 'change_data',            1,          0                 );
     options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );
     options = autofill(options, 'clipping_step_size',     2,          '*Int'            );
     options = autofill(options, 'clipping_threshold',     0.1,        '*Num'            );
@@ -381,12 +382,6 @@ switch FunName
            'Please specify a valid output directory if you want to save missing epochs.');
          options.invalid = 1;
          return
-       end
-     else
-       if options.change_data == 0
-         warning('ID:invalid_input',...
-         'This procedure leads to no output, according to the selected options.');
-         options.invalid = 1;
        end
      end
   case 'segment_mean'
@@ -456,6 +451,7 @@ switch FunName
     options = autofill(options, 'drop_offset_markers',    0,          '*Int'            );
     options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
     options = autofill(options, 'overwrite',              0,          1                 );
+    options = autofill(options, 'missing',               [],          '*Char'           );
   case 'write_channel'
     % 2.47 pspm_write_channel --
     options = autofill(options, 'channel',                0,          '*Int*Char'  );
@@ -577,8 +573,8 @@ switch nargin
               if contains(optional_value, '*Int')
                 flag_is_allowed_value = flag_is_allowed_value || ...
                   all([isnumeric(options.(field_name)), ...
-                  options.(field_name)>=0, ...
-                  mod(options.(field_name), 1)==0]);
+                  all(options.(field_name)>=0), ...
+                  all(mod(options.(field_name), 1)==0)]);
               end
               if contains(optional_value, '*Struct')
                 flag_is_allowed_value = flag_is_allowed_value || isstruct(options.(field_name));

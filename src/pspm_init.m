@@ -39,7 +39,7 @@ end
 fprintf('PsPM: loading defaults ... \n');
 %% 2 check
 % 2.1 check pspm version
-[~, pspm_vers] = pspm_version('check');
+pspm_vers = pspm_version('check');
 % 2.2 check various settings
 global settings
 if ~isempty(settings) % initialise settings

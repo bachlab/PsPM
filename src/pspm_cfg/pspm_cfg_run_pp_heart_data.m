@@ -23,20 +23,20 @@ for i = 1:numel(job.pp_type)
                                      {'semi', 'twthresh'});
         options = pspm_update_struct(options, job, 'channel_action');
         % call function
-        [sts, winfo] = pspm_convert_ecg2hb(fn, options);
+        [sts, outchannel] = pspm_convert_ecg2hb(fn, options);
       case 'ecg2hb_amri'
         options = pp_field.opt;
         options.channel = chan;
         options = pspm_update_struct(options, job, 'channel_action');
         winfo = struct();
-        [sts, winfo.channel] = pspm_convert_ecg2hb_amri(fn, options);
+        [sts, outchannel] = pspm_convert_ecg2hb_amri(fn, options);
       case 'hb2hp'
         sr = job.pp_type{i}.hb2hp.sr;
         options = struct();
         options.channel = chan;
         options.limit = job.pp_type{i}.hb2hp.limit;
         options = pspm_update_struct(options, job, 'channel_action');
-        [sts, winfo] = pspm_convert_hb2hp(fn, sr, options);
+        [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options);
       case 'ecg2hp'
         sr = job.pp_type{i}.ecg2hp.sr;
         % copy options
@@ -51,16 +51,16 @@ for i = 1:numel(job.pp_type)
         options = pspm_update_struct(options, job, {'channel_action'});
         options.channel = chan;
         % call ecg2hb
-        [sts, winfo] = pspm_convert_ecg2hb(fn, options);
+        [sts, outchannel] = pspm_convert_ecg2hb(fn, options);
         if sts ~= -1
           % replace channel
           options.channel_action = 'replace';
           options = pspm_update_struct(options, ...
               job.pp_type{i}.ecg2hp, ...
               'limit');
-          options.channel = winfo.channel;
+          options.channel = outchannel;
           % call ecg2hp
-          [sts, winfo] = pspm_convert_hb2hp(fn, sr, options);
+          [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options);
         end
       case 'ppg2hb'
         options = struct();
@@ -73,10 +73,10 @@ for i = 1:numel(job.pp_type)
         end
         options.channel = chan;
         options = pspm_update_struct(options, job, {'channel_action'});
-        [sts, winfo] = pspm_convert_ppg2hb(fn, options);
+        [sts, outchannel] = pspm_convert_ppg2hb(fn, options);
     end
     if sts ~= -1
-      outputs{i} = winfo.channel;
+      outputs{i} = outchannel;
     else
       outputs{i} = [];
       warning('Error occured during conversion. Could not finish correctly.');
