@@ -19,29 +19,36 @@ mrk_chan            = pspm_cfg_selector_channel('Marker');
 
 %% Specific items
 % Timeunits
-seconds         = cfg_const;
+
+if sf
+    seconds         = cfg_branch;
+    samples         = cfg_branch;
+    markers         = cfg_branch;
+    whole           = cfg_const;
+    whole.name      = 'Whole';
+    whole.tag       = 'whole';
+    whole.val       = {'whole'};
+    whole.help      = {'Choose whole file for analysis.'};
+else
+    seconds         = cfg_const;
+    samples         = cfg_const;
+    markers         = cfg_branch;
+end
+
 seconds.name    = 'Seconds';
 seconds.tag     = 'seconds';
 seconds.val     = {'seconds'};
 seconds.help    = {''};
 
-samples         = cfg_const;
 samples.name    = 'Samples';
 samples.tag     = 'samples';
 samples.val     = {'samples'};
 samples.help    = {''};
 
-markers         = cfg_branch;
 markers.name    = 'Markers';
 markers.tag     = 'markers';
 markers.val     = {mrk_chan};
 markers.help    = {''};
-
-whole         = cfg_const;
-whole.name    = 'Whole';
-whole.tag     = 'whole';
-whole.val     = {'whole'};
-whole.help    = {'Choose whole file for analysis.'};
 
 timeunits         = cfg_choice;
 timeunits.name    = 'Time Units';
