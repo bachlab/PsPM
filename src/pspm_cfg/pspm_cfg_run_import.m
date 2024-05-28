@@ -2,7 +2,7 @@ function [out,datafiles, datatype, import, options] = pspm_cfg_run_import(job)
 % Updated on 08-01-2024 by Teddy
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
-datafiles = job.datatype.(datatype).datafile;
+datafile = job.datatype.(datatype).datafile{1};
 % Import
 n = size(job.datatype.(datatype).importtype,2); % Nr. of channels
 % Check if multioption is off
@@ -85,4 +85,4 @@ for i = 1:n
 end
 options = struct();
 options = pspm_update_struct(options, job, 'overwrite');
-[sts, out] = pspm_import(datafiles, datatype, import, options);
+[sts, out] = pspm_import(datafile, datatype, import, options);
