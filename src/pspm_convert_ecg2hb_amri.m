@@ -9,8 +9,8 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   it will either replace an existing heartbeat channel or add it as a new
 %   channel to the provided file.
 % ● Format
-%   [sts, out_channel] = pspm_convert_ecg2hb_amri(fn)
-%   [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
+%   [sts, channel_index] = pspm_convert_ecg2hb_amri(fn)
+%   [sts, channel_index] = pspm_convert_ecg2hb_amri(fn, options)
 % ● Arguments
 %                 fn: [string] Path to the PsPM file which contains the pupil
 %                     data.
@@ -70,12 +70,8 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %                     does not replace the raw data channel, but a previously
 %                     stored heartbeat channel.
 %                     (Default: 'replace')
-% ● Outputs
-%                sts: status marker showing whether the function works normally.
-%        out_channel: Channel ID of the preprocessed output. Output will
-%                     be written to a 'heartbeat' channel to the given PsPM
-%                     file. .data field contains the timestamps of heartbeats
-%                     in seconds.
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● References
 %   [1] Liu, Zhongming, et al. "Statistical feature extraction for artifact
 %       removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012):
@@ -91,6 +87,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+out_channel = [];
+
 %% create default arguments
 if nargin < 2
   options = struct();
@@ -122,7 +120,6 @@ heartbeats{1}.header.chantype = 'hb';
 heartbeats{1}.header.units = 'events';
 o.msg.prefix = 'QRS detection using AMRI algorithm';
 [lsts, infos] = pspm_write_channel(fn, heartbeats, options.channel_action);
-if lsts ~= 1; return; end;
+if lsts ~= 1; return; end
 out_channel = infos.channel;
 sts = 1;
-return

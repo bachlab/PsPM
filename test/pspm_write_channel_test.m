@@ -208,11 +208,10 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
     function test_delete_single(this)
       % ●●● 1 Delete with chantype
       % prepare
-      data.header.chantype = 'hr';
       % load file before
       [~, old.infos, old.data] = pspm_load_data(this.testdatafile);
       % run delete
-      [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, data, 'delete'));
+      [~, outinfos] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, [], 'delete', struct('channel', 'hr', 'delete', 'all')));
       % load changed data
       [~, new.infos, new.data] = pspm_load_data(this.testdatafile);
       % do basic checks

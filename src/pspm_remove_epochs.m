@@ -1,13 +1,13 @@
-function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
+function [sts, outchannel] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % ● Description
 %   pspm_remove_epochs sets epochs of data to NaN
 % ● Format
-%   [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
+%   [sts, channel_index] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % ● Arguments
 %    datafile:  a filename or a cell of filenames
-%     channel:  defines which channels should be affected by epoch removal. This
-%               argument is passed to pspm_load_data(). Therefore, valid values
-%               are defined therein.
+%     channel:  defines which channels should be affected by epoch removal. 
+%               This can be a numerical vector or channel identifier
+%               accepted by pspm_load_data.
 %   epochfile:  a filename which defines the epoch to be set to NaN. The epochs
 %               must be in seconds. This parameter is passed to pspm_get_timing().
 %   timeunits:  timeunits of the epochfile.
@@ -16,6 +16,8 @@ function [sts] = pspm_remove_epochs(datafile, channel, epochfile, options)
 %               ['add'/'replace'] Defines whether the new channels should be
 %               added or the corresponding channel should be replaced.
 %               (Default: 'add')
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 by Tobias Moser (University of Zurich)
@@ -25,29 +27,30 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+outchannel = [];
+
 % input checks for options only as these are not directly passed to
 % other functions.
 if nargin < 3
   warning('ID:invalid_input', 'Not enough input arguments');
   return;
-end
-if ~exist('options', 'var')
+elseif nargin < 4
   options = struct();
 end
 options = pspm_options(options, 'remove_epochs');
 if options.invalid
   return
 end
-[lsts, ~, data] = pspm_load_data(datafile, channel);
+[lsts, ~, data, pos_of_channels] = pspm_load_data(datafile, channel);
 if lsts == -1
-  warning('ID:invalid_input', 'Could not load data properly.');
   return;
 end
+
 [lsts, ep] = pspm_get_timing('epochs', epochfile, 'seconds');
 if lsts == -1
-  warning('ID:invalid_input', 'Could not load epochs properly.');
   return;
 end
+
 n_ep = size(ep, 1);
 n_data = numel(data);
 for i_data = 1:n_data
@@ -73,10 +76,6 @@ for i_data = 1:n_data
   end
 end
 % save data to file
-[lsts] = pspm_write_channel(datafile, data, options.channel_action);
-if ~lsts
-  warning('ID:invalid_input', 'Could not write channel to file.');
-  return;
-end
-sts = 1;
-return
+[sts, out] = pspm_write_channel(datafile, data, options.channel_action, ...
+    struct('channel', pos_of_channels));
+outchanel = out.channel;

@@ -53,6 +53,7 @@ classdef pspm_load1_test < matlab.unittest.TestCase
           this.dummyfiles{i} = dfn;
           fh = str2func(['pspm_', settings.first{i}]);
           fh(model, struct());
+          if ~exist(mfn), keyboard; end
           copyfile(this.modelfiles{i}, this.dummyfiles{i});
         end
       end
