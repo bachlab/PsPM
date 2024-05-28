@@ -36,7 +36,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       epochs = zeros(1,2);
       epochs(1,1)=3;
       epochs(1,2)=4;
-      save([this.fn_missing,'.mat'],"epochs")
+      save([this.fn_missing,'.mat'], 'epochs')
       [sts, newdatafile]  = pspm_split_sessions(fn, options);
       this.verifyTrue(isfile(newdatafile{1}));
       this.verifyTrue(isfile(newdatafile{2}));
