@@ -276,7 +276,7 @@ if (sto_p + sto_offset) > infos.duration
     warning('ID:marker_out_of_range', ['\nEnd point (%.2f s) outside ', ...
         'file, no trimming at end.'], (sto_p + sto_offset));
     % adjustment of the end point is being taken care of in pspm_epochs2logical
-    sto_time = infos.duration - sta_p - sta_offset;
+    sto_time = infos.duration;
 else
     sto_time = sto_p + sto_offset;
 end
