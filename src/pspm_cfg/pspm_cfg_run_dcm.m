@@ -1,11 +1,15 @@
-function [out, dcm] = pspm_cfg_run_dcm(job)
+function out = pspm_cfg_run_dcm(job)
 % Executes pspm_dcm
 %% initialise
 global settings
 if isempty(settings), pspm_init; end
 eventnameflag = 1;
+model = struct();
+options = struct();
 %% construct job structure
-model.modelfile = [job.outdir{1}, filesep,  job.modelfile, '.mat'];
+% modelfile & overwrite
+model.modelfile = pspm_cfg_selector_outputfile('run', job);
+options.overwrite = job.overwrite;
 % datafiles & events
 nrSession = size(job.session,2);
 for iSession=1:nrSession
@@ -90,5 +94,5 @@ end
 if eventnameflag
   options.eventnames = eventnames;
 end
-[out, dcm] = pspm_dcm(model, options);
+[sts, out] = pspm_dcm(model, options);
 
