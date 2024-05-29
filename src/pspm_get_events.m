@@ -129,7 +129,7 @@ elseif strcmpi(import.marker, 'continuous')
     warning('Different number of hi2lo and lo2hi transitions in marker channel - please choose ascending or descending flank.');
     import.data = [];
     return;
-  end;
+  end
 
   % check if markerinfo should be set and if there are any data points
   if ~isfield(import, 'markerinfo') && ~isempty(import.data)
@@ -173,7 +173,7 @@ elseif strcmpi(import.marker, 'timestamp') || strcmpi(import.marker, 'timestamps
   import.data = import.data(:) .* import.sr;
 else
   warning('ID:invalid_field_content', 'The value of ''marker'' must either be ''continuous'' or ''timestamps'''); return;
-end;
+end
 
 % set status
 % -------------------------------------------------------------------------

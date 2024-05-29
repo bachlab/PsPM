@@ -28,12 +28,11 @@ classdef pspm_pp_test < matlab.unittest.TestCase
       fn = 'testfile549813.mat';
       pspm_testdata_gen(channels, 10, fn);
       %filter one channel
-      [sts, newfile] = pspm_pp('median', fn, 3, 50, struct('channel_action', 'replace'));
+      [sts, outchannel] = pspm_pp('median', fn, 3, 50, struct('channel_action', 'replace'));
       this.verifyTrue(sts == 1);
-      [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
+      [sts, infos, data, filestruct] = pspm_load_data(fn, 'none');
       this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
-      delete(newfile);
       delete(fn);
     end
     function butter_test(this)
@@ -45,12 +44,11 @@ classdef pspm_pp_test < matlab.unittest.TestCase
       pspm_testdata_gen(channels, 10, fn);
       %filter one channel
       filt = struct('hporder', 1, 'lporder', 1, 'hpfreq', 1, 'lpfreq', 4, 'down', 8);
-      [sts, newfile] = pspm_pp('butter', fn, 'scr', filt, struct('channel_action', 'replace'));
+      [sts, outchannel] = pspm_pp('butter', fn, 'scr', filt, struct('channel_action', 'replace'));
       this.verifyTrue(sts == 1);
-      [sts, infos, data, filestruct] = pspm_load_data(newfile, 'none');
+      [sts, infos, data, filestruct] = pspm_load_data(fn, 'none');
       this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
-      delete(newfile);
       delete(fn);
     end
   end

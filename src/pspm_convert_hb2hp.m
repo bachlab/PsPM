@@ -1,9 +1,9 @@
-function [sts, infos] = pspm_convert_hb2hp(fn, sr, options)
+function [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options)
 % ● Description
 %   pspm_convert_hb2hp transforms heart beat data into an interpolated heart
 %   rate signal and adds this as an additional channel to the data file
 % ● Format
-%   sts = pspm_convert_hb2hp(fn, sr, options)
+%   [sts, channel_index] = pspm_convert_hb2hp(fn, sr, options)
 % ● Arguments
 %                 fn: data file name
 %                 sr: new sample rate for heart period channel
@@ -34,6 +34,8 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, options)
 %   └─────────.lower: [numeric]
 %                     Specifies the lower limit of the
 %                     heart periods in seconds. Default is 0.2.
+% ● Output
+%      channel_index: index of channel containing the processed data
 % 
 % % ● Reference
 %     [1] Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related 
@@ -46,9 +48,10 @@ function [sts, infos] = pspm_convert_hb2hp(fn, sr, options)
 %% initialise & user output
 sts = -1;
 global settings;
-if isempty(settings), 
+if isempty(settings) 
     pspm_init;
 end
+outchannel = [];
 
 % check input
 % -------------------------------------------------------------------------
@@ -95,7 +98,6 @@ newdata.header.sr = sr;
 newdata.header.units = 'ms';
 newdata.header.chantype = 'hp';
 
-
 o.msg.prefix = 'Heart beat converted to heart period and';
 try
   [nsts,winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
@@ -105,6 +107,6 @@ catch
   warning('ID:invalid_input', 'call of pspm_write_channel failed');
   return;
 end
-infos.channel = winfos.channel;
+outchannel = winfos.channel;
 sts = 1;
 return

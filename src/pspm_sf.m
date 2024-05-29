@@ -1,8 +1,8 @@
-function varargout = pspm_sf(model, options)
+function [sts, sf] = pspm_sf(model, options)
 % ● Description
 %   pspm_sf is a wrapper function for analysis of tonic SC measures.
 % ● Format
-%   outfile = pspm_sf(model, options)
+%   [sts, sf] = pspm_sf(model, options)
 % ● Arguments
 %   ┌───────────model
 %   │ Mandantory
@@ -82,13 +82,8 @@ if isempty(settings)
 end
 outfile = [];
 sts = -1;
-switch nargout
-  case 1
-    varargout{1} = outfile;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = outfile;
-end
+
+
 %% 2 Check input
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
@@ -244,7 +239,7 @@ for iFile = 1:nFile
         model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
       end
       if inv_flag ~= 0
-        invrs = fhandle{k}(model_analysis, options);
+        [sts, invrs] = fhandle{k}(model_analysis, options);
         sf.model{k}(iEpoch).inv = invrs;
       else
         sf.model{k}(iEpoch).inv = [];
@@ -270,15 +265,7 @@ for iFile = 1:nFile
   sf.modeltype = 'sf';
   sf.modality = settings.modalities.sf;
   save(model.modelfile{iFile}, 'sf');
-  outfile = model.modelfile(iFile);
   fprintf('\n');
 end
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = outfile;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = outfile;
-end
-return
+

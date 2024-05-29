@@ -8,14 +8,14 @@ filename         = cfg_files;
 filename.name    = 'File Name';
 filename.tag     = 'filename';
 filename.num     = [1 1];
-%filename.filter  = '\.mat$';
+filename.filter  = '\.mat$';
 filename.help    = {'Choose name of original file.'};
 
 newfilename         = cfg_entry;
 newfilename.name    = 'New File Name';
 newfilename.tag     = 'newfilename';
 newfilename.strtype = 's';
-%newfilename.num     = [1 1];
+newfilename.num     = [1 inf];
 newfilename.help    = {''};
 
 file         = cfg_branch;
@@ -24,17 +24,11 @@ file.tag     = 'file';
 file.val     = {filename,newfilename};
 file.help    = {''};
 
-rename_file         = cfg_repeat;
-rename_file.name    = 'Rename';
-rename_file.tag     = 'rename_file';
-rename_file.values  = {file};
-rename_file.help    = {'Choose how many files to rename.'};
-
 %% Executable branch
 rename      = cfg_exbranch;
 rename.name = 'Rename File';
 rename.tag  = 'rename';
-rename.val  = {rename_file};
+rename.val  = {filename, newfilename};
 rename.prog = @pspm_cfg_run_rename;
 rename.vout = @pspm_cfg_vout_rename;
 rename.help = {'Rename PsPM data file. This renames the file and updates the file information.'};

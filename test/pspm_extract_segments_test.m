@@ -43,13 +43,13 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % figure, plot(x,bs);
       signal_len = length(x);
       % change onsets values from seconds to sample idx
-      onsets_idx = onsets .* sr;
+      onsets_idx = round(onsets .* sr);
       % generate trial matrix
       trial_mat = zeros(nr_trials,length_sec*sr);
       % fill matrix with signal shifted over time
       for i=1:nr_trials
-        start = onsets_idx(i);
-        stop = onsets_idx(i)+signal_len-1;
+        start = onsets_idx(i) + 1;
+        stop = onsets_idx(i)+signal_len;
         if stop <=length_sec*sr
           trial_mat(i,start:stop) = bs';
         else
@@ -99,7 +99,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         cond_trial_data{i} = zeros(samples_per_trial,numel(idx));
         cond_durations{i} = 3.5* ones(numel(idx),1);
         for k=1:numel(idx)
-          cond_trial_data{i}(:,k) = y(cond_consets_idx{i}(k):min(length_sec*sr,(cond_consets_idx{i}(k)+samples_per_trial-1)));
+          cond_trial_data{i}(:,k) = y((cond_consets_idx{i}(k)+1):min(length_sec*sr,(cond_consets_idx{i}(k)+samples_per_trial)));
         end
         cond_trial_mean{i} = nanmean(cond_trial_data{i}, 2);
         cond_trial_std{i}  = nanstd(cond_trial_data{i}, [], 2);
@@ -185,6 +185,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
  function test_auto_mode_glm_with_markers(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
+      rehash
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
       load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
       if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
@@ -225,7 +226,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         seg_len = this.options.length * sr;
         onset_i = glm.timing.multi.onsets{i};
         for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr);
+          onset = round(onset_i(j) * sr) + 1;
           all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
         all_vecs = all_vecs';
@@ -280,7 +281,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         seg_len = this.options.length * sr;
         onset_i = glm.timing.multi.onsets{i};
         for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr);
+          onset = round(onset_i(j) * sr) + 1;
           all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
         all_vecs = all_vecs';
@@ -318,7 +319,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       for i = 1:numel(input_data)
           onset_i = dcm.input.trlstart{i};
           for j = 1:numel(onset_i)
-              onset = round(onset_i(j) * sr);
+              onset = round(onset_i(j) * sr) + 1;
               all_vecs = [all_vecs, input_data{i}(onset : onset + seg_len - 1)];
           end
       end

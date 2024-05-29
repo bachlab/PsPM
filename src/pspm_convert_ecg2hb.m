@@ -1,10 +1,10 @@
-function [sts,infos] = pspm_convert_ecg2hb(fn, options)
+function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 % ● Description
 %   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and
 %   writes them as heart beat channel into the datafile. This function
 %   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
 % ● Format
-%   sts = pspm_convert_ecg2hb(fn, options)
+%   [sts, channel_index, quality_info] = pspm_convert_ecg2hb(fn, options)
 % ● Arguments
 %                 fn: data file name
 %   ┌─────── options
@@ -34,7 +34,11 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, options)
 %   └.channel_action: ['add'/'replace', default as 'replace']
 %                     Defines whether the new channel should be added or
 %                     the previous outputs of this function should be replaced.
-% 
+%
+% ● Output
+%      channel_index: index of channel containing the processed data
+%      quality_info:  generated if options.debugmode == 1
+%
 % ● Reference
 %   [1] Adjusted algorithm:
 %       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related 
@@ -115,8 +119,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-infos = struct();
-
+outchannel = [];
+debug_info = [];
 
 %% check input
 if nargin < 1
@@ -281,8 +285,8 @@ action = options.channel_action;
 o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
 [nsts, write_info] = pspm_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end
-infos.channel = write_info.channel;
-infos.pt_debug = pt_debug;
+outchannel = write_info.channel;
+debug_info = pt_debug;
 sts = 1;
 return
 

@@ -312,6 +312,12 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       % correct out shiftbf
       model.timing{1}.onsets{1} = model.timing{1}.onsets{1} + shiftbf;
       model.timing{2}.onsets{1} = model.timing{2}.onsets{1} + shiftbf;
+      for i_file = 1:2
+          [sts, newdata.infos, newdata.data] = pspm_load_data(model.datafile{i_file});
+          newdata.data{2}.data = newdata.data{2}.data + shiftbf;
+          newdata.options.overwrite = 1;
+          sts = pspm_load_data(model.datafile{i_file}, newdata);
+      end
       %test 1
       model.timeunits = 'seconds';
       expected = [cond1 offset1 offset2]';
@@ -431,7 +437,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       pspm_glm_test.save_datafile(Y1, 200, 10, model.datafile{1});
       Y2 = rand(200*10,1);
       pspm_glm_test.save_datafile(Y2, 200, 10, model.datafile{2});
-      glm = pspm_glm(model, struct());
+      [sts, glm] = pspm_glm(model, struct());
       %tests
       exptected_number_of_stats = 16;
       this.verifyEqual(length(glm.stats),exptected_number_of_stats, sprintf('test6: glm.stats does not have the expected number (%i) of elements', exptected_number_of_stats));
@@ -523,7 +529,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       %t
       pspm_glm_test.save_datafile(Y, sr, duration, model.datafile);
       % test
-      glm = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff)));
+      [sts, glm] = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff)));
       exptected_number_of_conditions = 3;
       this.verifyEqual(length(glm.stats_missing),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_missing does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyEqual(length(glm.stats_exclude),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_exclude does not have the expected number (%i) of elements', exptected_number_of_conditions));
@@ -542,7 +548,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       rehash;
       %call pspm_glm
       options = struct('marker_chan_num', 'marker');
-      glm = pspm_glm(model, options);
+      [sts, glm] = pspm_glm(model, options);
       %check if output is equal the timing
       actual = glm.stats;
       this.verifyEqual(length(actual),length(expected_stats), sprintf('%s: glm.stats does not have the expected number (%i) of elements', test_name, length(expected_stats)));
@@ -590,7 +596,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       end
       signal = zeros(sr*duration,1);
       for i = 1:length(onsets)
-        signal(floor(onsets(i)*sr):floor((onsets(i)+onsets_duration(i))*sr)) = scal(i);
+        signal(round(onsets(i)*sr+1):round((onsets(i)+onsets_duration(i))*sr+1)) = scal(i);
       end
       signal = signal + offset;
     end

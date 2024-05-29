@@ -116,9 +116,6 @@ function split_sessions = pspm_cfg_split_sessions
         elseif isfield(job.split_behavior, 'marker')
             options.splitpoints = job.split_behavior.marker;
         end
-        out = pspm_split_sessions(datafile, options);
-        if ~iscell(out)
-            out = {out};
-        end
+        [sts, out] = pspm_split_sessions(datafile, options);
     end
 end
