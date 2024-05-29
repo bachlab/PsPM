@@ -59,14 +59,8 @@ interpolate_data.help = {['The function interpolates missing values, ', ...
     'writes the data to a new channel.']};
 
 function vout = pspm_cfg_vout_interpolate(job)
-
-vout = cfg_dep;
 if isfield(job.mode, 'file')
-    vout.sname      = 'Output File';
-    % this can be entered into any file selector
-    vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
+    vout = pspm_cfg_vout_outfile;
 elseif isfield(job.mode, 'channel')
-    vout.sname      = 'Interpolated channel';
-    vout.tgt_spec   = cfg_findspec({{'class','cfg_entry', 'strtype', 'i'}});
-end;
-vout.src_output = substruct('()',{':'});
+    vout = pspm_cfg_vout_outchannel;
+end

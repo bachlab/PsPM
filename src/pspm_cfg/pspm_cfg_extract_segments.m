@@ -119,13 +119,8 @@ extract_segments.name = 'Extract segments';
 extract_segments.tag  = 'extract_segments';
 extract_segments.val  = {extract_mode, options, output};
 extract_segments.prog = @pspm_cfg_run_extract_segments;
-extract_segments.vout = @pspm_cfg_vout_extract_segments;
+extract_segments.vout = @pspm_cfg_vout_outfile;
 extract_segments.help = {['This function extracts data segments ', ...
     '(e.g., for visual inspection of mean responses per condition).']};
 
-function vout = pspm_cfg_vout_extract_segments(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% only cfg_files
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
+

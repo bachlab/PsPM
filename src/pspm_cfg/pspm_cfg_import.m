@@ -399,12 +399,8 @@ import_data.name = 'Import';
 import_data.tag  = 'import';
 import_data.val  = {datatype, overwrite};
 import_data.prog = @pspm_cfg_run_import;
-import_data.vout = @pspm_cfg_vout_import;
+import_data.vout = @pspm_cfg_vout_outfile;
 import_data.help = {['Import external data files for use by PsPM. First, specify the ' ...
   'data type. Then, other fields will come up as required for this data type. The ' ...
   'imported data will be written to a new .mat file, prepended with ''pspm_''.']};
 
-function vout = pspm_cfg_vout_import(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-vout.src_output = substruct('()',{':'});

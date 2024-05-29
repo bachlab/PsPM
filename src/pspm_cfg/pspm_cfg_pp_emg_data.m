@@ -34,7 +34,7 @@ pp_emg.name = 'Preprocess startle eyeblink EMG';
 pp_emg.tag  = 'pp_emg_data';
 pp_emg.val  = {datafile, options};
 pp_emg.prog = @pspm_cfg_run_pp_emg_data;
-pp_emg.vout = @pspm_cfg_vout_pp_emg_data;
+pp_emg.vout = @pspm_cfg_vout_outchannel;
 pp_emg.help = {['Preprocess startle eyeblink EMG data for further ', ...
     'analysis. Noise in EMG data will be removed in three steps: ', ...
     'Initially the data is filtered with a 4th order Butterworth filter ', ...
@@ -48,8 +48,3 @@ pp_emg.help = {['Preprocess startle eyeblink EMG data for further ', ...
     'startle eyeblink GLM.'], ...
     'References:', 'Khemka, Tzovara, Quednow & Bach (2016) Psychophysiology'};
 
-function vout = pspm_cfg_vout_pp_emg_data(~)
-vout = cfg_dep;
-vout.sname      = 'Output Channel';
-vout.tgt_spec = cfg_findspec({{'class','cfg_entry'}});
-vout.src_output = substruct('()',{':'});

@@ -167,17 +167,9 @@ trim.name = 'Trim';
 trim.tag  = 'trim';
 trim.val  = {datafile,ref,overwrite};
 trim.prog = @pspm_cfg_run_trim;
-trim.vout = @pspm_cfg_vout_trim;
+trim.vout = @pspm_cfg_vout_outfile;
 trim.help = {['Trim away unnessecary data, for example before an experiment started, ' ...
     'or after it ended. Trim points can be defined in seconds with respect to start of ' ...
     'the data file, in seconds with respect to first and last marker (if markers exist), ' ...
     'or in seconds with respect to a user-defined marker. The resulting data will be written ' ...
     'to a new file, prepended with ''t''.']};
-
-function vout = pspm_cfg_vout_trim(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
-

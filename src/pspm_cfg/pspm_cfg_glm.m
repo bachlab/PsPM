@@ -164,7 +164,7 @@ glm.tag   = 'glm';
 glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, ...
     bf, norm, filter, exclude_missing, overwrite};
 %glm_scr.prog  = ;
-glm.vout  = @pspm_cfg_vout_glm;
+glm.vout  = @pspm_cfg_vout_modelfile;
 glm.help  = {...
 
     ['General linear convolution models (GLM) are powerful for analysing evoked responses that ' ...
@@ -176,9 +176,4 @@ glm.help  = {...
     vars.glmref{:} ...
     };
 
-function vout = pspm_cfg_vout_glm(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('.','modelfile');
+

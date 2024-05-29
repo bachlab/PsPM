@@ -129,7 +129,7 @@ sf.name = 'SF';
 sf.tag  = 'sf';
 sf.val  = {datafile, modelfile, outdir, method, timeunits, filter, channel, overwrite, threshold, missing, theta, fresp, dispwin, dispsmallwin};
 sf.prog = @pspm_cfg_run_sf;
-sf.vout = @pspm_cfg_vout_sf;
+sf.vout = @pspm_cfg_vout_modelfile;
 sf.help = {['This suite of models is designed for analysing spontaneous fluctuations (SF) in skin conductance ' ...
     'as a marker for tonic arousal. SF are analysed over time windows that ' ...
     'typically last 60 s and should at least be 15 s long. PsPM implements 3 different models: '], '', ...
@@ -143,10 +143,3 @@ sf.help = {['This suite of models is designed for analysing spontaneous fluctuat
     'Bach, Friston, Dolan (2010) International Journal of Psychophysiology (AUC)', '', ...
     'Bach, Daunizeau et al. (2011) Psychophysiology (DCM)', '', ...
     'Bach & Staib (2015) Psychophysiology (MP)'};
-
-function vout = pspm_cfg_vout_sf(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});

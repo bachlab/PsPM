@@ -22,12 +22,5 @@ rename.name = 'Rename File';
 rename.tag  = 'rename';
 rename.val  = {filename, newfilename};
 rename.prog = @pspm_cfg_run_rename;
-rename.vout = @pspm_cfg_vout_rename;
+rename.vout = @pspm_cfg_vout_outfile;
 rename.help = {'Rename PsPM data file. This renames the file and updates the file information.'};
-
-function vout = pspm_cfg_vout_rename(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});

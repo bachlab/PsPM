@@ -95,7 +95,7 @@ pupil_correct.name = 'Pupil foreshortening error correction';
 pupil_correct.tag  = 'pupil_correct';
 pupil_correct.val  = {datafile, screen_size_px, screen_size_mm, mode, channel, channel_action};
 pupil_correct.prog = @pspm_cfg_run_pupil_correct;
-pupil_correct.vout = @pspm_cfg_vout_pupil_correct;
+pupil_correct.vout = @pspm_cfg_vout_outchannel;
 pupil_correct.help = {['Perform pupil foreshortening error correction using the equations described in ',...
     'the reference paper.'],...
     ['To perform correction, we define the coordinate system centered on the pupil. In this system, x coordinates ',...
@@ -112,10 +112,4 @@ pupil_correct.help = {['Perform pupil foreshortening error correction using the 
     'Research Methods 48.2 (2016): 510-527.']};
 end
 
-function vout = pspm_cfg_vout_pupil_correct(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% only cfg_files
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
-end
+

@@ -64,16 +64,11 @@ merge.name = 'Merge files';
 merge.tag  = 'merge';
 merge.val  = {datafiles, reference, options};
 merge.prog = @pspm_cfg_run_merge;
-merge.vout = @pspm_cfg_vout_merge;
+merge.vout = @pspm_cfg_vout_outfile;
 merge.help = {['Allows to merge (i.e. stack) two files that were acquired ', ...
     'simultaneously but contain different channels. The files are ', ...
     'aligned according to the first event of a given marker channel or ', ...
     'to the start of the file. The output file name consists of an ''m'' ', ...
     'prepended to the name of the first file. ']};
 
-function vout = pspm_cfg_vout_merge(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
+

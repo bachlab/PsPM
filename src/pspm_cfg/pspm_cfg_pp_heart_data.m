@@ -230,7 +230,7 @@ pp_heart_data.name = 'Preprocess heart data';
 pp_heart_data.tag  = 'pp_heart_data';
 pp_heart_data.val  = {datafile, pp, channel_action};
 pp_heart_data.prog = @pspm_cfg_run_pp_heart_data;
-pp_heart_data.vout = @pspm_cfg_vout_pp_heart_data;
+pp_heart_data.vout = @pspm_cfg_vout_outchannel;
 pp_heart_data.help = {['Convert ECG to heart beat using Pan & Tompkins detects QRS complexes in ', ...
     'ECG data and write timestamps of detected R spikes into a new ', ...
     'heart beat channel. This function uses an algorithm adapted from ', ...
@@ -252,8 +252,4 @@ pp_heart_data.help = {['Convert ECG to heart beat using Pan & Tompkins detects Q
     'combination of the two functions "Convert ECG to heart beat" ', ...
     'and "Convert Heart Beat to heart period".']};
 
-function vout = pspm_cfg_vout_pp_heart_data(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-vout.tgt_spec = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
+

@@ -58,7 +58,7 @@ filtering.name        = 'Data filtering';
 filtering.tag         = 'filtering';
 filtering.val         = {datafile,chan_nr,filtertype,overwrite};
 filtering.prog        = @pspm_cfg_run_filtering;
-filtering.vout        = @pspm_cfg_vout_artefact;
+filtering.vout        = @pspm_cfg_vout_outchannel;
 filtering.help        = {['This module offers several basic filtering functions. ',...
                            'Currently, a median filter and a butterworth low pass ' ...
                            'filter are implemented. The median filter is useful to ' ...
@@ -68,12 +68,3 @@ filtering.help        = {['This module offers several basic filtering functions.
                            'filtered away by the filters implemented on-the-fly during ',...
                            'first level modelling.']};
 
-
-  function vout = pspm_cfg_vout_artefact(job)
-    vout = cfg_dep;
-    vout.sname      = 'Output File';
-    % this can be entered into any file selector
-    vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-    vout.src_output = substruct('()',{':'});
-  end
-end

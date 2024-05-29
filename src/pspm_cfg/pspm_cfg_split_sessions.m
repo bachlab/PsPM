@@ -64,7 +64,7 @@ split_sessions.name = 'Split Sessions';
 split_sessions.tag  = 'split_sessions';
 split_sessions.val  = {datafile,channel,split_behavior,missing_epoch,overwrite};
 split_sessions.prog = @pspm_cfg_run_split_sessions;
-split_sessions.vout = @pspm_cfg_vout_split_sessions;
+split_sessions.vout = @pspm_cfg_vout_outfile;
 split_sessions.help = {['Split sessions, defined by trains of of markers. This function ' ...
 'is most commonly used to split fMRI sessions when a (slice or volume) pulse from the ' ...
 'MRI scanner has been recorded. In automatic mode, the function will identify trains of markers and detect ' ...
@@ -74,13 +74,6 @@ split_sessions.help = {['Split sessions, defined by trains of of markers. This f
 'one missing epochs file, which will be split at the same points. By default, the function will use ', ...
 'the first marker channel. Alternatively, you can choose a marker channel number.']};
 
-function vout = pspm_cfg_vout_split_sessions(job)
-    vout = cfg_dep;
-    vout.sname      = 'Output File(s)';
-    % this can be entered into any file selector
-    vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-    vout.src_output = substruct('()',{':'});
-end
 
 function out = pspm_cfg_run_split_sessions(job)
     fn = job.datafile{1,1};

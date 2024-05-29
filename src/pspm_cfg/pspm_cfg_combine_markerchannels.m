@@ -22,14 +22,11 @@ combine_markerchannels.name   = 'Combine marker channels';
 combine_markerchannels.tag    = 'combine_markerchannels';
 combine_markerchannels.val    = {datafile, channel_action, marker_chan};
 combine_markerchannels.prog   = @pspm_cfg_run_combine_markerchannels;
-combine_markerchannels.vout   = @pspm_cfg_vout_combine_markerchannels;
+combine_markerchannels.vout   = @pspm_cfg_vout_outchannel;
 combine_markerchannels.help   = {['The feature combine marker channels ',...
   'can combine all the marker channels of a data file and add the ',...
   'result to the original data file, specified by channel action.']};
 
-function vout = pspm_cfg_vout_combine_markerchannels(job)
-vout = cfg_dep;
-vout.sname      = 'Output Channel';
-vout.src_output = substruct('()',{1});
+
 
 

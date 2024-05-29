@@ -105,4 +105,5 @@ export.name = 'Export Statistics';
 export.tag  = 'export';
 export.val  = {modelfile, datatype, exclude_missing, target, delim};
 export.prog = @pspm_cfg_run_export;
+export.vout = @pspm_cfg_vout_outfile;
 export.help = {'Export statistics to a file for further analysis in statistical software, or to the screen.'};

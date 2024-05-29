@@ -97,7 +97,7 @@ resp_pp.name = 'Preprocess respiration data';
 resp_pp.tag  = 'resp_pp';
 resp_pp.val  = {datafile,sr,channel, channel_action ,options};
 resp_pp.prog = @pspm_cfg_run_resp_pp;
-resp_pp.vout = @pspm_cfg_vout_resp_pp;
+resp_pp.vout = @pspm_cfg_vout_outchannel;
 resp_pp.help = {['Convert continuous respiration traces into interpolated ', ...
 'respiration period, amplitude, or RFR, or into time stamps indicating ', ...
 'the start of inspiration. This function detects the beginning of ', ...
@@ -127,14 +127,8 @@ function out = pspm_cfg_run_resp_pp(job)
         end
     end
     resp_pp_options.channel_action = job.channel_action;
-    sts = pspm_resp_pp(job.datafile{1}, sr, resp_pp_options);
-    out = job.datafile;
+    [sts, out] = pspm_resp_pp(job.datafile{1}, sr, resp_pp_options);
 end
 
-function vout = pspm_cfg_vout_resp_pp(job)
-    vout = cfg_dep;
-    vout.sname      = 'Output File';
-    vout.tgt_spec = cfg_findspec({{'class','cfg_files'}});
-    vout.src_output = substruct('()',{':'});
-end
+
 end

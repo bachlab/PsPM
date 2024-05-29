@@ -133,18 +133,11 @@ pp_scr.val          = {datafile, ...
                         channel_action,...
                         };
 pp_scr.prog         = @pspm_cfg_run_scr_pp;
-pp_scr.vout         = @pspm_cfg_vout_scr_pp;
+pp_scr.vout         = @pspm_cfg_vout_outchannel;
 pp_scr.help         = {'Pre processing (PP) skin conductance response (SCR).',...
 ['See I. R. Kleckner et al., "Simple, Transparent, and' ...
 'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
 'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460--1467, July 2018.']};
-
-function vout = pspm_cfg_vout_scr_pp(~)
-    vout = cfg_dep;
-    vout.sname      = 'Output Channel';
-    vout.tgt_spec = cfg_findspec({{'class','cfg_entry'}});
-    vout.src_output = substruct('()',{':'});
-end
 
 function out = pspm_cfg_run_scr_pp(job)
     scr_pp_datafile = job.datafile{1};

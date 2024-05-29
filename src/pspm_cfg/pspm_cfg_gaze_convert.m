@@ -65,5 +65,6 @@ pp_gaze_convert.name   = 'Gaze convert';
 pp_gaze_convert.tag    = 'gaze_convert';
 pp_gaze_convert.val    = {datafile, width, height, screen_distance, from, target, chan, chan_action};
 pp_gaze_convert.prog   = @pspm_cfg_run_gaze_convert;
+pp_gaze_convert.vout   = @pspm_cfg_vout_outchannel;
 pp_gaze_convert.help   = {['Provides conversion functions for the specified ', ...
     'gaze data.']};

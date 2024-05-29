@@ -416,7 +416,7 @@ dcm.name = 'Non-Linear Model';
 dcm.tag  = 'dcm';
 dcm.val  = {modelfile, outdir, chan, session_rep, data_options, resp_options, inv_options, disp_options};
 dcm.prog = @pspm_cfg_run_dcm;
-dcm.vout = @pspm_cfg_vout_dcm;
+dcm.vout = @pspm_cfg_vout_outfile;
 dcm.help = {['Non-linear models for SCR are powerful if response timing is not precisely known and has to be ' ...
     'estimated. A typical example are anticipatory SCR in fear conditioning � they must occur at some point ' ...
     'within a time-window of several seconds duration, but that time point may vary over trials. Dynamic ' ...
@@ -428,12 +428,6 @@ dcm.help = {['Non-linear models for SCR are powerful if response timing is not p
     'Bach, Daunizeau et al. (2010) Biological Psychology (Model development)', '', ...
     'Staib et al. (2015) Journal of Neuroscience Methods (Optimising a model-based approach)'};
 
-function vout = pspm_cfg_vout_dcm(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
 
 function [sts, val] = pspm_cfg_dcm_check_conditions(val)
 sts = [];
