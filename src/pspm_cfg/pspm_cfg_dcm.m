@@ -5,10 +5,9 @@ global settings
 %% Standard items
 datafile            = pspm_cfg_selector_datafile;
 chan                = pspm_cfg_selector_channel('SCR');
-[modelfile, outdir] = pspm_cfg_selector_outputfile('model');
+modelfile           = pspm_cfg_selector_outputfile('Model');
 filter              = pspm_cfg_selector_filter(settings.dcm{1,1}.filter);
 norm                = pspm_cfg_selector_norm;
-overwrite           = pspm_cfg_selector_overwrite;
 
 %% Specific items
 % Parameter estimation
@@ -415,7 +414,7 @@ disp_options.help    = {''};
 dcm      = cfg_exbranch;
 dcm.name = 'Non-Linear Model';
 dcm.tag  = 'dcm';
-dcm.val  = {modelfile, outdir, overwrite, chan, session_rep, data_options, resp_options, inv_options, disp_options};
+dcm.val  = {modelfile, chan, session_rep, data_options, resp_options, inv_options, disp_options};
 dcm.prog = @pspm_cfg_run_dcm;
 dcm.vout = @pspm_cfg_vout_modelfile;
 dcm.help = {['Non-linear models for SCR are powerful if response timing is not precisely known and has to be ' ...

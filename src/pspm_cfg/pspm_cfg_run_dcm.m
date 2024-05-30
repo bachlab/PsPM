@@ -9,11 +9,10 @@ options = struct();
 %% construct job structure
 % modelfile & overwrite
 model.modelfile = pspm_cfg_selector_outputfile('run', job);
-options.overwrite = job.overwrite;
+options.overwrite = job.output.overwrite;
 % datafiles & events
 nrSession = size(job.session,2);
 for iSession=1:nrSession
-  options = struct();
   % datafile
   datafile{iSession} = job.session(iSession).datafile{1};
   % events

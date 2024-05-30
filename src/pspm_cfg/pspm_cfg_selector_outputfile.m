@@ -1,27 +1,43 @@
-function [modelfile, outdir] = pspm_cfg_selector_outputfile(outtype, varargin)
-% [modelfile, outdir] = pspm_cfg_selector_modelfile(outtype)
+function [output, dummy] = pspm_cfg_selector_outputfile(outtype, varargin)
+% output = pspm_cfg_selector_modelfile(outtype)
 %  modelfile = pspm_cfg_selector('run', job)
 % outtype: char, used in the help text
 
+
 if nargin < 1
-    outtype = 'output';
+    outtype = 'Output';
 elseif strcmpi(outtype, 'run')
     job = varargin{1};
-    [pth, fn, ext] = fileparts(job.outfile);
-    modelfile = fullfile(job.outdir{1}, [fn, '.mat']);
+    [pth, fn, ext] = fileparts(job.output.file);
+    output = fullfile(job.output.dir{1}, [fn, '.mat']);
     return
 end
 
-modelfile         = cfg_entry;
-modelfile.name    = sprintf('%s file name', outtype);
-modelfile.tag     = 'outfile';
-modelfile.strtype = 's';
-modelfile.help    = {sprintf('Specify file name for the resulting %s.', outtype)};
+% Output file
+outfile         = cfg_entry;
+outfile.name    = sprintf('%s file name', outtype);
+outfile.tag     = 'file';
+outfile.strtype = 's';
+outfile.help    = {sprintf('Specify file name for the resulting %s file.', lower(outtype))};
 
 % Output directory
 outdir         = cfg_files;
-outdir.name    = 'Output directory';
-outdir.tag     = 'outdir';
+outdir.name    = sprintf('%s directory', outtype);
+outdir.tag     = 'dir';
 outdir.filter  = 'dir';
 outdir.num     = [1 1];
-outdir.help    = {sprintf('Specify directory where the mat file with the resulting %s will be written.', outtype)};
+outdir.help    = {sprintf('Specify directory where the mat file with the resulting %s will be written.', lower(outtype))};
+
+% overwrite settings
+overwrite = pspm_cfg_selector_overwrite;
+
+% branch
+output       = cfg_branch;
+output.name  = sprintf('%s file', outtype);
+output.tag   = 'output';
+output.val   = {outfile, outdir, overwrite};
+output.help  = {sprintf('Specify location for the resulting %s.', lower(outtype))};
+
+% to be removed at end of GUI development
+dummy = outdir; 
+% ---------------------------------------

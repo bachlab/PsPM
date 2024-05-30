@@ -19,8 +19,7 @@ function [glm] = pspm_cfg_glm(vars)
 global settings
 
 %% Standard items
-[modelfile, outdir]      = pspm_cfg_selector_outputfile('model');
-overwrite                = pspm_cfg_selector_overwrite;
+output                   = pspm_cfg_selector_outputfile('Model');
 session_rep              = pspm_cfg_selector_data_design('glm', vars);
 timeunits                = pspm_cfg_selector_timeunits;
 chan                     = pspm_cfg_selector_channel(vars.modality);
@@ -161,8 +160,8 @@ latency.help    = {['Latency is either ''fixed'' or ''free''. If latency is ''fr
 glm       = cfg_exbranch;
 glm.name  = 'GLM';
 glm.tag   = 'glm';
-glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, ...
-    bf, norm, filter, exclude_missing, overwrite};
+glm.val   = {output, chan, timeunits, session_rep, latency, ...
+    bf, norm, filter, exclude_missing};
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_modelfile;
 glm.help  = {...

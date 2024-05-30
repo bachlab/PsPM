@@ -9,7 +9,7 @@ else
 end
 
 datafile         = cfg_files;
-datafile.name    = 'Data File';
+datafile.name    = 'Data file';
 datafile.tag     = 'datafile';
 datafile.num     = [1 1];
 datafile.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
