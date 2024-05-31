@@ -7,7 +7,7 @@ function pspm_quit
 
 global settings
 if isempty(settings)
-    pspm_init;
+  pspm_init;
 end
 
 % Remove paths added during pspm_init
