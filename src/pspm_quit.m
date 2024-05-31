@@ -7,10 +7,16 @@ function pspm_quit
 
 global settings
 if isempty(settings)
-  pspm_init;
+    pspm_init;
 end
+
+% Remove paths added during pspm_init
+if isfield(settings, 'added_paths') && ~isempty(settings.added_paths)
+   cellfun(@rmpath, settings.added_paths);
+end
+
 fs = filesep;
-if settings.scrpath, rmpath(settings.path), end;
+if settings.scrpath, rmpath(settings.path), end
 if any(contains(settings.path, 'VBA'))
   rmpath(pspm_path('ext','VBA'));
   rmpath(pspm_path('ext','VBA','subfunctions'));

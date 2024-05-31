@@ -41,10 +41,27 @@ fprintf('PsPM: loading defaults ... \n');
 % 2.1 check pspm version
 pspm_vers = pspm_version('check');
 % 2.2 check various settings
-global settings
-if ~isempty(settings) % initialise settings
-  settings = [];
+initial_paths = strsplit(path, pathsep);
+global settings;
+if isempty(settings)
+  settings = struct();
 end
+% Define the directories PsPM will need
+pspm_root = fileparts(which('pspm_init'));
+required_folders = {'backroom', 'ext', 'Import', 'pspm_cfg'};
+required_paths = fullfile(pspm_root, required_folders);
+
+% Add necessary paths that are not already included
+added_paths = {};
+for i = 1:length(required_paths)
+  if ~any(strcmp(initial_paths, required_paths{i}))
+    addpath(required_paths{i});
+    added_paths{end+1} = required_paths{i};
+  end
+end
+
+settings.initial_paths = initial_paths;
+settings.added_paths = added_paths;
 p = path;
 fs = filesep;
 pth = fileparts(which('pspm_guide'));
