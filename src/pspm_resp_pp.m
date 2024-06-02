@@ -33,6 +33,12 @@ function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 %                     corresponding channel should be replaced.
 % ● Output
 %      channel_index: index of channel containing the processed data
+%
+% ● References
+%   [1] Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model
+%       for event-related respiration responses. Journal of Neuroscience 
+%       Methods, 270, 174-155.
+%   
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

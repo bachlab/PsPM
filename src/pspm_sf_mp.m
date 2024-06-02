@@ -34,6 +34,10 @@ function [sts, out] = pspm_sf_mp(model, options)
 %             false. If set to true this will add a further field 'D' to the
 %             output struct. Default is false.
 % ● References
+%   [1] Bach DR, Staib M (2015). A matching pursuit algorithm for inferring 
+%       tonic sympathetic arousal from spontaneous skin conductance 
+%       fluctuations. Psychophysiology, 52, 1106-12.
+% 
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN) last edited 18.08.2014
