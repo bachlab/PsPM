@@ -453,6 +453,7 @@ switch FunName
     options = autofill(options, 'drop_offset_markers',    0,          '*Int'            );
     options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
     options = autofill(options, 'overwrite',              0,          1                 );
+    options = autofill(options, 'missing',               [],          '*Char'           );
   case 'write_channel'
     % 2.47 pspm_write_channel --
     options = autofill(options, 'channel',                0,          '*Int*Char'  );

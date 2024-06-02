@@ -106,27 +106,6 @@ if ~sts_load_data
   return;
 end
 
-% 2.2 Handle missing epochs
-if ~isempty(options.missing)
-  % makes sure the epochs are in seconds and not empty
-  [sts_get_timing, missing_time] = pspm_get_timing('epochs', options.missing, 'seconds');
-  if ~sts_get_timing
-    warning('ID:invalid_input', 'Could not load missing epochs.');
-  end
-  missingsr = 10000; % dummy sample rate, should be higher than data sampling rates (but no need to make it dynamic)
-  duration_index = round(missingsr * ininfos.duration);
-  indx = zeros(1,duration_index); % indx should be a one-dimensional array?
-  missing = pspm_time2index(missing_time, missingsr, duration_index); % convert epochs in sec to datapoints
-
-  % allow splitting empty missing epochs
-  if ~isempty(missing)
-    indx(missing(:, 1)) = 1;
-    indx(missing(:, 2)+1) = -1;
-  end
-  dp_epochs = (cumsum(indx(:)) == 1);
-  % extract fileparts for later
-  [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
-end
 
 % 2.3 Handle markers
 
@@ -193,47 +172,27 @@ else
 
   % 2.4 Split files
   for sn = 1:size(trimpoint,1)
-    % 2.4.1 Determine filenames
-    [p, f, ex] = fileparts(datafile);
-    newdatafile{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
-    if ~isempty(options.missing)
-      newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
-    end
+      % 2.4.1 Determine options & filenames
+      trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', options.marker_chan_num);
+      [p, f, ex] = fileparts(datafile);
+      newdatafile{sn} = fullfile(p, sprintf('%s_sn%02.0f%s', f, sn, ex));
+      if ~isempty(options.missing)
+        [p_epochs, f_epochs, ex_epochs] = fileparts(options.missing);
+        newepochfile{sn} = fullfile(p_epochs, sprintf('%s_sn%02.0f%s', f_epochs, sn, ex_epochs));
+        trimoptions.missing = options.missing;
+     end
     % 2.4.2 Split data
-    trimoptions = struct('drop_offset_markers', 1, 'marker_chan_num', options.marker_chan_num);
-    [tsts, newdata] = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
+    [tsts, newdata, newmissingfile] = pspm_trim(struct('data', {indata}, 'infos', ininfos), ...
       prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions);
     if tsts < 1, return; end
     options.overwrite = pspm_overwrite(newdatafile{sn}, options);
     newdata.options = options;
     pspm_load_data(newdatafile{sn}, newdata);
-    % 2.4.5 Split Epochs
+    % 2.4.3 deal with missing epoch file
     if ~isempty(options.missing)
-      dummydata{1,1}.header = struct('chantype', 'custom', ...
-        'sr', missingsr, ...
-        'units', 'unknown');
-      dummydata{1,1}.data   = dp_epochs;
-      % add marker channel so that pspm_trim has a reference
-      dummydata{2,1}      = mrkdata;
-      dummyinfos          = ininfos;
-			trimoptions_missing = trimoptions;
-			trimoptions_missing.marker_chan_num = 2;
-      [tsts, newmissing] = pspm_trim(struct('data', {dummydata}, 'infos', dummyinfos), ...
-        prefix{sn}, suffix{sn}, trimpoint(sn, 1:2), trimoptions_missing);
-      if tsts < 1, return; end
-      epochs = newmissing.data{1}.data;
-      epoch_on = 1 + strfind(epochs.', [0 1]); % Return the start points of the excluded interval
-      epoch_off = strfind(epochs.', [1 0]); % Return the end points of the excluded interval
-      if numel(epoch_off) < numel(epoch_on) % if the epochs is in the middle of 2 blocks
-        epoch_off(end+1) = numel(epochs);
-      elseif numel(epoch_on) < numel(epoch_off)
-        epoch_on = [0, epoch_on];
-      elseif (numel(epoch_on) > 0 && numel(epoch_off > 0) && epoch_off(1) < epoch_on(1))
-        epoch_on = [0, epoch_on];
-        epoch_off(end+1) = numel(epochs);
-      end
-      epochs = [epoch_on.', epoch_off.']/missingsr; % convert back to seconds
+      [sts, epochs] = pspm_get_timing('epochs', newmissingfile, 'seconds');
       save(newepochfile{sn}, 'epochs');
+      delete(newmissingfile);
     end
   end
 end
