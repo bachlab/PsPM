@@ -70,13 +70,16 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %                     does not replace the raw data channel, but a previously
 %                     stored heartbeat channel.
 %                     (Default: 'replace')
-% ● Output
+% ● Outputs
+%                sts: status marker showing whether the function works normally.
 %      channel_index: index of channel containing the processed data
+%
 % ● References
 %   [1] Liu, Zhongming, et al. "Statistical feature extraction for artifact
 %       removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012):
 %       2073-2087.
 %   [2] http://www.amri.ninds.nih.gov/software.html
+% 
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 2022 by Teddy Chao
