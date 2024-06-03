@@ -4,29 +4,6 @@ function tam = pspm_tam(model, options)
 %   trial-averaged data. pspm_tam starts by extracting and averaging signal segments of
 %   length `model.window` from each data file individually, then averages
 %   these mean segments and finally fits an LTI model.
-% ● Developer's Notes
-%   The fitting process is a residual least square minimisation where the
-%   predicted value is calculated as following:
-%     Y_predicted = input_function (*) basis_function
-%   with (*) represents a convolution. Only parameters of the input
-%   function are optimised.
-%   ---
-%   TIMING - multiple condition file(s) or struct variable(s):
-%    The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
-%    such that SPM files can be used.
-%    The file contains the following variables:
-%    - names: a cell array of string for the names of the experimental
-%      conditions
-%    - onsets: a cell array of number vectors for the onsets of events for
-%      each experimental condition, expressed in seconds, marker numbers, or
-%      samples, as specified in timeunits
-%    - durations (optional, default 0): a cell array of vectors for the
-%      duration of each event. You need to use 'seconds' or 'samples' as time
-%      units
-%    e.g. produce a simple multiple condition file by typing
-%      names = {'condition a', 'condition b'};
-%      onsets = {[1 2 3], [4 5 6]};
-%      save('testfilcircle_degreee', 'names', 'onsets');
 % ● Arguments
 %   ┌───────model:  [struct]
 %   │ ▶︎ mandatory
@@ -99,18 +76,47 @@ function tam = pspm_tam(model, options)
 %                   Default value: determined by pspm_overwrite.
 % ● Outputs
 %   tam: a structure 'tam' which is also written to file
+% 
 % ● Reference
-%   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
-%   cognition: Modeling event-related pupil responses. Journal of Vision,
-%   16(3), 28. https://doi.org/10.1167/16.3.28
-%   Abivardi, A., Korn, C.W., Rojkov, I. et al. Acceleration of inferred
-%   neural responses to oddball targets in an individual with bilateral
-%   amygdala lesion compared to healthy controls. Sci Rep 13, 14550 (2023).
-%   https://doi.org/10.1038/s41598-023-41357-1
+%   [1] Model development:
+%       Korn CW & Bach DR (2016). A solid frame for the window on cognition: 
+%       Modelling event-related pupil responses. Journal of Vision, 16:28,
+%       1-6. https://doi.org/10.1167/16.3.28
+%   [2] Model application:
+%       Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR 
+%       (2023). Acceleration of inferred neural responses to oddball 
+%       targets in an individual with bilateral amygdala lesion compared to 
+%       healthy controls. Scientific Reports, 13, 41357.
+%       https://doi.org/10.1038/s41598-023-41357-1
+% 
 % ● History
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)
+% ● Developer's Notes
+%   The fitting process is a residual least square minimisation where the
+%   predicted value is calculated as following:
+%     Y_predicted = input_function (*) basis_function
+%   with (*) represents a convolution. Only parameters of the input
+%   function are optimised.
+%   ---
+%   TIMING - multiple condition file(s) or struct variable(s):
+%    The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
+%    such that SPM files can be used.
+%    The file contains the following variables:
+%    - names: a cell array of string for the names of the experimental
+%      conditions
+%    - onsets: a cell array of number vectors for the onsets of events for
+%      each experimental condition, expressed in seconds, marker numbers, or
+%      samples, as specified in timeunits
+%    - durations (optional, default 0): a cell array of vectors for the
+%      duration of each event. You need to use 'seconds' or 'samples' as time
+%      units
+%    e.g. produce a simple multiple condition file by typing
+%      names = {'condition a', 'condition b'};
+%      onsets = {[1 2 3], [4 5 6]};
+%      save('testfilcircle_degreee', 'names', 'onsets');
+
 
 %% Initialise
 global settings
