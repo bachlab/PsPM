@@ -1,4 +1,4 @@
-function [sts, newdatafile] = pspm_trim(datafile, from, to, reference, options)
+function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, reference, options)
 % ● Description
 %   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 %   and 'to' and writes it to a file with a prepended 't'
@@ -29,16 +29,23 @@ function [sts, newdatafile] = pspm_trim(datafile, from, to, reference, options)
 %   │                   Default value: determined by pspm_overwrite.
 %   ├.marker_chan_num:  marker channel number.
 %   │                   if undefined or 0, first marker channel is used.
+%   ├────────.missing:  Optional name of an epoch file, e.g. containing a
+%   │                   missing epochs definition in s. This is then split
+%   │                   accordingly.
 %   └.drop_offset_markers:
-%                       if offsets are set in the reference, you might be
-%                       interested in only the data, but not in the additional
-%                       markers which are within the offset. therefore set this
+%                       if 'from' and 'to' are defined with respect to
+%                       markers, you might be interested in the data that within
+%                       extend beyond these markers but not in any additional
+%                       markers which are within this interval. Set this
 %                       option to 1 to drop markers which lie in the offset.
-%                       this is for event channels only. default is 0.
+%                       this is for event channels only. Default is 0.
 % ● Outputs
 %                  sts: status variable indicating whether function run successfully.
 %          newdatafile: a filename for the updated file (or a struct with 
 %                       fields .data and .infos if data file is a struct)
+%         newepochfile: missing epoch filename for the individual
+%                       sessions (empty if options.missing not specified)
+
 % ● Version
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -52,6 +59,7 @@ if isempty(settings)
 end
 sts = -1;
 newdatafile = [];
+newepochfile = [];
 
 % 1.2 Verify the number of input arguments
 switch nargin
@@ -263,65 +271,73 @@ if ((sta_p + sta_offset) < 0)
         sta_offset = 0;
     end
 end
+sta_time = sta_p + sta_offset;
 if (sto_p + sto_offset) > infos.duration
     warning('ID:marker_out_of_range', ['\nEnd point (%.2f s) outside ', ...
         'file, no trimming at end.'], (sto_p + sto_offset));
-    if (sto_p > infos.duration)
-        sto_p = infos.duration;
-        sto_offset = 0;
-    else
-        sto_offset = infos.duration - sto_p;
-    end
+    % adjustment of the end point is being taken care of in pspm_epochs2logical
+    sto_time = infos.duration;
+else
+    sto_time = sto_p + sto_offset;
 end
+
 % 2.5 Trim file
 for k = 1:numel(data)
     if ~strcmpi(data{k}.header.units, 'events') % waveform channels
-        % set start point (`ceil` for protect against having duration < data*sr,
-        % the `+1` is here because of matlabs convention to start indices from 1)
-        newstartpoint = ceil((sta_p + sta_offset) * data{k}.header.sr)+1;
-        if newstartpoint == 0
-            newstartpoint = 1;
-        end
-        % set end point
-        newendpoint = floor((sto_p + sto_offset) * data{k}.header.sr);
-        if newendpoint > numel(data{k}.data), ...
-                newendpoint = numel(data{k}.data);
-        end
-        % trim data
-        data{k}.data=data{k}.data(newstartpoint:newendpoint);
+        index = pspm_epochs2logical([sta_time, sto_p + sto_offset], ...
+                                     numel(data{k}.data), ...
+                                     data{k}.header.sr);
+        data{k}.data=data{k}.data(find(index));
     else % event channels
         if options.drop_offset_markers
-            newendpoint = sto_p;
             newstartpoint = sta_p;
+            newendpoint   = sto_p;
         else
-            newendpoint = sto_p + sto_offset;
-            newstartpoint = sta_p + sta_offset;
+            newstartpoint = sta_time;
+            newendpoint   = sto_time;
         end
+        newendpoint = min([newendpoint, sto_time]);
+        remove_early = data{k}.data < newstartpoint;
         remove_late = data{k}.data > newendpoint;
-        data{k}.data(remove_late) = [];
-        data{k}.data = data{k}.data - newstartpoint;
-        remove_early = data{k}.data < 0;
-        data{k}.data(remove_early) = [];
-
-        % move to match data if offset markers should be dropped
-        if options.drop_offset_markers
-            data{k}.data = data{k}.data - sta_offset;
-        end
+        remove_index = any([remove_early, remove_late], 2);
+        data{k}.data(remove_index) = [];
+        data{k}.data = data{k}.data - sta_time;
+        
         if isfield(data{k}, 'markerinfo')
             % also trim marker info if available
-            data{k}.markerinfo.value(remove_late) = [];
-            data{k}.markerinfo.name(remove_late) = [];
-
-            data{k}.markerinfo.value(remove_early) = [];
-            data{k}.markerinfo.name(remove_early) = [];
+            data{k}.markerinfo.value(remove_index) = [];
+            data{k}.markerinfo.name(remove_index) = [];
         end
     end
     % save new file
-    infos.duration = (sto_p + sto_offset) - (sta_p + sta_offset);
+    infos.duration = sto_time - sta_time;
     infos.trimdate = date;
-    infos.trimpoints = [(sta_p + sta_offset) (sto_p + sto_offset)];
+    infos.trimpoints = [sta_time, sto_time];
 end
 clear savedata
+
+% handle optional missing data file
+if ~isempty(options.missing)
+    [lsts, epochs] = pspm_get_timing('epochs', options.missing, 'seconds');
+    if lsts < 1, return; end
+    index = epochs(:, 2) < sta_time | ...
+            epochs(:, 1) > sto_time | ...
+            epochs(:, 1) > infos.duration;
+    epochs(index, :) = [];
+    epochs = epochs - sta_time;
+    if ~isempty(epochs)
+        epochs(1, 1) = max([0, epochs(1, 1)]);
+        epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
+    end
+    lsts = pspm_get_timing('epochs', epochs, 'seconds');
+    if lsts < 1, return; end
+    [pth, fn, ext] = fileparts(options.missing);
+    newepochfile = fullfile(pth, ['t', fn, ext]);
+    save(newepochfile, 'epochs');
+end
+
+
+
 % 2.6 Save data
 savedata.data = data;
 savedata.infos = infos;

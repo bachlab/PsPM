@@ -145,16 +145,20 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   the trials use much less than available amount of samples in both case
 %   (1) and (2). Instead, we aim to use as much data as possible in (1), and
 %   perform (2) only if this edge case is not present.
+% 
 % ● References
-%   1.Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
-%     Dynamic causal modelling of anticipatory skin conductance changes.
-%     Biological Psychology, 85(1), 163-70
-%   2.Staib, M., Castegnetti, G., & Bach, D. R. (2015).
-%     Optimising a model-based approach to inferring fear learning from
-%     skin conductance responses.
-%     Journal of Neuroscience Methods, 255, 131-138.
+%   [1] Model development:
+%       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal 
+%       modelling of anticipatory skin conductance changes. Biological 
+%       Psychology, 85(1), 163-70
+%   [2] Model validation and improvement:
+%       Staib, M., Castegnetti, G., & Bach, D. R. (2015). Optimising a
+%       model-based approach to inferring fear learning from skin  
+%       conductance responses. Journal of Neuroscience Methods, 255, 
+%       131-138.
+%       
 % ● History
-%   Introduced in PsPM 5.1.0
+%   Introduced in PsPM 3.0
 %   Written in 2010-2021 by Dominik R Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
 %% 1 Initialise
@@ -363,8 +367,7 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
-  flanks = pspm_time2index(sbSn(2:3), sr{sbSn(1)});
-  sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
+  sbSn_data = y{sbSn(1)}((pspm_epochs2logical(sbSn(2:3), length(y{sbSn(1)}), sr{sbSn(1)})==1));
   sbs_miss = isnan(sbSn_data);
 
   if any(sbs_miss)
@@ -690,7 +693,7 @@ model.meanSCR = transpose(mean(D,'omitnan') );
 
 %% 6 Invert DCM
 [sts, dcm] = pspm_dcm_inv(model, options);
-if sts < 1,
+if sts < 1
     return
 end
 
