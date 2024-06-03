@@ -11,29 +11,29 @@ function pspm(varargin)
 %   App Designer is available for MATLAB that is later than version R2016a (9.0).
 if ispc
   if isMATLABReleaseOlderThan('R2018a') % MATLAB 2018
-      msgbox(['PsPM UI is not supported by this version of MATLAB. ',...
-        'Please consider updating your MATLAB to 2018a or newer, ',...
-        'or alternatively using scripts only.']);
+    msgbox(['PsPM UI is not supported by this version of MATLAB. ',...
+      'Please consider updating your MATLAB to 2018a or newer, ',...
+      'or alternatively using scripts only.']);
   else
-      pspm_appdesigner
+    pspm_appdesigner
   end
 elseif ismac
   if isMATLABReleaseOlderThan('R2018a') % MATLAB 2018
     msgbox(['PsPM UI is not supported by this version of MATLAB. ',...
-        'Please consider updating your MATLAB to 2018a for macOS or newer, ',...
-        'or alternatively using scripts only.']);
-     % pspm_guide
+      'Please consider updating your MATLAB to 2018a for macOS or newer, ',...
+      'or alternatively using scripts only.']);
+    % pspm_guide
   else
-      pspm_appdesigner
+    pspm_appdesigner
   end
 else % Linux
   if isMATLABReleaseOlderThan('R2022a') % MATLAB 2022
     msgbox(['PsPM UI is not supported by this version of MATLAB. ',...
-        'Please consider updating your MATLAB to 2022a for Linux or newer, ',...
-        'or alternatively using scripts only.']);
-      % pspm_guide
+      'Please consider updating your MATLAB to 2022a for Linux or newer, ',...
+      'or alternatively using scripts only.']);
+    % pspm_guide
   else
-      pspm_appdesigner
+    pspm_appdesigner
   end
 end
 return
