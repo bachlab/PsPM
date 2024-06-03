@@ -14,7 +14,12 @@ function [sts, moduleNames] = pspm_check_python_modules(module, varargin)
     moduleNames = {};
 
     if nargin > 1
-      pyenv(Version=varargin{1});
+        pe = pyenv();
+        if strcmp(pe.Status, 'Loaded')
+            warning(append('Newly defined python is not used since a previous version, ', pe.Executable, ', has been set up. \n'));
+        else
+            pyenv(Version=varargin{1});
+        end
     end
     
     try
