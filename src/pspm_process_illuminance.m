@@ -33,6 +33,10 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %                out: has same size as ldata and contains either the
 %                     processed data or contains the path to the .mat file
 %                     where the data has been stored to
+% ● References
+%   Korn CW & Bach DR (2016). A solid frame for the window on cognition: 
+%   Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.
+%
 % ● History
 %   Introduced In PsPM 3.1
 %   Written in 2015 by Tobias Moser, Christoph Korn (University of Zurich)

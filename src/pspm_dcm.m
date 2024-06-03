@@ -145,16 +145,20 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   the trials use much less than available amount of samples in both case
 %   (1) and (2). Instead, we aim to use as much data as possible in (1), and
 %   perform (2) only if this edge case is not present.
+% 
 % ● References
-%   1.Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
-%     Dynamic causal modelling of anticipatory skin conductance changes.
-%     Biological Psychology, 85(1), 163-70
-%   2.Staib, M., Castegnetti, G., & Bach, D. R. (2015).
-%     Optimising a model-based approach to inferring fear learning from
-%     skin conductance responses.
-%     Journal of Neuroscience Methods, 255, 131-138.
+%   [1] Model development:
+%       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal 
+%       modelling of anticipatory skin conductance changes. Biological 
+%       Psychology, 85(1), 163-70
+%   [2] Model validation and improvement:
+%       Staib, M., Castegnetti, G., & Bach, D. R. (2015). Optimising a
+%       model-based approach to inferring fear learning from skin  
+%       conductance responses. Journal of Neuroscience Methods, 255, 
+%       131-138.
+%       
 % ● History
-%   Introduced in PsPM 5.1.0
+%   Introduced in PsPM 3.0
 %   Written in 2010-2021 by Dominik R Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
 %% 1 Initialise

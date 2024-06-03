@@ -33,12 +33,25 @@ function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 %   │                 [def. 0.36s].
 %   └.channel_action: ['add'/'replace', default as 'replace']
 %                     Defines whether the new channel should be added or
+%                     the previous outputs of this function should be replaced.
+%
 % ● Output
 %      channel_index: index of channel containing the processed data
 %      quality_info:  generated if options.debugmode == 1
+%
 % ● Reference
-%   Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
-%   Transactions on Biomedical Engineering, 32, 230-236.
+%   [1] Adjusted algorithm:
+%       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related 
+%       heart period responses. Psychophysiology, 53, 837-846.
+%   [2] Original algorithm:
+%       Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
+%       Transactions on Biomedical Engineering, 32, 230-236.
+% 
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
+%   (Technische Universitaet Dresden, University of Zurich)
+%   Updated in 2022 Teddy Chao
 % ● Developer's Notes
 %   ▶︎ Changes from the original Pan & Tompkins algorithm
 %   filter:       P. & T. intend to achieve a pass band from 5-15 Hz with a
@@ -99,11 +112,6 @@ function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 %
 %   R:            Vector of the same length as the raw data, containing
 %                 information on the position of the QRS complexes.
-% ● History
-%   Introduced in PsPM 3.0
-%   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
-%   (Technische Universitaet Dresden, University of Zurich)
-%   Updated in 2022 Teddy Chao
 
 %% Initialise
 global settings
