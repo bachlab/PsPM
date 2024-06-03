@@ -3,6 +3,9 @@ function datafile = pspm_cfg_selector_datafile(varargin)
 if nargin < 1 || strcmpi(varargin{1}, 'PsPM')
     ext = 'mat';
     helptext = 'Specify a PsPM file with the data to be used.';
+elseif strcmpi(varargin{1}, 'epoch')
+    ext = 'mat';
+    helptext = 'Specify the epochs file to be used.';
 else
     ext = varargin{1};
     helptext = 'Specify the data file to be imported.';

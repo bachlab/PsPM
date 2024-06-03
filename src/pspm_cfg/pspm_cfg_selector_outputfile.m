@@ -18,7 +18,7 @@ outfile         = cfg_entry;
 outfile.name    = sprintf('%s file name', outtype);
 outfile.tag     = 'file';
 outfile.strtype = 's';
-outfile.help    = {sprintf('Specify file name for the resulting %s file.', lower(outtype))};
+outfile.help    = {sprintf('Specify name for the resulting %s file.', lower(outtype))};
 
 % Output directory
 outdir         = cfg_files;
