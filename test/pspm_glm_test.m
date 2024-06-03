@@ -491,6 +491,33 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       delete(model.datafile);
       delete(model.modelfile);
     end
+    function test_pmod(this)
+        % this checks github issue 191: a pmod is defined on a condition
+        % that is not present in the first session
+        bf1 = 1; offset = 0; sr = 100; duration = 120;
+        model.modelfile = 'Test_GLM_pmod_model.mat';
+        model.datafile = {'Test_GLM_pmod_data_1.mat', 'Test_GLM_pmod_data_2.mat'};
+        model.timeunits = 'seconds';
+        model.timing{1}.names{1} = 'cond_a';
+        model.timing{1}.onsets{1} = [10 40 70 100]';
+        model.timing{2}.names{1} = 'cond_b';
+        model.timing{2}.onsets{1} = [20 50 80 110]';
+        model.timing{2}.pmod(1).param = {[1, 2, 3, 4]; [1, 3, 3, 1]};
+        model.timing{2}.pmod(1).name = {'pmod1', 'pmod2'};
+        Y1 = pspm_glm_test.testdata_gen(model.timing{1}.onsets{1}, bf1, offset, 0,  sr, duration);
+        Y2 = pspm_glm_test.testdata_gen(model.timing{2}.onsets{1}, bf1, offset, 0,  sr, duration);
+        pspm_glm_test.save_datafile(Y1, sr, duration, model.datafile{1});
+        pspm_glm_test.save_datafile(Y2, sr, duration, model.datafile{2});
+        model.channel = 'scr';
+        model.modelspec = 'scr';
+        model.modality = 'scr';
+        [sts, glm] = this.verifyWarningFree(@() pspm_glm(model));
+        this.verifyEqual(glm.names, ...
+            {'cond_a, bf 1', 'cond_a, bf 2', 'cond_b, bf 1', 'cond_b, bf 2', ...
+            'cond_b x pmod1^1, bf 1', 'cond_b x pmod1^1, bf 2', 'cond_b x pmod2^1, bf 1', ...
+            'cond_b x pmod2^1, bf 2', 'Constant 1', 'Constant 2'}');
+        delete(model.modelfile);
+    end
   end
   methods(Test, ParameterCombination='exhaustive')
     function glm = test_extract_missing(this, cutoff, nan_percent)
