@@ -117,6 +117,8 @@ classdef pspm_get_timing_test < matlab.unittest.TestCase
       this.verifyEqual(outtiming.names(:), names(:));
       this.verifyTrue(isfield(outtiming, 'durations'));
       % test 4
+      % this checks github issue 191: a pmod is defined on a condition
+      % that is not present in the first session
       names = {'name1', 'name2'};
       onsets = {[1 2 3], [3 4 5]};
       durations = {[3 4 5]', [5 6 7]'};
@@ -139,7 +141,12 @@ classdef pspm_get_timing_test < matlab.unittest.TestCase
       this.verifyEqual(outtiming(1).names, {'name1', 'name2', 'name5'});
       this.verifyTrue(isfield(outtiming(1), 'durations'));
       this.verifyEqual(outtiming(1).durations, [durations, {[]}]);
-      this.verifyEqual(outtiming(1).pmod.param, {[2 3 4], [4 9 16], [4 5 6]});
+      this.verifyEqual(outtiming(1).pmod(1).param, {[2 3 4], [4 9 16], [4 5 6]});
+      this.verifyEqual(outtiming(1).pmod(2).param, []);
+      this.verifyEqual(outtiming(1).pmod(3).param, {[], [], []});
+      this.verifyEqual(outtiming(1).pmod(1).name, {'name3^1'  'name3^2'  'name4^1'});
+      this.verifyEqual(outtiming(1).pmod(2).name,[]);
+      this.verifyEqual(outtiming(1).pmod(3).name, {'name6^1'  'name6^2'  'name4^1'});      
       load(fn_mat2);
       this.verifyTrue(sts==1);
       this.verifyEqual(outtiming(2).onsets, [onsets{2}, {[]}, onsets{1}]);
