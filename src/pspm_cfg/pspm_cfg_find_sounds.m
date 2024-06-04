@@ -88,19 +88,19 @@ no.val             = {0};
 no.help            = {''};
 
 %% yes
-yes                = cfg_branch;
+yes                = cfg_const;
 yes.name           = 'Yes';
 yes.tag            = 'yes';
-yes.val            = {chan_action};
+yes.val            = {1};
 yes.help           = {''};
 
 %% New corrected channel
 new_corrected_chan         = cfg_choice;
-new_corrected_chan.name    = 'Create channel with specific sounds';
+new_corrected_chan.name    = 'Output specific sounds only';
 new_corrected_chan.tag     = 'create_corrected_chan';
 new_corrected_chan.val     = {no};
 new_corrected_chan.values  = {no, yes};
-new_corrected_chan.help    = {['Create new data channel which contains ', ...
+new_corrected_chan.help    = {['By default, all sounds are outputted. Choose ''yes'' here to create new data channel which contains ', ...
     'only marker onsets which could have been assigned to a ', ...
     'marker in the specified marker channel.']};
 
@@ -135,28 +135,40 @@ n_sounds.help   = {['Checks for correct number of detected sounds. ', ...
     'If too few sounds are found, threshold is lowered until specified ', ...
     'count is reached.']};
 
+%% Diagnostics: which ones?
+diag_yes = cfg_branch;
+diag_yes.name = 'Yes';
+diag_yes.tag    = 'diagnostics';
+diag_yes.val = {diag_output, new_corrected_chan, marker_chan, max_delay, ...
+    min_delay, n_sounds};
+diag_yes.help = {};
+
 %% Diagnostics
-diagnostic        = cfg_branch;
+diagnostic        = cfg_choice;
 diagnostic.name   = 'Diagnostic';
 diagnostic.tag    = 'diagnostic';
-diagnostic.val = {diag_output, new_corrected_chan, marker_chan, max_delay, ...
-    min_delay, n_sounds};
+diagnostic.val    = {no};
+diagnostic.values = {diag_yes, no};
 diagnostic.help   = {['Analyze delays between existing marker channel ', ...
     'and detected sound onsets.']};
 
-%% Output
-output          = cfg_choice;
-output.name     = 'Output';
-output.tag      = 'output';
-output.val      = {new_chan};
-output.values   = {new_chan, diagnostic};
-output.help     = {''};
+%% Channel action
+chan_action         = cfg_menu;
+chan_action.name    = 'Channel action';
+chan_action.tag     = 'channel_action';
+chan_action.val     = {'add'};
+chan_action.values  = {'add', 'replace'};
+chan_action.labels  = {'add', 'replace'};
+chan_action.help    = {['Add will append the new marker channel as ', ...
+    'additional channel to the specified PsPM file. Replace will ', ...
+    'overwrite the last marker channel of the PsPM file ', ...
+    '(be careful with reference markers).']};
 
 %% Executable branch
 find_sounds      = cfg_exbranch;
 find_sounds.name = 'Find startle sound onsets';
 find_sounds.tag  = 'find_sounds';
-find_sounds.val  = {datafile, chan, threshold, roi, output};
+find_sounds.val  = {datafile, chan, threshold, roi, diagnostic, chan_action};
 find_sounds.prog = @pspm_cfg_run_find_sounds;
 find_sounds.vout = @pspm_cfg_vout_outchannel;
 find_sounds.help = {['Translate continuous sound data into an event marker ', ...

@@ -14,7 +14,7 @@ marker_chan       = pspm_cfg_selector_channel(2);
 
 %% Specific items
 first_file = datafile;
-first_file.name    = 'First file(s)';
+first_file.name    = 'First file';
 first_file.tag      = 'first_file';
 first_file.help     = {['Specify the first of the two files to be ', ...
     'merged. The output file ', ...
@@ -22,7 +22,7 @@ first_file.help     = {['Specify the first of the two files to be ', ...
 
 %% Second file
 second_file         = datafile;
-second_file.name    = 'Second file(s)';
+second_file.name    = 'Second file';
 second_file.tag     = 'second_file';
 second_file.help    = {['Specify the second of the two files to be merged. ']};
 
