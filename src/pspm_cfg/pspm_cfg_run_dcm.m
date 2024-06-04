@@ -48,8 +48,8 @@ for iSession=1:nrSession
   end
   % missing epochs
   if isfield(job.session(iSession).missing,'epochs')
-    if isfield(job.session(iSession).missing.epochs,'epochfile')
-      model.missing{1,iSession} = job.session(iSession).missing.epochs.epochfile{1};
+    if isfield(job.session(iSession).missing.epochs,'datafile')
+      model.missing{1,iSession} = job.session(iSession).missing.epochs.datafile{1};
     else
       model.missing{1,iSession} = job.session(iSession).missing.epochs.epochentry;
     end

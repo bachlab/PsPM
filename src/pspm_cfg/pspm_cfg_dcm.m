@@ -3,11 +3,12 @@ function dcm = pspm_cfg_dcm
 global settings
 
 %% Standard items
-datafile            = pspm_cfg_selector_datafile;
+datafile            = pspm_cfg_selector_datafile('PsPM');
 chan                = pspm_cfg_selector_channel('SCR');
 modelfile           = pspm_cfg_selector_outputfile('Model');
 filter              = pspm_cfg_selector_filter(settings.dcm{1,1}.filter);
 norm                = pspm_cfg_selector_norm;
+epochfile           = pspm_cfg_selector_datafile('epochs');
 
 %% Specific items
 % Parameter estimation
@@ -56,7 +57,7 @@ timing_man.val   = {name, onsets};
 timing_man.help  = {''};
 
 timing_man_rep        = cfg_repeat;
-timing_man_rep.name   = 'Enter Timing Manually';
+timing_man_rep.name   = 'Enter Timing Manually (discouraged, will be removed in future releases)';
 timing_man_rep.tag    = 'timing_man_rep';
 timing_man_rep.values = {timing_man};
 timing_man_rep.num   = [1 Inf];
@@ -120,20 +121,9 @@ no_epochs.val     = {0};
 no_epochs.help    = {['Missing epochs are detected automatically ', ...
     'according to the data option ''Subsession threshold''.']};
 
-epochfile         = cfg_files;
-epochfile.name    = 'Missing Epoch File';
-epochfile.tag     = 'epochfile';
-epochfile.num     = [1 1];
-epochfile.filter  = '.*\.(mat|MAT|txt|TXT)$';
-epochfile.help    = {['Indicate an epoch file specifying the start and ', ...
-    'end points of missing epochs (m). The mat file has to contain a ', ...
-    'variable ''epochs'', which is an m x 2 array, where m is the number of' ...
-    ' missing epochs. The first column marks the start points ', ...
-    'of the epochs that are excluded from the ' ...
-    'analysis and the second column the end points.']};
 
 epochentry         = cfg_entry;
-epochentry.name    = 'Enter Missing Epochs Manually';
+epochentry.name    = 'Enter Missing Epochs Manually (discouraged)';
 epochentry.tag     = 'epochentry';
 epochentry.strtype = 'i';
 epochentry.num     = [Inf 2];

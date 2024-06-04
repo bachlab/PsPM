@@ -4,7 +4,7 @@ function data_editor = pspm_cfg_data_editor
 datafile               =  pspm_cfg_selector_datafile;
 datafile.help          = {'Specify the PsPM datafile to be edited.'};
 output                 = pspm_cfg_selector_outputfile('Editor output');
-epochfile              = pspm_cfg_selector_datafile('epochs');
+epochs                 = pspm_cfg_selector_datafile('epochs');
 
 %% disabled
 disabled            = cfg_const;
@@ -14,23 +14,23 @@ disabled.val        = {'disabled'};
 
 %% epoch file
 epochfile          = cfg_choice;
-epochfile.name     = 'Epochs file';
+epochfile.name     = 'Epoch input';
 epochfile.tag      = 'epochs';
 epochfile.val      = {disabled};
-epochfile.values   = {epochfile, disabled};
-epochfile.help     = {['Choose pre-defined epochs to be displayed and used in the data editor.']};
+epochfile.values   = {epochs, disabled};
+epochfile.help     = {['Choose pre-defined epochs to be displayed and used in the data editor. Can also be provided manually in the data editor. ']};
 
 %% enabled
-output.name        = 'Enabled';
+%output.name        = 'Enabled';
 
 
 %% output file
 outputfile          = cfg_choice;
-outputfile.name     = 'Output file';
+outputfile.name     = 'Epoch output';
 outputfile.tag      = 'outputfile';
 outputfile.val      = {disabled};
 outputfile.values   = {output, disabled};
-outputfile.help     = {['Choose a file to save the resulting epochs.']};
+outputfile.help     = {['Choose a file to save the resulting epochs. Can also be provided manually in the data editor. ']};
 
 %% Executable branch
 data_editor      = cfg_exbranch;

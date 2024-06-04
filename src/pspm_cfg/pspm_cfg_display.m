@@ -14,6 +14,6 @@ display.help = {'Display PsPM data file in a new figure.'};
 
 
     function pspm_cfg_run_display(job)
-        pspm_display(job.datafile);
+        pspm_display(job.datafile{1});
     end
 end
