@@ -8,8 +8,14 @@ function [sts, data, pos_of_channels] = pspm_select_channels(data, channel, unit
 %    data:      a data cell array as loaded by pspm_load_data 
 %    channel:   [numeric] / [char]
 %               ▶ numeric vector: returns these channels
-%               ▶ char:     any permissible channel type, 'events' or
-%                           'wave': returns all channels of this type
+%               ▶ char:     (1) any permissible channel type will return
+%                           the respective channels, unless the channel
+%                           type is in category (2)
+%                           (2) eyetracker channel specification including 'gaze'
+%                           will return channels with names that start with 
+%                           the specified char
+%                           (3) 'events' or 'wave': returns all channels of 
+%                           this type
 %   units:      any units definition (e.g., 'mm' or 'V') - can be omitted
 % 
 % ● History
@@ -40,7 +46,8 @@ switch class(channel)
     end
   case 'char'
     % in this case channel is specified as a char
-    if ~ismember(channel, [{settings.channeltypes.type}, settings.eyetracker_channels, 'none', 'wave', 'events'])
+    if ~ismember(channel, [{settings.channeltypes.type}, settings.eyetracker_channels, ...
+            'gaze', 'none', 'wave', 'events'])
       warning('ID:invalid_chantype', 'Unknown channel type ''%s''.', channel);
       return
     end
