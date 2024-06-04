@@ -133,22 +133,27 @@ down.help    = {'Specify the sampling rate in Hz to downsample data. Enter NaN t
 direction         = cfg_menu;
 direction.name    = 'Filter direction';
 direction.tag     = 'direction';
-direction.val     = {'bi'};
+if isfield(default,'direction')
+    direction.val = {default.direction};
+else
+    direction.val     = {'uni'};
+end
 direction.labels  = {'Unidirectional', 'Bidirectional'};
 direction.values  = {'uni', 'bi'};
 direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
     'A ''bidirectional'' filter is applied once in the forward direction and once in the ' ...
     'backward direction to correct the temporal shift due to filtering in forward direction.']};
 
-filter_edit.val    = {lowpass, highpass, down, direction};
 filter_edit        = cfg_branch;
+filter_edit.val    = {lowpass, highpass, down, direction};
 filter_edit.name   = 'Edit settings';
 filter_edit.tag    = 'edit';
 filter_edit.val    = {lowpass, highpass, down, direction};
 
 if isempty(fieldnames(default))
-    filter_edit.help   = {'Specify Butterworth filter.'};
     filter = filter_edit;
+    filter.name = 'Butterworth filter';
+    filter.help = {'Specify Butterworth filter.'};
 else
     filter_edit.help   = {'Create your own filter (discouraged).'};
     filter_def        = cfg_const;

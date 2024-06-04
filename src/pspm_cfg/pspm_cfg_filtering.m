@@ -4,6 +4,7 @@ function filtering = pspm_cfg_filtering
 %% Standard items
 datafile                 = pspm_cfg_selector_datafile;
 chan_nr                  = pspm_cfg_selector_channel('any');
+chan_action              = pspm_cfg_selector_channel_action;
 FilterButter             = pspm_cfg_selector_filter('none');
 
 %% Leaky integrator
@@ -44,19 +45,11 @@ filtertype.help          = {['Currently, median and Butterworth ',...
                            'switching. A butterworth filter is already applied ' ...
                            'in most psychophysiological models; check there to see whether ' ...
                            'an additional filtering is meaningful. A leaky integrater is often used for EMG or neural data.']};
-%% Overwrite file
-overwrite                = cfg_menu;
-overwrite.name           = 'Overwrite Existing File';
-overwrite.tag            = 'overwrite';
-overwrite.val            = {false};
-overwrite.labels         = {'No', 'Yes'};
-overwrite.values         = {false, true};
-overwrite.help           = {'Overwrite if a file with the same name has existed?'};
 %% Executable branch
 filtering             = cfg_exbranch;
 filtering.name        = 'Data filtering';
 filtering.tag         = 'filtering';
-filtering.val         = {datafile,chan_nr,filtertype,overwrite};
+filtering.val         = {datafile,chan_nr, chan_action, filtertype};
 filtering.prog        = @pspm_cfg_run_filtering;
 filtering.vout        = @pspm_cfg_vout_outchannel;
 filtering.help        = {['This module offers several basic filtering functions. ',...

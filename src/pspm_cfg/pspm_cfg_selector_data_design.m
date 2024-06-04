@@ -89,19 +89,9 @@ else
     modspec = 'unknown';
 end
 
-% Datafile
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Add the data file containing the ', ...
-    ' data (and potential marker information). '...
-    'If you have trimmed your data, use the file containing the trimmed data.'],...
-     ['In case data/model file(s) are chosen via the ',...
-  'dependency button, make sure the number of output ',...
-  'files of the preceding module corresponds with the ',...
-  'allowed number of input files for this module.']};
+% standard items
+datafile         = pspm_cfg_selector_datafile();
+epochfile        = pspm_cfg_selector_datafile('epochs');
 
 % Missing epochs
 no_epochs         = cfg_const;
@@ -109,16 +99,6 @@ no_epochs.name    = 'No Missing Epochs';
 no_epochs.tag     = 'no_epochs';
 no_epochs.val     = {0};
 no_epochs.help    = {'The whole time series will be analyzed.'};
-
-epochfile         = cfg_files;
-epochfile.name    = 'Missing Epoch File';
-epochfile.tag     = 'epochfile';
-epochfile.num     = [1 1];
-epochfile.filter  = '.*\.(mat|MAT|txt|TXT)$';
-epochfile.help    = {['Indicate an epoch file specifying the start and end points of missing epochs (m). ' ...
-    'The mat file has to contain a variable ''epochs'', which is an m x 2 array, where m is the number of ' ...
-    'missing epochs. The first column marks the start points of the epochs that are excluded from the ' ...
-    'analysis and the second column the end points.']};
 
 epochentry         = cfg_entry;
 epochentry.name    = 'Enter Missing Epochs Manually';

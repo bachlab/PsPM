@@ -1,30 +1,16 @@
 function export = pspm_cfg_export
 
 %% Standard items
-[filename, outdir] = pspm_cfg_selector_outputfile();
+outfile           = pspm_cfg_selector_outputfile();
+modelfile         = pspm_cfg_selector_datafile('model', inf);
 
 %% Specific items
-% Select File
-modelfile         = cfg_files;
-modelfile.name    = 'Model File(s)';
-modelfile.tag     = 'modelfile';
-modelfile.num     = [1 Inf];
-modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Specify file(s) from which to export statistics.'};
-
 % Screen
 screen         = cfg_const;
 screen.name    = 'Screen';
 screen.tag     = 'screen';
 screen.val     = {'screen'};
 screen.help    = {''};
-
-% Filename
-outfile         = cfg_branch;
-outfile.name    = 'Output file';
-outfile.tag     = 'outfile';
-outfile.val     = {filename, outdir};
-outfile.help    = {};
 
 % Target
 target         = cfg_choice;

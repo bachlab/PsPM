@@ -7,31 +7,26 @@ function [extract_segments] = pspm_cfg_extract_segments
 % (C) 2016 Tobias Moser (University of Zurich)
 
 %% General items
+modelfile                = pspm_cfg_selector_datafile('model');
 channel                  = pspm_cfg_selector_channel('any');
-overwrite                = pspm_cfg_selector_overwrite;
-session_rep              = pspm_cfg_selector_data_design('extract');
+design                   = pspm_cfg_selector_data_design('extract');
 timeunits                = pspm_cfg_selector_timeunits;
-[file_name, file_path]   = pspm_cfg_selector_outputfile('output');
+nan_outputfile           = pspm_cfg_selector_outputfile('NaN output');
+nan_outputfile.val(3)    = []; % remove second overwrite selector
+outputfile               = pspm_cfg_selector_outputfile('Output');
 
 %% Manual mode
 mode_manual             = cfg_branch;
-mode_manual.name        = 'Manual';
+mode_manual.name        = 'Read from data file';
 mode_manual.tag         = 'mode_manual';
-mode_manual.val         = {channel, timeunits, session_rep};
+mode_manual.val         = {channel, timeunits, design};
 mode_manual.help        = {['Specify all the settings manually.']};
-
-%% GLM file
-glm_file                = cfg_files;
-glm_file.name           = 'Model file';
-glm_file.tag            = 'glm_file';
-glm_file.num            = [1 1];
-glm_file.help           = {['Choose model file to extract the required information.']};
 
 %% Automatic mode
 mode_automatic          = cfg_branch;
 mode_automatic.name     = 'Automatically read from model file (GLM, or non-linear SCR model)';
 mode_automatic.tag      = 'mode_automatic';
-mode_automatic.val      = {glm_file};
+mode_automatic.val      = {modelfile};
 mode_automatic.help     = {['Extracts all relevant information from a GLM or']...
                            ['non-linear SCR model file. To distinguish between conditions in a']...
                            ['non-linear model, trialnames must be specified in the model definition ']...
@@ -57,12 +52,6 @@ segment_length.val      = {10};
 segment_length.help     = {['Length of segments in seconds. Default: 10 s.']};
 
 %% Outputfile for nan-percentage
-nan_output_file         = cfg_branch;
-nan_output_file.name    = 'File output';
-nan_output_file.tag     = 'nan_output_file';
-nan_output_file.val     = {file_name, file_path};
-nan_output_file.help    = {['Write NaN output to file.']};
-
 nan_none                = cfg_const;
 nan_none.name           = 'none';
 nan_none.tag            = 'nan_none';
@@ -80,22 +69,15 @@ nan_output              = cfg_choice;
 nan_output.name         = 'NaN-output';
 nan_output.tag          = 'nan_output';
 nan_output.val          = {nan_none};
-nan_output.values       = {nan_none, nan_screen, nan_output_file};
+nan_output.values       = {nan_none, nan_screen, nan_outputfile};
 nan_output.help         = {'Option to output the percentages of NaN values of each trial and over all trials per condition'};
+
 %% Options
 options                 = cfg_branch;
 options.name            = 'Options';
 options.tag             = 'options';
 options.val             = {segment_length, nan_output};
 options.help            = {['Change values of optional settings.']};
-
-
-%% Output file
-output_file             = cfg_branch;
-output_file.name        = 'Output file';
-output_file.tag         = 'output_file';
-output_file.val         = {file_name, file_path};
-output_file.help        = {['Where to store the extracted segments.']};
 
 %% Plot
 plot                    = cfg_menu;
@@ -110,7 +92,7 @@ plot.help               = {['Plot means over conditions with standard error of t
 output                 = cfg_branch;
 output.name            = 'Output';
 output.tag             = 'output';
-output.val             = {output_file, overwrite, plot};
+output.val             = {outputfile, plot};
 output.help            = {['Output settings.']};
 
 %% Executable branch

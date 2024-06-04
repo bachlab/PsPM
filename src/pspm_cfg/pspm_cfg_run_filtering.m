@@ -1,12 +1,12 @@
 function out = pspm_cfg_run_filtering(job)
 % Reviewed and updated on 18-Dec-2023 by Teddy
 options = struct();
-options = pspm_update_struct(options, job, {'overwrite'});
+options = pspm_update_struct(options, job, {'channel_action'});
 filtertype = fieldnames(job.filtertype);
 filtertype = filtertype{1};
 datafile = job.datafile;
 datafile = datafile{1};
-channelnumber = pspm_cfg_channel_selector('run', job);
+channelnumber = pspm_cfg_selector_channel('run', job);
 switch filtertype
   case 'leaky_integrator'
     tau = job.filtertype.(filtertype).tau;
