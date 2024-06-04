@@ -40,7 +40,7 @@ switch class(channel)
     end
   case 'char'
     % in this case channel is specified as a char
-    if ~any(startsWith([{settings.channeltypes.type}, 'none', 'wave', 'events'], channel))
+    if ~ismember(channel, [{settings.channeltypes.type}, settings.eyetracker_channels, 'none', 'wave', 'events'])
       warning('ID:invalid_chantype', 'Unknown channel type ''%s''.', channel);
       return
     end
