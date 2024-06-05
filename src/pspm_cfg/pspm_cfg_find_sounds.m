@@ -46,15 +46,6 @@ roi.values          = {whole, region};
 roi.help            = {['Region of interest for discovering sounds. ', ...
     'Only sounds between the 2 timestamps will be considered.']};
 
-%% Create Channel
-new_chan        = cfg_branch;
-new_chan.name   = 'Create Channel';
-new_chan.tag    = 'create_chan';
-new_chan.val    = {chan_action};
-new_chan.help   = {['The new data channel contains by default all ', ...
-    'marker onsets found in the specified data file. If you want ', ...
-    'specific sounds defined by a marker, use the diagnostics option.']};
-
 %% Text only
 text_only       = cfg_const;
 text_only.name  = 'Text only';
@@ -100,8 +91,8 @@ new_corrected_chan.name    = 'Output specific sounds only';
 new_corrected_chan.tag     = 'create_corrected_chan';
 new_corrected_chan.val     = {no};
 new_corrected_chan.values  = {no, yes};
-new_corrected_chan.help    = {['By default, all sounds are outputted. Choose ''yes'' here to create new data channel which contains ', ...
-    'only marker onsets which could have been assigned to a ', ...
+new_corrected_chan.help    = {['By default, all sounds are written to the new channel. Choose ''yes'' here to write ', ...
+    'only marker onsets that could be assigned to a ', ...
     'marker in the specified marker channel.']};
 
 %% Max delay
@@ -152,23 +143,12 @@ diagnostic.values = {diag_yes, no};
 diagnostic.help   = {['Analyze delays between existing marker channel ', ...
     'and detected sound onsets.']};
 
-%% Channel action
-chan_action         = cfg_menu;
-chan_action.name    = 'Channel action';
-chan_action.tag     = 'channel_action';
-chan_action.val     = {'add'};
-chan_action.values  = {'add', 'replace'};
-chan_action.labels  = {'add', 'replace'};
-chan_action.help    = {['Add will append the new marker channel as ', ...
-    'additional channel to the specified PsPM file. Replace will ', ...
-    'overwrite the last marker channel of the PsPM file ', ...
-    '(be careful with reference markers).']};
 
 %% Executable branch
 find_sounds      = cfg_exbranch;
 find_sounds.name = 'Find startle sound onsets';
 find_sounds.tag  = 'find_sounds';
-find_sounds.val  = {datafile, chan, threshold, roi, diagnostic, chan_action};
+find_sounds.val  = {datafile, chan, chan_action, threshold, roi, diagnostic};
 find_sounds.prog = @pspm_cfg_run_find_sounds;
 find_sounds.vout = @pspm_cfg_vout_outchannel;
 find_sounds.help = {['Translate continuous sound data into an event marker ', ...
