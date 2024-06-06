@@ -151,12 +151,12 @@ plot_gaze_coords.help   = {['Define whether to plot the gaze coordinates ',...
 output                  = cfg_branch;
 output.name             = 'Output settings';
 output.tag              = 'output_settings';
-output.val              = {ChanAct, plot_gaze_coords};
+output.val              = {missing, plot_gaze_coords};
 %% Executable branch
 FindValidFixa           = cfg_exbranch;
 FindValidFixa.name      = 'Find valid fixations';
 FindValidFixa.tag       = 'find_valid_fixations';
-FindValidFixa.val       = {datafile, chan, val_method, missing, output};
+FindValidFixa.val       = {datafile, chan, ChanAct, val_method, output};
 FindValidFixa.prog      = @pspm_cfg_run_find_valid_fixations;
 FindValidFixa.vout      = @pspm_cfg_vout_outchannel;
 FindValidFixa.help      = {['Pupil data time series can contain missing ',...

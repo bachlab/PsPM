@@ -3,6 +3,7 @@ function [out] = pspm_cfg_run_find_sounds(job)
 file = job.datafile{1};
 options = struct();
 options.channel = pspm_cfg_selector_channel('run', job.chan);
+options.channel_action = job.channel_action;
 if isfield(job.roi, 'region')
   options.roi = job.roi.region;
 end
