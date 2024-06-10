@@ -34,7 +34,7 @@ channel_action.help    = {['Specify whether the new channel should be added ',..
 marker_chan         = pspm_cfg_channel_selector('many');
 marker_chan.help    = {['Choose any number of marker channel numbers ',...
                            'to combine. If 0, all marker ',...
-                           'channels in each file are combined.']};
+                           'channels in the file are combined.']};
 
 %% Executable branch
 combine_markerchannels        = cfg_exbranch;

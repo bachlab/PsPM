@@ -1,4 +1,4 @@
-function artefact_rm = pspm_cfg_artefact_rm
+function filtering = pspm_cfg_filtering
 % Updated 26-Feb-2024 by Teddy
 % Initialise
 global settings
@@ -8,6 +8,19 @@ end
 %% Global items
 chan_nr                  = pspm_cfg_channel_selector('any');
 
+%% Leaky integrator
+tau               = cfg_entry;
+tau.name          = 'Time constant';
+tau.tag           = 'tau';
+tau.strtype       = 'r';
+tau.num           = [1 1];
+tau.help          = {'Time constant in seconds.'};
+
+FilterLeaky             = cfg_branch;
+FilterLeaky.name        = 'Leaky Integrator';
+FilterLeaky.tag         = 'leaky_integrator';
+FilterLeaky.val         = {tau};
+FilterLeaky.help        = {''};
 %% Medianfilter
 nr_time_pt               = cfg_entry;
 nr_time_pt.name          = 'Number of Time Points';
@@ -114,14 +127,14 @@ datafile.help            = {settings.datafilehelp};
 filtertype               = cfg_choice;
 filtertype.name          = 'Filter Type';
 filtertype.tag           = 'filtertype';
-filtertype.values        = {FilterMedian,FilterButter};
-filtertype.help          = {['Currently, median and butterworth ',...
-                           'filters are implemented. A median filter is ' ...
+filtertype.values        = {FilterMedian,FilterButter,FilterLeaky};
+filtertype.help          = {['Currently, median and Butterworth ',...
+                           'filters and a leaky integrator are implemented. A median filter is ' ...
                            'recommended for short spikes, generated ' ...
                            'for example in MRI scanners by gradient ' ...
-                           'switching. A butterworth filter is applied ' ...
-                           'in most models; check there to see whether ' ...
-                           'an additional filtering is meaningful.']};
+                           'switching. A butterworth filter is already applied ' ...
+                           'in most psychophysiological models; check there to see whether ' ...
+                           'an additional filtering is meaningful. A leaky integrater is often used for EMG or neural data.']};
 %% Overwrite file
 overwrite                = cfg_menu;
 overwrite.name           = 'Overwrite Existing File';
@@ -131,13 +144,13 @@ overwrite.labels         = {'No', 'Yes'};
 overwrite.values         = {false, true};
 overwrite.help           = {'Overwrite if a file with the same name has existed?'};
 %% Executable branch
-artefact_rm             = cfg_exbranch;
-artefact_rm.name        = 'Artefact Removal';
-artefact_rm.tag         = 'artefact_rm';
-artefact_rm.val         = {datafile,chan_nr,filtertype,overwrite};
-artefact_rm.prog        = @pspm_cfg_run_artefact_rm;
-artefact_rm.vout        = @pspm_cfg_vout_artefact;
-artefact_rm.help        = {['This module offers a few basic artefact removal functions. ',...
+filtering             = cfg_exbranch;
+filtering.name        = 'Data filtering';
+filtering.tag         = 'filtering';
+filtering.val         = {datafile,chan_nr,filtertype,overwrite};
+filtering.prog        = @pspm_cfg_run_filtering;
+filtering.vout        = @pspm_cfg_vout_artefact;
+filtering.help        = {['This module offers several basic filtering functions. ',...
                            'Currently, a median filter and a butterworth low pass ' ...
                            'filter are implemented. The median filter is useful to ' ...
                            'remove short "spikes" in the data, for example from gradient ' ...
@@ -146,15 +159,6 @@ artefact_rm.help        = {['This module offers a few basic artefact removal fun
                            'filtered away by the filters implemented on-the-fly during ',...
                            'first level modelling.']};
 
-  function [sts, val] =  pspm_cfg_check_artefact_rm_freq(val)
-    sts = [];
-    if val < 20
-      sts = 'Cutoff Frequency hast to be at least 20Hz';
-    end
-    if ~isempty(sts)
-      uiwait(msgbox(sts));
-    end
-  end
 
   function vout = pspm_cfg_vout_artefact(job)
     vout = cfg_dep;
