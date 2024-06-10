@@ -65,7 +65,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 %  └────.chan_id: Channel index of the imported channel in the raw data columns.
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

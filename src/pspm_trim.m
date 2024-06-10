@@ -49,7 +49,7 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 % ● Version
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% 1 Pre-settings
 % 1.1 Initialise

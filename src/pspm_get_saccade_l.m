@@ -12,7 +12,7 @@ function [sts, data] = pspm_get_saccade_l(import)
 % ● History
 %   Introduced in PsPM 4.0.2
 %   Written in 2018 by Laure Ciernik
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings

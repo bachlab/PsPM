@@ -7,7 +7,7 @@ function varargout = pspm_display(varargin)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
-%   Maintained in 2021 by Teddy Chao (UCL)
+%   Maintained in 2021 by Teddy
 
 %% Initialise
 global settings

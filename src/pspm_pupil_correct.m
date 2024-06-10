@@ -49,7 +49,7 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 % ● History
 %   Introduced in PsPM version?.
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings

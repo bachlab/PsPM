@@ -18,7 +18,7 @@ function index = pspm_time2index(time, sr, varargin)
 %          index: [integer] index or data point
 % ● History
 %   Introduced in PsPM 5.1.2
-%   Written in 2021 by Teddy Chao (UCL)
+%   Written in 2021 by Teddy
 %   Refactored in 2024 by Dominik Bach (Uni Bonn)
 
 if nargin < 3

@@ -4,7 +4,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     % ● History
     %   PsPM TestEnvironment
     %   (C) 2016 Tobias Moser (University of Zurich)
-    %   Updated in 2021 by Teddy Chao (UCL)
+    %   Updated in 2021 by Teddy
     %   Updated for fitting logic in 2024 by Dominik R Bach (Uni Bonn)
 
     properties

@@ -11,7 +11,7 @@ function [information, arguments] = pspm_help(func_name)
 %     arguments:  the arguments of the specific function
 % ● History
 %   Introduced in PsPM 6.0
-%   Written and maintained in 2022 by Teddy Chao (UCL)
+%   Written and maintained in 2022 by Teddy
 
 global settings
 if isempty(settings)

@@ -103,7 +103,7 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% 1 Initialise
 global settings

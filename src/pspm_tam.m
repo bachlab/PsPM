@@ -92,7 +92,7 @@ function tam = pspm_tam(model, options)
 % ● History
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 % ● Developer's Notes
 %   The fitting process is a residual least square minimisation where the
 %   predicted value is calculated as following:

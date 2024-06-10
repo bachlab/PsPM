@@ -13,7 +13,7 @@ function [bs, x] = pspm_bf_rarf_fc(varargin)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by G Castegnetti, Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings

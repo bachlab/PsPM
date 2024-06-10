@@ -11,7 +11,7 @@ function Y = pspm_interp1(varargin)
 %   Y:              processed data
 % ● History
 %   Introduced in PsPM 6.1
-%   Written in 2023 by Teddy Chao (UCL)
+%   Written in 2023 by Teddy
 
 %% 1 Load inputs
 switch nargin

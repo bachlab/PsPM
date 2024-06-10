@@ -11,7 +11,7 @@ function [channeltype_new] = pspm_update_channeltype (channeltype_og, keyword)
 %   channeltype_new: the new channel type with the updated keyword
 % ● History
 %   Introduced in PsPM 6.0.
-%   Written in 2022 by Teddy Chao (UCL)
+%   Written in 2022 by Teddy
 
 %% Initialise
 global settings

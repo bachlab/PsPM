@@ -26,7 +26,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % ● History
 %   Introduced in PsPM 3.0 and updated in PsPM 5.1.2
 %   Written in 2008-2017 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

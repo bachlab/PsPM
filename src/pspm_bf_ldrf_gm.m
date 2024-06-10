@@ -22,7 +22,7 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings
