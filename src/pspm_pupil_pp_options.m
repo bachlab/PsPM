@@ -103,7 +103,7 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 % ● History
 %   Introduced In PsPM version?.
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 global settings
 if isempty(settings)

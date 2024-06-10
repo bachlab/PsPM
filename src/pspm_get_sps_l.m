@@ -12,7 +12,7 @@ function [sts, data] = pspm_get_sps_l(import)
 %    .range:
 % ● History
 %   Introduced in PsPM version?
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings

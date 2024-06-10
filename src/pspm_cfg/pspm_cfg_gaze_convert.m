@@ -6,7 +6,7 @@ function [pp_gaze_convert] = pspm_cfg_gaze_convert
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 % PsPM 5.1.2
-% Updated 2021 Teddy Chao (WCHN, UCL)
+% Updated 2021 Teddy
 
 % Initialise
 global settings

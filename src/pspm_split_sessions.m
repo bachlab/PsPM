@@ -54,7 +54,7 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 % ● History
 %   Introduced in PsPM 5.1.1
 %   Written in 2021 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Updated and maintained in 2022 by Teddy Chao (UCL)
+%   Updated and maintained in 2022 by Teddy
 
 %% 1 Initialise
 global settings

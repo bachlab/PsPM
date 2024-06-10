@@ -8,7 +8,7 @@ function Y = pspm_eye(X, feature)
 %   Y:
 % ● History
 %   Introduced in PsPM 6.0
-%   Written in 2015 by Teddy Chao (UCL)
+%   Written in 2015 by Teddy
 
 global settings
 if isempty(settings)

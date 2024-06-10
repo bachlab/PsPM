@@ -164,7 +164,7 @@ function [sts, glm] = pspm_glm(model, options)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 %
 % ● Developer's Notes
 %   TIMING - multiple condition file(s) or struct variable(s):

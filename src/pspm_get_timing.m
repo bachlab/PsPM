@@ -60,7 +60,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

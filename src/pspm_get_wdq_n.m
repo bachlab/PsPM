@@ -23,7 +23,7 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2012-2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings

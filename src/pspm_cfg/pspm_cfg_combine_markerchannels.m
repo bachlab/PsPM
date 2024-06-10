@@ -4,7 +4,7 @@ function combine_markerchannels = pspm_cfg_combine_markerchannels
 %   Matlab UI function for pspm_combine_markerchannels
 % ● History
 %   PsPM 6.2
-%   Written in 2023 by Teddy Chao
+%   Written in 2023 by Teddy
 
 %% Initialise
 global settings

@@ -11,7 +11,7 @@ function [sts, data] = pspm_get_emg(import)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2009-2014 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

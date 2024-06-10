@@ -69,7 +69,7 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● History
 %   Introduced in PsPM 5.1.2
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Maintained in 2021-2022 by Teddy Chao (UCL)
+%   Maintained in 2021-2022 by Teddy
 
 %% Initialise
 global settings

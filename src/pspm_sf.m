@@ -73,7 +73,7 @@ function [sts, sf] = pspm_sf(model, options)
 % ● Copyright
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (WCHN, UCL and UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% 1 Initialise
 global settings

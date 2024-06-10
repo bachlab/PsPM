@@ -3,7 +3,7 @@ function resp_pp = pspm_cfg_resp_pp
 
     % $Id: pspm_cfg_resp_pp.m 626
     % 2019-02-20 16:14:40Z lciernik $
-    % 15-06-2021 Teddy Chao
+    % 15-06-2021 Teddy
     % $Rev: 626 $
 
     % Initialise
@@ -34,7 +34,7 @@ function resp_pp = pspm_cfg_resp_pp
 
     % Channel
     chan         = pspm_cfg_channel_selector('respiration');
-    
+
     % define channel_action
     % ------------------------------------------------------
     channel_action = cfg_menu;

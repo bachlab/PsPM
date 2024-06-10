@@ -20,7 +20,7 @@ function [sts, data] = pspm_get_marker(import)
 % ● History
 %   Introduced in PsPM version.
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings;

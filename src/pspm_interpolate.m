@@ -39,7 +39,7 @@ function [sts, outdata] = pspm_interpolate(indata, varargin)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 %   Refactored in 2024 by Dominik Bach (Uni Bonn)
 
 %% 1 Initialise

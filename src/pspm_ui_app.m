@@ -51,10 +51,10 @@ update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]
 %% Window specific settings
 switch app.layout.Name
   case 'pspm'
-    attribution_disp_text = ['Build 03-06-2024 with MATLAB 2024a, ',...
-      'The PsPM Team, University College London'];
-    app.text_attribution.Text{1,1} = 'Version 7.0';
-    app.text_attribution.Text{2,1} = attribution_disp_text;
+    attribution_disp_text = ['Build 25-01-2024 with MATLAB 2024a, ',...
+      'The PsPM Team'];
+    app.attribution.Text{1,1} = 'Version 7.0';
+    app.attribution.Text{2,1} = attribution_disp_text;
 end
 return
 
