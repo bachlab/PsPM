@@ -13,99 +13,36 @@ function [extract_segments] = pspm_cfg_extract_segments(job)
 global settings
 if isempty(settings), pspm_init; end;
 
+% call the common data & design selector to be used later
+[session_rep, timeunits] = pspm_cfg_data_design_selector('extract');
 
-%% Data file
-datafile                = cfg_files;
-datafile.name           = 'Data files';
-datafile.tag            = 'datafiles';
-datafile.num            = [1 Inf];
-datafile.help           = {['PsPM files from which data segments should ', ...
-    'be extracted.'],' ',settings.datafilehelp};
 
 %% Channel
 channel                 = pspm_cfg_channel_selector('any');
-
-%% Condition file
-condition_file          = cfg_files;
-condition_file.name     = 'Condition files';
-condition_file.tag      = 'condition_files';
-condition_file.num      = [1 Inf];
-condition_file.help     = {['Condition files as expected in a GLM model.']};
-
-%% Condition onsets
-cond_onsets             = cfg_entry;
-cond_onsets.name        = 'Onsets';
-cond_onsets.tag         = 'cond_onsets';
-cond_onsets.strtype     = 'i';
-cond_onsets.num         = [1 Inf];
-cond_onsets.help        = {['Specify a vector of onsets. The length of ', ...
-    'the vector corresponds to the number of events included in this ', ...
-    'condition. Onsets have to be indicated in the specified time ', ...
-    'unit (�seconds�, �samples�).']};
-
-%% Condition durations
-cond_durations             = cfg_entry;
-cond_durations.name        = 'Duration';
-cond_durations.tag         = 'cond_duration';
-cond_durations.strtype     = 'i';
-cond_durations.num         = [1 1];
-cond_durations.help         = {['Specify the length of the condition.']};
-
-%% Condition name
-cond_name               = cfg_entry;
-cond_name.name          = 'Name';
-cond_name.tag           = 'cond_name';
-cond_name.strtype       = 's';
-cond_name.num           = [1 Inf];
-cond_name.help          = {['Specify the name of the condition.']};
-
-
-%% Condition
-condition               = cfg_branch;
-condition.name          = 'Condition';
-condition.tag           = 'condition';
-condition.val           = {cond_name, cond_onsets, cond_durations};
-
-%% Condition repeat
-condition_rep           = cfg_repeat;
-condition_rep.name      = 'Enter conditions manually';
-condition_rep.tag       = 'condition_rep';
-condition_rep.values    = {condition};
-condition_rep.num       = [1 Inf];
-condition_rep.help      = {['Specify the conditions that you want to include in your design matrix.']};
-
-%% Conditions
-conditions              = cfg_choice;
-conditions.name         = 'Conditions';
-conditions.tag          = 'conditions';
-conditions.values       = {condition_file, condition_rep};
-conditions.val          = {condition_file};
-conditions.help         = {['Should be in the format of the conditions ', ...
-    'defined in a GLM model. Required fields are names, onsets, durations.']};
 
 %% Manual mode
 mode_manual             = cfg_branch;
 mode_manual.name        = 'Manual';
 mode_manual.tag         = 'mode_manual';
-mode_manual.val         = {datafile, channel, conditions};
+mode_manual.val         = {channel, timeunits, session_rep};
 mode_manual.help        = {['Specify all the settings manually.']};
 
 %% GLM file
 glm_file                = cfg_files;
-glm_file.name           = 'GLM or DCM file';
+glm_file.name           = 'Model file';
 glm_file.tag            = 'glm_file';
 glm_file.num            = [1 1];
-glm_file.help           = {['Choose GLM or DCM file to extract the required information.'],...
+glm_file.help           = {['Choose model file to extract the required information.'],...
                             ' ',settings.datafilehelp};
 
 %% Automatic mode
 mode_automatic          = cfg_branch;
-mode_automatic.name     = 'Automatically read from GLM or DCM';
+mode_automatic.name     = 'Automatically read from model file (GLM, or non-linear SCR model)';
 mode_automatic.tag      = 'mode_automatic';
 mode_automatic.val      = {glm_file};
 mode_automatic.help     = {['Extracts all relevant information from a GLM or']...
-                           ['DCM file. To distinguish between conditions in a']...
-                           ['DCM, trialnames must be specified in the DCM definition ']...
+                           ['non-linear SCR model file. To distinguish between conditions in a']...
+                           ['non-linear model, trialnames must be specified in the model definition ']...
                            ['(before running it)']};
 
 %% Mode
@@ -114,20 +51,8 @@ extract_mode.name       = 'Mode';
 extract_mode.tag        = 'mode';
 extract_mode.val        = {mode_automatic};
 extract_mode.values     = {mode_automatic, mode_manual};
-extract_mode.help       = {['Either extract all information from a GLM ', ...
+extract_mode.help       = {['Either extract all information from a ', ...
     'model file or define the relevant information manually. ']};
-
-%% Timeunit
-timeunit                = cfg_menu;
-timeunit.name           = 'Timeunits';
-timeunit.tag            = 'timeunits';
-timeunit.labels         = {'Seconds', 'Samples', 'Markers'};
-timeunit.values         = {'seconds', 'samples', 'markers'};
-timeunit.val            = {'seconds'};
-timeunit.help           = {'The timeunit in which conditions should be interpreted.'};
-
-%% Marker channel
-marker_chan                = pspm_cfg_channel_selector('Marker');
 
 
 %% Segment length
@@ -136,9 +61,9 @@ segment_length.name     = 'Segment length';
 segment_length.tag      = 'segment_length';
 segment_length.strtype  = 'r';
 segment_length.num      = [1 1];
-segment_length.val      = {-1};
-segment_length.help     = {['Length of segments. If set (= enabled) ', ...
-    'durations in conditions will be ignored (-1 = disabled).']};
+segment_length.val      = {10};
+segment_length.help     = {['Length of segments in seconds. Default: 10 s.']};
+
 %% Outputfile for nan-percentage
 nan_file                = cfg_entry;
 nan_file.name           = 'File name';
@@ -179,12 +104,12 @@ nan_output.name         = 'NaN-output';
 nan_output.tag          = 'nan_output';
 nan_output.val          = {nan_none};
 nan_output.values       = {nan_none, nan_screen, nan_output_file};
-nan_output.help         = {'Option to visulaize the percentages of NaN values of each trial and over all trials  per condition'};
+nan_output.help         = {'Option to output the percentages of NaN values of each trial and over all trials per condition'};
 %% Options
 options                 = cfg_branch;
 options.name            = 'Options';
 options.tag             = 'options';
-options.val             = {timeunit, segment_length, marker_chan, nan_output};
+options.val             = {segment_length, nan_output};
 options.help            = {['Change values of optional settings.']};
 
 %% File path

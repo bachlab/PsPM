@@ -6,7 +6,7 @@ function [glm] = pspm_cfg_glm(vars)
 % are set. Then the struct is passed on to the next higher level of the
 % matlabbatch configuration set.
 %
-% vars is a struct of text-variables. current vars are:
+% vars is a struct with char fields:
 %   - modality
 %   - modspec
 %   - glmref
@@ -22,17 +22,10 @@ function [glm] = pspm_cfg_glm(vars)
 global settings
 if isempty(settings), pspm_init; end
 
-%% Modality undependent items
-% Datafile
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Add the data file containing the ', vars.modality, ...
-    ' data (and potential marker information). '...
-    'If you have trimmed your data, add the file containing the trimmed data.'],...
-    ' ',settings.datafilehelp};
+%% Modality independent items
+
+% call the common data & design selector to be used later
+[session_rep, timeunits] = pspm_cfg_data_design_selector('glm', vars);
 
 % Modelfile name
 modelfile         = cfg_entry;
@@ -49,291 +42,6 @@ outdir.filter  = 'dir';
 outdir.num     = [1 1];
 outdir.help    = {'Specify directory where the mat file with the resulting model will be written.'};
 
-% Missing epochs
-no_epochs         = cfg_const;
-no_epochs.name    = 'No Missing Epochs';
-no_epochs.tag     = 'no_epochs';
-no_epochs.val     = {0};
-no_epochs.help    = {'The whole time series will be analyzed.'};
-
-epochfile         = cfg_files;
-epochfile.name    = 'Missing Epoch File';
-epochfile.tag     = 'epochfile';
-epochfile.num     = [1 1];
-epochfile.filter  = '.*\.(mat|MAT|txt|TXT)$';
-epochfile.help    = {['Indicate an epoch file specifying the start and end points of missing epochs (m). ' ...
-    'The mat file has to contain a variable �epochs�, which is an m x 2 array, where m is the number of ' ...
-    'missing epochs. The first column marks the start points of the epochs that are excluded from the ' ...
-    'analysis and the second column the end points.']};
-
-epochentry         = cfg_entry;
-epochentry.name    = 'Enter Missing Epochs Manually';
-epochentry.tag     = 'epochentry';
-epochentry.strtype = 'i';
-epochentry.num     = [Inf 2];
-epochentry.help    = {'Enter the start and end points of missing epochs (m) manually.', ...
-    ['Specify an m x 2 array, where m is the number of missing epochs. The first column marks the ' ...
-    'start points of the epochs that are excluded from the analysis and the second column the end points.']};
-
-epochs        = cfg_choice;
-epochs.name   = 'Define Missing Epochs';
-epochs.tag    = 'epochs';
-epochs.values = {epochfile, epochentry};
-epochs.help   = {['Define the start and end points of the missing epochs either as epoch files ' ...
-    'or manually. Missing epochs will be excluded from the design matrix. Start and end points ' ...
-    'have to be defined in seconds starting from the beginning of the session.']};
-
-missing        = cfg_choice;
-missing.name   = 'Missing Epochs';
-missing.tag    = 'missing';
-missing.val    = {no_epochs};
-missing.values = {no_epochs, epochs};
-missing.help   = {['Indicate epochs in your data in which the ', vars.modality ...
-    ,' signal is missing or corrupted (e.g., due to artifacts). NaN values ', ...
-    'in the signal will be interpolated for filtering and downsampling ', ...
-    'and later automatically removed from data and design matrix. ']};
-
-% Condition file
-condfile         = cfg_files;
-condfile.name    = 'Condition File';
-condfile.tag     = 'condfile';
-condfile.num     = [1 1];
-condfile.filter  = '.*\.(mat|MAT)$';
-condfile.help    = {['Create a file with the following variables:'],
-    ['� names: a cell array of string for the names of the experimental conditions'],
-    ['� onsets: a cell array of number vectors for the onsets of events for '...
-    'each experimental condition, expressed in seconds, marker numbers, '...
-    'or samples, as specified in timeunits'],
-    ['� durations (optional, default 0): a cell array of vectors for '...
-    '  the duration of each event. You need to use ''seconds'' or ''samples'' as time units'],
-    ['� pmod: this is used to specify regressors that specify how responses '...
-    'in an experimental condition depend on a parameter to model the '...
-    'effect e.g. of habituation, reaction times, or stimulus ratings. pmod '...
-    'is a struct array corresponding to names and onsets and containing the fields'],
-    ['  * name: cell array of names for each parametric modulator for this condition'],
-    ['  * param: cell array of vectors for each parameter for this condition, '...
-    'containing as many numbers as there are onsets'],
-    ['  * poly (optional, default 1): specifies the polynomial degree'],
-    [' � e.g. produce a simple multiple condition file by typing: '...
-    'names = {''condition a'', ''condition b''}; onsets = {[1 2 3], [4 5 6]}; '...
-    'save(''testfile'', ''names'', ''onsets'');']};
-
-% Name
-name         = cfg_entry;
-name.name    = 'Name';
-name.tag     = 'name';
-name.strtype = 's';
-%name.num     = [1 1];
-name.help    = {'Specify the name of the parametric modulator.'}; % Help text for name of pmod
-
-% Onsets
-onsets         = cfg_entry;
-onsets.name    = 'Onsets';
-onsets.tag     = 'onsets';
-onsets.strtype = 'r';
-onsets.num     = [1 Inf];
-onsets.help    = {['Specify a vector of onsets. The length of the vector corresponds to ' ...
-    'the number of events included in this condition. Onsets have to be indicated in the ' ...
-    'specified time unit (�seconds�, �markers�, or �samples�).']};
-
-% Parameter
-param         = cfg_entry;
-param.name    = 'Parameter Values';
-param.tag     = 'param';
-param.strtype = 'r';
-param.num     = [1 Inf];
-param.help    = {'Specify a vector with the same length as the vector for onsets.'};
-
-% Polynomial degree
-poly= cfg_entry;
-poly.name    = 'Polynomial Degree';
-poly.tag     = 'poly';
-poly.strtype = 'r';
-poly.num     = [1 1];
-poly.val     = {1};
-poly.help    = {['Specify an exponent that is applied to the parametric modulator. A value of 1 ' ...
-    'leaves the parametric modulator unchanged and thus corresponds to a linear change over the ' ...
-    'values of the parametric modulator (first-order). Higher order modulation introduces further ' ...
-    'columns that contain the non-linear parametric modulators [e.g., second-order: (squared), third-order (cubed), etc].']};
-
-% Name
-pmodname         = cfg_entry;
-pmodname.name    = 'Name';
-pmodname.tag     = 'name';
-pmodname.strtype = 's';
-pmodname.help    = {'Specify the name of the parametric modulator.'};
-
-% Pmod
-pmod         = cfg_branch;
-pmod.name    = 'Parametric Modulator';
-pmod.tag     = 'pmod';
-pmod.val     = {pmodname, poly, param};
-pmod.help    = {''};
-
-pmod_rep         = cfg_repeat;
-pmod_rep.name    = 'Parametric Modulator(s)';
-pmod_rep.tag     = 'pmod_rep';
-pmod_rep.values  = {pmod};
-pmod_rep.num     = [0 Inf];
-pmod_rep.help    = {['If you want to include a parametric modulator, specify a vector with the same ' ...
-    'length as the vector for onsets.'], ['For example, parametric modulators can model ' ...
-    'reaction times, ratings of stimuli, or habituation effects over time. For each parametric ' ...
-    'modulator a new regressor is included in the design matrix. The normalized parameters are ' ...
-    'multiplied with the respective onset regressors.']};
-
-% Durations vector
-durations         = cfg_entry;
-durations.name    = 'Durations';
-durations.tag     = 'durations';
-durations.strtype = 'r';
-durations.num     = [1 Inf];
-durations.val     = {0};
-durations.help    = {['Typically, a duration of 0 is used to model an event onset. If all ' ...
-    'events included in this condition have the same length specify just a single number. ' ...
-    'If events have different durations, specify a vector with the same length as the vector for onsets.']};
-
-% Name
-condname         = cfg_entry;
-condname.name    = 'Name';
-condname.tag     = 'name';
-condname.strtype = 's';
-condname.help    = {'Specify the name of the condition.'}; % Help text for name of condition
-
-% Conditions
-condition         = cfg_branch;
-condition.name    = 'Condition';
-condition.tag     = 'condition';
-condition.val     = {condname, onsets, durations, pmod_rep};
-condition.help    = {''};
-
-condition_rep         = cfg_repeat;
-condition_rep.name    = 'Enter conditions manually';
-condition_rep.tag     = 'condition_rep';
-condition_rep.values  = {condition};
-condition_rep.num     = [1 Inf];
-condition_rep.help    = {'Specify the conditions that you want to include in your design matrix.'};
-
-% markervalues vector of numbers
-marker_values_val         = cfg_entry;
-marker_values_val.name    = 'Values for conditions';
-marker_values_val.tag     = 'marker_values_val';
-marker_values_val.strtype = 'r';
-marker_values_val.num     = [1 Inf];
-marker_values_val.val     = {0};
-marker_values_val.help    = {'Specify the values for the conditions.'};
-
-% markervalues cell array of strings
-marker_values_names         = cfg_entry;
-marker_values_names.name    = 'Names for conditions';
-marker_values_names.tag     = 'marker_values_names';
-marker_values_names.strtype = 's+';
-marker_values_names.num     = [1 Inf];
-marker_values_names.help    = {'Specify the names for the conditions.',...
-                               ' Separate each name by a whitespace.'};
-
-% condition values for marker based conditions
-marker_values        = cfg_choice;
-marker_values.name   = 'Condition-defining values/names ';
-marker_values.tag    = 'marker_values';
-marker_values.values = {marker_values_val, marker_values_names};
-marker_values.help   = {'Specify the values or names for the conditions.'};
-
-% condition names for marker based conditions
-cond_names         = cfg_entry;
-cond_names.name    = 'Name';
-cond_names.tag     = 'cond_names';
-cond_names.strtype = 's+';
-cond_names.num     = [1 Inf];
-cond_names.help    = {'Specify the names of the conditions in the same order', ...
-                      ' as the conditioning-defining values/names.',...
-                      ' Separate each name by a whitespace.'};
-
-% condition from marker
-marker_cond        = cfg_branch;
-marker_cond.name   = 'Define conditions from distinct values/names of event markers ';
-marker_cond.tag    = 'marker_cond';
-marker_cond.val    = {marker_values, cond_names};
-marker_cond.help   = {'This option defines event onsets according to the values or',...
-                     ' names of events stored in a marker channel. These names/values',...
-                     ' are imported for some data types.'};
-% no condition
-no_condition        = cfg_const;
-no_condition.name   = 'No condition';
-no_condition.tag    = 'no_condition';
-no_condition.val    = {0};
-no_condition.help   = {['If there is no condition, it is mandatory to ', ...
-    'specify a nuisance file. (e. g. for illuminance GLM).']};
-
-% Timing
-timing         = cfg_choice;
-timing.name    = 'Design';
-timing.tag     = 'data_design';
-timing.values  = {condfile, condition_rep, marker_cond ,no_condition};
-timing.help    = {['Specify the timing of the events within the design matrix. Timing can '...
-    'be specified in "seconds", "markers" or "samples" with respect to the beginning of the ' ...
-    'data file. See "Time Units" settings. Conditions can be specified manually or by using ' ...
-    'multiple condition files (i.e., an SPM-style mat file).']};
-
-% Nuisance
-nuisancefile         = cfg_files;
-nuisancefile.name    = 'Nuisance File';
-nuisancefile.tag     = 'nuisancefile';
-nuisancefile.num     = [0 1];
-nuisancefile.val{1}  = {''};
-nuisancefile.filter  = '.*\.(mat|MAT|txt|TXT)$';
-nuisancefile.help    = {['You can include nuisance parameters such as motion parameters in ' ...
-    'the design matrix. Nuisance parameters are not convolved with the canonical response function. ', ...
-    'This is also used for the illuminance GLM.'], ...
-    ['The file has to be either a .txt file containing the regressors in columns, or a .mat file containing ' ...
-    'the regressors in a matrix variable called R. There must be as many values for each column of R as there ' ...
-    'are data values in your data file. PsPM will call the regressors pertaining to the different columns R1, R2, ...']};
-
-% Sessions
-session        = cfg_branch;
-session.name   = 'Session';
-session.tag    = 'session';
-session.val    = {datafile, missing, timing, nuisancefile};
-session.help   = {''};
-
-session_rep         = cfg_repeat;
-session_rep.name    = 'Data & Design';
-session_rep.tag     = 'session_rep';
-session_rep.values  = {session};
-session_rep.num     = [1 Inf];
-session_rep.help    = {'Add the appropriate number of sessions here. These will be concatenated.'};
-
-% Marker Channel
-mrk_chan         = pspm_cfg_channel_selector('marker');
-mrk_chan.help    = {[mrk_chan.help{1}, ' Markers are only used if you have ' ...
-    'specified the time units as "markers".']};
-
-% Timeunits
-seconds         = cfg_const;
-seconds.name    = 'Seconds';
-seconds.tag     = 'seconds';
-seconds.val     = {'seconds'};
-seconds.help    = {''};
-
-samples         = cfg_const;
-samples.name    = 'Samples';
-samples.tag     = 'samples';
-samples.val     = {'samples'};
-samples.help    = {''};
-
-markers         = cfg_branch;
-markers.name    = 'Markers';
-markers.tag     = 'markers';
-markers.val     = {mrk_chan};
-markers.help    = {''};
-
-timeunits         = cfg_choice;
-timeunits.name    = 'Time Units';
-timeunits.tag     = 'timeunits';
-timeunits.values = {seconds, samples, markers};
-timeunits.help    = {['Indicate the time units on which the specification of the conditions ' ...
-    'will be based. Time units can be specified in �seconds�, number of �markers�, or number ' ...
-    'of data �samples� . Time units refer to the beginning of the data file and not to the ' ...
-    'beginning of the original recordings e. g. if data were trimmed.']};
 
 % Normalize
 norm              = cfg_menu;
@@ -616,7 +324,7 @@ glm       = cfg_exbranch;
 glm.name  = 'GLM';
 glm.tag   = 'glm';
 glm.val   = {modelfile, outdir, chan, timeunits, session_rep, latency, ...
-    bf, norm, filter,exclude_missing, overwrite};
+    bf, norm, filter, exclude_missing, overwrite};
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_glm;
 glm.help  = {...
