@@ -90,7 +90,7 @@ for i = 1:n
         import{i}.method = 'classic';
       else
         import{i}.method = 'python';
-        settings.python_path = job.datatype.(datatype).acq_import_method.acq_import_python.python_path{1};
+        settings.python_path = job.datatype.(datatype).acq_import_method.Bioread.pypath{1};
       end
     end
     import{i} = pspm_update_struct(import{i}, ...
