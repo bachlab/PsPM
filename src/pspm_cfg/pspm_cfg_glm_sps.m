@@ -17,7 +17,9 @@ vars          = struct();
 vars.modality = 'sps';
 
 vars.modspec = 'sps';
-vars.glmref = {['unknown'] };
+vars.glmref = {['Xia Y, Melinščak F,  Bach DR (2020). Saccadic scanpath ', ...
+    'length: an index for human threat conditioning. Behavior Research ', ...
+    'Methods, 53, 1426-1439.']};
 vars.glmhelp = '';
 
 % load default settings
@@ -73,31 +75,4 @@ bf.help   = {'Basis functions.'};
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_sps.val);
 glm_sps.val{b} = bf;
-% specific channel
-% left sps
-chan_def_left         = cfg_const;
-chan_def_left.name    = 'Last left eye';
-chan_def_left.tag     = 'chan_def_left';
-chan_def_left.val     = {'sps_l'};
-chan_def_left.help    = {'Use the last sps channel from left eye.'};
-% right sps
-chan_def_right         = cfg_const;
-chan_def_right.name    = 'Last right eye';
-chan_def_right.tag     = 'chan_def_right';
-chan_def_right.val     = {'sps_r'};
-chan_def_right.help    = {'Use the last sps channel from right eye.'};
-% best eye
-best_eye                = cfg_const;
-best_eye.name           = 'Best eye';
-best_eye.tag            = 'best_eye';
-best_eye.val            = {'sps'};
-best_eye.help           = {'Use the sps data from the eye with fewest NaN values.'};
-%% Define channel
-chan_def                = cfg_choice;
-chan_def.name           = 'Default';
-chan_def.tag            = 'chan_def';
-chan_def.val            = {best_eye};
-chan_def.values         = {best_eye, chan_def_left, chan_def_right};
-a = cellfun(@(f) strcmpi(f.tag, 'chan'), glm_sps.val);
-glm_sps.val{a}.values{1} = chan_def;
-glm_sps.val{a}.val{1} = chan_def;
+
