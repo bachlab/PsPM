@@ -279,6 +279,7 @@ if ~isempty(channel)
   action = 'replace';
   for i=1:numel(channel)
     AddPlot(hObject, channel(i), action);
+    % Update y-axis label based on selected channel
     action = 'add';
   end
   set(handles.axData, 'NextPlot', np);
@@ -314,7 +315,7 @@ end
 handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
 xlabel('time -- second');
-ylabel([handles.data{1,1}.header.chantype, ' -- ', handles.data{1,1}.header.units]);
+ylabel([handles.data{chan_id}.header.chantype, ' -- ', handles.data{chan_id}.header.units]);
 handles.axData.FontSize = 14;
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);

@@ -7,7 +7,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
   properties (TestParameter)
     shiftbf = {0, 5};
     norm = {0, 1};
-    cutoff = {0, .5, .95};
+    cutoff = {0, .1, .5, .95};
     nan_percent = {0,.25,.5,.75,.95};
   end
   methods (Test)
@@ -491,6 +491,33 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       delete(model.datafile);
       delete(model.modelfile);
     end
+    function test_pmod(this)
+        % this checks github issue 191: a pmod is defined on a condition
+        % that is not present in the first session
+        bf1 = 1; offset = 0; sr = 100; duration = 120;
+        model.modelfile = 'Test_GLM_pmod_model.mat';
+        model.datafile = {'Test_GLM_pmod_data_1.mat', 'Test_GLM_pmod_data_2.mat'};
+        model.timeunits = 'seconds';
+        model.timing{1}.names{1} = 'cond_a';
+        model.timing{1}.onsets{1} = [10 40 70 100]';
+        model.timing{2}.names{1} = 'cond_b';
+        model.timing{2}.onsets{1} = [20 50 80 110]';
+        model.timing{2}.pmod(1).param = {[1, 2, 3, 4]; [1, 3, 3, 1]};
+        model.timing{2}.pmod(1).name = {'pmod1', 'pmod2'};
+        Y1 = pspm_glm_test.testdata_gen(model.timing{1}.onsets{1}, bf1, offset, 0,  sr, duration);
+        Y2 = pspm_glm_test.testdata_gen(model.timing{2}.onsets{1}, bf1, offset, 0,  sr, duration);
+        pspm_glm_test.save_datafile(Y1, sr, duration, model.datafile{1});
+        pspm_glm_test.save_datafile(Y2, sr, duration, model.datafile{2});
+        model.channel = 'scr';
+        model.modelspec = 'scr';
+        model.modality = 'scr';
+        [sts, glm] = this.verifyWarningFree(@() pspm_glm(model));
+        this.verifyEqual(glm.names, ...
+            {'cond_a, bf 1', 'cond_a, bf 2', 'cond_b, bf 1', 'cond_b, bf 2', ...
+            'cond_b x pmod1^1, bf 1', 'cond_b x pmod1^1, bf 2', 'cond_b x pmod2^1, bf 1', ...
+            'cond_b x pmod2^1, bf 2', 'Constant 1', 'Constant 2'}');
+        delete(model.modelfile);
+    end
   end
   methods(Test, ParameterCombination='exhaustive')
     function glm = test_extract_missing(this, cutoff, nan_percent)
@@ -526,16 +553,25 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       else
         new_nan_percent = nan_percent * 100;
       end
-      %t
       pspm_glm_test.save_datafile(Y, sr, duration, model.datafile);
-      % test
-      [sts, glm] = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff)));
+      % find conditions to exclude
+      for i_cond = 1:3
+        onsets = pspm_time2index(model.timing.onsets{i_cond}, sr);
+        duration = pspm_time2index(segment_length, sr, inf, 1);
+        [sts, segments] = pspm_extract_segments_core({Y}, {onsets}, duration);
+        nan_ratio = sum(isnan(segments(:)))/numel(segments);
+        exclude_cond(i_cond) = nan_ratio > cutoff;
+      end
+      % test (caution: here we specify cutoff as proportion but pspm_glm
+      % expects and returns percentage)
+      [sts, glm] = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff', 100 * cutoff)));
       exptected_number_of_conditions = 3;
       this.verifyEqual(length(glm.stats_missing),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_missing does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyEqual(length(glm.stats_exclude),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_exclude does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyTrue((abs(mean(glm.stats_missing)-new_nan_percent) < 1), sprintf('test_extract_missing: mean of glm.stats_missing (%i) does not correspond to expected nan_percentage (%i)', mean(glm.stats_missing), new_nan_percent));
-      check_values = glm.stats_missing > cutoff;
+      check_values = glm.stats_missing > 100 * cutoff;
       this.verifyTrue(all(glm.stats_exclude == check_values), sprintf('test_extract_missing: glm.stats_exclude does not exclude the right conditions'));
+      this.verifyTrue(all(glm.stats_exclude == exclude_cond), sprintf('test_extract_missing: glm.stats_exclude does not exclude the right conditions'));
       % clean up
       delete(model.datafile);
       delete(model.modelfile);
