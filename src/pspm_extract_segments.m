@@ -71,8 +71,8 @@ sts = -1;
 out = struct();
 
 %% check input
-if nargin < 3 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'}) || ...
-        (~strcmpi(method, 'model') && nargin < 5)
+if nargin < 2 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'}) || ...
+        (~strcmpi(method, 'model') && nargin < 4)
     warning('ID:invalid_input', 'Don''t know what to do'); return
 elseif strcmpi(method, 'model')
      data = pspm_load1(data, 'all');
@@ -81,10 +81,15 @@ elseif strcmpi(method, 'model')
     end
 else
     timing = varargin{2};
-    options = varargin{3};
+    if nargin > 4
+        options = varargin{3};
+    end
 end
 
 % set options (required for next input checks)
+if ~exist('options', 'var')
+    options = struct();
+end
 options = pspm_options(options, 'extract_segments');
 if options.invalid, return, end
 
