@@ -15,20 +15,6 @@ switch filtertype
     n = job.filtertype.(filtertype).nr_time_pt;
     out = pspm_pp(filtertype, datafile, channelnumber, n, options);
   case 'butter'
-    filt = struct();
-    if isfield(job.filtertype.(filtertype).freqLP, 'freqLP')
-      filt.lpfreq  = job.filtertype.(filtertype).freqLP.freqLP;
-    else
-      filt.lpfreq  = 'none';
-    end
-    filt.lporder   = job.filtertype.(filtertype).orderLP;
-    if isfield(job.filtertype.(filtertype).freqHP, 'freqHP')
-      filt.hpfreq  = job.filtertype.(filtertype).freqHP.freqHP;
-    else
-      filt.hpfreq  = 'none';
-    end
-    filt.hporder   = job.filtertype.(filtertype).orderHP;
-    filt.direction = job.filtertype.(filtertype).direction;
-    filt.down      = job.filtertype.(filtertype).down.down;
+    filt = pspm_cfg_selector_filter('run', job.filtertype.(filtertype));
     out = pspm_pp(filtertype, datafile, channelnumber, filt, options);
 end

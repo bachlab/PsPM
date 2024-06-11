@@ -17,23 +17,23 @@ if nargin > 1 && ischar(default) && strcmpi(default, 'run')
     end
 
   % lowpass
-  if isfield(job.edit.lowpass,'disable')
+  if isfield(job.lowpass,'disable')
     filter.lpfreq = NaN;
     filter.lporder = 1;
   else
-    filter.lpfreq = job.edit.lowpass.enable.freq;
-    filter.lporder = job.edit.lowpass.enable.order;
+    filter.lpfreq = job.lowpass.enable.freq;
+    filter.lporder = job.lowpass.enable.order;
   end
   % highpass
-  if isfield(job.edit.highpass,'disable')
+  if isfield(job.highpass,'disable')
     filter.hpfreq = NaN;
     filter.hporder = 1;
   else
-    filter.hpfreq = job.edit.highpass.enable.freq;
-    filter.hporder = job.edit.highpass.enable.order;
+    filter.hpfreq = job.highpass.enable.freq;
+    filter.hporder = job.highpass.enable.order;
   end
-  filter.down = job.edit.down; % sampling rate
-  filter.direction = job.edit.direction; % sampling rate
+  filter.down = job.down; % sampling rate
+  filter.direction = job.direction; % sampling rate
   return
 end
 
@@ -152,6 +152,7 @@ filter_edit.val    = {lowpass, highpass, down, direction};
 
 if isempty(fieldnames(default))
     filter = filter_edit;
+    filter.tag  = 'butter';
     filter.name = 'Butterworth filter';
     filter.help = {'Specify Butterworth filter.'};
 else

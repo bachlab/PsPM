@@ -5,6 +5,6 @@ conversion = struct();
 conversion = pspm_update_struct(conversion, job, {'from', 'target', 'screen_width', 'screen_height', 'screen_distance'});
 options = struct();
 options = pspm_update_struct(options, job, {'channel_action'});
-options.channel = pspm_cfg_channel_selector('run', job.chan);
+options.channel = pspm_cfg_selector_channel('run', job.chan);
 [~, out] = pspm_convert_gaze(fn, conversion, options);
 
