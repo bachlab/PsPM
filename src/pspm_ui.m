@@ -20,10 +20,17 @@ addons = matlab.addons.installedAddons;
 flag_new_desktop = any(strcmp(addons.Identifier,'ML_JAVASCRIPT_DESKTOP'));
 %% Parameters for UI optimisation
 if ispc
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 9;
+  if flag_new_desktop
+    FSTitle = 10;
+    FSText = 9;
+    FSCaption = 8;
+    FSAttr = 8;
+  else
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 9;
+  end
   DisplayUnit = 'points';
   FNRoman = 'Segoe UI';
   FNEmph = 'Segoe UI Bold';
