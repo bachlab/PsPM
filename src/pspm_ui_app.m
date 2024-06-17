@@ -13,6 +13,7 @@ pspm_font_list = {'Segoe UI', '.AppleSystemUIFont', 'DejaVu Sans'};
 pspm_font_size_list = {14, 14, 14};
 pspm_font = pspm_font_list{OS};
 pspm_font_size = pspm_font_size_list{OS};
+pspm_colour = [0.54,0.10,0.20];
 pspm_layout_component_list_full = {...
   'title_help',... %'title_quit',...
   'button_data_editor',...
@@ -43,16 +44,21 @@ pspm_layout_component_list_panels = {...
   'panel_data_display', ...
   'panel_quit', ...
   'panel_help' ...
+  'button_logo' ...
   };
 update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontSize', pspm_font_size);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal');
-update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]);
+% update colour
+app.GridLayout.BackgroundColor = pspm_colour;
+if isfield(app.button_logo, 'BorderColor')
+  update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]);
+end
 %% Window specific settings
 switch app.layout.Name
   case 'pspm'
     attribution_disp_text = ['Build 03-06-2024 with MATLAB 2024a, ',...
-      'The PsPM Team, University College London'];
+      'The PsPM Team'];
     app.text_attribution.Text{1,1} = 'Version 7.0';
     app.text_attribution.Text{2,1} = attribution_disp_text;
 end

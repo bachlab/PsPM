@@ -15,12 +15,22 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+%% Check desktop system
+addons = matlab.addons.installedAddons;
+flag_new_desktop = any(strcmp(addons.Identifier,'ML_JAVASCRIPT_DESKTOP'));
 %% Parameters for UI optimisation
 if ispc
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 9;
+  if flag_new_desktop
+    FSTitle = 10;
+    FSText = 9;
+    FSCaption = 8;
+    FSAttr = 8;
+  else
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 9;
+  end
   DisplayUnit = 'points';
   FNRoman = 'Segoe UI';
   FNEmph = 'Segoe UI Bold';
@@ -30,10 +40,17 @@ if ispc
   DisplayHeight = 250/5;
   SwitchResize = 'off';
 elseif ismac
-  FSTitle = 16;
-  FSText = 14;
-  FSCaption = 12;
-  FSAttr = 13;
+  if flag_new_desktop
+    FSTitle = 12;
+    FSText = 12;
+    FSCaption = 10;
+    FSAttr = 11;
+  else
+    FSTitle = 14;
+    FSText = 14;
+    FSCaption = 12;
+    FSAttr = 13;
+  end
   FNRoman = 'Helvetica';
   FNEmph = 'Helvetica-Bold';
   DisplayUnit = 'points';
@@ -43,10 +60,17 @@ elseif ismac
   DisplayHeight = 60;
   SwitchResize = 'off';
 else
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 10;
+  if flag_new_desktop
+    FSTitle = 10;
+    FSText = 9;
+    FSCaption = 8;
+    FSAttr = 9;
+  else
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 10;
+  end
   FNRoman = 'DejaVu Sans';
   FNEmph = 'DejaVu Sans Bold';
   DisplayUnit = 'points';
@@ -87,8 +111,8 @@ switch window
     handles.tag_attribution.FontSize = FSAttr;
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
-    attribution_disp_text = sprintf(['Version 6.1.2, Build 25-01-2024 with MATLAB 2023a, ',...
-      'The PsPM Team, University College London']);
+    attribution_disp_text = sprintf(['Version 7.0, Build 25-01-2024 with MATLAB 2023a, ',...
+      'The PsPM Team']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_PsPM.FontName = FNRoman;
     hObject.Position(3) = MainWeight;
