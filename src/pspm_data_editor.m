@@ -132,9 +132,9 @@ if numel(varargin) > 0
   % if isfield(handles, 'options') && isfield(handles.options, 'output_file')
   %   set(handles.pnlOutput, 'Visible', 'off');
   % end
-  if isfield(handles, 'options') && ~isfield(handles.options, 'epoch_file')
-    set(handles.pnlEpoch, 'Visible', 'off');
-  end
+  % if isfield(handles, 'options') && ~isfield(handles.options, 'epoch_file')
+  %   set(handles.pnlEpoch, 'Visible', 'off');
+  % end
   if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
     handles.epoch_file = handles.options.epoch_file;
     Add_Epochs(hObject, handles)
