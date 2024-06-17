@@ -2,12 +2,18 @@ function varargout = pspm_display(varargin)
 % ● Description
 %   pspm_display is the code for the GUI that is used to display different data from scr
 %   datafiles.
+% ● Format
+%   pspm_display
+%   pspm_display(filename), such as pspm_display('test.mat')
+%   pspm_display(filepath), such as pspm_display('~/Documents/test.mat')
 % ● Arguments
-%   Accepts input: 'filepath/filename'
+%   filename: the name of a file to be displayed, which must ends with '.mat'.
+%   filepath: the path of a file to be displayed, which must ends with '.mat'.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
-%   Maintained in 2021 by Teddy Chao (UCL)
+%   Maintained in 2021 by Teddy
+%   Bug fixed in 2024 by Teddy
 
 %% Initialise
 global settings
@@ -29,7 +35,11 @@ gui_State = struct('gui_Name',       mfilename, ...
   'gui_LayoutFcn',  [], ...
   'gui_Callback',   []);
 if nargin && ischar(varargin{1})
-  gui_State.gui_Callback = str2func(varargin{1});
+  if nargin == 1 && length(varargin{1})>5 && strcmp(varargin{1}(end-3:end), '.mat')
+    gui_State.gui_Callback = varargin{1};
+  else
+    gui_State.gui_Callback = str2func(varargin{1});
+  end
 end
 
 if nargout
