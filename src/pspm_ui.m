@@ -60,10 +60,17 @@ elseif ismac
   DisplayHeight = 60;
   SwitchResize = 'off';
 else
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 10;
+  if flag_new_desktop
+    FSTitle = 10;
+    FSText = 9;
+    FSCaption = 8;
+    FSAttr = 9;
+  else
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 10;
+  end
   FNRoman = 'DejaVu Sans';
   FNEmph = 'DejaVu Sans Bold';
   DisplayUnit = 'points';
