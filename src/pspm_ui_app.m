@@ -47,7 +47,7 @@ pspm_layout_component_list_panels = {...
 update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontSize', pspm_font_size);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal');
-update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]);
+% update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]);
 %% Window specific settings
 switch app.layout.Name
   case 'pspm'
