@@ -52,7 +52,7 @@ update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal
 switch app.layout.Name
   case 'pspm'
     attribution_disp_text = ['Build 03-06-2024 with MATLAB 2024a, ',...
-      'The PsPM Team, University College London'];
+      'The PsPM Team'];
     app.text_attribution.Text{1,1} = 'Version 7.0';
     app.text_attribution.Text{2,1} = attribution_disp_text;
 end
