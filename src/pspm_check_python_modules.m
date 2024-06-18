@@ -16,7 +16,7 @@ function [sts, moduleNames] = pspm_check_python_modules(module, varargin)
     if nargin > 1
         pe = pyenv();
         if strcmp(pe.Status, 'Loaded')
-            warning(append('Newly defined python is not used since a previous version, ', pe.Executable, ', has been set up. \n'));
+            warning(append('The specified python path is not used since Python environment, ', pe.Executable, ', has already been set up within the current matlab session. \n'));
         else
             pyenv(Version=varargin{1});
         end
