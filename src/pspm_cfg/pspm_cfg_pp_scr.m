@@ -5,7 +5,7 @@ function [pp_scr] = pspm_cfg_pp_scr
 datafile               = pspm_cfg_selector_datafile;
 chan                   = pspm_cfg_selector_channel('SCR');
 channel_action         = pspm_cfg_selector_channel_action;
-[file_name, file_path] = pspm_cfg_selector_outputfile('missing epochs');
+missing_epochs_file    = pspm_cfg_selector_outputfile('Missing epochs');
 
 %% simple SCR quality correction
 scr_min          = cfg_entry;
@@ -33,28 +33,6 @@ scr_slope.val      = {10};
 scr_slope.help     = {'Maximum SCR slope in microsiemens per second.'};
 
 % Options
-missing_epochs_no_filename          = cfg_const;
-missing_epochs_no_filename.name     = 'Do not write to file';
-missing_epochs_no_filename.tag      = 'no_missing_epochs';
-missing_epochs_no_filename.val      = {0};
-missing_epochs_no_filename.help     = {'Do not store artefacts epochs to file'};
-
-missing_epochs_file      = cfg_exbranch;
-missing_epochs_file.name = 'Write to filename';
-missing_epochs_file.tag  = 'write_to_file';
-missing_epochs_file.val  = {file_name, file_path};
-missing_epochs_file.help = {['If you choose to store the artefact epochs please specify a filename ',...
-                            'as well as an output directory. When giving the filename do not specify ',...
-                            'any extension, the artefact epochs will be stored as .mat file.']};
-
-missing_epochs         = cfg_choice;
-missing_epochs.name    = 'Missing epochs file';
-missing_epochs.tag     = 'missing_epochs';
-missing_epochs.val     = {missing_epochs_no_filename};
-missing_epochs.values  = {missing_epochs_no_filename, missing_epochs_file};
-missing_epochs.help    = {'Specify if you want to store the artefact epochs in a separate file of not.', ...
-                        'Default: artefact epochs are not stored.'};
-
 scr_deflection_threshold         = cfg_entry;
 scr_deflection_threshold.name    = 'Deflection threshold';
 scr_deflection_threshold.tag     = 'deflection_threshold';
@@ -107,8 +85,8 @@ clipping_threshold.tag               = 'clipping_threshold';
 clipping_threshold.strtype           = 'r';
 clipping_threshold.num               = [1 1];
 clipping_threshold.val               = {0.1};
-clipping_threshold.help              = {['A float between 0 and 1 specifying the proportion of local maximum in a step'],...
-                                        'Default: 0.1'};
+clipping_threshold.help              = {['A float between 0 and 1 specifying the proportion of local maximum in a step',...
+                                        'Default: 0.1']};
 
 clipping_detection         = cfg_exbranch;
 clipping_detection.name    = 'Clipping detection';
@@ -116,58 +94,41 @@ clipping_detection.tag     = 'clipping_detection';
 clipping_detection.val     = {clipping_step_size, clipping_threshold};
 clipping_detection.help    = {'Specify parameters for clipping detection.'};
 
-% Executable Branch
-pp_scr              = cfg_exbranch;
-pp_scr.name         = 'Preprocessing SCR';
-pp_scr.tag          = 'pp_scr';
-pp_scr.val          = {datafile, ...
-                        scr_min, ...
+% Output
+output         = cfg_choice;
+output.name    = 'Output';
+output.tag     = 'outputtype';
+output.val     = {missing_epochs_file};
+output.values  = {channel_action, missing_epochs_file};
+output.help    = {['Specify if you want to store the artefact epochs in a separate ', ...
+                   'missing epochs file, or output NaN in the PsPM data file .']};
+
+% Option
+options             = cfg_branch;
+options.name        = 'Options';
+options.tag         = 'options';
+options.val         = {scr_min, ...
                         scr_max, ...
                         scr_slope, ...
                         scr_deflection_threshold, ...
                         scr_data_island_threshold, ...
                         scr_expand_epochs, ...
+                        clipping_detection};
+options.help        = {['']};
+
+% Executable Branch
+pp_scr              = cfg_exbranch;
+pp_scr.name         = 'Preprocessing SCR';
+pp_scr.tag          = 'pp_scr';
+pp_scr.val          = {datafile, ...
                         chan, ...
-                        clipping_detection, ...
-                        missing_epochs, ...
-                        channel_action,...
-                        };
+                        output,...
+                        options};
 pp_scr.prog         = @pspm_cfg_run_scr_pp;
-pp_scr.vout         = @pspm_cfg_vout_outchannel;
+pp_scr.vout         = @pspm_cfg_vout_dynamic;
 pp_scr.help         = {'Pre processing (PP) skin conductance response (SCR).',...
 ['See I. R. Kleckner et al., "Simple, Transparent, and' ...
 'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
 'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460--1467, July 2018.']};
 
-function out = pspm_cfg_run_scr_pp(job)
-    scr_pp_datafile = job.datafile{1};
-    scr_pp_options = struct();
-    scr_pp_options.min = job.min;
-    scr_pp_options.max = job.max;
-    scr_pp_options.slope = job.slope;
-    scr_pp_options.deflection_threshold = job.deflection_threshold;
-    scr_pp_options.expand_epochs = job.expand_epochs;
-    scr_pp_options.channel = pspm_cfg_selector_channel('run', job.chan);
-    scr_pp_options.clipping_step_size = job.clipping_detection.clipping_step_size;
-    scr_pp_options.clipping_threshold = job.clipping_detection.clipping_threshold;
-    if isfield(job.missing_epochs, 'write_to_file')
-        scr_pp_options.missing_epochs_filename = [job.missing_epochs.write_to_file.outdir{1},...
-            '/', job.missing_epochs.write_to_file.filename, '.mat'];
-        length_temp = length(scr_pp_options.missing_epochs_filename);
-        if length_temp > 7
-            if strcmp((scr_pp_options.missing_epochs_filename(length_temp-7: length_temp)),'.mat.mat')
-                scr_pp_options.missing_epochs_filename(length_temp-3:length_temp) = [];
-            end
-        end
 
-    end
-    scr_pp_options.channel_action = job.channel_action;
-    [sts, output] = pspm_scr_pp(scr_pp_datafile, scr_pp_options);
-    if sts == 1
-        out = output;
-    else
-        out = -1;
-    end
-end
-
-end

@@ -33,17 +33,6 @@ datafiles.tag       = 'datafiles';
 datafiles.val       =  {first_file, second_file};
 datafiles.help      = {['Specify the PsPM datafiles to be merged.']};
 
-%% Reference
-reference           = cfg_menu;
-reference.name      = 'Reference';
-reference.tag       = 'reference';
-reference.values    = {'marker', 'file'};
-reference.labels    = {'Marker', 'File'};
-reference.val       = {'file'};
-reference.help      = {['Specify whether to align the files with respect ', ...
-    'to the first marker or with respect to the file start.']};
-
-
 %% Marker channel
 marker_chan.val     = {[0 0]};
 marker_chan.help    = {['Specify for both files a numerical ', ...
@@ -51,18 +40,34 @@ marker_chan.help    = {['Specify for both files a numerical ', ...
     'expected. If equal to 0, the first marker channel is used. ', ...
     'Default: [0 0]']};
 
-%% Options
-options             = cfg_branch;
-options.name        = 'Options';
-options.tag         = 'options';
-options.val         = {marker_chan, overwrite};
-options.help        = {['']};
+%% Reference
+file            = cfg_const;
+file.name       = 'File';
+file.tag        = 'file';
+file.val        = {'file'};
+file.help       = {''};
+
+markers         = cfg_branch;
+markers.name    = 'Markers';
+markers.tag     = 'markers';
+markers.val     = {marker_chan};
+markers.help    = {''};
+
+reference           = cfg_choice;
+reference.name      = 'Reference';
+reference.tag       = 'reference';
+reference.values    = {markers, file};
+reference.val       = {file};
+reference.help      = {['Specify whether to align the files with respect ', ...
+    'to the first marker or with respect to the file start.']};
+
+
 
 %% Executable branch
 merge      = cfg_exbranch;
 merge.name = 'Merge files';
 merge.tag  = 'merge';
-merge.val  = {datafiles, reference, options};
+merge.val  = {datafiles, reference, overwrite};
 merge.prog = @pspm_cfg_run_merge;
 merge.vout = @pspm_cfg_vout_outfile;
 merge.help = {['Allows to merge (i.e. stack) two files that were acquired ', ...

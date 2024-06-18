@@ -2,19 +2,12 @@ function rename = pspm_cfg_rename
 
 %% Standard items
 datafile         = pspm_cfg_selector_datafile;
-newfilename      = pspm_cfg_selector_outputfile('file');
+newfilename      = pspm_cfg_selector_outputfile('New');
 
 %% Specific items
 %% Data file
 filename         = datafile;
 filename.help    = {'Choose name of original file.'};
-newfilename.tag     = 'newfilename';
-
-file         = cfg_branch;
-file.name    = 'File';
-file.tag     = 'file';
-file.val     = {filename,newfilename};
-file.help    = {''};
 
 %% Executable branch
 rename      = cfg_exbranch;

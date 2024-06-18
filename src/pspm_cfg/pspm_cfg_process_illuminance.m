@@ -7,12 +7,12 @@ function [prod_illu] = pspm_cfg_process_illuminance(~)
 %   Updated in 2024 by Teddy
 
 %% Standard items
-[file_name, file_path] = pspm_cfg_selector_outputfile('nuisance regressors');
-overwrite              = pspm_cfg_selector_overwrite;
+output                 = pspm_cfg_selector_outputfile('Nuisance regressors');
 
 %% Select file
 lum_file        = cfg_files;
 lum_file.name   = 'Illuminance file';
+lum_file.filter  = '.*\.(mat|MAT)$';
 lum_file.tag    = 'lum_file';
 lum_file.num    = [1 1];
 lum_file.help   = {['Select a file that contains illuminance data. ', ...
@@ -92,7 +92,7 @@ bf.help         = {'Specify options for the basis functions.'};
 prod_illu       = cfg_exbranch;
 prod_illu.name  = 'Prepare illuminance GLM';
 prod_illu.tag   = 'process_illuminance';
-prod_illu.val   = {lum_file, sr, bf, file_name, file_path, overwrite};
+prod_illu.val   = {lum_file, sr, bf, output};
 prod_illu.prog  = @pspm_cfg_run_proc_illuminance;
 prod_illu.vout  = @pspm_cfg_vout_outfile;
 prod_illu.help  = {['Transform an illuminance time series into ', ...

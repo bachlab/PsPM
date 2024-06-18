@@ -344,7 +344,7 @@ switch FunName
   case 'remove_epochs'
     % 2.38 pspm_remove_epochs --
     options = autofill_channel_action(options);
-  case 'ren'
+    case 'rename'
     % pspm_ren
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'resp_pp'
@@ -375,7 +375,8 @@ switch FunName
     options = autofill(options, 'min',                    0.05,       '>', 0            );
     options = autofill(options, 'missing_epochs_filename','',         '*Char'           );
     options = autofill(options, 'slope',                  10,         '*Num'            );
-    if ~isempty(options.missing_epochs_filename)
+    options = autofill(options, 'overwrite',              0,          1                 );
+if ~isempty(options.missing_epochs_filename)
        [pth, ~, ~] = fileparts(options.missing_epochs_filename);
        if ~isempty(pth) && exist(pth,'dir')~=7
          warning('ID:invalid_input',...

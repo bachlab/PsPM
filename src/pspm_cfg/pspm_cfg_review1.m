@@ -1,20 +1,8 @@
 function review = pspm_cfg_review1
 % Review model (first level)
 
-% $Id$
-% $Rev$
-
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-
 %% Data File Selector
-modelfile         = cfg_files;
-modelfile.name    = 'Model File';
-modelfile.tag     = 'modelfile';
-modelfile.num     = [1 1];
-modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Choose model file to review.'};
+modelfile         = pspm_cfg_selector_datafile('model');
 
 %% GLM
 glm         = cfg_menu;
@@ -90,20 +78,11 @@ sf.tag     = 'sf';
 sf.val     = {epoch_nr};
 sf.help    = {'Non-linear model for spontaneous fluctuations: Show inversion results for one episode.'};
 
-%% Contrasts
-
-con         = cfg_const;
-con.name    = 'Contrasts';
-con.tag     = 'con';
-con.val     = {'all'};
-con.help    = {'Display contrast names for any first level model.'};
-
-
 % Modeltype
 modeltype         = cfg_choice;
 modeltype.name    = 'Model Type';
 modeltype.tag     = 'modeltype';
-modeltype.values  = {glm, dcm, sf, con};
+modeltype.values  = {glm, dcm, sf};
 modeltype.help    = {'Specify the type of model.'};
 
 % Executable Branch

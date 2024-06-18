@@ -28,26 +28,12 @@ mode.val            = {area2diameter};
 mode.values         = {area2diameter};
 mode.help           = {['Choose conversion mode.']};
 
-%% Conversion
-conversion          = cfg_branch;
-conversion.name     = 'Conversion';
-conversion.tag      = 'conversion';
-conversion.val      = {channel, mode};
-conversion.help     = {['']};
-
-%% Conversions
-conversions         = cfg_repeat;
-conversions.name    = 'Conversion list';
-conversions.tag     = 'conversions';
-conversions.values  = {conversion};
-conversions.num     = [1 Inf];
-conversion.help     = {['']};
 
 %% Executable branch
 pp_pupil_size_convert        = cfg_exbranch;
 pp_pupil_size_convert.name   = 'Pupil size convert';
 pp_pupil_size_convert.tag    = 'pupil_size_convert';
-pp_pupil_size_convert.val    = {datafile, conversion, channel_action};
+pp_pupil_size_convert.val    = {datafile, channel, channel_action, mode};
 pp_pupil_size_convert.prog   = @pspm_cfg_run_pupil_size_convert;
 pp_pupil_size_convert.vout   = @pspm_cfg_vout_outchannel;
 pp_pupil_size_convert.help   = {['Provides conversion functions for the specified ', ...

@@ -6,9 +6,8 @@ global settings
 %% Standard items
 datafile            = pspm_cfg_selector_datafile;
 channel             = pspm_cfg_selector_channel('SCR');
-[modelfile, outdir] = pspm_cfg_selector_outputfile('model');
+output              = pspm_cfg_selector_outputfile('Model');
 filter              = pspm_cfg_selector_filter(settings.dcm{2});
-overwrite           = pspm_cfg_selector_overwrite;
 % (see below for timeunits, requires specification of epochs item first)
 
 %% Specific items
@@ -127,7 +126,7 @@ dispsmallwin.help    = {'Show small plots displaying the progress of each iterat
 sf      = cfg_exbranch;
 sf.name = 'SF';
 sf.tag  = 'sf';
-sf.val  = {datafile, modelfile, outdir, method, timeunits, filter, channel, overwrite, threshold, missing, theta, fresp, dispwin, dispsmallwin};
+sf.val  = {datafile, output, method, timeunits, filter, channel, threshold, missing, theta, fresp, dispwin, dispsmallwin};
 sf.prog = @pspm_cfg_run_sf;
 sf.vout = @pspm_cfg_vout_modelfile;
 sf.help = {['This suite of models is designed for analysing spontaneous fluctuations (SF) in skin conductance ' ...

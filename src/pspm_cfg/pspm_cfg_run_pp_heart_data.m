@@ -10,7 +10,7 @@ for i = 1:numel(job.pp_type)
     subs_pp.type= '.';
     subs_pp.subs = pp;
     pp_field = subsref(job.pp_type{i}, subs_pp);
-    chan = pspm_cfg_channel_selector('run', pp_field.chan);
+    chan = pspm_cfg_selector_channel('run', pp_field.chan);
      switch pp
       case 'ecg2hb'
         % copy options
