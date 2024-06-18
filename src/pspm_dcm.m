@@ -239,7 +239,7 @@ missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
   [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
-  if sts == -1 
+  if sts < 1 
     return;
   else
      y{iSn} = data.data;
