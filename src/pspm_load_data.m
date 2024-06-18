@@ -67,7 +67,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
+sts = 0;
 infos = [];
 data = [];
 filestruct = [];

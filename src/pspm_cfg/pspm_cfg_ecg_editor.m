@@ -5,6 +5,11 @@ ecg_chan         = pspm_cfg_selector_channel('ECG');
 hb_chan         =  pspm_cfg_selector_channel('Heart beat');
 
 %% Specific items
+ecg_chan.name         = 'ECG channel';
+ecg_chan.tag          = 'ecg_chan';
+hb_chan.name          = 'Heart beat channel';
+hb_chan.tag           = 'hb_chan';
+
 %% artefact none
 artefact_none         = cfg_const;
 artefact_none.name    = 'None';

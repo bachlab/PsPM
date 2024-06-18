@@ -125,10 +125,18 @@ pp_scr.val          = {datafile, ...
                         output,...
                         options};
 pp_scr.prog         = @pspm_cfg_run_scr_pp;
-pp_scr.vout         = @pspm_cfg_vout_dynamic;
+pp_scr.vout         = @pspm_cfg_vout_pp_scr;
 pp_scr.help         = {'Pre processing (PP) skin conductance response (SCR).',...
 ['See I. R. Kleckner et al., "Simple, Transparent, and' ...
 'Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data," in ' ...
 'IEEE Transactions on Biomedical Engineering, vol. 65, no. 7, pp. 1460--1467, July 2018.']};
+end
 
+function pspm_cfg_vout_pp_scr(job)
+if isfield(job.outputtype, 'channel_action')
+    vout = pspm_cfg_vout_outchannel(job);
+else
+    vout = pspm_cfg_vout_outfile(job);
+end
 
+end

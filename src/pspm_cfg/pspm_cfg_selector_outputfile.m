@@ -1,4 +1,4 @@
-function [output, dummy] = pspm_cfg_selector_outputfile(outtype, varargin)
+function output = pspm_cfg_selector_outputfile(outtype, varargin)
 % output = pspm_cfg_selector_modelfile(outtype)
 %  modelfile = pspm_cfg_selector('run', job)
 % outtype: char, used in the help text
@@ -38,6 +38,3 @@ output.tag   = 'output';
 output.val   = {outfile, outdir, overwrite};
 output.help  = {sprintf('Specify location for the resulting %s.', lower(outtype))};
 
-% to be removed at end of GUI development
-dummy = outdir; 
-% ---------------------------------------
