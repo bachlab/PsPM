@@ -6,6 +6,7 @@ filtertype = fieldnames(job.filtertype);
 filtertype = filtertype{1};
 datafile = job.datafile;
 datafile = datafile{1};
+
 channelnumber = pspm_cfg_selector_channel('run', job);
 switch filtertype
   case 'leaky_integrator'

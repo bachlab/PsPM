@@ -6,6 +6,7 @@ function [extract_segments] = pspm_cfg_extract_segments
 % PsPM 3.1
 % (C) 2016 Tobias Moser (University of Zurich)
 
+
 %% General items
 modelfile                = pspm_cfg_selector_datafile('model');
 channel                  = pspm_cfg_selector_channel('any');
@@ -15,12 +16,15 @@ nan_outputfile           = pspm_cfg_selector_outputfile('NaN output');
 nan_outputfile.val(3)    = []; % remove second overwrite selector
 outputfile               = pspm_cfg_selector_outputfile('Output');
 
+
 %% Manual mode
 mode_manual             = cfg_branch;
 mode_manual.name        = 'Read from data file';
 mode_manual.tag         = 'mode_manual';
+
 mode_manual.val         = {channel, timeunits, design};
 mode_manual.help        = {['Specify all the settings manually.']};
+
 
 %% Automatic mode
 mode_automatic          = cfg_branch;
@@ -50,6 +54,7 @@ segment_length.strtype  = 'r';
 segment_length.num      = [1 1];
 segment_length.val      = {10};
 segment_length.help     = {['Length of segments in seconds. Default: 10 s.']};
+
 
 %% Outputfile for nan-percentage
 nan_none                = cfg_const;

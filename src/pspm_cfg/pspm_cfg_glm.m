@@ -15,8 +15,8 @@ function [glm] = pspm_cfg_glm(vars)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% Initialise
 global settings
+
 
 %% Standard items
 output                   = pspm_cfg_selector_outputfile('Model');
@@ -25,10 +25,7 @@ timeunits                = pspm_cfg_selector_timeunits;
 chan                     = pspm_cfg_selector_channel(vars.modality);
 modelspec                = strcmpi({settings.glm.modelspec}, vars.modspec);
 filter                   = pspm_cfg_selector_filter(settings.glm(modelspec).filter);
-norm                     = pspm_cfg_selector_norm;
-
-
-%% Specific items
+normalise                = pspm_cfg_selector_norm;
 
 %settings if Create Stats Exclude = yes
 excl_segment_length         = cfg_entry;
@@ -161,7 +158,8 @@ glm       = cfg_exbranch;
 glm.name  = 'GLM';
 glm.tag   = 'glm';
 glm.val   = {output, chan, timeunits, session_rep, latency, ...
-    bf, norm, filter, exclude_missing};
+    bf, normalise, filter, exclude_missing};
+
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_modelfile;
 glm.help  = {...

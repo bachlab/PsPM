@@ -1,6 +1,5 @@
 function [out] = pspm_cfg_run_extract_segments(job)
 % Updated on 25-12-2023 by Teddy
-out = {};
 
 if isfield(job, 'mode')
   if isfield(job.mode, 'mode_automatic')
