@@ -1,5 +1,8 @@
 function export = pspm_cfg_export
 
+%% Initialise
+global settings
+
 %% Standard items
 outfile           = pspm_cfg_selector_outputfile();
 modelfile         = pspm_cfg_selector_datafile('model', inf);
@@ -96,4 +99,4 @@ export.tag  = 'export';
 export.val  = {modelfile, datatype, exclude_missing, target, delim};
 export.prog = @pspm_cfg_run_export;
 export.vout = @pspm_cfg_vout_outfile;
-export.help = {'Export statistics to a file for further analysis in statistical software, or to the screen.'};
+export.help = {settings.help.pspm_exp.description};

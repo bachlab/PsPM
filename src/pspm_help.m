@@ -111,7 +111,7 @@ for i_D = 1:length(D)
       break
     end
   end
-  A.(D{i_D}) = remove_multiple_space(str);
+  A.(lower(D{i_D})) = remove_multiple_space(str);
 end
 
 function B = remove_multiple_space (A)

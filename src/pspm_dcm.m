@@ -1,6 +1,6 @@
 function [sts, dcm] = pspm_dcm(model, options)
 % ● Description
-%   pspm_dcm sets up a DCM for skin conductance, prepares and normalises the
+%   This function sets up a non-linear SCR model, prepares and normalises the
 %   data, passes it over to the model inversion routine, and saves both the
 %   forward model and its inversion.
 %   Both flexible-latency (within a response window) and fixed-latency
@@ -10,6 +10,13 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   responses, both are estimated for each individual trial.
 %   Flexible responses can for example be anticipatory, decision-related,
 %   or evoked with unknown onset.
+%   Non-linear SCR models are required if response timing is not known and 
+%   has to be estimated from data. A typical example are anticipatory SCR 
+%   in fear conditioning. These occur at some point between CS and US, but
+%   this time point is not known. 
+%   PsPM implements an iterative trial-by-trial algorithm. Different from 
+%   GLM, response parameters are always estimated per trial, and the 
+%   algorithm is not informed about the condition.
 % ● Format
 %   [sts, dcm] = pspm_dcm(model, options)
 % ● Arguments

@@ -1,9 +1,10 @@
 function sts = pspm_exp(modelfile, options)
 % ● Description
-%   pspm_exp exports first level statistics from one or several first-level
-%   models. The output is organised as a matrix with rows for observations
+%   This function exports first level statistics from one or several first-level
+%   models for further statistical analysis on the group level. 
+%   The output is organised as a matrix with rows for observations
 %   (first-level models) and columns for statistics (must be the same for all
-%   models)
+%   models). The output can be written to screen or to a text file. 
 % ● Format
 %   pspm_exp(modelfile, options)
 % ● Arguments

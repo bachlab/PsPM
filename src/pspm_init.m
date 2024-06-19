@@ -872,8 +872,10 @@ if exist([pth, 'pspm_settings.mat'], 'file')
 else
   settings = defaults;
 end
-%% 11 Finalisation
+% 10.3 Initialise the help texts
 settings.path = pth;
+settings.help = pspm_help_init;
+%% 11 Finalisation
 settings.scrpath = scrpath;
 settings.spmpath = spmpath;
 settings.matlabbatchpath = matlabbatchpath;
