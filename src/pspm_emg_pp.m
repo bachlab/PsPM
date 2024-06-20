@@ -1,17 +1,16 @@
 function [sts, outchannel] = pspm_emg_pp(fn, options)
 % ● Description
-%   pspm_emg_pp reduces noise in emg data in 3 steps. Following from the
-%   literature[1] it does the following steps:
+%   This function pre-processes startle eyeblink EMG data in 3 steps, which
+%   were optimised in reference [1]:
 %   1)  Initial filtering:
-%       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies
-%   2)  Remove mains noise:
-%       50 Hz (variable) notch filter
+%       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies. 
+%   2)  Removing mains noise:
+%       adjustable notch filter (default 50 Hz). 
 %   3)  Smoothing and rectifying:
 %       4th order Butterworth low-pass filter with a time constant of 3 ms
-%       (=> cutoff of 53.05Hz)
-%   Once the data is preprocessed, according to the option 'channel_action',
-%   it will either replace the existing channel or add it as new channel to
-%   the provided file.
+%       (corresponding to a cutoff of 53.05 Hz). 
+%   While the input data must be an EMG channel, the output channel will be 
+%   of type emg_pp, as required by the startle eyeblink GLM.
 % ● Format
 %   [sts, channel_index]  = pspm_emg_pp(fn, options)
 % ● Arguments
@@ -19,7 +18,7 @@ function [sts, outchannel] = pspm_emg_pp(fn, options)
 %                     Path to the PsPM file which contains the EMG data.
 %           options:
 %       .mains_freq:  [integer] Frequency of mains noise to remove
-%                     with notch filter (default: 50Hz).
+%                     with notch filter (default: 50 Hz).
 %          .channel:  [numeric/string] Channel to be preprocessed.
 %                     Can be a channel ID or a channel name.
 %                     Default is 'emg' (i.e. last EMG channel)
@@ -85,7 +84,7 @@ filt.down = 'none';
 filt.direction = 'uni';
 
 [lsts, data.data, data.header.sr] = pspm_prepdata(data.data, filt);
-if lsts == -1, return; end
+if lsts < 1, return; end
 
 % (2) remove mains noise with notch filter
 % design from
@@ -118,7 +117,7 @@ filt.direction = 'uni';
 
 % rectify before with abs()
 [lsts, data.data, data.header.sr] = pspm_prepdata(abs(data.data), filt);
-if lsts == -1, return; end
+if lsts < 1, return; end
 
 % change channel type to emg_pp to match sebr modality
 old_channeltype = data.header.chantype;
@@ -133,7 +132,7 @@ o.msg.prefix = sprintf(...
   old_channeltype, ...
   data.header.chantype);
 [lsts, outinfos] = pspm_write_channel(fn, data, options.channel_action, o);
-if lsts ~= 1, return; end
+if lsts < 1, return; end
 
 outchannel = outinfos.channel;
 sts = 1;

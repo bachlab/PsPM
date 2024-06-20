@@ -1,7 +1,7 @@
 function [sts, outchannel] = pspm_convert_area2diameter(varargin)
 % ● Description
-%   pspm_convert_area2diameter converts area values into diameter values
-%   It can work on PsPM files or on numeric vectors.
+%   This function converts area values into diameter values
+%   It can work on PsPM files or on numeric vectors. 
 % ● Format
 %   [sts, converted_data] = pspm_convert_area2diameter(area)
 %   [sts, channel_index]  = pspm_convert_area2diameter(fn, options)
