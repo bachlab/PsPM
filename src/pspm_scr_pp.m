@@ -1,13 +1,15 @@
 function [sts, out] = pspm_scr_pp(datafile, options)
 % ● Description
-%   pspm_scr_pp applies simple skin conductance response (SCR) quality
-%   assessment rulesets
-%   Rule 1: Microsiemens values must be within range (0.05 to 60)
+%   This function applies a simple skin conductance response (SCR) quality
+%   check according to the following rules. 
+%   Rule 1: Microsiemens values must be within range (0.05 to 60). 
 %   Rule 2: Absolute slope of value change must be less than 10 microsiemens
-%           per second
-%   If option.missing_epochs_filename is specified, the detected epochs
+%           per second. 
+%   If a missing epochs filename is specified, the detected epochs
 %   will be written to a missing epochs file to be used for GLM
-%   (recommended). Otherwise, the respective data will be changed to NaN.
+%   (recommended). Otherwise, the function will create a channel in the 
+%   original data file in which the respective data are changed to NaN 
+%   (either adding this channel or replacing the original one).
 % ● Format
 %   [sts, channel_index]       = pspm_scr_pp(data, options)
 %   [sts, missing_epochs_file] = pspm_scr_pp(data, options)
@@ -104,6 +106,11 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   Written in 2017      by Tobias Moser (University of Zurich)
 %   Updated in 2020      by Samuel Maxwell (UCL)
 %              2021-2024 by Teddy
+% ● References
+% [1] Kleckner IR et al. (2018). "Simple, Transparent, and Flexible 
+%     Automated Quality Assessment Procedures for Ambulatory Electrodermal 
+%     Activity Data. IEEE Transactions on Biomedical Engineering, 65 (7), 
+%     1460-1467.
 
 %% Initialise
 global settings
