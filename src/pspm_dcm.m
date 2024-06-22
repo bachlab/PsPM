@@ -1,6 +1,6 @@
 function [sts, dcm] = pspm_dcm(model, options)
 % ● Description
-%   This function sets up a non-linear SCR model, prepares and normalises the
+%   pspm_dcm sets up a non-linear SCR model, prepares and normalises the
 %   data, passes it over to the model inversion routine, and saves both the
 %   forward model and its inversion.
 %   Both flexible-latency (within a response window) and fixed-latency

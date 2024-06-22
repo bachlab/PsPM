@@ -126,7 +126,7 @@ pp_scr.val          = {datafile, ...
                         options};
 pp_scr.prog         = @pspm_cfg_run_scr_pp;
 pp_scr.vout         = @pspm_cfg_vout_pp_scr;
-pp_scr.help         = {settings.help.pspm_scr_pp.description};
+pp_scr.help         = pspm_cfg_help_format('pspm_scr_pp');
 end
 
 function pspm_cfg_vout_pp_scr(job)
