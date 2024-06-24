@@ -107,7 +107,6 @@ extract_segments.tag  = 'extract_segments';
 extract_segments.val  = {extract_mode, options, output};
 extract_segments.prog = @pspm_cfg_run_extract_segments;
 extract_segments.vout = @pspm_cfg_vout_outfile;
-extract_segments.help = {['This function extracts data segments ', ...
-    '(e.g., for visual inspection of mean responses per condition).']};
+extract_segments.help = pspm_cfg_help_format('pspm_extract_segments');
 
 

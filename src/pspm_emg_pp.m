@@ -1,12 +1,12 @@
 function [sts, outchannel] = pspm_emg_pp(fn, options)
 % ● Description
-%   This function pre-processes startle eyeblink EMG data in 3 steps, which
+%   pspm_emg_pp pre-processes startle eyeblink EMG data in 3 steps, which
 %   were optimised in reference [1]:
-%   1)  Initial filtering:
+%   (1)  Initial filtering:
 %       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies. 
-%   2)  Removing mains noise:
+%   (2)  Removing mains noise:
 %       adjustable notch filter (default 50 Hz). 
-%   3)  Smoothing and rectifying:
+%   (3)  Smoothing and rectifying:
 %       4th order Butterworth low-pass filter with a time constant of 3 ms
 %       (corresponding to a cutoff of 53.05 Hz). 
 %   While the input data must be an EMG channel, the output channel will be 

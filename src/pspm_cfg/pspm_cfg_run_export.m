@@ -15,5 +15,5 @@ options.target    = target;
 options.statstype = job.datatype;
 options = pspm_update_struct(options, job, 'exclude_missing');
 % exclude conditions with too many NaN
-pspm_exp(modelfile, options);
+pspm_export(modelfile, options);
 out = target;

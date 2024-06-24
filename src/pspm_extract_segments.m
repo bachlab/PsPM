@@ -1,15 +1,15 @@
 function [sts, out] = pspm_extract_segments(method, data, varargin)
 % ● Description
-%   pspm_extract_segments. Function in order to extract segments of a certain
-%   length after defined onsets and create summary statistics
-%   (mean, SD, SEM, % NaN) over these segments
-%   The function supports either manual setting of data file, channel,
-%   timing and timeunits or automatic extraction from a glm or dcm model file.
-%   The segments variable returned will be a cx1 cell where c corresponds to
-%   the number of conditions (1 if extracted from non-linear model).
-%   Each element contains a struct with fields data, mean, std and sem.
-%   The field data is a nxo*s vector where n is number of data points and o*s
-%   corresponds to the onsets multiplied by the sessions.
+%   pspm_extract_segments extracts segments of a fixed
+%   length after defined onsets and creates summary statistics
+%   (mean, SD, SEM, % NaN) for these segments. 
+%   The function supports automated extraction from a model file, or
+%   from a PsPM data file with manually defining timing definition.  
+%   When called directly, the function returns a cell array of struct 
+%   named ''segments'' with c elements, where c is the number of conditions 
+%   specified. Each element contains the following fields: data, mean, std, 
+%   sem, trial_nan_percent, and total_nan_percent. 
+%   The output can also be written to file. 
 % ● Format
 %   [sts, segments] = pspm_extract_segments('file', data_fn, channel, timing, options)
 %   [sts, segments] = pspm_extract_segments('data', data, sr, timing, options)
