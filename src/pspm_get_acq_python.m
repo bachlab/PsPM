@@ -1,4 +1,4 @@
-function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
+function [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import)
 % ● Description
 %   pspm_get_acq_python imports of biopac/acknowledge files with python
 %   package bioread (version 3.0.1).
@@ -16,9 +16,8 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 %         import: The import struct that saves importing information
 %    sourceinfo: The struct that saves information of original data source
 % ● History
-%   Introduced in PsPM 3.0
-%   Written in 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Updated in 2024 by Teddy
+%   Introduced in PsPM 7.0
+%   Written in 2024 by Teddy
 
 %% Initialise
 global settings
@@ -28,8 +27,7 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','acq'));
-%% Load data 
-[sts, header, inputdata] = evalc('acqread(datafile)');
+[sts, header, inputdata] = acqread_python(datafile);
 %% Extract individual channels
 for k = 1:numel(import)
   % define channel number ---

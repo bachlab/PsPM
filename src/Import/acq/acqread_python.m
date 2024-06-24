@@ -21,7 +21,6 @@ if ~isfield(settings, 'python_path')
 else
   psts = pspm_check_python(settings.python_path);
 end
-psts = pspm_check_python_modules('bioread', settings.python_path);
 %% Set the Python environment and the filename
 py_filename = py.str(filename);
 acq_data = py.bioread.read(py_filename); % Load the data using Bioread
