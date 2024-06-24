@@ -1,8 +1,18 @@
-function [out,datafiles, datatype, import, options] = pspm_cfg_run_import(job)
+function [out,datafile, datatype, import, options] = pspm_cfg_run_import(job)
 % Updated on 08-01-2024 by Teddy
+global settings
+if isempty(settings), pspm_init; end
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
 datafiles = job.datatype.(datatype).datafile;
+switch class(datafiles)
+  case 'cell'
+    datafile = datafiles{1};
+  case 'char'
+    datafile = datafiles;
+  otherwise
+    warning('ID:invalid_input', 'The input datafile should be a single file.');
+end
 % Import
 n = size(job.datatype.(datatype).importtype,2); % Nr. of channels
 % Check if multioption is off
@@ -75,6 +85,14 @@ for i = 1:n
       import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
       import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
     end
+    if isfield(job.datatype, 'acq')
+      if isfield(job.datatype.(datatype).acq_import_method, 'acq_import_classic')
+        import{i}.method = 'classic';
+      else
+        import{i}.method = 'python';
+        settings.python_path = job.datatype.(datatype).acq_import_method.Bioread.pypath{1};
+      end
+    end
     import{i} = pspm_update_struct(import{i}, ...
                                    job.datatype.(datatype), ...
                                    {'channel_names_line',...
@@ -85,4 +103,7 @@ for i = 1:n
 end
 options = struct();
 options = pspm_update_struct(options, job, 'overwrite');
-[sts, out] = pspm_import(datafiles, datatype, import, options);
+
+
+
+[~, out] = pspm_import(datafile, datatype, import, options);
