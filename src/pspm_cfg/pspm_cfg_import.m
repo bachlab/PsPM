@@ -318,6 +318,27 @@ for datatype_i=1:length(fileoptions)
   end
 
 
+  %% ACQ related
+
+  acq_import_classic         = cfg_const;
+  acq_import_classic.name    = 'Classic';
+  acq_import_classic.val     = {true};
+  acq_import_classic.tag     = 'acq_import_classic';
+  acq_import_classic.help    = {['Import Biopac Acqknowledge (ACQ) files with the classic method. ',...
+                                  'Only ACQ versions equal to or lower than 3.9.0 are supported.']};
+
+
+  acq_import_python          = pspm_cfg_python('Bioread', '3.0.1');
+  acq_import_python.help     = {['Import Biopac Acqknowledge (ACQ) files with the python package "Bioread". ',...
+                                  'Any ACQ version is supported.']};
+
+  acq_import_method         = cfg_choice;
+  acq_import_method.name    = 'Import Method';
+  acq_import_method.tag     = 'acq_import_method';
+  acq_import_method.values  = {acq_import_classic,acq_import_python};
+  acq_import_method.help    = {'Select how to import ACQ.'};
+
+
   % Data File
   datafile         = pspm_cfg_selector_datafile(ext);
   if strcmpi(ext, 'any')
@@ -384,6 +405,11 @@ for datatype_i=1:length(fileoptions)
     datatype_item{datatype_i}.val = ...
       [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
   end
+
+   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq'))
+     datatype_item{datatype_i}.val = ...
+       [datatype_item{datatype_i}.val, {acq_import_method}];
+   end
 end
 
 %% Data type
