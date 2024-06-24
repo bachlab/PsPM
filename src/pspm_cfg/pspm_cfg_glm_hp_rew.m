@@ -28,10 +28,10 @@ glm_hp_rew.prog = @pspm_cfg_run_glm_hp_rew;
 %% Basis function
 % HPRF
 hprf_rew        = cfg_const;
-hprf_rew.name   = 'HPRF_REW';
+hprf_rew.name   = 'HPRF for reward conditioning';
 hprf_rew.tag    = 'hprf_rew';
 hprf_rew.val    = {1};
-hprf_rew.help   = {'HPRF_REW without derivatives.'};
+hprf_rew.help   = {'HPRF for reward conditioning without derivatives.'};
 
 rf        = cfg_choice;
 rf.name   = 'Function';
