@@ -14,11 +14,15 @@ function out = pspm_cfg_python(varargin)
 %% Input checking
 switch length(varargin)
   case 0
-    python_package    = 'Python';
-    text_keyword      = 'the python package';
+    python_package            = 'Python';
+    text_keyword              = 'the python package';
   case 1
-    python_package    = varargin{1};
-    text_keyword      = ['the python package ', python_package];
+    python_package            = varargin{1};
+    text_keyword              = ['the python package ', python_package];
+  case 2
+    python_package            = varargin{1};
+		python_package_version    = varargin{2};
+    text_keyword      = ['the python package ', python_package, '(recommended version ', python_package_version, ')'];
   otherwise
     warning('ID:invalid_input', 'Up to one input variable is allowed');
 end
@@ -47,7 +51,7 @@ pspm_py_detect.val    = {pspm_py_path};
 pspm_py_detect.values = {pspm_py_path};
 pspm_py_detect.name   = python_package;
 pspm_py_detect.tag    = python_package;
-pspm_py_detect.help   = {['Use ',python_package,' to analyse the input data. ',...
+pspm_py_detect.help   = {['Use ',text_keyword,' to analyse the input data. ',...
                           'Please select how to detect Python in the following.']};
 %% Output
 out = pspm_py_detect;

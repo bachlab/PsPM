@@ -326,7 +326,7 @@ for datatype_i=1:length(fileoptions)
                                   'Only ACQ versions equal to or lower than 3.9.0 are supported.']};
 
 
-  acq_import_python          = pspm_cfg_python('Bioread');
+  acq_import_python          = pspm_cfg_python('Bioread', '3.0.1');
   acq_import_python.help     = {['Import Biopac Acqknowledge (ACQ) files with the python package "Bioread". ',...
                                   'Any ACQ version is supported.']};
 
