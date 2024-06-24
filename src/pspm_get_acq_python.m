@@ -14,7 +14,7 @@ function [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import)
 %   └────.marker: The type of marker, such as 'continuous'
 % ● Output
 %         import: The import struct that saves importing information
-%    sourceinfo: The struct that saves information of original data source
+%     sourceinfo: The struct that saves information of original data source
 % ● History
 %   Introduced in PsPM 7.0
 %   Written in 2024 by Teddy

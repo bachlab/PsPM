@@ -19,7 +19,10 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 %   └────.marker: The type of marker, such as 'continuous'
 % ● Output
 %         import: The import struct that saves importing information
-%    sourceinfo: The struct that saves information of original data source
+%     sourceinfo: The struct that saves information of original data source
+% ● Developer's Notes
+%   The main part of this function is shared with pspm_get_acq_python. 
+%   The function acqread is stored in the path /Import/acq.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
