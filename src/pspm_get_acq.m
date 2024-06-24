@@ -1,7 +1,12 @@
 function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 % ● Description
-%   pspm_get_acq_python imports of biopac/acknowledge files with python
-%   package bioread (version 3.0.1).
+%   pspm_get_acq_python imports of biopac/acknowledge files that are equal to
+%   or earlier than version 3.9.0.
+%   This function uses the conversion routine acqread.m version 2.0 (2007-08-21)
+%   by Sebastien Authier and Vincent Finnerty at the University of Montreal
+%   which supports all files created with Windows/PC versions of
+%   AcqKnowledge (3.9.0 or below), BSL (3.7.0 or below), and BSL PRO
+%   (3.7.0 or below).
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import);
 % ● Arguments
