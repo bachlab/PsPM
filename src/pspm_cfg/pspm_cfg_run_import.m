@@ -85,13 +85,8 @@ for i = 1:n
       import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
       import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
     end
-    if isfield(job.datatype, 'acq')
-      if isfield(job.datatype.(datatype).acq_import_method, 'acq_import_classic')
-        import{i}.method = 'classic';
-      else
-        import{i}.method = 'python';
-        settings.python_path = job.datatype.(datatype).acq_import_method.Bioread.pypath{1};
-      end
+    if isfield(job.datatype, 'acq_any')
+        settings.python_path = job.datatype.(datatype).Bioread.pypath{1};
     end
     import{i} = pspm_update_struct(import{i}, ...
                                    job.datatype.(datatype), ...

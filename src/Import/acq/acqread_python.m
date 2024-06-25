@@ -1,13 +1,13 @@
 function [sts, header, data] = acqread_python(filename)
 % ● Description
-%   acqread_python read data from acq files
+%   acqread_python read data from acq files by calling bioread package.
 % ● Format
 %   [sts, data] = acqread_python(filename)
 % ● Arguments
 %   filename: the ACQ data file to import
 %     import: the import struct of importing settings
 % ● History
-%   Introduced in PsPM 6.1.2
+%   Introduced in PsPM 7.0
 %   Written in May 2024 by Madni Abdul Wahab (Uni Bonn) and Teddy
 
 global settings
@@ -21,7 +21,6 @@ if ~isfield(settings, 'python_path')
 else
   psts = pspm_check_python(settings.python_path);
 end
-psts = pspm_check_python_modules('bioread', settings.python_path);
 %% Set the Python environment and the filename
 py_filename = py.str(filename);
 acq_data = py.bioread.read(py_filename); % Load the data using Bioread
