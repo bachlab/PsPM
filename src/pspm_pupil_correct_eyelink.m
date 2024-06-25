@@ -1,10 +1,10 @@
 function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Description
 %   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE)
-%   correction specifically for Eyelink recorded and imported data following
-%   the steps described in [1]. For details of the exact scaling, see
+%   correction specifically for data recorded and imported with an SR Research
+%   Eyelink eyetracker, following the steps described in reference [1]. 
+%   For details of the exact scaling, see 
 %   <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
-% ● Developer's Notes
 %   In order to perform PFE, we need both pupil and gaze data. If the gaze data
 %   in the given file is in pixels, we need information about the screen
 %   dimensions and resolution to calculate the pixel to milimeter ratio. On the
@@ -63,9 +63,9 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Outputs
 %      channel_index: index of channel containing the processed data
 % ● Reference
-%   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
-%       influence of gaze position on pupil size measurements." Behavior
-%       Research Methods 48.2 (2016): 510-527.
+%   [1] Hayes, Taylor R., and Alexander A. Petrov  (2016). Mapping and correcting the
+%       influence of gaze position on pupil size measurements. Behavior
+%       Research Methods 48.2, 510-527.
 % ● History
 %   Introduced in PsPM 5.1.2
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)

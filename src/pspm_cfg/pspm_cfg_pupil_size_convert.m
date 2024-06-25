@@ -36,6 +36,4 @@ pp_pupil_size_convert.tag    = 'pupil_size_convert';
 pp_pupil_size_convert.val    = {datafile, channel, channel_action, mode};
 pp_pupil_size_convert.prog   = @pspm_cfg_run_pupil_size_convert;
 pp_pupil_size_convert.vout   = @pspm_cfg_vout_outchannel;
-pp_pupil_size_convert.help   = {['Provides conversion functions for the specified ', ...
-    'data (e.g. pupil size data). Currently only area to diameter conversion is ',...
-    'available.']};
+pp_pupil_size_convert.help   = pspm_cfg_help_format('pspm_convert_area2diameter');

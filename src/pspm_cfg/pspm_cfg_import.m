@@ -400,7 +400,5 @@ import_data.tag  = 'import';
 import_data.val  = {datatype, overwrite};
 import_data.prog = @pspm_cfg_run_import;
 import_data.vout = @pspm_cfg_vout_outfile;
-import_data.help = {['Import external data files for use by PsPM. First, specify the ' ...
-  'data type. Then, other fields will come up as required for this data type. The ' ...
-  'imported data will be written to a new .mat file, prepended with ''pspm_''.']};
+import_data.help = pspm_cfg_help_format('pspm_import');
 

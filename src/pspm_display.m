@@ -1,7 +1,8 @@
 function varargout = pspm_display(varargin)
 % ● Description
-%   pspm_display is the code for the GUI that is used to display different data from scr
-%   datafiles.
+%   pspm_display opens a GUI for displaying data from PsPM files. A PsPM file
+%   to be displayed can be specified in the function call or in the GUI
+%   itself.
 % ● Format
 %   pspm_display
 %   pspm_display(filename), such as pspm_display('test.mat')

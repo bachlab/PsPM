@@ -1,7 +1,15 @@
 function [sts, glm] = pspm_glm(model, options)
 % ● Description
-%   pspm_glm specifies a within subject general linear convolution model of
-%   predicted signals and calculates amplitude estimates for these responses.
+%   pspm_glm specifies a within-subject general linear convolution model 
+%   (GLM) of predicted signals and calculates amplitude estimates for these 
+%   responses.
+%   GLMs can be used for analysing evoked responses that follow an event 
+%   with (approximately) fixed latency. This is similar to standard 
+%   analysis of fMRI data. 
+%   The user specifies events for different conditions. These are used to 
+%   estimate the mean response amplitude per condition. These mean 
+%   amplitudes can later be expored for statistical analysis, using 
+%   pspm_export.
 % ● Format
 %   [sts, glm] = pspm_glm(model, options)
 % ● Arguments

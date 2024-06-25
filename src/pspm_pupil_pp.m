@@ -1,7 +1,8 @@
 function [sts, outchannel] = pspm_pupil_pp (fn, options)
 % ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
-%   measurement. It performs the steps described in [1]. This function uses
+%   measurement, with a possibility of combining left/right pupil. 
+%   It performs the steps described in [1]. This function uses
 %   a modified version of [2]. The modified version with a list of changes
 %   from the original is shipped with PsPM under pupil-size directory.
 %   The steps performed are listed below:

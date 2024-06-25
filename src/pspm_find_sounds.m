@@ -1,8 +1,15 @@
 function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 % ● Description
-%   pspm_find_sounds finds and if required analyzes sound events in a pspm file.
-%   A sound is accepted as event if it is longer than 10 ms and events are
-%   recognized as different if they are at least 50 ms appart.
+%   pspm_find_sounds finds (and if requested analyzes) sound events in a 
+%   PsPM data file. This function can be used to precisely define the onset
+%   of startle sounds for GLM-based analysis of startle eye blink data. The
+%   detected events are written into a marker channel. 
+%   A sound is detected as event if it is longer than 10 ms, and events are
+%   recognized as distinct if they are at least 50 ms appart. Various
+%   options allow customizing the algorithm to specific experimental
+%   settings. In particular, events can be constrained to be in the
+%   vicinity of event markers, and/or a desired number of events can be 
+%   specified. 
 % ● Format
 %   [sts, channel_index, info] = pspm_find_sounds(fn, options)
 % ● Arguments

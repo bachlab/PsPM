@@ -1,11 +1,18 @@
 function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Description
-%   pspm_process_illuminance is used to process raw lux data and transfer
-%   it into two nuisance regressors (dilation and constriction) for glm
-% ● Developer's Notes
-%   Pupil size models were developed with pupil size data recorded in
-%   diameter values. Therefore pupil size data analyzed using these models
-%   should also be in diameter.
+%   pspm_process_illuminance transforms an illuminance time series into
+%   a convolved pupil response time series, to be used as nuisance file in 
+%   a GLM. This allows partialling out illuminance contributions to pupil 
+%   responses evoked by cognitive inputs. Alternatively it allows analysing 
+%   the illuminance responses as such, by extracting parameter estimates 
+%   relating to the nuisance regressors from the GLM.
+%   The illuminance file should be a .mat file with a vector variable 
+%   called Lx. In order to fulfill the requirements of a later nuisance 
+%   file there must be as many values as there are data values in the pupil 
+%   channel. Data must be given in lux (lm/m2) to account for the 
+%   non-linear mapping from illuminance to steady-state pupil size. To 
+%   transform luminance (cd/m2) to illuminance values, please see 
+%   https://en.wikipedia.org/wiki/Illuminance#Relation_to_luminance
 % ● Format
 %   [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Arguments

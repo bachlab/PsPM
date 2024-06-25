@@ -1,10 +1,14 @@
 function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Description
 %   pspm_split_sessions splits experimental sessions/blocks, based on
-%   regularly incoming markers, for example volume or slice markers from an
-%   MRI scanner, or based on a vector of split points that is defined in
-%   terms of markers. The first and the last marker will define the start of
-%   the first session and the end of the last session.
+%   regularly incoming markers, for example trial markers, volume or slice 
+%   markers from an MRI scanner, or based on a vector of split points that 
+%   is defined in terms of markers. The first and the last marker will 
+%   define the start of the first session and the end of the last session.
+%   In addition, the function can split a (missing) epochs file associated
+%   with the original PsPM file to the same limits.
+%   The individual sessions will be written to new files with a suffix '_sn'
+%   and the session number.
 % ● Format
 %   [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Arguments

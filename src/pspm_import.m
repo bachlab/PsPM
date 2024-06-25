@@ -1,7 +1,8 @@
 function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● Description
 %   pspm_import imports data from different formats and writes them to
-%   a file to the same path.
+%   a file on the same path, with the original file name prepended with 
+%   'pspm_'.
 % ● Format
 %   [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● Arguments
