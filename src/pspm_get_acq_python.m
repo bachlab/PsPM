@@ -1,12 +1,7 @@
-function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
+function [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import)
 % ● Description
-%   pspm_get_acq_python imports of biopac/acknowledge files that are equal to
-%   or earlier than version 3.9.0.
-%   This function uses the conversion routine acqread.m version 2.0 (2007-08-21)
-%   by Sebastien Authier and Vincent Finnerty at the University of Montreal
-%   which supports all files created with Windows/PC versions of
-%   AcqKnowledge (3.9.0 or below), BSL (3.7.0 or below), and BSL PRO
-%   (3.7.0 or below).
+%   pspm_get_acq_python imports of biopac/acknowledge files with python
+%   package bioread (version 3.0.1).
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import);
 % ● Arguments
@@ -20,13 +15,9 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 % ● Output
 %         import: The import struct that saves importing information
 %     sourceinfo: The struct that saves information of original data source
-% ● Developer's Notes
-%   The main part of this function is shared with pspm_get_acq_python. 
-%   The function acqread is stored in the path /Import/acq.
 % ● History
-%   Introduced in PsPM 3.0
-%   Written in 2011-2014 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Updated in 2024 by Teddy
+%   Introduced in PsPM 7.0
+%   Written in 2024 by Teddy
 
 %% Initialise
 global settings
@@ -36,8 +27,7 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','acq'));
-%% Load data 
-[sts, header, inputdata] = evalc('acqread(datafile)');
+[sts, header, inputdata] = acqread_python(datafile);
 %% Extract individual channels
 for k = 1:numel(import)
   % define channel number ---
