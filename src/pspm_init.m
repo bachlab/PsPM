@@ -48,7 +48,7 @@ if isempty(settings)
 end
 % Define the directories PsPM will need
 pspm_root = fileparts(which('pspm_init'));
-required_folders = {'backroom', 'ext', 'Import', 'pspm_cfg'};
+required_folders = {'ext', 'Import', 'pspm_cfg'};
 required_paths = fullfile(pspm_root, required_folders);
 
 % Add necessary paths that are not already included
@@ -87,6 +87,7 @@ end
 if ~contains(p, pth)
   scrpath=1;
   addpath(pth);
+  added_paths{end+1} = pth;
 else
   scrpath=0;
 end
@@ -141,6 +142,7 @@ else
 end
 if addspm
   addpath(pspm_path('ext','SPM'));
+  added_paths{end+1} = pspm_path('ext','SPM');
   spmpath = 1;
 else
   spmpath = 0;
@@ -150,6 +152,8 @@ end
 dummy=which('cfg_ui');
 if isempty (dummy)
   addpath(pspm_path('ext','matlabbatch'));
+  added_paths{end+1} = pspm_path('ext','matlabbatch');
+  added_paths{end+1} = pspm_path('ext','matlabbatch','cfg_basicio');
   matlabbatchpath=1;
 else
   if strcmp(fs, '/')
@@ -168,6 +172,7 @@ else
         rmpath(config_dir);
       end
       addpath(pspm_path('ext','matlabbatch'));
+      added_paths{end+1} = pspm_path('ext','matlabbatch');
       matlabbatchpath = 1;
     else
       matlabbatchpath = 0;
@@ -181,6 +186,7 @@ end
 dummy=which('pspm_cfg');
 if isempty (dummy)
   addpath(pspm_path('pspm_cfg'));
+  added_paths{end+1} = pspm_path('pspm_cfg');
   scrcfgpath=1;
 else
   scrcfgpath=0;
@@ -188,8 +194,11 @@ end
 % 2.10 Check VBA
 % add VBA because this is used in various functions
 addpath(pspm_path('ext','VBA'));
+added_paths{end+1} = pspm_path('ext','VBA');
 addpath(pspm_path('ext','VBA','subfunctions'));
+added_paths{end+1} = pspm_path('ext','VBA','subfunctions');
 addpath(pspm_path('ext','VBA','stats&plots'));
+added_paths{end+1} = pspm_path('ext','VBA','stats&plots');
 %% 3 Chennel types
 %
 % 3.1 allowed channel types
@@ -917,6 +926,7 @@ else
 end
 %% 11 Finalisation
 settings.path = pth;
+settings.added_paths = added_paths;
 settings.scrpath = scrpath;
 settings.spmpath = spmpath;
 settings.matlabbatchpath = matlabbatchpath;

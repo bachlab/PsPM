@@ -14,17 +14,15 @@ end
 if isfield(settings, 'added_paths') && ~isempty(settings.added_paths)
    cellfun(@rmpath, settings.added_paths);
 end
+settings = rmfield(settings, 'added_paths');
 
 fs = filesep;
 if settings.scrpath, rmpath(settings.path), end;
-if any(contains(settings.path, 'VBA'))
-  rmpath(pspm_path('ext','VBA'));
-  rmpath(pspm_path('ext','VBA','subfunctions'));
-  rmpath(pspm_path('ext','VBA','stats&plots'));
-end
+
 if isfile(fullfile(settings.path,'pspm_text.mat'))
   delete(fullfile(settings.path,'pspm_text.mat'))
 end
+
 clear settings
 close all
 disp(' ');
