@@ -29,6 +29,7 @@ function varargout = pspm_data_editor(varargin)
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)
 %   Maintained in 2021 by Teddy
+%   Updated in 2024 by Teddy for UI controller display
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -98,13 +99,12 @@ if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   if handles.options.invalid
     return
   end
-  if isfield(handles.options, 'output_file') && ... % check if options are valid and assign accordingly
-      ischar(handles.options.output_file)
+  if isfield(handles.options, 'output_file') && ischar(handles.options.output_file)
+    % check if options are valid and assign accordingly  
     handles.output_file = handles.options.output_file;
     set(handles.edOutputFile, 'String', handles.output_file);
   end
-  if isfield(handles.options, 'epoch_file') && ...
-      ischar(handles.options.epoch_file)
+  if isfield(handles.options, 'epoch_file') && ischar(handles.options.epoch_file)
     handles.epoch_file = handles.options.epoch_file;
     set(handles.edOpenMissingEpochFilePath, 'String', handles.epoch_file);
   end
@@ -128,12 +128,13 @@ if numel(varargin) > 0
   handles = guidata(hObject);
   guidata(hObject, handles);
   PlotData(hObject);
-  if isfield(handles, 'options') && isfield(handles.options, 'output_file')
-    set(handles.pnlOutput, 'Visible', 'off');
-  end
-  if isfield(handles, 'options') && ~isfield(handles.options, 'epoch_file')
-    set(handles.pnlEpoch, 'Visible', 'off');
-  end
+  % % enable the following code if output file module wants to be enabled
+  % if isfield(handles, 'options') && isfield(handles.options, 'output_file')
+  %   set(handles.pnlOutput, 'Visible', 'off');
+  % end
+  % if isfield(handles, 'options') && ~isfield(handles.options, 'epoch_file')
+  %   set(handles.pnlEpoch, 'Visible', 'off');
+  % end
   if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
     handles.epoch_file = handles.options.epoch_file;
     Add_Epochs(hObject, handles)

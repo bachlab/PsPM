@@ -103,7 +103,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 6.1.2
+Version 7.0
 \end_layout
 
 \begin_layout Standard
@@ -6894,6 +6894,202 @@ pspm_cfg_run_functionname.m
 \end_layout
 
 \begin_layout Subsection
+Python Support
+\end_layout
+
+\begin_layout Standard
+PsPM provides some features that are enabled by using Python packages, namly
+ HeartPy and Bioread, and descriptions in the GUI.
+ This is controled through 
+\family typewriter
+pspm_cfg_python
+\family default
+.
+ Any PsPM functions or features that require Python-enabled features need
+ to call 
+\family typewriter
+pspm_cfg_python
+\family default
+ to show Python path specification in the GUI, so that users can select
+ appropriate Python location for calling the packages.
+\end_layout
+
+\begin_layout Subsubsection
+Python packages
+\end_layout
+
+\begin_layout Standard
+The Python packages that are used by PsPM are Bioread and HeartPy, until
+ PsPM version 7.0.
+ This is to support the features of importing .acq data for Bioread and process
+ PPG data for HeartPy.
+ The tested competible version of these packages are Python 3.11, Bioread
+ 3.0.1, and HeartPy 1.2.7.
+ Because some packages may have dependence on other packages such as numpy,
+ here is a list of Python packages that work on both Windows and macOS
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Pillow==10.1.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+aigpy==2022.7.8.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+bioread==3.0.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+certifi==2023.11.17 
+\end_layout
+
+\begin_layout Plain Layout
+
+charset-normalizer==3.3.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+colorama==0.4.6 
+\end_layout
+
+\begin_layout Plain Layout
+
+contourpy==1.2.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+cycler==0.12.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+docopt==0.6.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+fonttools==4.45.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+heartpy==1.2.7 
+\end_layout
+
+\begin_layout Plain Layout
+
+idna==3.4 
+\end_layout
+
+\begin_layout Plain Layout
+
+kiwisolver==1.4.5 
+\end_layout
+
+\begin_layout Plain Layout
+
+matplotlib==3.8.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+mutagen==1.47.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+numpy==1.26.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+packaging==23.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+pip==24.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+prettytable==3.9.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+pycryptodome==3.19.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+pydub==0.25.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+pyparsing==3.1.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+python-dateutil==2.8.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+requests==2.31.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+scipy==1.11.4 
+\end_layout
+
+\begin_layout Plain Layout
+
+setuptools==68.2.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+six==1.16.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+urllib3==2.1.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+wcwidth==0.2.12 
+\end_layout
+
+\begin_layout Plain Layout
+
+wheel==0.41.3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
 GUI Development Progress
 \end_layout
 
@@ -6995,8 +7191,8 @@ The new GUI is currently using the colour
 \family default
  for stylishing.
  The main typeface for UI design is Segoe UI, San Francisco (or Helvetica
- Neue for pre-macOS Yosemite) and DejaVu Sans for Windows, macOS and Linux,
- respectively.
+ Neue for Yosemite, Lucida Grande for pre-Yosemite) and DejaVu Sans for
+ Windows, macOS, and Linux, respectively.
 \end_layout
 
 \begin_layout Standard
