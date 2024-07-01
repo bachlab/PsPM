@@ -1108,3 +1108,4 @@ else
 end
 handles.tag_summary_channel_list_content.String = string_channel_list;
 end
+
