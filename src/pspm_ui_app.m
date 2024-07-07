@@ -47,6 +47,9 @@ pspm_layout_component_list_panels = {...
   'button_logo' ...
   };
 update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
+update_app_struct(app, pspm_layout_component_list_buttons, 'BackgroundColor', [0.9608 0.9608 0.9608]);
+update_app_struct(app, pspm_layout_component_list_buttons, 'FontColor', [0.1294 0.1294 0.1294]);
+update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontSize', pspm_font_size);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal');
 % update colour
