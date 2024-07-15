@@ -1,12 +1,10 @@
 function [out] = pspm_cfg_run_extract_segments(job)
 % Updated on 25-12-2023 by Teddy
-out = {};
 
-mode = 'auto';
 if isfield(job, 'mode')
   if isfield(job.mode, 'mode_automatic')
     mode = 'model';
-    glm_file = job.mode.mode_automatic.glm_file{1};
+    glm_file = job.mode.mode_automatic.datafile{1};
   elseif isfield(job.mode, 'mode_manual')
     mode = 'file';
     chan = pspm_cfg_channel_selector('run', job.mode.mode_manual);
@@ -28,20 +26,16 @@ if isfield(job, 'mode')
     case 'nan_screen'
       options.nan_output = 'screen';
     case 'nan_output_file'
-      file_name = job.options.nan_output.nan_output_file.nan_file;
-      file_path = job.options.nan_output.nan_output_file.nan_path{1};
-      options.nan_output = fullfile(file_path, file_name);
+      options.nan_output = pspm_cfg_selector_outputfile('run', job.options.nan_output);
   end
   % extract output
-  options = pspm_update_struct(options, job.output, {'overwrite',...
-                                                     'plot'});
-  out_file = job.output.output_file.file_name;
-  out_path = job.output.output_file.file_path{1};
-  options.outputfile = [out_path filesep out_file];
+  options.outputfile = pspm_cfg_selector_outputfile('run', job.output);
+  options.overwrite  = job.output.output.overwrite;
+  options.plot       = job.output.plot;
   switch mode
-    case 'auto'
+      case 'model'
       [~, out] = pspm_extract_segments(mode, glm_file, options);
-    case 'manual'
+      case 'file'
       [~, out] = pspm_extract_segments(mode, data_fn, chan, timing, options);
   end
 else

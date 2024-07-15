@@ -107,7 +107,7 @@ fprintf('Processing sound in file %s\n',fn);
 
 % Load Data
 [lsts, snd] = pspm_load_channel(fn, options.channel, 'snd');
-if lsts == -1 
+if lsts < 1 
   return;
 end
 

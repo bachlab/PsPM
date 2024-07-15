@@ -39,6 +39,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+outchannel = NaN;
+
 narginchk(1, 3);
 if numel(varargin) == 1 && ~ischar(varargin{1})
   area = varargin{1};

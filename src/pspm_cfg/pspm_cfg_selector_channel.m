@@ -1,4 +1,4 @@
-function out = pspm_cfg_channel_selector(channame, varargin)
+function out = pspm_cfg_selector_channel(channame, varargin)
 % ● Description
 % pspm_cfg_channel_selector generates a standardised matlabbatch entry for 
 % channel selection 
@@ -22,6 +22,8 @@ function out = pspm_cfg_channel_selector(channame, varargin)
 %                   one channel
 %              (6) 'many' - generates a numerical channel selector for an
 %                   arbitrary number of channels
+%              (7)  a number - generates a numerical channel selector for 
+%                   the specified number of channels
 
 
 % check input
@@ -30,7 +32,7 @@ if nargin == 0
 end
 
 %% parse channel selection from matlabbatch
-if strcmpi(channame, 'run')
+if ischar(channame) && strcmpi(channame, 'run')
     job = varargin{1};
     if isfield(job, 'chan_default')
         out = job.chan_default;
@@ -50,6 +52,14 @@ if strcmpi(channame, 'run')
     end
 
 %% gather channel selection in matlabbatch  
+% vector definition
+elseif isnumeric(channame)
+    out         = vec_chan('any', channame);
+
+% vector definition
+elseif strcmpi(channame, 'many')
+    out         = vec_chan('any', Inf);
+    
 % numerical or string definition
 elseif strcmpi(channame, 'any')
     out         = str_chan(channame);
@@ -58,9 +68,6 @@ elseif strcmpi(channame, 'any')
 elseif isempty(channame)
     out         = num_chan;
 
-% vector definition
-elseif strcmpi(channame, 'many')
-    out         = vec_chan('any', Inf);
 
 % specific pupil options or numerical definition
 elseif ismember(channame, {'pupil', 'pupil_both', 'pupil_none'})

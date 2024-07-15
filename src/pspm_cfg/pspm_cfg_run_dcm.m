@@ -1,15 +1,18 @@
-function [out, dcm] = pspm_cfg_run_dcm(job)
+function out = pspm_cfg_run_dcm(job)
 % Executes pspm_dcm
 %% initialise
 global settings
 if isempty(settings), pspm_init; end
 eventnameflag = 1;
+model = struct();
+options = struct();
 %% construct job structure
-model.modelfile = [job.outdir{1}, filesep,  job.modelfile, '.mat'];
+% modelfile & overwrite
+model.modelfile = pspm_cfg_selector_outputfile('run', job);
+options.overwrite = job.output.overwrite;
 % datafiles & events
 nrSession = size(job.session,2);
 for iSession=1:nrSession
-  options = struct();
   % datafile
   datafile{iSession} = job.session(iSession).datafile{1};
   % events
@@ -45,8 +48,8 @@ for iSession=1:nrSession
   end
   % missing epochs
   if isfield(job.session(iSession).missing,'epochs')
-    if isfield(job.session(iSession).missing.epochs,'epochfile')
-      model.missing{1,iSession} = job.session(iSession).missing.epochs.epochfile{1};
+    if isfield(job.session(iSession).missing.epochs,'datafile')
+      model.missing{1,iSession} = job.session(iSession).missing.epochs.datafile{1};
     else
       model.missing{1,iSession} = job.session(iSession).missing.epochs.epochentry;
     end
@@ -57,26 +60,9 @@ end
 model.datafile = datafile;
 model.timing = timing;
 % filter
-if ~isfield(job.data_options.filter,'def')
-  % lowpass
-  if isfield(job.data_options.filter.edit.lowpass,'disable')
-    filter.lpfreq = NaN;
-    filter.lporder = settings.dcm{1,1}.filter.lporder;
-  else
-    filter.lpfreq = job.data_options.filter.edit.lowpass.enable.freq;
-    filter.lporder = job.data_options.filter.edit.lowpass.enable.order;
-  end
-  % highpass
-  if isfield(job.data_options.filter.edit.highpass,'disable')
-    filter.hpfreq = NaN;
-    filter.hporder = settings.dcm{1,1}.filter.hporder;
-  else
-    filter.hpfreq = job.data_options.filter.edit.highpass.enable.freq;
-    filter.hporder = job.data_options.filter.edit.highpass.enable.order;
-  end
-  filter.down = job.data_options.filter.edit.down; % sampling rate
-  filter.direction = job.data_options.filter.edit.direction; % sampling rate
-  model.filter = filter;
+filter = pspm_cfg_selector_filter('run', job.data_options.filter);
+if isstruct(filter)
+    model.filter = filter;
 end
 % normalization, subsession threshold
 model = pspm_update_struct(model, job.data_options, {'norm', 'substhresh'});
@@ -107,5 +93,5 @@ end
 if eventnameflag
   options.eventnames = eventnames;
 end
-[out, dcm] = pspm_dcm(model, options);
+[sts, out] = pspm_dcm(model, options);
 
