@@ -1,24 +1,10 @@
 function export = pspm_cfg_export
-% Contrast (first level)
 
-% $Id$
-% $Rev$
+%% Standard items
+outfile           = pspm_cfg_selector_outputfile();
+modelfile         = pspm_cfg_selector_datafile('model', inf);
 
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-
-
-% Select File
-modelfile         = cfg_files;
-modelfile.name    = 'Model File(s)';
-modelfile.tag     = 'modelfile';
-modelfile.num     = [1 Inf];
-modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Specify file from which to export statistics.',...
-                      ' ',settings.datafilehelp};
-
-
+%% Specific items
 % Screen
 screen         = cfg_const;
 screen.name    = 'Screen';
@@ -26,18 +12,11 @@ screen.tag     = 'screen';
 screen.val     = {'screen'};
 screen.help    = {''};
 
-% Filename
-filename         = cfg_entry;
-filename.name    = 'Filename';
-filename.tag     = 'filename';
-filename.strtype = 's';
-filename.help    = {'Specify a filename.'};
-
 % Target
 target         = cfg_choice;
 target.name    = 'Target';
 target.tag     = 'target';
-target.values  = {screen, filename};
+target.values  = {screen, outfile};
 target.help    = {'Export to screen or to file?'};
 
 % Datatype
@@ -116,4 +95,5 @@ export.name = 'Export Statistics';
 export.tag  = 'export';
 export.val  = {modelfile, datatype, exclude_missing, target, delim};
 export.prog = @pspm_cfg_run_export;
+export.vout = @pspm_cfg_vout_outfile;
 export.help = {'Export statistics to a file for further analysis in statistical software, or to the screen.'};

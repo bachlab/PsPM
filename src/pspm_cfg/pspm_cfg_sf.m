@@ -1,37 +1,16 @@
 function sf = pspm_cfg_sf
 
-% $Id$
-% $Rev$
-
-% Initialise
+%% Initialise
 global settings
-if isempty(settings), pspm_init; end;
 
-%% Data file
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Add the data file containing the SCR data (and potential marker information). '...
-    'If you have trimmed your data, add the file containing the trimmed data.'],...
-    ' ',settings.datafilehelp};
+%% Standard items
+datafile            = pspm_cfg_selector_datafile;
+channel             = pspm_cfg_selector_channel('SCR');
+output              = pspm_cfg_selector_outputfile('Model');
+filter              = pspm_cfg_selector_filter(settings.dcm{2});
+% (see below for timeunits, requires specification of epochs item first)
 
-%% Output directory
-outdir         = cfg_files;
-outdir.name    = 'Output Directory';
-outdir.tag     = 'outdir';
-outdir.filter  = 'dir';
-outdir.num     = [1 1];
-outdir.help    = {'Specify directory where the mat file with the resulting model will be written.'};
-
-%% Filenames for model output
-modelfile         = cfg_entry;
-modelfile.name    = 'Model Filename';
-modelfile.tag     = 'modelfile';
-modelfile.strtype = 's';
-modelfile.help    = {'Specify file name for the resulting model.'};
-
+%% Specific items
 %% Method
 method         = cfg_menu;
 method.name    = 'Method';
@@ -48,123 +27,6 @@ method.help    = {['Choose the method for estimating tonic sympathetic arousal: 
                    '(Bach & Staib, 2015, Psychophysiology). ', ...
                    'In simulations, it is less accurate when the expected ', ...
                    'number of SF exceeds 10/min.']};
-
-% Filter
-disable        = cfg_const;
-disable.name   = 'Disable';
-disable.tag    = 'disable';
-disable.val    = {0};
-disable.help   = {''};
-
-% Low pass
-lpfreq         = cfg_entry;
-lpfreq.name    = 'Cutoff Frequency';
-lpfreq.tag     = 'freq';
-lpfreq.strtype = 'r';
-if isfield(settings.dcm{1,2}.filter,'lpfreq')
-    lpfreq.val = {settings.dcm{1,2}.filter.lpfreq};
-end
-lpfreq.num     = [1 1];
-lpfreq.help    = {'Specify the low-pass filter cutoff in Hz.'};
-
-lporder         = cfg_entry;
-lporder.name    = 'Filter Order';
-lporder.tag     = 'order';
-lporder.strtype = 'i';
-if isfield(settings.dcm{1,2}.filter,'lporder')
-    lporder.val = {settings.dcm{1,2}.filter.lporder};
-end
-lporder.num     = [1 1];
-lporder.help    = {'Specify the low-pass filter order.'};
-
-enable_lp        = cfg_branch;
-enable_lp.name   = 'Enable';
-enable_lp.tag    = 'enable';
-enable_lp.val    = {lpfreq, lporder};
-enable_lp.help   = {''};
-
-lowpass        = cfg_choice;
-lowpass.name   = 'Low-Pass Filter';
-lowpass.tag    = 'lowpass';
-lowpass.val    = {enable_lp};
-lowpass.values = {enable_lp, disable};
-lowpass.help   = {''};
-
-% High pass
-hpfreq         = cfg_entry;
-hpfreq.name    = 'Cutoff Frequency';
-hpfreq.tag     = 'freq';
-hpfreq.strtype = 'r';
-if isfield(settings.dcm{1,2}.filter,'hpfreq')
-    hpfreq.val = {settings.dcm{1,2}.filter.hpfreq};
-end
-hpfreq.num     = [1 1];
-hpfreq.help    = {'Specify the high-pass filter cutoff in Hz.'};
-
-hporder         = cfg_entry;
-hporder.name    = 'Filter Order';
-hporder.tag     = 'order';
-hporder.strtype = 'i';
-if isfield(settings.dcm{1,2}.filter,'hporder')
-    hporder.val = {settings.dcm{1,2}.filter.hporder};
-end
-hporder.num     = [1 1];
-hporder.help    = {'Specify the high-pass filter order.'};
-
-enable_hp        = cfg_branch;
-enable_hp.name   = 'Enable';
-enable_hp.tag    = 'enable';
-enable_hp.val    = {hpfreq, hporder};
-enable_hp.help   = {''};
-
-highpass        = cfg_choice;
-highpass.name   = 'High-Pass Filter';
-highpass.tag    = 'highpass';
-highpass.val    = {enable_hp};
-highpass.values = {enable_hp, disable};
-highpass.help   = {''};
-
-% Sampling rate
-down         = cfg_entry;
-down.name    = 'New Sampling Rate';
-down.tag     = 'down';
-down.strtype = 'r';
-if isfield(settings.dcm{1,2}.filter,'down')
-    down.val = {settings.dcm{1,2}.filter.down};
-end
-down.num     = [1 1];
-down.help    = {'Specify the sampling rate in Hz to down sample SCR data. Enter NaN to leave the sampling rate unchanged.'};
-
-% Filter direction
-direction         = cfg_menu;
-direction.name    = 'Filter Direction';
-direction.tag     = 'direction';
-direction.val     = {'bi'};
-direction.labels  = {'Unidirectional', 'Bidirectional'};
-direction.values  = {'uni', 'bi'};
-direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
-    'A "bidirectional" filter is applied once in the forward direction and once in the ' ...
-    'backward direction to correct the temporal shift due to filtering in forward direction.']};
-
-filter_edit        = cfg_branch;
-filter_edit.name   = 'Edit Settings';
-filter_edit.tag    = 'edit';
-filter_edit.val    = {lowpass, highpass, down, direction};
-filter_edit.help   = {'Create your own filter (discouraged).'};
-
-filter_def        = cfg_const;
-filter_def.name   = 'Default';
-filter_def.tag    = 'def';
-filter_def.val    = {0};
-filter_def.help   = {['Standard settings for the Butterworth bandpass filter.']};
-
-filter        = cfg_choice;
-filter.name   = 'Filter Settings';
-filter.tag    = 'filter';
-filter.val    = {filter_def};
-filter.values = {filter_def, filter_edit};
-filter.help   = {'Specify how you want filter the SCR data.'};
-
 
 
 %% Epochs
@@ -188,58 +50,7 @@ epochs.tag    = 'epochs';
 epochs.values = {epochfile, epochentry};
 epochs.help   = {''};
 
-%% Marker Channel
-mrk_chan         = pspm_cfg_channel_selector('Marker');
-mrk_chan.help    = {mrk_chan.help{1} , ['Markers are only used if you have ' ...
-    'specified the time units as "markers".']};
-
-
-%% Timeunits
-seconds         = cfg_branch;
-seconds.name    = 'Seconds';
-seconds.tag     = 'seconds';
-seconds.val     = {epochs};
-seconds.help    = {''};
-
-samples         = cfg_branch;
-samples.name    = 'Samples';
-samples.tag     = 'samples';
-samples.val     = {epochs};
-samples.help    = {''};
-
-markers         = cfg_branch;
-markers.name    = 'Markers';
-markers.tag     = 'markers';
-markers.val     = {epochs, mrk_chan};
-markers.help    = {''};
-
-whole         = cfg_const;
-whole.name    = 'Whole';
-whole.tag     = 'whole';
-whole.val     = {'whole'};
-whole.help    = {''};
-
-timeunits         = cfg_choice;
-timeunits.name    = 'Time Units';
-timeunits.tag     = 'timeunits';
-timeunits.values  = {seconds, samples, markers, whole};
-timeunits.help    = {['Indicate the time units on which the specification of the conditions will be based. ' ...
-    'Time units can be specified in "seconds", number of "markers", or number of data "samples". Time units ' ...
-    'refer to the beginning of the data file and not to the beginning of the original recordings e.g. if ' ...
-    'data were trimmed.']};
-
-%% Channel nr
-% Channel
-chan        = pspm_cfg_channel_selector('SCR');
-
-%% Overwrite file
-overwrite         = cfg_menu;
-overwrite.name    = 'Overwrite Existing File';
-overwrite.tag     = 'overwrite';
-overwrite.val     = {false};
-overwrite.labels  = {'No', 'Yes'};
-overwrite.values  = {false, true};
-overwrite.help    = {'Specify whether you want to overwrite existing mat file.'};
+timeunits           = pspm_cfg_selector_timeunits('sf', epochs);
 
 %% Additional options for individual methods (hidden in GUI)
 threshold         = cfg_entry;
@@ -264,9 +75,6 @@ fresp.strtype = 'r';
 fresp.val     = {[]};
 fresp.help    = {'Frequency of responses to model.'};
 fresp.hidden  = true;
-
-
-
 
 
 missingepoch_file         = cfg_files;
@@ -318,9 +126,9 @@ dispsmallwin.help    = {'Show small plots displaying the progress of each iterat
 sf      = cfg_exbranch;
 sf.name = 'SF';
 sf.tag  = 'sf';
-sf.val  = {datafile, modelfile, outdir, method, timeunits, filter, chan, overwrite, threshold, missing, theta, fresp, dispwin, dispsmallwin};
+sf.val  = {datafile, output, method, timeunits, filter, channel, threshold, missing, theta, fresp, dispwin, dispsmallwin};
 sf.prog = @pspm_cfg_run_sf;
-sf.vout = @pspm_cfg_vout_sf;
+sf.vout = @pspm_cfg_vout_modelfile;
 sf.help = {['This suite of models is designed for analysing spontaneous fluctuations (SF) in skin conductance ' ...
     'as a marker for tonic arousal. SF are analysed over time windows that ' ...
     'typically last 60 s and should at least be 15 s long. PsPM implements 3 different models: '], '', ...
@@ -334,10 +142,3 @@ sf.help = {['This suite of models is designed for analysing spontaneous fluctuat
     'Bach, Friston, Dolan (2010) International Journal of Psychophysiology (AUC)', '', ...
     'Bach, Daunizeau et al. (2011) Psychophysiology (DCM)', '', ...
     'Bach & Staib (2015) Psychophysiology (MP)'};
-
-function vout = pspm_cfg_vout_sf(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});

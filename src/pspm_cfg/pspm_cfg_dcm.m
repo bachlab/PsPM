@@ -1,41 +1,16 @@
 function dcm = pspm_cfg_dcm
-% DCM
 
-% $Id: pspm_cfg_dcm.m 626 2019-02-20 16:14:40Z lciernik $
-% $Rev: 626 $
-
-% Initialise
 global settings
-if isempty(settings), pspm_init; end;
 
-% Datafile
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-datafile.filter  = '.*\.(mat|MAT)$';
-datafile.help    = {['Add the data file containing the SCR data. If you ',...
-                     'have trimmed your data, add the file containing the' ,...
-                     'trimmed data.'],' ',settings.datafilehelp};
+%% Standard items
+datafile            = pspm_cfg_selector_datafile('PsPM');
+chan                = pspm_cfg_selector_channel('SCR');
+modelfile           = pspm_cfg_selector_outputfile('Model');
+filter              = pspm_cfg_selector_filter(settings.dcm{1,1}.filter);
+norm                = pspm_cfg_selector_norm;
+epochfile           = pspm_cfg_selector_datafile('epochs');
 
-% Channel
-chan         = pspm_cfg_channel_selector('SCR');
-
-% Modelfile name
-modelfile         = cfg_entry;
-modelfile.name    = 'Model Filename';
-modelfile.tag     = 'modelfile';
-modelfile.strtype = 's';
-modelfile.help    = {'Specify file name for the resulting model.'};
-
-% Output directory
-outdir         = cfg_files;
-outdir.name    = 'Output Directory';
-outdir.tag     = 'outdir';
-outdir.filter  = 'dir';
-outdir.num     = [1 1];
-outdir.help    = {'Specify directory where the mat file with the resulting model will be written.'};
-
+%% Specific items
 % Parameter estimation
 timingfile         = cfg_files;
 timingfile.name    = 'Timing File';
@@ -82,7 +57,7 @@ timing_man.val   = {name, onsets};
 timing_man.help  = {''};
 
 timing_man_rep        = cfg_repeat;
-timing_man_rep.name   = 'Enter Timing Manually';
+timing_man_rep.name   = 'Enter Timing Manually (discouraged, will be removed in future releases)';
 timing_man_rep.tag    = 'timing_man_rep';
 timing_man_rep.values = {timing_man};
 timing_man_rep.num   = [1 Inf];
@@ -146,20 +121,9 @@ no_epochs.val     = {0};
 no_epochs.help    = {['Missing epochs are detected automatically ', ...
     'according to the data option ''Subsession threshold''.']};
 
-epochfile         = cfg_files;
-epochfile.name    = 'Missing Epoch File';
-epochfile.tag     = 'epochfile';
-epochfile.num     = [1 1];
-epochfile.filter  = '.*\.(mat|MAT|txt|TXT)$';
-epochfile.help    = {['Indicate an epoch file specifying the start and ', ...
-    'end points of missing epochs (m). The mat file has to contain a ', ...
-    'variable ''epochs'', which is an m x 2 array, where m is the number of' ...
-    ' missing epochs. The first column marks the start points ', ...
-    'of the epochs that are excluded from the ' ...
-    'analysis and the second column the end points.']};
 
 epochentry         = cfg_entry;
-epochentry.name    = 'Enter Missing Epochs Manually';
+epochentry.name    = 'Enter Missing Epochs Manually (discouraged)';
 epochentry.tag     = 'epochentry';
 epochentry.strtype = 'i';
 epochentry.num     = [Inf 2];
@@ -231,133 +195,6 @@ session_rep.help    = {'Add the appropriate number of sessions here.'};
 
 
 %% Data options
-% Normalization
-norm         = cfg_menu;
-norm.name    = 'Normalization';
-norm.tag     = 'norm';
-norm.labels  = {'No', 'Yes'};
-norm.val     = {0};
-norm.values  = {0,1};
-norm.help    = {['Specify if you want to normalize the SCR data for each subject. For within-subjects designs, ' ...
-    'this is highly recommended.']};
-
-% Filter
-disable        = cfg_const;
-disable.name   = 'Disable';
-disable.tag    = 'disable';
-disable.val    = {0};
-disable.help   = {''};
-
-% Low pass
-lpfreq         = cfg_entry;
-lpfreq.name    = 'Cutoff Frequency';
-lpfreq.tag     = 'freq';
-lpfreq.strtype = 'r';
-if isfield(settings.dcm{1,1}.filter,'lpfreq')
-    lpfreq.val = {settings.dcm{1,1}.filter.lpfreq};
-end
-lpfreq.num     = [1 1];
-lpfreq.help    = {'Specify the low-pass filter cutoff in Hz.'};
-
-lporder         = cfg_entry;
-lporder.name    = 'Filter Order';
-lporder.tag     = 'order';
-lporder.strtype = 'i';
-if isfield(settings.dcm{1,1}.filter,'lporder')
-    lporder.val = {settings.dcm{1,1}.filter.lporder};
-end
-lporder.num     = [1 1];
-lporder.help    = {'Specify the low-pass filter order.'};
-
-enable_lp        = cfg_branch;
-enable_lp.name   = 'Enable';
-enable_lp.tag    = 'enable';
-enable_lp.val    = {lpfreq, lporder};
-enable_lp.help   = {''};
-
-lowpass        = cfg_choice;
-lowpass.name   = 'Low-Pass Filter';
-lowpass.tag    = 'lowpass';
-lowpass.val    = {enable_lp};
-lowpass.values = {enable_lp, disable};
-lowpass.help   = {''};
-
-% High pass
-hpfreq         = cfg_entry;
-hpfreq.name    = 'Cutoff Frequency';
-hpfreq.tag     = 'freq';
-hpfreq.strtype = 'r';
-if isfield(settings.dcm{1,1}.filter,'hpfreq')
-    hpfreq.val = {settings.dcm{1,1}.filter.hpfreq};
-end
-hpfreq.num     = [1 1];
-hpfreq.help    = {'Specify the high-pass filter cutoff in Hz.'};
-
-hporder         = cfg_entry;
-hporder.name    = 'Filter Order';
-hporder.tag     = 'order';
-hporder.strtype = 'i';
-if isfield(settings.dcm{1,1}.filter,'hporder')
-    hporder.val = {settings.dcm{1,1}.filter.hporder};
-end
-hporder.num     = [1 1];
-hporder.help    = {'Specify the high-pass filter order.'};
-
-enable_hp        = cfg_branch;
-enable_hp.name   = 'Enable';
-enable_hp.tag    = 'enable';
-enable_hp.val    = {hpfreq, hporder};
-enable_hp.help   = {''};
-
-highpass        = cfg_choice;
-highpass.name   = 'High-Pass Filter';
-highpass.tag    = 'highpass';
-highpass.val    = {enable_hp};
-highpass.values = {enable_hp, disable};
-highpass.help   = {''};
-
-% Sampling rate
-down         = cfg_entry;
-down.name    = 'New Sampling Rate';
-down.tag     = 'down';
-down.strtype = 'r';
-if isfield(settings.dcm{1,1}.filter,'down')
-    down.val = {settings.dcm{1,1}.filter.down};
-end
-down.num     = [1 1];
-down.help    = {'Specify the sampling rate in Hz to down sample SCR data. Enter NaN to leave the sampling rate unchanged.'};
-
-% Filter direction
-direction         = cfg_menu;
-direction.name    = 'Filter Direction';
-direction.tag     = 'direction';
-direction.val     = {'bi'};
-direction.labels  = {'Unidirectional', 'Bidirectional'};
-direction.values  = {'uni', 'bi'};
-direction.help    = {['A unidirectional filter is applied twice in the forward direction. ' ...
-    'A ''bidirectional'' filter is applied once in the forward direction and once in the ' ...
-    'backward direction to correct the temporal shift due to filtering in forward direction.']};
-
-filter_edit        = cfg_branch;
-filter_edit.name   = 'Edit Settings';
-filter_edit.tag    = 'edit';
-filter_edit.val    = {lowpass, highpass, down, direction};
-filter_edit.help   = {'Create your own filter (discouraged).'};
-
-filter_def        = cfg_const;
-filter_def.name   = 'Default';
-filter_def.tag    = 'def';
-filter_def.val    = {0};
-filter_def.help   = {['Standard settings for the Butterworth bandpass filter. These are the optimal ' ...
-    'settings from the paper by Staib, Castegnetti & Bach (2015).']};
-
-filter        = cfg_choice;
-filter.name   = 'Filter Settings';
-filter.tag    = 'filter';
-filter.val    = {filter_def};
-filter.values = {filter_def, filter_edit};
-filter.help   = {'Specify how you want filter the SCR data.'};
-
 substhresh          = cfg_entry;
 substhresh.name     = 'Subsession threshold';
 substhresh.tag      = 'substhresh';
@@ -567,9 +404,9 @@ disp_options.help    = {''};
 dcm      = cfg_exbranch;
 dcm.name = 'Non-Linear Model';
 dcm.tag  = 'dcm';
-dcm.val  = {modelfile, outdir, chan, session_rep, data_options, resp_options, inv_options, disp_options};
+dcm.val  = {modelfile, chan, session_rep, data_options, resp_options, inv_options, disp_options};
 dcm.prog = @pspm_cfg_run_dcm;
-dcm.vout = @pspm_cfg_vout_dcm;
+dcm.vout = @pspm_cfg_vout_modelfile;
 dcm.help = {['Non-linear models for SCR are powerful if response timing is not precisely known and has to be ' ...
     'estimated. A typical example are anticipatory SCR in fear conditioning � they must occur at some point ' ...
     'within a time-window of several seconds duration, but that time point may vary over trials. Dynamic ' ...
@@ -581,12 +418,6 @@ dcm.help = {['Non-linear models for SCR are powerful if response timing is not p
     'Bach, Daunizeau et al. (2010) Biological Psychology (Model development)', '', ...
     'Staib et al. (2015) Journal of Neuroscience Methods (Optimising a model-based approach)'};
 
-function vout = pspm_cfg_vout_dcm(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
 
 function [sts, val] = pspm_cfg_dcm_check_conditions(val)
 sts = [];

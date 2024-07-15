@@ -1,26 +1,14 @@
 function ecg_editor = pspm_cfg_ecg_editor
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+ecg_chan         = pspm_cfg_selector_channel('ECG');
+hb_chan         =  pspm_cfg_selector_channel('Heart beat');
 
-% $Id$
-% $Rev$
-
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-
-%% Data file
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 Inf];
-%datafile.filter  = '\.(mat|MAT)$';
-datafile.help    = {'Specify the PsPM datafile containing the ECG data',...
-                    ' ',settings.datafilehelp};
-
-%% ecg chan
-ecg_chan         = pspm_cfg_channel_selector('ECG');
-
-%% hb chan
-hb_chan         =  pspm_cfg_channel_selector('Heart beat');
+%% Specific items
+ecg_chan.name         = 'ECG channel';
+ecg_chan.tag          = 'ecg_chan';
+hb_chan.name          = 'Heart beat channel';
+hb_chan.tag           = 'hb_chan';
 
 %% artefact none
 artefact_none         = cfg_const;
