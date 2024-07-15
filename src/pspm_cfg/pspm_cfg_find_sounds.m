@@ -1,5 +1,5 @@
-function [find_sounds] = pspm_cfg_find_sounds(job)
-% function [find_sounds] = pspm_cfg_find_sounds(job)
+function [find_sounds] = pspm_cfg_find_sounds
+% function [find_sounds] = pspm_cfg_find_sounds
 %
 % Matlabbatch function specifies the pspm_cfg_find_sounds.
 %
@@ -7,23 +7,11 @@ function [find_sounds] = pspm_cfg_find_sounds(job)
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
 
-% $Id: pspm_cfg_find_sounds.m 626 2019-02-20 16:14:40Z lciernik $
-% $Rev: 626 $
-
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-
-%% Select file / datafile
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 Inf];
-datafile.help    = {['Specify the PsPM datafile containing the imported ', ...
-    'startle sound data.'],' ',settings.datafilehelp };
-
-%% Channel
-chan         = pspm_cfg_channel_selector('sound');
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+chan             = pspm_cfg_selector_channel('sound');
+chan_action      = pspm_cfg_selector_channel_action;
+marker_chan      = pspm_cfg_selector_channel('marker');
 
 %% Threshold
 threshold            = cfg_entry;
@@ -57,7 +45,6 @@ roi.val             = {whole};
 roi.values          = {whole, region};
 roi.help            = {['Region of interest for discovering sounds. ', ...
     'Only sounds between the 2 timestamps will be considered.']};
-
 
 %% Text only
 text_only       = cfg_const;
@@ -104,12 +91,9 @@ new_corrected_chan.name    = 'Output specific sounds only';
 new_corrected_chan.tag     = 'create_corrected_chan';
 new_corrected_chan.val     = {no};
 new_corrected_chan.values  = {no, yes};
-new_corrected_chan.help    = {['By default, all sounds are outputted. Choose ''yes'' here to create new data channel which contains ', ...
-    'only marker onsets which could have been assigned to a ', ...
+new_corrected_chan.help    = {['By default, all sounds are written to the new channel. Choose ''yes'' here to write ', ...
+    'only marker onsets that could be assigned to a ', ...
     'marker in the specified marker channel.']};
-
-%% Marker channel
-marker_chan         = pspm_cfg_channel_selector('marker');
 
 %% Max delay
 max_delay        = cfg_entry;
@@ -159,35 +143,17 @@ diagnostic.values = {diag_yes, no};
 diagnostic.help   = {['Analyze delays between existing marker channel ', ...
     'and detected sound onsets.']};
 
-%% Channel action
-chan_action         = cfg_menu;
-chan_action.name    = 'Channel action';
-chan_action.tag     = 'channel_action';
-chan_action.val     = {'add'};
-chan_action.values  = {'add', 'replace'};
-chan_action.labels  = {'add', 'replace'};
-chan_action.help    = {['Add will append the new marker channel as ', ...
-    'additional channel to the specified PsPM file. Replace will ', ...
-    'overwrite the last marker channel of the PsPM file ', ...
-    '(be careful with reference markers).']};
 
 %% Executable branch
 find_sounds      = cfg_exbranch;
 find_sounds.name = 'Find startle sound onsets';
 find_sounds.tag  = 'find_sounds';
-find_sounds.val  = {datafile, chan, threshold, roi, diagnostic, chan_action};
+find_sounds.val  = {datafile, chan, chan_action, threshold, roi, diagnostic};
 find_sounds.prog = @pspm_cfg_run_find_sounds;
-find_sounds.vout = @pspm_cfg_vout_find_sounds;
+find_sounds.vout = @pspm_cfg_vout_outchannel;
 find_sounds.help = {['Translate continuous sound data into an event marker ', ...
     'channel. The function adds a new marker channel to the given data ', ...
     'file containing the sound data and returns the added channel number. ', ...
     'The option threshold, passed in percent to the maximum amplitude of ', ...
     'the sound data, allows to specify the minimum amplitude of a sound ', ...
     'to be accepted as an event.']};
-
-function vout = pspm_cfg_vout_find_sounds(job)
-vout = cfg_dep;
-vout.sname      = 'Output Channel';
-% this can be entered into any entry
-vout.tgt_spec   = cfg_findspec({{'class','cfg_entry'}, {'strtype', 'i'}});
-vout.src_output = substruct('()',{':'});

@@ -1,21 +1,11 @@
 function trim = pspm_cfg_trim
 
-% $Id$
-% $Rev$
+%% Standard items
+datafile         = pspm_cfg_selector_datafile;
+channel          = pspm_cfg_selector_channel('marker');
+overwrite        = pspm_cfg_selector_overwrite;
 
-% Initialise
-global settings
-if isempty(settings), pspm_init; end
-
-%% Select file
-datafile         = cfg_files;
-datafile.name    = 'Data File';
-datafile.tag     = 'datafile';
-datafile.num     = [1 1];
-datafile.help    = {'Select datafile.',' ',settings.datafilehelp};
-
-%% Marker channel number
-mrk_chan = pspm_cfg_channel_selector('marker');
+%% Specific items
 
 %% Items for reference: File
 file_from         = cfg_entry;
@@ -145,20 +135,20 @@ ref_file.help    = {'Trim from xx seconds after file start to xx seconds after f
 ref_fl_mrk         = cfg_branch;
 ref_fl_mrk.name    = 'First/Last Marker';
 ref_fl_mrk.tag     = 'ref_mrk';
-ref_fl_mrk.val     = {fl_mrk_from,fl_mrk_to,mrk_chan};
+ref_fl_mrk.val     = {fl_mrk_from,fl_mrk_to,channel};
 ref_fl_mrk.help    = {'Trim from xx seconds after first marker to xx seconds after last marker.'};
 
 ref_any_mrk         = cfg_branch;
 ref_any_mrk.name    = 'Any Marker';
 ref_any_mrk.tag     = 'ref_any_mrk';
-ref_any_mrk.val     = {ref_any_mrk_from,ref_any_mrk_to,mrk_chan};
+ref_any_mrk.val     = {ref_any_mrk_from,ref_any_mrk_to,channel};
 ref_any_mrk.help    = {['Trim from xx seconds after any marker of your choice to xx ' ...
     'seconds after any marker of your choice.']};
 
 ref_mrk_vals         = cfg_branch;
 ref_mrk_vals.name    = 'Marker according to values or names';
 ref_mrk_vals.tag     = 'ref_mrk_vals';
-ref_mrk_vals.val     = {ref_mrk_vals_from,ref_mrk_vals_to,mrk_chan};
+ref_mrk_vals.val     = {ref_mrk_vals_from,ref_mrk_vals_to,channel};
 ref_mrk_vals.help    = {['Trim from xx seconds after first marker with value or name yy  to xx ' ...
     'seconds after first marker of value or name zz.']};
 %% Reference Choice
@@ -171,32 +161,15 @@ ref.help    = {['Choose your reference for trimming: file start, first/last mark
     ' All trimming is defined in seconds after this reference ' ...
     '- choose negative values if you want to trim before the reference.']};
 
-%% Overwrite file
-overwrite         = cfg_menu;
-overwrite.name    = 'Overwrite Existing File';
-overwrite.tag     = 'overwrite';
-overwrite.val     = {false};
-overwrite.labels  = {'No', 'Yes'};
-overwrite.values  = {false, true};
-overwrite.help    = {'Overwrite if a file with the same name has existed?'};
-
 %% Executable branch
 trim      = cfg_exbranch;
 trim.name = 'Trim';
 trim.tag  = 'trim';
 trim.val  = {datafile,ref,overwrite};
 trim.prog = @pspm_cfg_run_trim;
-trim.vout = @pspm_cfg_vout_trim;
+trim.vout = @pspm_cfg_vout_outfile;
 trim.help = {['Trim away unnessecary data, for example before an experiment started, ' ...
     'or after it ended. Trim points can be defined in seconds with respect to start of ' ...
     'the data file, in seconds with respect to first and last marker (if markers exist), ' ...
     'or in seconds with respect to a user-defined marker. The resulting data will be written ' ...
     'to a new file, prepended with ''t''.']};
-
-function vout = pspm_cfg_vout_trim(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any file selector
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});
-

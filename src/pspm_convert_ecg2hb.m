@@ -149,7 +149,7 @@ pt_debug=[];
 
 %% get data
 [nsts, data] = pspm_load_channel(fn, options.channel, 'ecg');
-if nsts == -1, return; end
+if nsts < 1, return; end
 
 % =========================================================================
 % Pan Tompkins QRS detection

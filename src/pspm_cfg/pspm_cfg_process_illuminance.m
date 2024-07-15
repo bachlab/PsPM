@@ -5,19 +5,20 @@ function [prod_illu] = pspm_cfg_process_illuminance(~)
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
 %   Updated in 2024 by Teddy
-%% Initialise
-global settings
-if isempty(settings), pspm_init; end
+
+%% Standard items
+output                 = pspm_cfg_selector_outputfile('Nuisance regressors');
+
 %% Select file
 lum_file        = cfg_files;
 lum_file.name   = 'Illuminance file';
+lum_file.filter  = '.*\.(mat|MAT)$';
 lum_file.tag    = 'lum_file';
-lum_file.num    = [1 Inf];
+lum_file.num    = [1 1];
 lum_file.help   = {['Select a file that contains illuminance data. ', ...
                     'The file should contain a variable ''Lx'' ', ...
                     'which should be an n x 1 numeric ', ...
-                    'vector containing the illuminance values. '], ...
-                    settings.datafilehelp};
+                    'vector containing the illuminance values. ']};
 %% Sample rate
 sr              = cfg_entry;
 sr.name         = 'Sample rate';
@@ -86,37 +87,14 @@ bf.name         = 'Basis function options';
 bf.tag          = 'bf';
 bf.val          = {duration, offset, dilation, constrict};
 bf.help         = {'Specify options for the basis functions.'};
-%% Outdir
-outdir          = cfg_files;
-outdir.name     = 'Output directory';
-outdir.tag      = 'outdir';
-outdir.help     = {['Specify the directory where the .mat file with ', ...
-                    'the resulting nuisance data will be written.']};
-outdir.filter   = 'dir';
-outdir.num      = [1 1];
-%% Filename
-fn              = cfg_entry;
-fn.name         = 'Filename for output';
-fn.tag          = 'filename';
-fn.help         = {'Specify the name for the resulting nuisance file.'};
-fn.num          = [1 Inf];
-fn.strtype      = 's';
-%% Overwrite file
-overwrite       = cfg_menu;
-overwrite.name  = 'Overwrite existing file';
-overwrite.tag   = 'overwrite';
-overwrite.val   = {false};
-overwrite.labels= {'No', 'Yes'};
-overwrite.values= {0, 1};
-overwrite.help  = {['Choose "yes" if you want to overwrite existing ', ...
-                    'file(s) with the same name.']};
+
 %% Executable branch
 prod_illu       = cfg_exbranch;
 prod_illu.name  = 'Prepare illuminance GLM';
 prod_illu.tag   = 'process_illuminance';
-prod_illu.val   = {lum_file, sr, bf, outdir, fn, overwrite};
+prod_illu.val   = {lum_file, sr, bf, output};
 prod_illu.prog  = @pspm_cfg_run_proc_illuminance;
-prod_illu.vout  = @pspm_cfg_vout_proc_illuminance;
+prod_illu.vout  = @pspm_cfg_vout_outfile;
 prod_illu.help  = {['Transform an illuminance time series into ', ...
                     'a convolved pupil response time series to ', ...
                     'be used as nuisance file in a GLM. This ', ...
@@ -140,9 +118,3 @@ prod_illu.help  = {['Transform an illuminance time series into ', ...
                     '> Data processing > Pupil & Eyetracking.'], ...
                     'References', ...
                     'Korn & Bach (2016) Journal of Vision'};
-function vout = pspm_cfg_vout_proc_illuminance(~)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-% this can be entered into any entry
-vout.tgt_spec   = cfg_findspec({{'class','cfg_files'}});
-vout.src_output = substruct('()',{':'});

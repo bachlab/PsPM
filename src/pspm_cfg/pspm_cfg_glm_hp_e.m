@@ -1,9 +1,6 @@
 function glm_hp_e = pspm_cfg_glm_hp_e
 % GLM
 
-% $Id$
-% $Rev$
-
 % Initialise
 global settings
 if isempty(settings), pspm_init; end;

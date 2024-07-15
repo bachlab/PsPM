@@ -4,15 +4,7 @@ global settings
 if isempty(settings), pspm_init; end
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
-datafiles = job.datatype.(datatype).datafile;
-switch class(datafiles)
-  case 'cell'
-    datafile = datafiles{1};
-  case 'char'
-    datafile = datafiles;
-  otherwise
-    warning('ID:invalid_input', 'The input datafile should be a single file.');
-end
+datafile = job.datatype.(datatype).datafile{1};
 % Import
 n = size(job.datatype.(datatype).importtype,2); % Nr. of channels
 % Check if multioption is off
@@ -98,7 +90,4 @@ for i = 1:n
 end
 options = struct();
 options = pspm_update_struct(options, job, 'overwrite');
-
-
-
-[~, out] = pspm_import(datafile, datatype, import, options);
+[sts, out] = pspm_import(datafile, datatype, import, options);

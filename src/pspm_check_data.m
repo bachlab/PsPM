@@ -24,15 +24,8 @@ end
 % check infos
 if nargin > 1
     flag_infos = 0;
-    if isempty(fieldnames(infos))
-        flag_infos = 1;
-    else
-        if ~isfield(infos, 'duration')
-            flag_infos = 1;
-        end
-    end
-    if flag_infos
-        warning('ID:invalid_data_structure', 'Input data does not have sufficient infos');
+    if ~isstruct(infos) || isempty(fieldnames(infos)) || ~isfield(infos, 'duration')
+        warning('ID:invalid_data_structure', 'Invalid infos structure.');
         return
     end
 else

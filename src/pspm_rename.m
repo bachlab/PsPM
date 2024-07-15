@@ -1,8 +1,8 @@
-function [sts, newfilename] = pspm_ren(filename, newfilename, options)
+function [sts, outfile] = pspm_rename(filename, newfilename, options)
 % ● Description
 %   pspm_ren renames an SCR datafile and updates the infos field
 % ● Format
-%   [sts, newfilename] = pspm_ren(filename, newfilename)
+%   [sts, newfilename] = pspm_ren(filename, newfilename, options)
 % ● Arguments
 %      filename: name of an existing PsPM file
 %   newfilename: new name of the PsPM file
@@ -22,6 +22,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+outfile = [];
 
 if nargin < 2 || ~ischar(newfilename)
   warning('ID:invalid_input', 'No new filename given.');
@@ -30,7 +31,7 @@ elseif nargin < 3
     options = struct();
 end
 
-options = pspm_options(options, 'ren');
+options = pspm_options(options, 'rename');
 if options.invalid
   return
 end
@@ -57,4 +58,4 @@ if sts < 1
     return
 end
 delete(filename);
-newfilename = fnfn;
+outfile = fnfn;
