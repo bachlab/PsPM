@@ -9,16 +9,27 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-fs = filesep;
-if settings.scrpath, rmpath(settings.path), end;
-if any(contains(settings.path, 'VBA'))
-  rmpath(pspm_path('ext','VBA'));
-  rmpath(pspm_path('ext','VBA','subfunctions'));
-  rmpath(pspm_path('ext','VBA','stats&plots'));
+
+% Remove paths added during pspm_init
+if isfield(settings, 'added_paths') && ~isempty(settings.added_paths)
+   cellfun(@rmpath, settings.added_paths);
+   settings = rmfield(settings, 'added_paths');
 end
+
+
+if settings.scrpath, rmpath(settings.path), end
+
+% Add paths deleted during pspm_init
+if isfield(settings, 'removed_paths') && ~isempty(settings.removed_paths)
+   cellfun(@addpath, settings.removed_paths);
+   settings = rmfield(settings, 'removed_paths');
+end
+
+
 if isfile(fullfile(settings.path,'pspm_text.mat'))
   delete(fullfile(settings.path,'pspm_text.mat'))
 end
+
 clear settings
 close all
 disp(' ');
