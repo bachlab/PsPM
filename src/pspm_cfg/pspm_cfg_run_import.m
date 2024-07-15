@@ -1,5 +1,7 @@
-function [out,datafiles, datatype, import, options] = pspm_cfg_run_import(job)
+function [out,datafile, datatype, import, options] = pspm_cfg_run_import(job)
 % Updated on 08-01-2024 by Teddy
+global settings
+if isempty(settings), pspm_init; end
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
 datafile = job.datatype.(datatype).datafile{1};
@@ -74,6 +76,9 @@ for i = 1:n
     if isfield(job.datatype.(datatype), 'smi_target_unit')
       import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
       import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
+    end
+    if isfield(job.datatype, 'acq_any')
+        settings.python_path = job.datatype.(datatype).Bioread.pypath{1};
     end
     import{i} = pspm_update_struct(import{i}, ...
                                    job.datatype.(datatype), ...

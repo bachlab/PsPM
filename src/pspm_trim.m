@@ -327,17 +327,21 @@ clear savedata
 if ~isempty(options.missing)
     [lsts, epochs] = pspm_get_timing('epochs', options.missing, 'seconds');
     if lsts < 1, return; end
-    index = epochs(:, 2) < sta_time | ...
-            epochs(:, 1) > sto_time | ...
-            epochs(:, 1) > infos.duration;
-    epochs(index, :) = [];
-    epochs = epochs - sta_time;
     if ~isempty(epochs)
-        epochs(1, 1) = max([0, epochs(1, 1)]);
-        epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
+        index = epochs(:, 2) < sta_time | ...
+                epochs(:, 1) > sto_time | ...
+                epochs(:, 1) > infos.duration;
+        epochs(index, :) = [];
+        epochs = epochs - sta_time;
+        if ~isempty(epochs)
+            epochs(1, 1) = max([0, epochs(1, 1)]);
+            epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
+        end
+        lsts = pspm_get_timing('epochs', epochs, 'seconds');
+        if lsts < 1, return; end
+    else
+        % do nothing and keep the empty epochs array
     end
-    lsts = pspm_get_timing('epochs', epochs, 'seconds');
-    if lsts < 1, return; end
     [pth, fn, ext] = fileparts(options.missing);
     newepochfile = fullfile(pth, ['t', fn, ext]);
     save(newepochfile, 'epochs');

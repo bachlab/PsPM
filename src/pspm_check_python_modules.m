@@ -1,4 +1,4 @@
-function [sts, moduleNames] = pspm_check_python_modules(module)
+function [sts, moduleNames] = pspm_check_python_modules(module, varargin)
     % ● Description
     %   pspm_check_python_modules Returns a list of currently imported Python modules in MATLAB.
     %
@@ -13,6 +13,15 @@ function [sts, moduleNames] = pspm_check_python_modules(module)
     sts = 0;
     moduleNames = {};
 
+    if nargin > 1
+        pe = pyenv();
+        if strcmp(pe.Status, 'Loaded')
+            warning(append('The specified python path is not used since Python environment, ', pe.Executable, ', has already been set up within the current matlab session. \n'));
+        else
+            pyenv(Version=varargin{1});
+        end
+    end
+    
     try
         % Ensure Python is correctly set up in MATLAB
         pe = pyenv();

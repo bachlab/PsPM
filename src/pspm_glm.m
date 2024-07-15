@@ -143,28 +143,31 @@ function [sts, glm] = pspm_glm(model, options)
 %       Castegnetti G, Tzovara A, Staib M, Paulus PC, Hofer N, & Bach DR 
 %       (2016). Modelling fear-conditioned bradycardia in humans. 
 %       Psychophysiology, 53, 930-939.
+%   [9] GLM for reward-conditioned bradycardia:
+%       Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (under review). Measuring 
+%       human Pavlovian appetitive conditioning and memory retention. 
 %   
 %   Respiration analysis
 %   --------------------
-%   [9] GLM for evoked respiratory responses:
+%  [10] GLM for evoked respiratory responses:
 %       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model 
 %       for event-related respiration responses. Journal of Neuroscience 
 %       Methods, 270, 174-155.
-%  [10] GLM for fear-conditioned respiration amplitude responses
+%  [11] GLM for fear-conditioned respiration amplitude responses
 %       Castegnetti G, Tzovara A, Staib M, Gerster S, Bach DR (2017). 
 %       Assessing fear learning via conditioned respiratory amplitude 
 %       responses. Psychophysiology, 54, 215-223.
 %   
 %   Startle eye-blink analysis
 %   --------------------------
-%  [11] GLM for startle eye-blink responses: 
+%  [12] GLM for startle eye-blink responses: 
 %       Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
 %       Modeling Startle Eyeblink Electromyogram to Assess
 %       Fear Learning. Psychophysiology
 %
 %   Eye gaze analysis
 %   -----------------
-%  [12] GLM for saccadic scanpath speed
+%  [13] GLM for saccadic scanpath speed
 %       Xia Y, Melinščak F,  Bach DR (2020). Saccadic scanpath length: an 
 %       index for human threat conditioning. Behavior Research Methods, 53, 
 %       1426-1439.
