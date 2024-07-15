@@ -16,8 +16,13 @@ if isfield(settings, 'added_paths') && ~isempty(settings.added_paths)
 end
 settings = rmfield(settings, 'added_paths');
 
-fs = filesep;
-if settings.scrpath, rmpath(settings.path), end;
+if settings.scrpath, rmpath(settings.path), end
+
+% Add paths deleted during pspm_init
+if isfield(settings, 'removed_paths') && ~isempty(settings.removed_paths)
+   cellfun(@addpath, settings.removed_paths);
+end
+settings = rmfield(settings, 'removed_paths');
 
 if isfile(fullfile(settings.path,'pspm_text.mat'))
   delete(fullfile(settings.path,'pspm_text.mat'))
