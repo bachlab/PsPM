@@ -319,7 +319,7 @@ for datatype_i=1:length(fileoptions)
 
 
   %% ACQ related
-  acq_import_python          = pspm_cfg_python('Bioread', '3.0.1');
+  acq_import_python          = pspm_cfg_selector_python('Bioread', '3.0.1');
   acq_import_python.help     = {['Import Biopac Acqknowledge (ACQ) files with the python package "Bioread". ',...
                                   'Any ACQ version is supported.']};
   % Data File
