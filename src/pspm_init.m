@@ -32,7 +32,6 @@ global settings;
 if isempty(settings)
   settings = struct();
 end
-sts = 1;
 %% 1 license & user output
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
@@ -102,8 +101,7 @@ if flag_contain_subfolder
     cellfun(@(x) rmpath(x),subfolders(contained_subfolder_index),'UniformOutput',0);
     removed_paths = [removed_paths, subfolders(contained_subfolder_index)];
   else
-    msgbox("PsPM is not set up properly and will quit immediately.");
-    sts = -1;
+    error("PsPM cannot be started up with subfolder paths add in MATLAB.");
   end
 end
 % 2.7 Check whether Scralyze is on the path --
@@ -127,14 +125,12 @@ all_paths_spm = all_paths_spm(pspm_paths_idx);
 if ~isempty(all_paths_spm)
   if strcmp(questdlg(sprintf(warntext_spm_remove),...
       'Interference with SPM software',...
-      'Yes', 'No', 'No'), 'Yes') && sts == 1
+      'Yes', 'No', 'No'), 'Yes')
     cellfun(@(x) rmpath(x),all_paths_spm,'UniformOutput',0);
     removed_paths = [removed_paths, all_paths_spm];
   else
     % quit pspm_init
-    errmsg = warntext_spm_quit;
-    error(errmsg);
-    sts = -1;
+    error(warntext_spm_quit);
   end
 end
 % 2.8.3 Check whether SPM 8 is already on path --
@@ -951,10 +947,5 @@ settings.scrcfgpath       = scrcfgpath;
 settings.scrpath          = scrpath;
 settings.signal           = signal;
 settings.spmpath          = spmpath;
-
-if sts < 0
-  pspm_quit;
-  close all force;
-end
 
 return
