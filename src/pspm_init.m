@@ -32,6 +32,7 @@ global settings;
 if isempty(settings)
   settings = struct();
 end
+sts = 1;
 %% 1 license & user output
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
@@ -75,24 +76,35 @@ end
 % 2.5 Load PsPM text --
 p = path;
 fs = filesep;
-pth = fileparts(which('pspm_guide'));
+pth = fileparts(which('pspm.m'));
 pth = [pth, fs];
 pspm_text(pth);
 load(fullfile(pth,'pspm_text.mat'))
 % 2.6 Check if subfolders are already in path --
+% 2.6.1 Get all path
+all_paths = regexpi(p,';','split');
+if isscalar(all_paths)
+  all_paths = regexpi(p,':','split');
+end
 % 2.6.1 get subfolders
-current_path = fileparts(mfilename('fullpath'));
-folder_content = dir(current_path);
-is_folder = [folder_content(:).isdir];
-subfolders = {folder_content(is_folder).name}';
-subfolders(ismember(subfolders, {'.','..'})) = [];
-subfolders = regexprep(subfolders, '(.*)',...
-  [regexptranslate('escape', [current_path, filesep]) , '$1']);
-sp = textscan(path,'%s','delimiter',pathsep);
-mem = ~ismember(subfolders, sp{1});
-% 2.6.2 loaded subdirs which may cause trouble
-if numel(subfolders(mem)) == 0
-  warning(warntext_subfolder);
+filelist = dir(fullfile(fileparts(which('pspm')), ['**',filesep,'*.*']));
+subfolders_full = unique({filelist.folder});
+subfolders = erase(subfolders_full,pth);
+subfolders = subfolders(~strcmp(subfolders,fileparts(which('pspm.m'))));
+subfolders = subfolders(contains(subfolders,filesep));
+subfolders = append(pth,subfolders);
+contained_subfolder_index = ismember(subfolders,all_paths);
+flag_contain_subfolder = any(contained_subfolder_index);
+if flag_contain_subfolder
+  if strcmp(questdlg(sprintf(warntext_subfolder),...
+      'Subfolder detected',...
+      'Yes', 'No', 'Yes'), 'Yes')
+    cellfun(@(x) rmpath(x),subfolders(contained_subfolder_index),'UniformOutput',0);
+    removed_paths = [removed_paths, subfolders(contained_subfolder_index)];
+  else
+    msgbox("PsPM is not set up properly and will quit immediately.");
+    sts = -1;
+  end
 end
 % 2.7 Check whether Scralyze is on the path --
 if ~contains(p, pth)
@@ -107,14 +119,6 @@ end
 % Dialog Window open to ask whether to remove program from the path or quit pspm_init.
 % Default is to quit pspm_init.
 % 2.8.1 Determine if SPM exists in current path --
-all_paths = regexpi(p,';','split');
-if isscalar(all_paths)
-  all_paths = regexpi(p,':','split');
-end
-all_paths = regexpi(p,';','split');
-if isscalar(all_paths)
-  all_paths = regexpi(p,':','split');
-end
 spm_paths_idx = cell2mat(cellfun(@(x) isempty(regexpi(x,'\<spm')),all_paths,'UniformOutput',0));
 all_paths_spm = all_paths(~spm_paths_idx);
 pspm_paths_idx = cell2mat(cellfun(@(x) isempty(regexpi(x,'pspm')),all_paths_spm,'UniformOutput',0));
@@ -123,13 +127,14 @@ all_paths_spm = all_paths_spm(pspm_paths_idx);
 if ~isempty(all_paths_spm)
   if strcmp(questdlg(sprintf(warntext_spm_remove),...
       'Interference with SPM software',...
-      'Yes', 'No', 'No'), 'Yes')
+      'Yes', 'No', 'No'), 'Yes') && sts == 1
     cellfun(@(x) rmpath(x),all_paths_spm,'UniformOutput',0);
     removed_paths = [removed_paths, all_paths_spm];
   else
     % quit pspm_init
     errmsg = warntext_spm_quit;
     error(errmsg);
+    sts = -1;
   end
 end
 % 2.8.3 Check whether SPM 8 is already on path --
@@ -946,5 +951,10 @@ settings.scrcfgpath       = scrcfgpath;
 settings.scrpath          = scrpath;
 settings.signal           = signal;
 settings.spmpath          = spmpath;
+
+if sts < 0
+  pspm_quit;
+  close all force;
+end
 
 return

@@ -13,16 +13,18 @@ end
 % Remove paths added during pspm_init
 if isfield(settings, 'added_paths') && ~isempty(settings.added_paths)
    cellfun(@rmpath, settings.added_paths);
+   settings = rmfield(settings, 'added_paths');
 end
-settings = rmfield(settings, 'added_paths');
+
 
 if settings.scrpath, rmpath(settings.path), end
 
 % Add paths deleted during pspm_init
 if isfield(settings, 'removed_paths') && ~isempty(settings.removed_paths)
    cellfun(@addpath, settings.removed_paths);
+   settings = rmfield(settings, 'removed_paths');
 end
-settings = rmfield(settings, 'removed_paths');
+
 
 if isfile(fullfile(settings.path,'pspm_text.mat'))
   delete(fullfile(settings.path,'pspm_text.mat'))
