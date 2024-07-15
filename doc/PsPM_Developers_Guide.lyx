@@ -174,7 +174,7 @@ Introduction
 \end_layout
 
 \begin_layout Quote
-Contributed by Teddy Zhao in April 2023
+Contributed by Teddy Zhao in July 2024
 \end_layout
 
 \begin_layout Standard
@@ -187,9 +187,10 @@ PsychoPhysiological Modelling, abbreviated as PsPM, is a software package
  shell scripts.
  PsPM is actively updated and maintained by bringing new features and fixing
  bugs, thus the latest version of PsPM is always encouraged for users.
- The recommended version of MATLAB for running PsPM is MATLAB 2023a (version
- 9.14), and the earliest version of MATLAB that could be used for running
- PsPM is MATLAB 2006a (version 7.2).
+ The recommended version of MATLAB for running PsPM is MATLAB 2024a (version
+ 24), and the earliest version of MATLAB (https://uk.mathworks.com/support/require
+ments/previous-releases.html) that could be used for running PsPM version
+ 7.0 is MATLAB 2019a (version 9.6).
 \end_layout
 
 \begin_layout Section
@@ -1640,11 +1641,94 @@ rate_below_minimum
 \end_layout
 
 \begin_layout Section
-List of data formats
+Help text
 \end_layout
 
 \begin_layout Subsection
-Supported Channel types
+GUI and warning messages
+\end_layout
+
+\begin_layout Standard
+The function 
+\family typewriter
+pspm_text
+\family default
+ handles the text of warning messages in PsPM.
+ Any help text that is used in PsPM is encouraged to be written in 
+\family typewriter
+pspm_text
+\family default
+ and called when it is to be displayed.
+ This is to help make GUI help text and warning messages consistent throughout
+ PsPM.
+ When PsPM is started, the function 
+\family typewriter
+pspm_text
+\family default
+ will create a file 
+\family typewriter
+pspm_text.mat
+\family default
+ that contains such text.
+ When the GUI or other places of PsPM require displaying such text, PsPM
+ will read text from this 
+\family typewriter
+pspm_text.mat
+\family default
+ and then display text at the corresponding places.
+ When PsPM quits, the file 
+\family typewriter
+pspm_text.mat
+\family default
+ will be deleted.
+\end_layout
+
+\begin_layout Subsection
+Functions
+\end_layout
+
+\begin_layout Standard
+The function 
+\family typewriter
+pspm_help
+\family default
+ handles reading and managing help text in PsPM source code.
+ The recommended structure of help text in a function is
+\end_layout
+
+\begin_layout Enumerate
+Description
+\end_layout
+
+\begin_layout Enumerate
+Format
+\end_layout
+
+\begin_layout Enumerate
+Arguments
+\end_layout
+
+\begin_layout Enumerate
+Developer's notes (optional)
+\end_layout
+
+\begin_layout Enumerate
+Version history
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Data formats
+\end_layout
+
+\begin_layout Subsection
+Supported channel types
 \end_layout
 
 \begin_layout Standard
@@ -1652,22 +1736,22 @@ Supported Channel types
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="22" columns="13">
-<features booktabs="true" tabularvalignment="middle">
-<column alignment="center" valignment="top" width="3.6cm">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<features booktabs="true" islongtable="true" longtabularalignment="center">
+<column alignment="center" valignment="top" width="30text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
+<column alignment="center" valignment="top" width="3text%">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1676,7 +1760,7 @@ Data format
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1685,7 +1769,7 @@ SCR
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1694,7 +1778,7 @@ ECG
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1703,7 +1787,7 @@ Heart Rate
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1712,7 +1796,7 @@ Heart Beat
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1721,7 +1805,7 @@ Heart Period
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1730,7 +1814,7 @@ Respiration
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1739,7 +1823,7 @@ Pupil Size
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1748,7 +1832,7 @@ Marker
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1757,7 +1841,7 @@ Custom
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1766,7 +1850,7 @@ Sound channel
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1775,7 +1859,7 @@ Pulse oxymeter
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2147,11 +2231,38 @@ Text
 \begin_inset Text
 
 \begin_layout Plain Layout
-Biopach AcqKnowledge (
-\begin_inset Formula $\leq$
+Biopach AcqKnowledge 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Biopach Acqknowledge is supported by both PsPM's internal importing function
+ and the python package 
+\begin_inset Quotes eld
 \end_inset
 
- v3.9.0)
+Bioread
+\begin_inset Quotes erd
+\end_inset
+
+.
+ However, only Biopach AcqKnowledge that is of a version no later than version
+ 3.9.0 is supported by PsPM's internal function.
+ Any version of Biopach AcqKnowledge is supported by the python package
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Bioread
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ 
 \end_layout
 
 \end_inset
@@ -6184,7 +6295,7 @@ By selecting PsPM the desired action can be selected (at the moment, there
 \end_layout
 
 \begin_layout Subsubsection
-Example Function: Trim
+Example function: Trim
 \end_layout
 
 \begin_layout Standard
@@ -6894,7 +7005,7 @@ pspm_cfg_run_functionname.m
 \end_layout
 
 \begin_layout Subsection
-Python Support
+Python support
 \end_layout
 
 \begin_layout Standard
@@ -7090,7 +7201,7 @@ wheel==0.41.3
 \end_layout
 
 \begin_layout Subsection
-GUI Development Progress
+GUI development progress
 \end_layout
 
 \begin_layout Standard
@@ -7203,7 +7314,7 @@ The new GUI is currently using the colour
 \end_layout
 
 \begin_layout Section
-Test Environment
+Test environment
 \end_layout
 
 \begin_layout Quote
@@ -27056,7 +27167,7 @@ pspm_check_python_modules
 \end_layout
 
 \begin_layout Section
-External Functions and Tools
+External functions and tools
 \end_layout
 
 \begin_layout Subsection
@@ -27137,7 +27248,7 @@ VBA_NLStateSpaceModel.m Added resetting warning to preceeding state.
 \end_layout
 
 \begin_layout Section
-GitHub Actions
+GitHub actions
 \end_layout
 
 \begin_layout Quote
@@ -27696,7 +27807,7 @@ Now the script should be running ok.
 \end_layout
 
 \begin_layout Section
-List of Functions
+List of functions
 \end_layout
 
 \begin_layout Standard
