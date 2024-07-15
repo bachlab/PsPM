@@ -101,7 +101,7 @@ if flag_contain_subfolder
     cellfun(@(x) rmpath(x),subfolders(contained_subfolder_index),'UniformOutput',0);
     removed_paths = [removed_paths, subfolders(contained_subfolder_index)];
   else
-    error("PsPM cannot be started up with subfolder paths add in MATLAB.");
+    error(errortext_subfolder);
   end
 end
 % 2.7 Check whether Scralyze is on the path --
@@ -130,7 +130,7 @@ if ~isempty(all_paths_spm)
     removed_paths = [removed_paths, all_paths_spm];
   else
     % quit pspm_init
-    error(warntext_spm_quit);
+    error(errortext_spm_quit);
   end
 end
 % 2.8.3 Check whether SPM 8 is already on path --
