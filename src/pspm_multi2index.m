@@ -4,9 +4,9 @@ function [sts, onsets, durations] = pspm_multi2index(timeunits, multi, sr, sessi
 %   cell array of numerical indices. This function is used by pspm_glm and
 %   pspm_extract_segments.
 % ● Format
-% [onsets, durations] = pspm_multi2index('samples', multi, sr_ratio, session_duration)
-% [onsets, durations] = pspm_multi2index('seconds', multi, sr, session_duration)
-% [onsets, durations] = pspm_multi2index('markers', multi, sr, session_duration, events)
+%   [onsets, durations] = pspm_multi2index('samples', multi, sr_ratio, session_duration)
+%   [onsets, durations] = pspm_multi2index('seconds', multi, sr, session_duration)
+%   [onsets, durations] = pspm_multi2index('markers', multi, sr, session_duration, events)
 % ● Arguments
 %           multi: multi structure from pspm_get_timing
 %             sr: sampling rate, or vector of sampling rates with the same 

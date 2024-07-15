@@ -1,13 +1,13 @@
 function [sts, moduleNames] = pspm_check_python_modules(module, varargin)
-    % ● Description
-    %   pspm_check_python_modules Returns a list of currently imported Python modules in MATLAB.
-    %
-    %   This function retrieves and returns the names of Python modules that have been imported
-    %   into the current MATLAB session. If a module name is provided as
-    %   argument, will try to load this module of not already loaded
-    %
-    % ● History
-    %   Written in 2024 by Dominik R Bach (Uni Bonn)
+% ● Description
+%   pspm_check_python_modules Returns a list of currently imported Python modules in MATLAB.
+%
+%   This function retrieves and returns the names of Python modules that have been imported
+%   into the current MATLAB session. If a module name is provided as
+%   argument, will try to load this module of not already loaded
+%
+% ● History
+%   Written in 2024 by Dominik R Bach (Uni Bonn)
 
     % Initialize return variables
     sts = 0;

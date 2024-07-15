@@ -45,8 +45,7 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %                       fields .data and .infos if data file is a struct)
 %         newepochfile: missing epoch filename for the individual
 %                       sessions (empty if options.missing not specified)
-
-% ● Version
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy
@@ -320,17 +319,21 @@ clear savedata
 if ~isempty(options.missing)
     [lsts, epochs] = pspm_get_timing('epochs', options.missing, 'seconds');
     if lsts < 1, return; end
-    index = epochs(:, 2) < sta_time | ...
-            epochs(:, 1) > sto_time | ...
-            epochs(:, 1) > infos.duration;
-    epochs(index, :) = [];
-    epochs = epochs - sta_time;
     if ~isempty(epochs)
-        epochs(1, 1) = max([0, epochs(1, 1)]);
-        epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
+        index = epochs(:, 2) < sta_time | ...
+                epochs(:, 1) > sto_time | ...
+                epochs(:, 1) > infos.duration;
+        epochs(index, :) = [];
+        epochs = epochs - sta_time;
+        if ~isempty(epochs)
+            epochs(1, 1) = max([0, epochs(1, 1)]);
+            epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
+        end
+        lsts = pspm_get_timing('epochs', epochs, 'seconds');
+        if lsts < 1, return; end
+    else
+        % do nothing and keep the empty epochs array
     end
-    lsts = pspm_get_timing('epochs', epochs, 'seconds');
-    if lsts < 1, return; end
     [pth, fn, ext] = fileparts(options.missing);
     newepochfile = fullfile(pth, ['t', fn, ext]);
     save(newepochfile, 'epochs');

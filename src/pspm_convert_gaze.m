@@ -28,7 +28,6 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 %   │                 Default is 'gaze'.
 %   └.channel_action: Channel action for sps data, add / replace existing sps
 %                     data (default: add)
-%
 % ● Output
 %      channel_index: index of channel containing the processed data
 % ● History
