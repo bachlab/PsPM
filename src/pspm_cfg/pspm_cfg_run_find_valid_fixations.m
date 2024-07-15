@@ -32,23 +32,16 @@ else
     options.fixation_point = job.val_method.validation_settings.fixation_point.fixpoint_file{1};
   end
 end
+
 %% options
-options.missing = job.missing;
-options.channel = pspm_cfg_channel_selector('run', job.chan); 
-options.overwrite = job.output_settings.file_output.overwrite;
-options = pspm_update_struct(options, job.output_settings, {'channel_action', ...
+options.channel = pspm_cfg_selector_channel('run', job.chan); 
+options.channel_action = job.channel_action;
+options = pspm_update_struct(options, job.output_settings, {'missing', ...
                                                             'plot_gaze_coords'});
-if isfield(job.output_settings.file_output, 'new_file')
-  f_path = job.output_settings.file_output.new_file.file_path{1};
-  f_name = job.output_settings.file_output.new_file.file_name;
-  options.newfile = [f_path filesep f_name]; % this does not seem to be used at all?
-elseif job.output_settings.file_output.overwrite
-  options.newfile = '';
-end
 %% run
 if isfield(job.val_method,'bitmap_file')
-  [~, out{1}] = pspm_find_valid_fixations(fn, bitmap, options);
+  [~, out] = pspm_find_valid_fixations(fn, bitmap, options);
 else
-  [~, out{1}] = pspm_find_valid_fixations(fn, box_degree, ...
+  [~, out] = pspm_find_valid_fixations(fn, box_degree, ...
     distance, unit, options);
 end

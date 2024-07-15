@@ -73,7 +73,7 @@ if datatype(end), datatype(1:end) = 1; end
 
 %% get data
 [nsts, data, infos] = pspm_load_channel(fn, options.channel, 'resp');
-if nsts == -1, return; end
+if nsts < 1, return; end
 old_channeltype = data.header.chantype;
 
 resp = data.data;

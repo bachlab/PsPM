@@ -1,4 +1,4 @@
-function out = pspm_cfg_python(varargin)
+function out = pspm_cfg_selector_python(varargin)
 % ● Description
 %   pspm_cfg_python is a function that provides UI controls for
 %   python definition.
@@ -41,7 +41,7 @@ python_path_help_text = [{'Specify the path of python installation in the comput
                           {'https://www.mathworks.com/help/matlab/matlab_external/install-supported-python-implementation.html'}; ...
                           {'https://docs.python.org/3/installing/index.html'}];
 pspm_py_path          = cfg_files;
-pspm_py_path.name     = 'Path';
+pspm_py_path.name     = 'Python path';
 pspm_py_path.tag      = 'pypath';
 pspm_py_path.num      = [1 1];
 pspm_py_path.help     = python_path_help_text;

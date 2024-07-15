@@ -2,7 +2,7 @@ function [out] = pspm_cfg_run_pupil_correct(job)
 % Updated on 08-01-2024 by Teddy
 fn = job.datafile{1};
 options = struct();
-options.channel = pspm_cfg_channel_selector('run', job.chan);
+options.channel = pspm_cfg_selector_channel('run', job.chan);
 options.mode = fieldnames(job.mode);
 if strcmp(options.mode, 'auto')
   options = pspm_update_struct(options, job.mode.auto, 'C_z');

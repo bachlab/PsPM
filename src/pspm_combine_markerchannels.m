@@ -69,7 +69,7 @@ data(dropchannels) = [];
 data(end + 1) = newdata;
 sts = pspm_load_data(datafile, struct('data', {data}, ...
     'infos', infos, 'options', struct('overwrite', 1)));
-outchannel = numel(data) + 1;
+outchannel = numel(data);
 if sts < 1, return; end
 
 

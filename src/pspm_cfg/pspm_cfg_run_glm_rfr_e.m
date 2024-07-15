@@ -1,16 +1,17 @@
 function out = pspm_cfg_run_glm_rfr_e(job)
-% Updated on 08-01-2024 by Teddy
-global settings
-if isempty(settings), pspm_init; end;
+
+% initialise
+model = struct();
+options = struct();
+
+% initialise
+model = struct();
+options = struct();
+
 % set modality
-modality = 'rfr';
-modelspec = 'rfr_e';
-f = strcmpi({settings.glm.modelspec}, modelspec);
-def_filter = settings.glm(f).filter;
-params = pspm_cfg_run_glm(job, def_filter);
-% get parameters
-model = params.model;
-options = params.options;
+model.modality = 'rfr';
+model.modelspec = 'rfr_e';
+
 % basis function
 bf = fieldnames(job.bf);
 bf = bf{1};
@@ -18,11 +19,5 @@ model.bf.args = subsref(job.bf, struct('type', '.', 'subs', bf));
 model.bf.fhandle = str2func('pspm_bf_rfrrf_e');
 model.modality = modality;
 model.modelspec = modelspec;
-out = pspm_glm(model, options);
-if exist('out', 'var') && isfield(out, 'modelfile')
-  if ~iscell(out.modelfile)
-    out.modelfile ={out.modelfile};
-  end
-else
-  out(1).modelfile = cell(1);
-end
+
+out = pspm_cfg_run_glm(job, model, options);

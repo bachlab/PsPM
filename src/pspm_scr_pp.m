@@ -73,12 +73,16 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   │             A bool value to determine if detected baseline alteration
 %   │             will be included in the calculated clippings.
 %   │             Default: 0 (not to include baseline alteration in clippings)
+%   ├─.overwrite: [logical] (0 or 1)
+%   │             Define whether to overwrite existing missing epochs files 
+%   │             or not (default). Will only be used if
+%   │             options.missing_epochs_filename is specified.
 %   └.channel_action:
 %                 Accepted values: 'add'/'replace'
-%                 Defines whether the new channel should be added, the previous
-%                 outputs of this function should be replaced, or new data
-%                 should be withdrawn. Default: 'add'. Will not be used if
-%                 options.missing_epochs_filename is specified.
+%                 Defines whether the new channel should be added or the previous
+%                 outputs of this function should be replaced. Default: 'add'. 
+%                 Will not be used if options.missing_epochs_filename is 
+%                 specified.
 % ● Outputs
 % ● Output
 %      channel_index: index of channel containing the processed data
@@ -192,17 +196,24 @@ end
 %% Save data
 if ~isempty(options.missing_epochs_filename)
     % Write epochs to mat if missing_epochs_filename option is present
-    save(options.missing_epochs_filename, 'epochs');
-    out = options.missing_epochs_filename;
+    if ~pspm_overwrite(options.missing_epochs_filename, options)
+        warning('ID:invalid_input', 'Missing epoch file exists, and overwriting not allowed by user.');
+        return
+    else
+        save(options.missing_epochs_filename, 'epochs');
+        out = options.missing_epochs_filename;
+    end
 else
     % If not save epochs, save the changed data to the original data as
     % a new channel or replace the old data
     data_to_write = indatas;
     data_to_write.data = data_changed;
-    [sts_write, ~] = pspm_write_channel(datafile, data_to_write, options.channel_action, struct('channel', pos_of_channel));
+    [sts_write, outinfos] = pspm_write_channel(datafile, data_to_write, options.channel_action, struct('channel', pos_of_channel));
     if sts_write == -1
         warning('Epochs were not written to the original file successfully.');
+        return
     end
+    out = outinfos.channel;
 end
 
 sts = 1; % sts is true if all processing above is successful
