@@ -101,7 +101,7 @@ if options.verbose
   fprintf('Splitting %s ... \n', datafile);
 end
 [sts_load_data, ininfos, indata, filestruct] = pspm_load_data(datafile); % check and get datafile ---
-if ~sts_load_data
+if sts_load_data < 1
   warning('ID:invalid_input', 'Could not load data.');
   return;
 end

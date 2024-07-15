@@ -3,7 +3,7 @@ function [sts, glm] = pspm_glm(model, options)
 %   pspm_glm specifies a within subject general linear convolution model of
 %   predicted signals and calculates amplitude estimates for these responses.
 % ● Format
-%   glm = pspm_glm(model, options)
+%   [sts, glm] = pspm_glm(model, options)
 % ● Arguments
 %   ┌─────model:  [struct]
 %   │ ▶︎ mandatory

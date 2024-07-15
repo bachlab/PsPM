@@ -2,9 +2,11 @@ function import_data = pspm_cfg_import
 
 %% Initialise
 global settings
-if isempty(settings), pspm_init; end
 
-% Get filetype
+%% Standard items
+overwrite = pspm_cfg_selector_overwrite;
+
+%% Get filetype
 fileoptions={settings.import.datatypes.long};
 channeltypesDescription = {settings.channeltypes.description};
 channeltypesData = {settings.channeltypes.data};
@@ -321,16 +323,10 @@ for datatype_i=1:length(fileoptions)
   acq_import_python.help     = {['Import Biopac Acqknowledge (ACQ) files with the python package "Bioread". ',...
                                   'Any ACQ version is supported.']};
   % Data File
-  datafile         = cfg_files;
-  datafile.name    = 'Data File(s)';
-  datafile.tag     = 'datafile';
-  datafile.num     = [1 Inf];
+  datafile         = pspm_cfg_selector_datafile(ext);
   if strcmpi(ext, 'any')
     datafile.filter ='.*';
-  else
-    datafile.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
   end
-  datafile.help    = {settings.datafilehelp} ;
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
     input_file = cfg_files;
@@ -347,7 +343,6 @@ for datatype_i=1:length(fileoptions)
     datafile.name    = 'Data File(s)';
     datafile.tag     = 'datafile';
     datafile.num     = [1 Inf];
-    datafile.help    = {settings.datafilehelp} ;
     datafile.values  = {input_file};
   end
 
@@ -407,27 +402,14 @@ datatype.tag     = 'datatype';
 datatype.values  = datatype_item;
 datatype.help    = {''};
 
-%% Overwrite file
-overwrite         = cfg_menu;
-overwrite.name    = 'Overwrite Existing File';
-overwrite.tag     = 'overwrite';
-overwrite.val     = {false};
-overwrite.labels  = {'No', 'Yes'};
-overwrite.values  = {false, true};
-overwrite.help    = {'Overwrite if a file with the same name has existed?'};
-
 %% Executable branch
 import_data      = cfg_exbranch;
 import_data.name = 'Import';
 import_data.tag  = 'import';
 import_data.val  = {datatype, overwrite};
 import_data.prog = @pspm_cfg_run_import;
-import_data.vout = @pspm_cfg_vout_import;
+import_data.vout = @pspm_cfg_vout_outfile;
 import_data.help = {['Import external data files for use by PsPM. First, specify the ' ...
   'data type. Then, other fields will come up as required for this data type. The ' ...
   'imported data will be written to a new .mat file, prepended with ''pspm_''.']};
 
-function vout = pspm_cfg_vout_import(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-vout.src_output = substruct('()',{':'});

@@ -4,7 +4,6 @@ function pspm_text(path)
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 by Teddy
-
 helptext_import_acq = ['Biopac Acknowledge (.acq) files can be imported with this feature. ',...
                       'Acq files that are of a version equal to or lower than 3.9.0 can be ',...
                       'imported with the classic method.'];

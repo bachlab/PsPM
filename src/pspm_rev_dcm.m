@@ -8,7 +8,7 @@ function sts = pspm_rev_dcm(dcm, job, sn, trl)
 % ● Format
 %   pspm_rev_dcm(dcm, job, sn, trl)
 % ● Arguments
-%   dcm:
+%   dcm:  dcm struct or modelfile
 %   job:  [char], accepts 'inv', 'sf', 'sum', 'scrf', or 'names'.
 %           'inv' show inversion results, input argument session & trial number
 %            'sf' same for SF, input argument episode number
@@ -34,6 +34,10 @@ end
 sts = -1;
 
 try, sn; catch, sn = 1; end;
+
+if ischar(dcm)
+    dcm = pspm_load1(dcm, 'all');
+end
 
 % check input
 % ------------------------------------------------------------------------

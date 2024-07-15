@@ -1,4 +1,4 @@
-function out = pspm_cfg_python(varargin)
+function out = pspm_cfg_selector_python(varargin)
 % ● Description
 %   pspm_cfg_python is a function that provides UI controls for
 %   python definition.

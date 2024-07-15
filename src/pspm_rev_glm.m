@@ -1,9 +1,9 @@
-function varargout = pspm_rev_glm(modelfile, glm, plotNr)
+function varargout = pspm_rev_glm(modelfile, plotNr)
 % ● Description
 %   pspm_rev_glm is a tool for reviewing a first level GLM designs. It is
 %   meant to be called by pspm_review only.
 % ● Format
-%   fig = pspm_rev_glm(modelfile, glm, plotNr, fig)
+%   fig = pspm_rev_glm(modelfile, plotNr)
 % ● Arguments
 %   modelfile:  filename and path of modelfile
 %         glm:  loaded model
