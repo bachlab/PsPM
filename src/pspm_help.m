@@ -11,7 +11,8 @@ function [information, arguments] = pspm_help(func_name)
 %     arguments:  the arguments of the specific function
 % ● History
 %   Introduced in PsPM 6.0
-%   Written and maintained in 2022 by Teddy Chao (UCL)
+%   Written in 2022 by Teddy
+%   Updated in 2024 by Teddy
 
 global settings
 if isempty(settings)
@@ -52,7 +53,7 @@ end
 N_target = find(strcmp(B, ' ● Arguments'),1);
 str = '';
 while ( ~strcmp(B{N_target+1,1}(1),'●') )
-  str = [str, B{N_target+1, 1}];
+  str = [str, B{N_target+1, 1}, newline];
   N_target = N_target + 1;
   if strcmp(B{N_target+1,1}(1:2),' ●')
     break

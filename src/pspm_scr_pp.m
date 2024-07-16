@@ -84,7 +84,6 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %                 Will not be used if options.missing_epochs_filename is 
 %                 specified.
 % ● Outputs
-% ● Output
 %      channel_index: index of channel containing the processed data
 %      missing_epochs_file: file that contains the missing epochs
 % ● Internal Functions
