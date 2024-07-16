@@ -40,7 +40,6 @@ function [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options)
 % % ● Reference
 %     [1] Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related 
 %         heart period responses. Psychophysiology, 53, 837-846.
-%  
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

@@ -52,8 +52,7 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %                       fields .data and .infos if data file is a struct)
 %         newepochfile: missing epoch filename for the individual
 %                       sessions (empty if options.missing not specified)
-
-% ● Version
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao (UCL)
