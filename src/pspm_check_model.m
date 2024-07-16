@@ -143,14 +143,12 @@ function model = pspm_check_model(model, modeltype)
 %   │              [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %   │              [cell_array] a cell array of methods mentioned above.
 %   │
-%   │ ▶︎ optional, GLM (modeltype) only
-
-
+%   └ ▶︎ optional, GLM (modeltype) only
 % ● History
 %   Introduced in PsPM 6.1.1
 %   Written in 2023 by Dominik Bach (UCL and Bonn)
 
-% 0. Initialise
+%% 0. Initialise
 global settings
 if isempty(settings)
   pspm_init;
