@@ -27,7 +27,12 @@ function pspm_init
 %   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 0 Cleaning terminal outputs
-%clc
+clc;
+global settings;
+if isempty(settings)
+  settings = struct();
+end
+
 %% 1 license & user output
 fid = fopen('pspm_msg.txt');
 msg = textscan(fid, '%s', 'Delimiter', '$');
@@ -37,143 +42,96 @@ for n = 1:numel(msg{1})
   fprintf('%s\n', msg{1}{n});
 end
 fprintf('PsPM: loading defaults ... \n');
-%% 2 check
-% 2.1 check pspm version
-pspm_vers = pspm_version('check');
-% 2.2 check various settings
-global settings
-if ~isempty(settings) % initialise settings
-  settings = [];
+
+%% 2 Check versions & paths
+added_paths = {};
+removed_paths = {};
+initial_paths = strsplit(path, pathsep);
+pspm_root = fileparts(which('pspm_init'));
+
+% 2.1 Check matlab version --
+% PsPM provides support for MATLAB with up to five years. For version 7.0, 
+% the earlist version of MATLAB is 2019.
+release_date_current = datetime(version('-date'));
+release_date_supported = datetime('01-Jan-2019');
+if release_date_current < release_date_supported
+  warning(append('You are using an unsupported Matlab version. ',...
+    'In case you encounter any problems, please consider upgrading MATLAB to use PsPM.'));
 end
-p = path;
-fs = filesep;
-pth = fileparts(which('pspm_guide'));
-pth = [pth, fs];
-pspm_text(pth);
-load(fullfile(pth,'pspm_text.mat'))
-% 2.3 check if subfolders are already in path
-% get subfolders
-current_path = fileparts(mfilename('fullpath'));
-folder_content = dir(current_path);
-is_folder = [folder_content(:).isdir];
-subfolders = {folder_content(is_folder).name}';
-subfolders(ismember(subfolders, {'.','..'})) = [];
-subfolders = regexprep(subfolders, '(.*)',...
-  [regexptranslate('escape', [current_path, filesep]) , '$1']);
-sp = textscan(path,'%s','delimiter',pathsep);
-mem = ~ismember(subfolders, sp{1});
-if numel(subfolders(mem)) == 0
-  % loaded subdirs which may cause trouble
-  warning(warntext_subfolder);
-end
-% 2.4 check whether scralyze is on the path
-if ~contains(p, pth)
-  scrpath=1;
-  addpath(pth);
-else
-  scrpath=0;
-end
-% 2.5 check matlab version
-v = version;
-if str2double(v(1:3)) < 7.1
-  warning(warntext_matlab_old, v);
-end
-% 2.6 check matlab toolbox: signal processing
+
+% 2.2 Check matlab toolbox: signal processing --
 tboxes = ver;
 signal = any(strcmp({tboxes.Name}, 'Signal Processing Toolbox'));
 if ~signal
-  errmsg = warntext_sigproc_toolbox;
-  warning(errmsg);
+  warning('Signal processing toolbox not installed. Some filters might not be implemented.');
 end
-% 2.7 Check SPM
-% check if SPM Software is on the current Path
-% Dialog Window open to ask whether to remove program from the path or quit
-% pspm_init.
-% Default is to quit pspm_init
-all_paths = regexpi(p,';','split');
-spm_paths_idx = cell2mat(cellfun(@(x) isempty(regexpi(x,'\<spm')),all_paths,'UniformOutput',0));
-all_paths_spm = all_paths(~spm_paths_idx);
-pspm_paths_idx = cell2mat(cellfun(@(x) isempty(regexpi(x,'pspm')),all_paths_spm,'UniformOutput',0));
-all_paths_spm = all_paths_spm(pspm_paths_idx);
-if ~isempty(all_paths_spm)
-  % remove the SPM from path
+
+% 2.3 Check PsPM version --
+pspm_vers = pspm_version('check');
+
+% 2.4 Load PsPM text --
+pspm_text([pspm_root, filesep]);
+load(fullfile(pspm_root,'pspm_text.mat'))
+
+% 2.5 Check if subfolders are already in path --
+filelist = dir(fullfile(pspm_root, ['**',filesep,'*.*']));
+subfolders_full = unique({filelist.folder});
+subfolders = erase(subfolders_full,pspm_root);
+subfolders = subfolders(~strcmp(subfolders,pspm_root));
+subfolders = subfolders(contains(subfolders,filesep));
+subfolders = append(pspm_root,subfolders);
+contained_subfolder_index = ismember(subfolders,initial_paths);
+flag_contain_subfolder = any(contained_subfolder_index);
+if flag_contain_subfolder
+  if strcmp(questdlg(sprintf(warntext_subfolder),...
+      'Subfolder detected',...
+      'Yes', 'No', 'Yes'), 'Yes')
+    cellfun(@(x) rmpath(x),subfolders(contained_subfolder_index),'UniformOutput',0);
+    removed_paths = [removed_paths, subfolders(contained_subfolder_index)];
+  else
+    error(errortext_subfolder);
+  end
+end
+
+% 2.6 Check for SPM and Matlabbatch conflicts--
+% Check if SPM software is on the current Path.
+% Dialog Window open to ask whether to remove program from the path or quit pspm_init.
+% Default is to quit pspm_init.
+spm_folders = {'spm', 'cfg_ui'};
+for k = 1:numel(spm_folders)
+    spm_path{k} = fileparts(which(spm_folders{k}));
+end
+spm_path_idx = cellfun(@(x) ~isempty(x), spm_path);
+if any(spm_path_idx)
   if strcmp(questdlg(sprintf(warntext_spm_remove),...
       'Interference with SPM software',...
       'Yes', 'No', 'No'), 'Yes')
-    cellfun(@(x) rmpath(x),all_paths_spm,'UniformOutput',0);
+    cellfun(@(x) rmpath(x),initial_paths_spm,'UniformOutput',0);
+    removed_paths = [removed_paths, spm_path(spm_path_idx)];
   else
     % quit pspm_init
-    errmsg = warntext_spm_quit;
-    error(errmsg);
+    error(errortext_spm_quit);
   end
 end
-% check whether SPM 8 is already on path
-dummy = which('spm');
-if ~isempty (dummy)
-  try
-    if strcmpi(spm('Ver'), 'spm8b') || strcmpi(spm('Ver'), 'spm8')
-      addspm = 0;
-    else
-      addspm = 1;
+
+% 2.7 Add required paths ---
+required_folders = {{}, {'pspm_cfg'}, {'ext', 'SPM'}; {'ext','VBA'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
+for k = 1:numel(required_folders)
+    required_path = pspm_path(required_folders{k}{:});
+    if ~any(strcmp(initial_paths, required_path))
+        added_paths{end+1} = required_path;
     end
-  catch
-    addspm = 1;
-  end
-else
-  addspm = 1;
 end
-if addspm
-  addpath(pspm_path('ext','SPM'));
-  spmpath = 1;
-else
-  spmpath = 0;
+
+% 2.8 Execute path handling
+for k = 1:numel(removed_paths)
+    rmpath(removed_paths{k});
 end
-% 2.8 Check matlabbatch
-% check whether matlabbatch is already on path
-dummy=which('cfg_ui');
-if isempty (dummy)
-  addpath(pspm_path('ext','matlabbatch'));
-  matlabbatchpath=1;
-else
-  if strcmp(fs, '/')
-    fs_regex = '/';
-  else
-    fs_regex = '\\';
-  end
-  m = regexpi(dummy, ['spm[0-9]+' fs_regex 'matlabbatch' fs_regex 'cfg_ui.m']);
-  if ~isempty(m)
-    if strcmp(questdlg(sprintf(warntext_matlabbatch), 'Matlabbatch', 'Yes', 'No', 'No'), 'Yes')
-      [matlabbatch_dir,~,~] = fileparts(dummy);
-      rmpath(matlabbatch_dir);
-      dummy=which('spm_cfg');
-      if ~isempty (dummy)
-        [config_dir,~,~] = fileparts(dummy);
-        rmpath(config_dir);
-      end
-      addpath(pspm_path('ext','matlabbatch'));
-      matlabbatchpath = 1;
-    else
-      matlabbatchpath = 0;
-    end
-  else
-    matlabbatchpath = 0;
-  end
+for k = 1:numel(added_paths)
+    addpath(added_paths{k});
 end
-% 2.9 Check pspm_cfg
-% check whether pspm_cfg is already on path
-dummy=which('pspm_cfg');
-if isempty (dummy)
-  addpath(pspm_path('pspm_cfg'));
-  scrcfgpath=1;
-else
-  scrcfgpath=0;
-end
-% 2.10 Check VBA
-% add VBA because this is used in various functions
-addpath(pspm_path('ext','VBA'));
-addpath(pspm_path('ext','VBA','subfunctions'));
-addpath(pspm_path('ext','VBA','stats&plots'));
-%% 3 Chennel types
+
+%% 3 Channel types
 %
 % 3.1 allowed channel types
 %
@@ -887,22 +845,26 @@ else
     'MainWeight',       650,...
     'SwitchResize',     'on');
 end
-% 10.2 Look for settings, otherwise set defaults
-if exist([pth, 'pspm_settings.mat'], 'file')
-  load([pth, 'pspm_settings.mat']);
+%% 11 Finalisation
+% 11.1 Look for settings, otherwise set defaults --
+if exist([pspm_root, 'pspm_settings.mat'], 'file')
+  load([pspm_root, 'pspm_settings.mat']);
 else
   settings = defaults;
 end
-% 10.3 Initialise the help texts
-settings.path = pth;
+
+
+% 11.2 Initialise the help texts
 settings.help = pspm_help_init;
-%% 11 Finalisation
-settings.scrpath = scrpath;
-settings.spmpath = spmpath;
-settings.matlabbatchpath = matlabbatchpath;
-settings.scrcfgpath = scrcfgpath;
-settings.signal = signal;
-settings.pspm_version = pspm_vers;
+
+% 11.2 Save variables --
+settings.added_paths      = added_paths;
+settings.removed_paths    = removed_paths;
+
+settings.developmode      = 0;
+settings.initial_paths    = initial_paths;
+settings.path             = pspm_root;
+settings.pspm_version     = pspm_vers;
+settings.signal           = signal;
 settings.developmode = 0;
 
-return
