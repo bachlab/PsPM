@@ -35,14 +35,13 @@ helptext_import_biotrace = '';
 helptext_import_brainvision = '';
 helptext_import_windaq = 'Requires an ActiveX Plugin provided by the manufacturer and contained in the subfolder Import/wdq for your convenience. This plugin only runs under 32 bit Matlab on Windows.';
 
-warntext_subfolder = 'Subfolders of the main directory are loaded into the MATLAB search path. \n\nThis is not necessary and may even cause trouble during runtime. \n\nIt is recommended to only add the path of the main directory to the search path.';
-warntext_matlab_old = 'You are running PsPM on a Matlab version (%s) under which it has not been tested.\nSPM 8 functions will be automatically added to you path but may not run. 1st level GLM may not run.\nIf you encounter any other error, please contact the developers.';
-warntext_matlabbatch = 'Matlabbatch from SPM and its config folder are currently on your MATLAB search path.\n\nDo you want to remove these folders temporarily from your MATLAB search path in order to avoid potential issues with matlabbatch from PsPM?';
+warntext_subfolder = 'Subfolders of the PsPM directory are loaded into the MATLAB search path. \n\nDo you want to remove these folders from your MATLAB search path during PsPM usage? \n\nThese folders will be restored to MATLAB path when PsPM exits later. If not, PsPM will quit.';
+warntext_matlab_old = 'You are running PsPM on a Matlab version (%s) under which it has not been tested.\nIf you encounter any other error, please upgrade your Matlab installation.';
 warntext_sigproc_toolbox = 'Signal processing toolbox not installed. Some filters might not be implemented.';
-warntext_spm_remove = 'The software SPM is currently on your MATLAB search path.\n\nDo you want to remove the folders belonging to SPM from your MATLAB search path in order to avoid potential issues with PsPM?\n\nThese SPM folders will be restored to MATLAB path when PsPM exits later.';
+warntext_spm_remove = 'A conflicting installation of SPM or the Matlabbatch is currently on your MATLAB search path.\n\nDo you want to remove the respective directory/ies from your MATLAB search path during PsPM usage?\n\nThese folders will be restored to MATLAB path when PsPM exits later. If not, PsPM will quit.';
 
-errortext_subfolder = 'PsPM cannot be started up with subfolder paths add in MATLAB. Please re-try starting up PsPM and click Yes when asked about removing subfolders.';
-errortext_spm_quit = 'Start of PsPM had to be quit, because of interference with the software SPM, which was on your MATLAB search path. Please re-try starting up PsPM and click Yes when asked about removing SPM folders.';
+errortext_subfolder = 'PsPM cannot be started with subfolders added to MATLAB search path. Please re-try starting up PsPM and click Yes when asked about removing subfolders.';
+errortext_spm_quit = 'PsPM cannot be started with conflicting SPM folders added to MATLAB search path. Please re-try starting up PsPM and click Yes when asked about removing subfolders.';
 
 save(fullfile(path,'pspm_text.mat'))
 return
