@@ -40,12 +40,12 @@ function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, chann
 %                infos: file infos as returned from pspm_load_data
 %                pos_of_channel: index of the returned channel
 % ● History
-% Written in 2019 by Eshref Yozdemir (University of Zurich)
-% Updated in 2024 by Dominik Bach (University of Bonn)
-% Introduced in PsPM 6.1.2
-
-% no checking of file and channel type as this is done downstream in
-% pspm_load_data
+%   Written in 2019 by Eshref Yozdemir (University of Zurich)
+%   Updated in 2024 by Dominik Bach (University of Bonn)
+%   Introduced in PsPM 6.1.2
+% ● Developer's notes
+%   No checking of file and channel type as this is done downstream in
+%   pspm_load_data
 
 % initialise
 global settings;
