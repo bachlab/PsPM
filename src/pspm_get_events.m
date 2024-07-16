@@ -13,7 +13,6 @@ function [sts, import] = pspm_get_events(import)
 %               'ascending', 'descending', 'both', 'all'.
 %    .denoise:  for continuous marker channels: only retains markers of duration
 %               longer than the value given here (in seconds).
-
 % ● Output
 %       import: returns event timestamps in seconds in import.data
 % ● History

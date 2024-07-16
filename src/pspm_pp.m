@@ -3,7 +3,6 @@ function [sts, outchannel] = pspm_pp(varargin)
 %   pspm_pp contains various preprocessing utilities for reducing noise in 
 %   the data. The 'butter' option that also allows downsampling after 
 %   application of an anti-alias Butterworth filter.
-
 % ● Format
 %   [sts, channel_index] = pspm_pp('median', fn, channel, n,    options) or
 %   [sts, channel_index] = pspm_pp('butter', fn, channel, filt, options) or
