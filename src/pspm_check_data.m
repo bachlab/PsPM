@@ -6,9 +6,9 @@ function [sts, data] = pspm_check_data(data, infos)
 %   conversions.
 % ● Format
 %   [sts, data] = pspm_check_data(data, infos)
-
-% this code is taken from pspm_load_data; it could be improved using
-% cellfun
+% ● Developer's notes
+%   This code is taken from pspm_load_data; it could be improved using
+%   cellfun
 
 global settings
 if isempty(settings)
