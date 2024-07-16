@@ -1,6 +1,8 @@
 function varargout = pspm_data_editor(varargin)
 % ● Description
-%   pspm_data_editor MATLAB code for pspm_data_editor.fig
+%   pspm_data_editor allows to mark epochs (e.g. artefact epochs) in a PsPM 
+%   file. This can be done for an individual channel, or for multiple
+%   channels, by switching the viewed channel.
 % ● Format
 %   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)

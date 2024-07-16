@@ -12,8 +12,3 @@ display.val  = {datafile};
 display.prog = @pspm_cfg_run_display;
 display.help = pspm_cfg_help_format('pspm_display');
 
-
-    function pspm_cfg_run_display(job)
-        pspm_display(job.datafile{1});
-    end
-end
