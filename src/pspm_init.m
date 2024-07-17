@@ -97,7 +97,7 @@ end
 % Check if SPM software is on the current Path.
 % Dialog Window open to ask whether to remove program from the path or quit pspm_init.
 % Default is to quit pspm_init.
-spm_folders = {'spm', 'cfg_ui'};
+spm_folders = {'spm'}; %, 'cfg_ui'
 for k = 1:numel(spm_folders)
     spm_path{k} = fileparts(which(spm_folders{k}));
 end
@@ -115,7 +115,7 @@ if any(spm_path_idx)
 end
 
 % 2.7 Add required paths ---
-required_folders = {{}, {'pspm_cfg'}, {'ext', 'SPM'}; {'ext','VBA'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
+required_folders = {{}, {'pspm_cfg'}, {'ext', 'SPM'}, {'ext','VBA'}, {'ext','matlabbatch'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
 for k = 1:numel(required_folders)
     required_path = pspm_path(required_folders{k}{:});
     if ~any(strcmp(initial_paths, required_path))
