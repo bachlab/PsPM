@@ -86,7 +86,6 @@ if flag_contain_subfolder
   if strcmp(questdlg(sprintf(warntext_subfolder),...
       'Subfolder detected',...
       'Yes', 'No', 'Yes'), 'Yes')
-    cellfun(@(x) rmpath(x),subfolders(contained_subfolder_index),'UniformOutput',0);
     removed_paths = [removed_paths, subfolders(contained_subfolder_index)];
   else
     error(errortext_subfolder);
