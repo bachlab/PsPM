@@ -37,9 +37,10 @@ A = A(cellfun(@ischar,A) & ~cellfun(@isempty,A));
 B = regexp(A,'^\s*%.*','match');
 B = vertcat(B{:});
 information = sort_info (B);
+C = sort_args(information.Arguments);
 return
 
-function A = sort_args (B)
+function A = sort_args_old (B)
 % remove '% '
 for i_line = 1:length(B)
   C = B{i_line, 1};
@@ -143,3 +144,17 @@ B(idx_space_remove) = [];
 if strcmp(A(end),newline)
   B = B(1:end-1);
 end
+
+function B = sort_args(A)
+  B = A;
+  B(strfind(B,[newline, '│'])) = '';
+  B(strfind(B,[newline, ' │'])) = ' ';
+  B(strfind(B,[newline, '│'])) = '';
+  B(strfind(B,'│')) = '';
+
+  checklist = strfind(B,newline);
+  checklist_valid = [strfind(B,[newline,'├']),...
+    strfind(B,[newline,'└']),...
+    strfind(B,[newline,'┌'])]  ;
+  checklist = checklist(~ismember(checklist, checklist_valid));
+  B(checklist) = '';
