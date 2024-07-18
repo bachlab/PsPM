@@ -47,6 +47,8 @@ fprintf('PsPM: loading defaults ... \n');
 added_paths = {};
 removed_paths = {};
 initial_paths = strsplit(path, pathsep);
+required_folders = {{'pspm_cfg'}, {'ext', 'SPM'}, {'ext','VBA'}, {'ext','matlabbatch'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
+
 pspm_root = fileparts(which('pspm_init'));
 
 % 2.1 Check matlab version --
@@ -115,9 +117,9 @@ if any(spm_path_idx)
 end
 
 % 2.7 Add required paths ---
-required_folders = {{}, {'pspm_cfg'}, {'ext', 'SPM'}, {'ext','VBA'}, {'ext','matlabbatch'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
-for k = 1:numel(required_folders)
-    required_path = pspm_path(required_folders{k}{:});
+required_folder_list = {{}, required_folders};
+for k = 1:numel(required_folder_list)
+    required_path = pspm_path(required_folder_list{k}{:});
     if ~any(strcmp(initial_paths, required_path))
         added_paths{end+1} = required_path;
     end

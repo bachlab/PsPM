@@ -1,14 +1,13 @@
-function [information, arguments] = pspm_help(func_name)
+function information = pspm_help(func_name)
 % ● Description
 %   pspm_help returns the description and arguments of
 %   a specified function
 % ● Format
-%   [information, arguments] = pspm_help(func_name)
+%   information = pspm_help(func_name)
 % ● Arguments
 %     func_name:  the name of the function for help information
 % ● Outputs
 %   information:  the description of the specific function
-%     arguments:  the arguments of the specific function
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 by Teddy
@@ -30,14 +29,14 @@ while ischar(tline)
 end
 fclose(fid);
 A = A.';
+% get help text
+A = A(1:find(cellfun(@isempty,A),1)-1);
 % get rid of empty lines
-mk = cellfun(@ischar,A) & ~cellfun(@isempty,A);
-A = A(mk);
+A = A(cellfun(@ischar,A) & ~cellfun(@isempty,A));
 % find matching lines
 B = regexp(A,'^\s*%.*','match');
 B = vertcat(B{:});
 information = sort_info (B);
-arguments = sort_args (B);
 return
 
 function A = sort_args (B)
@@ -95,24 +94,34 @@ for i_line = 1:length(B)
   end
   B{i_line, 1} = C;
 end
-D = {'Description', 'Format'};
+% Remove empty lines
+B = B(cellfun(@ischar,B) & ~cellfun(@isempty,B));
+D = {'Description', ...
+  'Format', ...
+  'Arguments', ...
+  'Outputs', ...
+  'References', ...
+  'History', ...
+  'Developer'};
 % sort
 A = struct();
 for i_D = 1:length(D)
   N_target = find(strcmp(B, ['● ', D{i_D}]),1);
-  str = '';
-  while ( ~strcmp(B{N_target+1,1}(1),'●') )
-    str = [str, B{N_target+1, 1}];
-    N_target = N_target + 1;
-    if N_target == length(B)
+  if ~isempty(N_target)
+    str = '';
+    while ( ~strcmp(B{N_target+1,1}(1),'●') )
+      str = [str, B{N_target+1, 1}, newline];
+      N_target = N_target + 1;
+      if N_target == length(B)
         break
-    elseif strcmp(B{N_target+1,1}(1),'●')
-      break
-    elseif strcmp(B{N_target+1,1}(1),'%')
-      break
+      elseif strcmp(B{N_target+1,1}(1),'●')
+        break
+      elseif strcmp(B{N_target+1,1}(1),'%')
+        break
+      end
     end
+    A.(D{i_D}) = remove_multiple_space(str);
   end
-  A.(D{i_D}) = remove_multiple_space(str);
 end
 
 function B = remove_multiple_space (A)
@@ -131,3 +140,6 @@ for i = 2:length(idx_space)
 end
 idx_space_remove = nonzeros(idx_space.*idx_space_preserve);
 B(idx_space_remove) = [];
+if strcmp(A(end),newline)
+  B = B(1:end-1);
+end
