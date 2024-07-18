@@ -105,7 +105,6 @@ if any(spm_path_idx)
   if strcmp(questdlg(sprintf(warntext_spm_remove),...
       'Interference with SPM software',...
       'Yes', 'No', 'No'), 'Yes')
-    cellfun(@(x) rmpath(x),initial_paths_spm,'UniformOutput',0);
     removed_paths = [removed_paths, spm_path(spm_path_idx)];
   else
     % quit pspm_init
