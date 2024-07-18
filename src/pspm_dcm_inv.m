@@ -826,7 +826,7 @@ if ~options.getrf
       newzfactor = model.zfactor;
     end
 
-    for trl = 1:trlno
+    for trl = trlindx
       for k = 1:aSCRno
         sig.G0 = aSCR_ln(k, trl);
         aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);
