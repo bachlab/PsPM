@@ -87,12 +87,12 @@ function A = sort_info (B)
 for i_line = 1:length(B)
   C = B{i_line, 1};
   if C(1) == ' '
-      break
+    break
+  elseif strcmp(C, '% ') || strcmp(C, '%  ') || strcmp(C, '%   ') || strcmp(C, '%    ')
+    B{i_line, 1} = '';
+  else
+    B{i_line, 1} = C(find(~isspace(C(2:end)),1)+1:end);
   end
-  if contains(C,'% ')
-    C(strfind(C,'% '):(strfind(C,'% ')+1))=[];
-  end
-  B{i_line, 1} = C;
 end
 % Remove empty lines
 B = B(cellfun(@ischar,B) & ~cellfun(@isempty,B));
