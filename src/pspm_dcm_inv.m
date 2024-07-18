@@ -518,7 +518,7 @@ if ~options.getrf
 
     % estimate trial-by-trial
     % =======================================================================
-    if isinf(options.depth)
+    if options.depth > trlno
         trlindx = 1;
     else
         trlindx = 1:trlno;

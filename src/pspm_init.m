@@ -122,9 +122,11 @@ for k = 1:numel(required_folders)
 end
 
 % 2.8 Execute path handling
+removed_paths = unique(removed_paths);
 for k = 1:numel(removed_paths)
     rmpath(removed_paths{k});
 end
+added_paths = unique(added_paths);
 for k = 1:numel(added_paths)
     addpath(added_paths{k});
 end
