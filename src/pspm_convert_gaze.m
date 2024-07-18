@@ -126,11 +126,11 @@ for i = 1:numel(channel)
             return
         end
     else
-         % for channeltype specification, just consider channels in the correct units
-         gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
+        % for channeltype specification, just consider channels in the correct units
+        gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
         [lsts, data{i}, infos, pos_of_channel(i)] = pspm_load_channel(gazedata, channel{i}, channeltypes{i});
         % map channel index from list of channels with correct units to list of all channels
-        pos_of_channel = channels_correct_units(pos_of_channel); 
+        pos_of_channel(i) = channels_correct_units(pos_of_channel(i)); 
     end
     if lsts < 1, return, end
 end

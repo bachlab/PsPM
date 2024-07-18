@@ -74,13 +74,14 @@ end
 
 if isempty(units)
     [sts, infos, data, filestruct] = pspm_load_data(fn, channel);
+    if sts < 1, return; end
     channel_index = filestruct.posofchannels;
 else
     [sts, infos, data] = pspm_load_data(fn);
     if sts < 1, return; end
     [sts, data, channel_index] = pspm_select_channels(data, channel, units);
+    if sts < 1, return; end
 end
-if sts < 1, return; end
 
 % precedence order for eyetracker channels
 if ~isnumeric(channel) && ismember(channel, settings.eyetracker_channels)
