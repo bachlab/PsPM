@@ -162,10 +162,13 @@ end
 
 if options.norm
   newmat = cell2mat(data_raw(:));
-  zfactor = std(newmat(:));
-  offset  = mean(newmat(:));
-  for iSn = 1:numel(data_raw)
-    data_raw{iSn} = (data_raw{iSn} - offset) / zfactor;
+  newmat = newmat(~isnan(newmat));
+  if ~isempty(newmat)
+      zfactor = std(newmat(:));
+      offset  = mean(newmat(:));
+      for iSn = 1:numel(data_raw)
+        data_raw{iSn} = (data_raw{iSn} - offset) / zfactor;
+      end
   end
 end
 
