@@ -5,8 +5,7 @@ function [sts, glm] = pspm_glm(model, options)
 % ● Format
 %   [sts, glm] = pspm_glm(model, options)
 % ● Arguments
-%   ┌─────model:  [struct]
-%   │ ▶︎ mandatory
+%   ┌─────model
 %   ├.modelfile:  a file name for the model output
 %   ├─.datafile:  a file name (single session) OR
 %   │             a cell array of file names
@@ -24,22 +23,21 @@ function [sts, glm] = pspm_glm(model, options)
 %   │             specifies over which time window (relative to the event
 %   │             onsets specified in model.timing) the model should be 
 %   │             evaluated. 
-%   │ ▶︎ optional
-%   ├.modelspec:  'scr' (default); specify the model to be used.
+%   ├.modelspec:  [optional] 'scr' (default); specify the model to be used.
 %   │             See pspm_init, defaults.glm() which modelspecs are possible
 %   │             with glm.
-%   ├─.modality:  specify the data modality to be processed.
+%   ├─.modality:  [optional] specify the data modality to be processed.
 %   │             When model.modality is set to be sps, the model.channel
 %   │             should be set among sps_l, sps_r, or defaultly sps. By
 %   │             default, this is determined automatically from "modelspec"
-%   ├───────.bf:  basis function/basis set; modality specific default
+%   ├───────.bf:  [optional] basis function/basis set; modality specific default
 %   │             with subfields .fhandle (function handle or string) and
 %   │             .args (arguments, first argument sampling interval will
 %   │             be added by pspm_glm). The optional subfield .shiftbf = n
 %   │             indicates that the onset of the basis function precedes
 %   │             event onsets by n seconds (default: 0: used for
 %   │             interpolated data channels)
-%   ├──.channel:  channel number or channel type. if a channel type is
+%   ├──.channel:  [optional] channel number or channel type. if a channel type is
 %   │             specified the LAST channel matching the given type will
 %   │             be used. The rationale for this is that, in general channels
 %   │             later in the channel list are preprocessed/filtered versions
@@ -55,38 +53,38 @@ function [sts, glm] = pspm_glm(model, options)
 %   │             accepts only 'sps_l', 'sps_r', or 'sps'.
 %   │             DEFAULT: last channel of the specified modality
 %   │             (for PSR this is 'pupil')
-%   ├─────.norm:  normalise data; default 0
-%   ├───.filter:  filter settings; modality specific default
-%   ├──.missing:  allows to specify missing (e. g. artefact) epochs in the
+%   ├─────.norm:  [optional] normalise data; default 0
+%   ├───.filter:  [optional] filter settings; modality specific default
+%   ├──.missing:  [optional] allows to specify missing (e. g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition;
 %   │             specify a cell array for multiple input files. This
 %   │             must always be specified in SECONDS.
 %   │             Default: no missing values
-%   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
+%   ├─.nuisance:  [optional] allows to specify nuisance regressors. Must be a file
 %   │             name; the file is either a .txt file containing the
 %   │             regressors in columns, or a .mat file containing the
 %   │             regressors in a matrix variable called R. There must be
 %   │             as many values for each column of R as there are data
 %   │             values. SCRalyze will call these regressors R1, R2, ...
-%   ├──.latency:  allows to specify whether latency should be 'fixed'
+%   ├──.latency:  [optional] allows to specify whether latency should be 'fixed'
 %   │             (default) or should be 'free'. In 'free' models an
 %   │             additional dictionary matching algorithm will try to
 %   │             estimate the best latency. Latencies will then be added
 %   │             at the end of the output. In 'free' models the fiel
 %   │             model.window is MANDATORY and single basis functions
 %   │             are allowed only.
-%   └.centering:  if set to 0 the function would not perform the
+%   └.centering:  [optional] if set to 0 the function would not perform the
 %                 mean centering of the convolved X data. For example, to
 %                 invert SPS model, set centering to 0. Default: 1
-%   ┌───options:
-%   │ ▶︎ optional
-%   ├──.overwrite:  [logical] (0 or 1)
+%   ┌───options
+%   ├──.overwrite:
+%   │             [optional] logical, 0 or 1.
 %   │             Define whether to overwrite existing output files or not.
 %   │             Default value: determined by pspm_overwrite.
 %   ├──.marker_chan_num:
-%   │             marker channel number; default first marker channel.
+%   │             [optional] marker channel number; default first marker channel.
 %   └──.exclude_missing:
-%                 marks trials during which NaN percentage exceeds
+%                 [optional] marks trials during which NaN percentage exceeds
 %                 a cutoff value. Requires two subfields:
 %                 'segment_length' (in s after onset) and 'cutoff'
 %                 (in % NaN per segment). Results are written into

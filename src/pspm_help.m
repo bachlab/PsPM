@@ -125,7 +125,7 @@ for i_D = 1:length(D)
   end
 end
 
-function B = sort_args(A)
+function args = sort_args(A)
 B = A;
 B(strfind(B,[newline, '│'])) = '';
 B(strfind(B,[newline, ' │'])) = ' ';
@@ -137,6 +137,21 @@ checklist_valid = [strfind(B,[newline,'├']),...
   strfind(B,[newline,'┌'])]  ;
 checklist = checklist(~ismember(checklist, checklist_valid));
 B(checklist) = '';
+B(strfind(B,'─'))='';
+[var_name_start,var_name_end] = regexp(B,'(?<=├.)(.*?)(?=:)'); % get subfields
+[var_name_start2,var_name_end2] = regexp(B,'(?<=:)(.*?)(?=\n)'); % get explainations
+args = struct();
+for i = 1:length(var_name_start)
+  varname = B(var_name_start(i):var_name_end(i));
+  content = B(var_name_start2(i):var_name_end2(i));
+  while content(1)==' ' 
+    content = content(2:end);
+  end
+  while content(end)~='.' 
+    content(end+1) = '.';
+  end
+  args.(varname) = content;
+end
 
 function B = sort_refs(A)
 B = remove_multiple_space (A);
