@@ -10,8 +10,7 @@ function information = pspm_help(func_name)
 %   information:  the description of the specific function
 % ● History
 %   Introduced in PsPM 6.0
-%   Written in 2022 by Teddy
-%   Updated in 2024 by Teddy
+%   Written in 2022 and updated in 2024 by Teddy
 
 global settings
 if isempty(settings)
@@ -37,7 +36,8 @@ A = A(cellfun(@ischar,A) & ~cellfun(@isempty,A));
 B = regexp(A,'^\s*%.*','match');
 B = vertcat(B{:});
 information = sort_info (B);
-C = sort_args(information.Arguments);
+information.Arguments = sort_args(information.Arguments);
+information.References = sort_refs(information.References);
 return
 
 function A = sort_args_old (B)
@@ -125,6 +125,25 @@ for i_D = 1:length(D)
   end
 end
 
+function B = sort_args(A)
+B = A;
+B(strfind(B,[newline, '│'])) = '';
+B(strfind(B,[newline, ' │'])) = ' ';
+B(strfind(B,[newline, '│'])) = '';
+B(strfind(B,'│')) = '';
+checklist = strfind(B,newline);
+checklist_valid = [strfind(B,[newline,'├']),...
+  strfind(B,[newline,'└']),...
+  strfind(B,[newline,'┌'])]  ;
+checklist = checklist(~ismember(checklist, checklist_valid));
+B(checklist) = '';
+
+function B = sort_refs(A)
+B = remove_multiple_space (A);
+B(strfind(B,newline)) = ' ';
+B(strfind(B,' [')) = newline;
+B(strfind(B,' *')) = newline;
+
 function B = remove_multiple_space (A)
 % B is a string with multiple spaces
 % A is the processed B where multiple spaces were converted into one space
@@ -144,17 +163,3 @@ B(idx_space_remove) = [];
 if strcmp(A(end),newline)
   B = B(1:end-1);
 end
-
-function B = sort_args(A)
-  B = A;
-  B(strfind(B,[newline, '│'])) = '';
-  B(strfind(B,[newline, ' │'])) = ' ';
-  B(strfind(B,[newline, '│'])) = '';
-  B(strfind(B,'│')) = '';
-
-  checklist = strfind(B,newline);
-  checklist_valid = [strfind(B,[newline,'├']),...
-    strfind(B,[newline,'└']),...
-    strfind(B,[newline,'┌'])]  ;
-  checklist = checklist(~ismember(checklist, checklist_valid));
-  B(checklist) = '';
