@@ -87,7 +87,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       options.marker_chan_num = 3;
       [sts, newdatafile] = testCase.verifyWarning(@() ...
         pspm_trim(testCase.fn,'none','none','marker', options), ...
-        'ID:invalid_option', 'marker_chan_num_option_test test 1');
+        'ID:unexpected_channeltype', 'marker_chan_num_option_test test 1');
       delete(newdatafile);
       struct = load(testCase.fn);
       struct.data{5}.data = struct.data{5}.data(2:end);

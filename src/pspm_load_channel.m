@@ -1,9 +1,11 @@
-function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, channel, channeltype)
+function [sts, data_struct, infos, pos_of_channel, chantype_sts] = ...
+    pspm_load_channel(fn, channel, channeltype)
 % ● Definition
 %   pspm_load_channel loads a single data channel and provides integrated
 %   channel checking logic
 % ● Format
-%   [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, channel, channeltype)
+%   [sts, data_struct, infos, pos_of_channel, chantype_correct] = 
+%                               pspm_load_channel(fn, channel, channeltype)
 % ● Arguments
 %   ┌─────fn:   [char] filename / [struct] with fields
 %   ├─.infos:
@@ -39,12 +41,14 @@ function [sts, data_struct, infos, pos_of_channel] = pspm_load_channel(fn, chann
 %                     returned by pspm_load_data
 %                infos: file infos as returned from pspm_load_data
 %                pos_of_channel: index of the returned channel
+%                chantype_correct: indicates whether specified channel type
+%                is correct
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 2024 by Dominik Bach (University of Bonn)
 %   Introduced in PsPM 6.1.2
 % ● Developer's notes
-%   No checking of file and channel type as this is done downstream in
+%   No checking of file and channel type here as this is done downstream in
 %   pspm_load_data
 
 % initialise
@@ -52,7 +56,7 @@ global settings;
 if isempty(settings)
   pspm_init;
 end
-sts = -1; data_struct = struct(); pos_of_channel = -1;
+sts = -1; data_struct = struct(); pos_of_channel = -1; chantype_sts = NaN;
 
 % expand channel if defined as struct
 if isstruct(channel)
