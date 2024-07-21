@@ -165,18 +165,12 @@ end
 % 2.2 Calculate markers if needed
 if getmarker == 1
     % 2.2.1 Verify the markers
-    [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
-    if ~strcmp(ndata{1}.header.chantype, 'marker')
-        warning('ID:invalid_option', ['Channel %i is no marker ', ...
-            ' channel. The first marker channel in the file is ', ...
-            'used instead'], options.marker_chan_num);
-        [nsts, ~, ndata] = pspm_load_data(datafile, 'marker');
-    end
-    if nsts > 0
-        events = ndata{1}.data;
-    else
+    [nsts, data_struct, infos, pos_of_channel, chantype_sts] = ...
+            pspm_load_channel(datafile, options.marker_chan_num, 'marker');
+    if (nsts < 1 || chantype_sts < 1)
         return
     end
+    events = data_struct.data;
     if isempty(events)
         warning('ID:marker_out_of_range', 'Marker channel (%i) is empty. Cannot use as a reference.', options.marker_chan_num);
         return
@@ -321,8 +315,7 @@ if ~isempty(options.missing)
     if lsts < 1, return; end
     if ~isempty(epochs)
         index = epochs(:, 2) < sta_time | ...
-                epochs(:, 1) > sto_time | ...
-                epochs(:, 1) > infos.duration;
+                epochs(:, 1) > sto_time;
         epochs(index, :) = [];
         epochs = epochs - sta_time;
         if ~isempty(epochs)
