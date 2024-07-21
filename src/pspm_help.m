@@ -99,7 +99,6 @@ checklist_valid = [strfind(B,[newline,'├']),...
 checklist = checklist(~ismember(checklist, checklist_valid));
 B(checklist) = '';
 B(strfind(B,'─'))='';
-
 levels = B([1,strfind(B,newline)+1]);
 level_ends = [strfind(B,newline),length(B)];
 level_starts = [1,level_ends(1:end-1)+1];
@@ -113,25 +112,16 @@ for i_level = 1:length(levels)
       fieldcontent = '';
     else
       split = strfind(C, ':');
-      fieldname = C(1:split);
-      fieldcontent = C((split+1),end);
+      fieldname = C(1:(split-1));
+      fieldcontent = C((split+1):end);
     end
-    args.(fieldname) = fieldcontent;
+    args.(sort_content(fieldname)) = sort_content(fieldcontent);
   else
     [var_name_start,var_name_end] = regexp(C,'(?<=^)(.*?)(?=:)'); % get subfields
     [var_name_start2,var_name_end2] = regexp(C,'(?<=:)(.*?)(?=$)'); % get explainations
     varname = C(var_name_start:var_name_end);
     content = C(var_name_start2:var_name_end2);
-    while varname(1)==' ' || varname(1)=='.'
-      varname = varname(2:end);
-    end
-    while content(1)==' ' || content(1)=='.'
-      content = content(2:end);
-    end
-    while content(end)~='.' 
-      content(end+1) = '.';
-    end
-    args.(fieldname).(varname) = content;
+    args.(fieldname).(sort_content(varname)) = sort_content(content);
   end
 end
 
@@ -159,4 +149,15 @@ idx_space_remove = nonzeros(idx_space.*idx_space_preserve);
 B(idx_space_remove) = [];
 if strcmp(A(end),newline)
   B = B(1:end-1);
+end
+
+function B = sort_content(A)
+B = A;
+if ~isempty(B)
+  while B(1)==' ' || B(1)=='.'
+    B = B(2:end);
+  end
+  while contains(B,' ') && B(end)~='.'
+    B(end+1) = '.';
+  end
 end
