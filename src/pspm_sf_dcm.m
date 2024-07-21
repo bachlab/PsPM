@@ -6,16 +6,13 @@ function [sts, out] = pspm_sf_dcm(model, options)
 % ● Format
 %   [sts, dcm] = pspm_sf_dcm(model, options)
 % ● Arguments
-%   ┌──────model
-%   │ ▶︎ Mandatory
-%   ├───────.scr:  skin conductance epoch (maximum size depends on computing
-%   │              power, a sensible size is 60 s at 10 Hz)
-%   ├────────.sr:  [numeric] [unit: Hz]
-%   │              sampling rate.
-%   │ ▶︎ Optional
-%   └.missing_data:missing epoch data, originally loaded as model.missing
-%                  from pspm_sf, but calculated into .missing_data (created
-%                  in pspm_sf and then transferred to pspm_sf_dcm.
+%   ┌────────model
+%   ├─────────.scr:  skin conductance epoch (maximum size depends on computing
+%   │                power, a sensible size is 60 s at 10 Hz)
+%   ├──────────.sr:  [numeric] [unit: Hz] sampling rate.
+%   └.missing_data:  [Optional] missing epoch data, originally loaded as model.missing
+%                    from pspm_sf, but calculated into .missing_data (created
+%                    in pspm_sf and then transferred to pspm_sf_dcm.
 %
 %   ┌────options
 %   ├─.threshold:  [numeric] [default: 0.1] [unit: mcS]
