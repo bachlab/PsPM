@@ -8,14 +8,14 @@ function [bs, x] = pspm_bf_ldrf_gu(varargin)
 %   [bs, x] = pspm_bf_ldrf_gu(td, n, offset, p1, p2, p3, p4)
 %   [bs, x] = pspm_bf_ldrf_gu([td, n, offset, p1, p2, p3, p4])
 % ● Arguments
-%       td: time resolution in s
-%        n: duration of the function in s [20s]
-%   offset: offset in s. tells the function where to start with
-%           the response function [0.2s]
-%       p1:
-%       p2:
-%       p3:
-%       p4:
+%   *     td: time resolution in s
+%   *      n: duration of the function in s [20s]
+%   * offset: offset in s. tells the function where to start with
+%             the response function [0.2s]
+%   *     p1:
+%   *     p2:
+%   *     p3:
+%   *     p4:
 % ● Reference
 %   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
 %   cognition: Modeling event-related pupil responses. Journal of Vision,

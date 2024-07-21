@@ -4,11 +4,11 @@ function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Format
 %   [bf p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Arguments
-%     td: time resolution in second
-%   p(1): a
-%   p(2): b
-%   p(3): x0
-%   p(4): A
+%   *   td: time resolution in second
+%   * p(1): a
+%   * p(2): b
+%   * p(3): x0
+%   * p(4): A
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)

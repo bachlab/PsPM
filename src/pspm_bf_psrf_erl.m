@@ -5,9 +5,9 @@ function [bs, x] = pspm_bf_psrf_erl(varargin)
 %   [bs, x] = pspm_bf_psrf_erl(TD, n, tmax)
 %   [bs, x] = pspm_bf_psrf_erl([TD, n, tmax])
 % ● Arguments
-%     td: Time resolution
-%      n: number of layers / boxes
-%   tmax: t of the maximum amplitude in seconds
+%   *   td: Time resolution
+%   *    n: number of layers / boxes
+%   * tmax: t of the maximum amplitude in seconds
 % ● Reference
 %   Hoeks, B., & Levelt, W.J.M. (1993).
 %   Pupillary Dilation as a Measure of Attention - a Quantitative System-Analysis.

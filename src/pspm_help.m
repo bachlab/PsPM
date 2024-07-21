@@ -5,9 +5,9 @@ function information = pspm_help(func_name)
 % ● Format
 %   information = pspm_help(func_name)
 % ● Arguments
-%     func_name:  the name of the function for help information
+%   * func_name  : the name of the function for help information
 % ● Outputs
-%   information:  the description of the specific function
+%   * information: the description of the specific function
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 and updated in 2024 by Teddy
@@ -119,6 +119,9 @@ for i_level = 1:length(levels)
       fieldcontent = '';
     else
       split = strfind(C, ':');
+      if length(split)>1
+        split = split(1);
+      end
       fieldname = C(1:(split-1));
       fieldcontent = C((split+1):end);
     end
@@ -148,23 +151,25 @@ function B = remove_multiple_space (A)
 % B is a string with multiple spaces
 % A is the processed B where multiple spaces were converted into one space
 B = A;
-idx_space = strfind(A,' ');
-idx_space_preserve = zeros(1,length(idx_space));
-if idx_space(1) == 1
-  idx_space_preserve(1) = 1;
-end
-for i = 2:length(idx_space)
-  if idx_space(i) == idx_space(i-1)+1
-    idx_space_preserve(i) = 1;
+if contains(A, '  ')
+  idx_space = strfind(A,' ');
+  idx_space_preserve = zeros(1,length(idx_space));
+  if idx_space(1) == 1
+    idx_space_preserve(1) = 1;
   end
+  for i = 2:length(idx_space)
+    if idx_space(i) == idx_space(i-1)+1
+      idx_space_preserve(i) = 1;
+    end
+  end
+  idx_space_remove = nonzeros(idx_space.*idx_space_preserve);
+  B(idx_space_remove) = [];
+  if strcmp(A(end),newline)
+    B = B(1:end-1);
+  end
+  % remove " :"
+  B(strfind(B, ' :')) = '';
 end
-idx_space_remove = nonzeros(idx_space.*idx_space_preserve);
-B(idx_space_remove) = [];
-if strcmp(A(end),newline)
-  B = B(1:end-1);
-end
-% remove " :"
-B(strfind(B, ' :')) = '';
 
 function B = sort_content(A)
 B = A;

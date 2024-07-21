@@ -5,7 +5,7 @@ function [bs, x] = pspm_bf_hprf_rew(td)
 % ● Format
 %   [bs, x] = pspm_bf_hprf_fc(TD)
 % ● Arguments
-%   td: time resolution in second
+%   * td: time resolution in second
 % ● References:
 %   [1] GLM for reward-conditioned bradycardia:
 %       Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (under review). Measuring 

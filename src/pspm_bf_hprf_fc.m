@@ -4,8 +4,8 @@ function [bs, x] = pspm_bf_hprf_fc(varargin)
 %   [bs, x] = pspm_bf_hprf_fc(TD, D, soa)
 %   [bs, x] = pspm_bf_hprf_fc([TD, D, soa])
 % ● Arguments
-%   td: time resolution in second
-%    d: number of derivatives (default value 0)
+%   * td: time resolution in second
+%   *  d: number of derivatives (default value 0)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)
