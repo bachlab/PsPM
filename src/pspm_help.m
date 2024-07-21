@@ -39,6 +39,9 @@ information = sort_info (B);
 if isfield(information, 'Arguments')
   information.Arguments = sort_args(information.Arguments);
 end
+if isfield(information, 'Outputs')
+  information.Outputs = sort_args(information.Outputs);
+end
 if isfield(information, 'References')
   information.References = sort_refs(information.References);
 end
@@ -95,6 +98,7 @@ B(strfind(B,'│')) = '';
 checklist = strfind(B,newline);
 checklist_valid = [strfind(B,[newline,'├']),...
   strfind(B,[newline,'└']),...
+  strfind(B,[newline,'*']),...
   strfind(B,[newline,'┌'])]  ;
 checklist = checklist(~ismember(checklist, checklist_valid));
 B(checklist) = '';
@@ -104,7 +108,7 @@ level_ends = [strfind(B,newline),length(B)];
 level_starts = [1,level_ends(1:end-1)+1];
 args = struct();
 for i_level = 1:length(levels)
-  C = B((level_starts(i_level)+1):(level_ends(i_level)-1));
+  C = B((level_starts(i_level)):(level_ends(i_level)));
   if ~strcmp(levels(i_level),'├') && ~strcmp(levels(i_level),'└')
     % this is a field
     if strcmp(levels(i_level),'┌')
@@ -113,6 +117,9 @@ for i_level = 1:length(levels)
     else
       split = strfind(C, ':');
       fieldname = C(1:(split-1));
+      while strcmp(fieldname(1),' ') || strcmp(fieldname(1),'*')
+        fieldname = fieldname(2:end);
+      end
       fieldcontent = C((split+1):end);
     end
     args.(sort_content(fieldname)) = sort_content(fieldcontent);
@@ -120,7 +127,13 @@ for i_level = 1:length(levels)
     [var_name_start,var_name_end] = regexp(C,'(?<=^)(.*?)(?=:)'); % get subfields
     [var_name_start2,var_name_end2] = regexp(C,'(?<=:)(.*?)(?=$)'); % get explainations
     varname = C(var_name_start:var_name_end);
+    while strcmp(varname(1),' ')
+      varname = varname(2:end);
+    end
     content = C(var_name_start2:var_name_end2);
+    while strcmp(content(1),' ')
+      content = content(2:end);
+    end
     args.(fieldname).(sort_content(varname)) = sort_content(content);
   end
 end
@@ -150,12 +163,17 @@ B(idx_space_remove) = [];
 if strcmp(A(end),newline)
   B = B(1:end-1);
 end
+% remove " :"
+B(strfind(B, ' :')) = '';
 
 function B = sort_content(A)
 B = A;
 if ~isempty(B)
   while B(1)==' ' || B(1)=='.'
     B = B(2:end);
+  end
+  while contains(B,newline)
+    B(strfind(B, newline)) = '';
   end
   while contains(B,' ') && B(end)~='.'
     B(end+1) = '.';

@@ -12,7 +12,7 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   [sts, channel_index]       = pspm_scr_pp(data, options)
 %   [sts, missing_epochs_file] = pspm_scr_pp(data, options)
 % ● Arguments
-%      datafile:  a file name
+%   *  datafile:  a file name
 %   [Optional]
 %   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default: 'scr', i.e. last

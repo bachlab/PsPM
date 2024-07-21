@@ -4,16 +4,15 @@ function [sts, scl] = pspm_sf_scl(model, options)
 % ● Format
 %   [sts, scl] = pspm_sf_scl(scr, sr)
 % ● Arguments
-%       scr:
-%        sr:
-%   options:
+%   * scr    : the input skin conductance response
+%   * sr     : the input sampling rate
+%   * options: the options struct
 % ● Outputs
-%       scl:
-% ● References
+%   * scl    : scl outputs
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings
