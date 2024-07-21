@@ -322,7 +322,7 @@ if ~isempty(options.missing)
             epochs(1, 1) = max([0, epochs(1, 1)]);
             epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
         end
-        lsts = pspm_get_timing('epochs', epochs, 'seconds');
+        [lsts, epochs] = pspm_get_timing('epochs', epochs, 'seconds');
         if lsts < 1, return; end
     else
         % do nothing and keep the empty epochs array
