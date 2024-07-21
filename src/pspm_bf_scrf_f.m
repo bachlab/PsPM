@@ -5,10 +5,10 @@ function [ft, p, t] = pspm_bf_scrf_f(td, p)
 % ● Format
 %   [bf p] = pspm_bf_scrf_f(td, p)
 % ● Arguments
-%       td: time resolution in s
-%     p(1): time to peak
-%     p(2): variance of rise defining gaussian
-%   p(3:4): decay constants
+%   *     td: time resolution in s
+%   *   p(1): time to peak
+%   *   p(2): variance of rise defining gaussian
+%   * p(3:4): decay constants
 % ● Reference
 %   Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related skin
 %   conductance responses. International Journal of Psychophysiology, 75, 349-356.

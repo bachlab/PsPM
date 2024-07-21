@@ -6,8 +6,8 @@ function [bs, x] = pspm_bf_scrf(varargin)
 %   [bs, x] = pspm_bf_scrf(TD, D)
 %   [bs, x] = pspm_bf_scrf([TD, D])
 % ● Arguments
-%   td: time resolution in second
-%    d: number of derivatives (default 0)
+%   * td: time resolution in second
+%   *  d: number of derivatives (default 0)
 % ● Reference
 %   Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
 %   skin conductance responses. International Journal of Psychophysiology,

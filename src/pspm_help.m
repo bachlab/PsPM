@@ -85,6 +85,9 @@ for i_D = 1:length(D)
         break
       end
     end
+    while strcmp(str(end), newline)
+      str = str(1:(end-1));
+    end
     A.(D{i_D}) = remove_multiple_space(str);
   end
 end
