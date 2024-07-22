@@ -6,12 +6,12 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import);
 % ● Arguments
-%     datafile:
-%       import:
+%   *   datafile:
+%   *     import:
 % ● Outputs
-%          sts:
-%       import:
-%   sourceinfo:
+%   *        sts:
+%   *     import:
+%   * sourceinfo:
 % ● Developer's Notes
 %   * NOTE
 %     This info is inherited from the old labchart export code but I

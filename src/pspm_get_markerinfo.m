@@ -6,10 +6,10 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 % ● Format
 %   [sts, markerinfo] = pspm_get_markerinfo(filename, options)
 % ● Arguments
-%       filename: [char]
+%   *   filename: [char]
 %                 name of PsPM file
 %                 if empty, you will be prompted for one
-%   ┌────options:
+%   ┌────options
 %   ├.markerchan: [double]
 %   │             channel id of the marker channel;
 %   │             default value: 0, meaning to use the first found marker
@@ -21,12 +21,12 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %                 Define whether to overwrite existing output files or not.
 %                 Default value: determined by pspm_overwrite.
 % ● Output
-%            sts: [double]
+%   *        sts: [double]
 %                 default value: -1 if unsuccessful
-%     markerinfo: [struct]
-%     ├────.name: [char]
-%     ├───.value:
-%     └─.element:
+%   ┌─markerinfo: [struct]
+%   ├──────.name: [char]
+%   ├─────.value:
+%   └───.element:
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

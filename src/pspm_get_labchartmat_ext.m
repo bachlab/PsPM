@@ -9,12 +9,12 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import);
 % ● Arguments
-%     datafile:
-%       import:
+%   *   datafile:
+%   *     import:
 % ● Outputs
-%          sts:
-%       import:
-%   sourceinfo:
+%   *        sts:
+%   *     import:
+%   * sourceinfo:
 % ● Developer's Notes
 %   Tue Jun 08, 2010 12:25 am from
 %   http://www.adinstruments.com/forum/viewtopic.php?f=7&t=35&p=79#p79
@@ -27,7 +27,7 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2011-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

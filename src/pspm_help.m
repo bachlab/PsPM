@@ -183,6 +183,9 @@ if ~isempty(B)
   while contains(B,newline)
     B(strfind(B, newline)) = '';
   end
+  while B(end)==':' || B(end)==' '
+    B = B(1:(end-1));
+  end
   while contains(B,' ') && B(end)~='.'
     B(end+1) = '.';
   end
