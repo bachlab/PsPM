@@ -19,8 +19,8 @@ function sts = pspm_rev_dcm(dcm, job, sn, trl)
 %          'scrf' show peripheral skin conductance response function as used
 %                 for trial-by-trial estimation of sympathetic input
 %         'names' show trial and condition names in command window
-%   *  sn:
-%   * trl:
+%   *  sn: session.
+%   * trl: trial.
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
