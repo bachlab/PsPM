@@ -1,15 +1,15 @@
 function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 % ● Description
-%   pspm_resp_pp preprocesses raw respiration traces. The function detects
-%   respiration cycles for bellows and cushion systems, computes respiration
-%   period, amplitude and RFR, assigns these measures to the start of each
-%   cycle and linearly interpolates these (expect rs = respiration time
-%   stamps). Results are written to new channels in the same file
+%   pspm_resp_pp preprocesses raw respiration traces. The function detects respiration
+%   cycles for bellows and cushion systems, computes respiration period, amplitude and
+%   RFR, assigns these measures to the start of each cycle and linearly interpolates these
+%   (expect rs = respiration time stamps). Results are written to new channels in the same 
+%   file.
 % ● Format
 %   [sts, channel_index] = pspm_resp_pp(fn, sr, options)
 % ● Arguments
-%                 fn: data file name
-%                 sr: sample rate for new interpolated channel
+%   *             fn: data file name
+%   *             sr: sample rate for new interpolated channel
 %   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default: 'resp', i.e. last 
 %   │                 respiration channel in the file]
@@ -32,7 +32,7 @@ function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 %                     Defines whether the new channels should be added or the
 %                     corresponding channel should be replaced.
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 %
 % ● References
 %   [1] Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model

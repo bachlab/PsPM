@@ -4,17 +4,15 @@ function [sts, outfile] = pspm_rename(filename, newfilename, options)
 % ● Format
 %   [sts, newfilename] = pspm_ren(filename, newfilename, options)
 % ● Arguments
-%      filename: name of an existing PsPM file
-%   newfilename: new name of the PsPM file
-%   [Optional]
-%   ┌─────── options
-%   └──────.overwrite:  overwrite existing file by default
-%                       [logical] (0 or 1)
-%                       Default value: determined by pspm_overwrite.
+%   *    filename:  name of an existing PsPM file
+%   * newfilename:  new name of the PsPM file
+%   ┌─────options
+%   └──.overwrite:  [Optional, logical] overwrite existing file by default
+%                   The default value is determined by pspm_overwrite.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
