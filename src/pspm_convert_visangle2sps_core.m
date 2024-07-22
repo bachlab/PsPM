@@ -3,10 +3,10 @@ function arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Format
 %   arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Arguments
-%   lat: gaze x data in degree
-%   lon: gaze y data in degree
+%   * lat: gaze x data in degree
+%   * lon: gaze y data in degree
 % ● History
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 sts = -1;
 % compare if length are the same

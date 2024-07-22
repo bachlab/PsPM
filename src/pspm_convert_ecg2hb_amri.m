@@ -12,19 +12,19 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   [sts, channel_index] = pspm_convert_ecg2hb_amri(fn)
 %   [sts, channel_index] = pspm_convert_ecg2hb_amri(fn, options)
 % ● Arguments
-%                 fn: [string] Path to the PsPM file which contains the pupil
+%   *             fn: [string] Path to the PsPM file which contains the pupil
 %                     data.
 %   ┌─────── options
-%   ├───────.channel: [optional, numeric/string, default: 'ecg', i.e. last 
+%   ├───────.channel: [optional, numeric/string, default: 'ecg', i.e. last
 %   │                 ECG channel in the file]
 %   │                 Channel type or channel ID to be preprocessed.
-%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 Channel can be specified by its index (numeric) in the
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to detect
 %   │                 R-peaks for several ECG channels in a PsPM file,
 %   │                 call this function multiple times with the index of
-%   │                 each channel.  In this case, set the option 
+%   │                 each channel.  In this case, set the option
 %   │                 'channel_action' to 'add',  to store each
 %   │                 resulting 'hb' channel separately.
 %   ├─.signal_to_use: ['ecg'/'teo'/'auto', default as 'auto']
@@ -71,8 +71,8 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %                     stored heartbeat channel.
 %                     (Default: 'replace')
 % ● Outputs
-%                sts: status marker showing whether the function works normally.
-%      channel_index: index of channel containing the processed data
+%   *            sts: status marker showing whether the function works normally.
+%   *  channel_index: index of channel containing the processed data
 % ● References
 %   [1] Liu, Zhongming, et al. "Statistical feature extraction for artifact
 %       removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012):
@@ -80,7 +80,7 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   [2] http://www.amri.ninds.nih.gov/software.html
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Updated in 2022 by Teddy Chao
+%   Updated in 2022 by Teddy
 
 %% Initialise
 global settings

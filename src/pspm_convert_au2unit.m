@@ -21,21 +21,21 @@ function [sts, outchannel] = pspm_convert_au2unit(varargin)
 %   [sts, converted_data] = pspm_convert_au2unit(data, unit, distance, record_method,
 %                multiplicator, reference_distance, reference_unit, options)
 % ● Arguments
-%                 fn: filename which contains the channels to be converted
-%               data: a one-dimensional vector which contains the data to be
+%   *             fn: filename which contains the channels to be converted
+%   *           data: a one-dimensional vector which contains the data to be
 %                     converted
-%               unit: To which unit the data should be converted. possible
+%   *           unit: To which unit the data should be converted. possible
 %                     values are mm, cm, dm, m, in, inches.
-%           distance: distance between camera and eyes in units as specified in
+%   *       distance: distance between camera and eyes in units as specified in
 %                     the parameter unit
-%      record_method: either 'area' or 'diameter', tells the function what the
+%   *  record_method: either 'area' or 'diameter', tells the function what the
 %                     format of the recorded data is
-%      multiplicator: the multiplicator in the linear conversion.
-% reference_distance: distance at which the multiplicator value was obtained,
-%                     as specified in the parameter unit.
+%   *  multiplicator: the multiplicator in the linear conversion.
+%   * reference_distance: distance at which the multiplicator value was
+%                     obtained, as specified in the parameter unit.
 %                     The values will be proportionally translated to this
 %                     distance before applying the conversion function.
-%     reference_unit: reference unit with which the multiplicator and
+%   * reference_unit: reference unit with which the multiplicator and
 %                     reference_distance values were obtained.
 %                     Possible values are mm, cm, dm, m, in, inches
 %   ┌────────options:
@@ -45,18 +45,18 @@ function [sts, outchannel] = pspm_convert_au2unit(varargin)
 %   │                 'pupil_r' and 'pupil_l'.
 %   │                 To process a specific eye, use 'pupil_l' or 'pupil_r'.
 %   │                 To process the combined left and right eye, use 'pupil_c'.
-%   │                 The identifier 'pupil' will use the first existing 
+%   │                 The identifier 'pupil' will use the first existing
 %   │                 option out of the following:
 %   │                 (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
 %   │                 eye pupil, (4) any pupil channel. If there are multiple
 %   │                 channels of the specified type, only last one will be
-%   │                 processed. 
+%   │                 processed.
 %   │                 You can also specify the number of a channel.
 %   └.channel_action: ['add'/'replace', default as 'add']
 %                     Defines whether the new channel should be added or the
 %                     previous outputs of this function should be replaced.
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
@@ -122,7 +122,7 @@ if options.invalid
     return
 end
 
-if ~(ismember(record_method, {'area', 'diameter'})) 
+if ~(ismember(record_method, {'area', 'diameter'}))
     warning('ID:invalid_input', 'record_method must be ''area'' or ''diameter''');
     return;
 end

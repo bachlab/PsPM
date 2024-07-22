@@ -9,7 +9,7 @@ function [ sts, outchannel ] = pspm_convert_ppg2hb( fn , options )
 % ● Format
 %   [sts, channel_index] = pspm_convert_ppg2hb( fn, options )
 % ● Arguments
-%                 fn: file name with path
+%   *             fn: file name with path
 %   ┌────────options: struct with following possible fields
 %   ├────────.method: 'classic' (default) or 'heartpy'.
 %   ├───────.channel: [optional, numeric/string, default: 'ppg', i.e. last
@@ -43,7 +43,7 @@ function [ sts, outchannel ] = pspm_convert_ppg2hb( fn , options )
 %                     The path where python can be found. Mandatory if
 %                     python environment is not yet set up
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster (University of Zurich)

@@ -5,19 +5,19 @@ function [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options)
 % ● Format
 %   [sts, channel_index] = pspm_convert_hb2hp(fn, sr, options)
 % ● Arguments
-%                 fn: data file name
-%                 sr: new sample rate for heart period channel
+%   *             fn: data file name
+%   *             sr: new sample rate for heart period channel
 %   ┌─────── options
-%   ├───────.channel: [optional, numeric/string, default: 'hb', i.e. last 
+%   ├───────.channel: [optional, numeric/string, default: 'hb', i.e. last
 %   │                 heart beat channel in the file]
 %   │                 Channel type or channel ID to be preprocessed.
-%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 Channel can be specified by its index (numeric) in the
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to
 %   │                 convert several heart beat channels in a PsPM file,
 %   │                 call this function multiple times with the index of
-%   │                 each channel.  In this case, set the option 
+%   │                 each channel.  In this case, set the option
 %   │                 'channel_action' to 'add',  to store each
 %   │                 resulting 'hp' channel separately.
 %   ├.channel_action: ['add'/'replace', default as 'replace']
@@ -35,10 +35,10 @@ function [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options)
 %                     Specifies the lower limit of the
 %                     heart periods in seconds. Default is 0.2.
 % ● Output
-%      channel_index: index of channel containing the processed data
-% 
+%   *  channel_index: index of channel containing the processed data
+%
 % % ● Reference
-%     [1] Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related 
+%     [1] Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related
 %         heart period responses. Psychophysiology, 53, 837-846.
 % ● History
 %   Introduced in PsPM 3.0
@@ -47,7 +47,7 @@ function [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options)
 %% initialise & user output
 sts = -1;
 global settings;
-if isempty(settings) 
+if isempty(settings)
     pspm_init;
 end
 outchannel = [];
@@ -60,7 +60,7 @@ elseif nargin < 2
   warning('ID:invalid_input','No sample rate given.'); return;
 elseif ~isnumeric(sr)
   warning('ID:invalid_input','Sample rate needs to be numeric.'); return;
-elseif nargin < 3   
+elseif nargin < 3
     options = struct();
 end
 options = pspm_options(options, 'convert_hb2hp');

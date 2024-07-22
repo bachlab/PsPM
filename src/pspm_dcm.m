@@ -104,12 +104,11 @@ function [sts, dcm] = pspm_dcm(model, options)
 %                 in the order they are specified in the model.timing array -
 %                 to be used for display and export only
 % ● Output
-%   fn:   Name of the model file.
-%   dcm: Model struct.
-%
-%   Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-%   in SN units such that an eSCR SN pulse with 1 unit amplitude causes an
-%   eSCR with 1 mcS amplitude
+%   fn:           Name of the model file.
+%   dcm:          Model struct. Output units: all timeunits are in seconds;
+%                 eSCR and aSCR amplitude are in SN units such that an
+%                 eSCR SN pulse with 1 unit amplitude causes an eSCR with
+%                 1 mcS amplitude.
 % ● Developer's Notes
 %   pspm_dcm can handle NaN values in data channels. Either by specifying
 %   missing epochs manually using model.missing, or by detecting NaN epochs
@@ -145,18 +144,16 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   the trials use much less than available amount of samples in both case
 %   (1) and (2). Instead, we aim to use as much data as possible in (1), and
 %   perform (2) only if this edge case is not present.
-% 
 % ● References
 %   [1] Model development:
-%       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal 
-%       modelling of anticipatory skin conductance changes. Biological 
+%       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal
+%       modelling of anticipatory skin conductance changes. Biological
 %       Psychology, 85(1), 163-70
 %   [2] Model validation and improvement:
 %       Staib, M., Castegnetti, G., & Bach, D. R. (2015). Optimising a
-%       model-based approach to inferring fear learning from skin  
-%       conductance responses. Journal of Neuroscience Methods, 255, 
+%       model-based approach to inferring fear learning from skin
+%       conductance responses. Journal of Neuroscience Methods, 255,
 %       131-138.
-%       
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2010-2021 by Dominik R Bach (Wellcome Centre for Human Neuroimaging, UCL)
@@ -173,7 +170,7 @@ dcm = [];
 % by a `return` function
 warnings = {};
 
-%% 2 Check input 
+%% 2 Check input
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
@@ -184,7 +181,7 @@ if model.invalid
     return
 end
 
-% 2.3 check options 
+% 2.3 check options
 options = pspm_options(options, 'dcm');
 if options.invalid
   return
@@ -239,7 +236,7 @@ missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
   [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
-  if sts < 1 
+  if sts < 1
     return;
   else
      y{iSn} = data.data;
@@ -254,7 +251,7 @@ for iSn = 1:numel(model.datafile)
   else
     missing{iSn} = [];
   end
- 
+
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);
 
@@ -269,7 +266,7 @@ for iSn = 1:numel(model.datafile)
           y{iSn}(flanks(1):flanks(2)) = NaN;
       end
   end
- 
+
   % find NaN in data, which might originate in previous step or exist in
   % the data already. This will update the previous miss_epochs definition.
   nan_epochs = isnan(y{iSn});

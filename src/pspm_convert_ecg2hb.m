@@ -6,18 +6,18 @@ function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 % ● Format
 %   [sts, channel_index, quality_info] = pspm_convert_ecg2hb(fn, options)
 % ● Arguments
-%                 fn: data file name
+%   *             fn: data file name
 %   ┌─────── options
-%   ├───────.channel: [optional, numeric/string, default: 'ecg', i.e. last 
+%   ├───────.channel: [optional, numeric/string, default: 'ecg', i.e. last
 %   │                 ECG channel in the file]
 %   │                 Channel type or channel ID to be preprocessed.
-%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 Channel can be specified by its index (numeric) in the
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to detect
 %   │                 R-peaks for several ECG channels in a PsPM file,
 %   │                 call this function multiple times with the index of
-%   │                 each channel.  In this case, set the option 
+%   │                 each channel.  In this case, set the option
 %   │                 'channel_action' to 'add',  to store each
 %   │                 resulting 'hb' channel separately.
 %   ├──────────.semi: activates the semi automatic mode, allowing the
@@ -36,22 +36,20 @@ function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 %                     the previous outputs of this function should be replaced.
 %
 % ● Output
-%      channel_index: index of channel containing the processed data
-%      quality_info:  generated if options.debugmode == 1
-%
+%   *  channel_index: index of channel containing the processed data
+%   *   quality_info: generated if options.debugmode == 1
 % ● Reference
 %   [1] Adjusted algorithm:
-%       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related 
+%       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related
 %       heart period responses. Psychophysiology, 53, 837-846.
 %   [2] Original algorithm:
 %       Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
 %       Transactions on Biomedical Engineering, 32, 230-236.
-% 
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
 %   (Technische Universitaet Dresden, University of Zurich)
-%   Updated in 2022 Teddy Chao
+%   Updated in 2022 Teddy
 % ● Developer's Notes
 %   ▶︎ Changes from the original Pan & Tompkins algorithm
 %   filter:       P. & T. intend to achieve a pass band from 5-15 Hz with a

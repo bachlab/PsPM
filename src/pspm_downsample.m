@@ -5,10 +5,10 @@ function [sts, data] = pspm_downsample(data, freqratio)
 % ● Format
 %   [sts, data] = pspm_downsample(data, freqratio)
 % ● Arguments
-%        data: the input data for performing downsampling on.
-%   freqratio: the frequency ratio of downsampling operation.
+%   *      data: the input data for performing downsampling on.
+%   * freqratio: the frequency ratio of downsampling operation.
 % ● Output
-%         sts: -1 if the frequency ratio is not an integer
+%   *       sts: -1 if the frequency ratio is not an integer
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

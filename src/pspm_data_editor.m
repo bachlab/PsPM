@@ -5,7 +5,7 @@ function varargout = pspm_data_editor(varargin)
 %   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
-%          indata:  Can be multiple kinds of data types. In order to use
+%   *      indata:  Can be multiple kinds of data types. In order to use
 %                   pspm_data_editor() to edit acquisition data, the actual
 %                   data vector has to be passed via the varargin
 %                   argmument. The data should be 1xn or nx1 double vector.
@@ -21,7 +21,7 @@ function varargout = pspm_data_editor(varargin)
 %                   Define whether to overwrite existing output files or not.
 %                   Default value: not to overwrite.
 % ● Outputs
-%             out:  The output depends on the actual output type chosen in
+%   *         out:  The output depends on the actual output type chosen in
 %                   the graphical interface. At the moment either the
 %                   interpolated data or epochs only can be chosen as
 %                   output of the function.
@@ -100,7 +100,7 @@ if numel(varargin) > 1 && isstruct(varargin{2}) % load options
     return
   end
   if isfield(handles.options, 'output_file') && ischar(handles.options.output_file)
-    % check if options are valid and assign accordingly  
+    % check if options are valid and assign accordingly
     handles.output_file = handles.options.output_file;
     set(handles.edOutputFile, 'String', handles.output_file);
   end

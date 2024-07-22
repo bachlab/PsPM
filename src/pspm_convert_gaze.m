@@ -8,7 +8,7 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 % ● Format
 %   [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
-%                 fn: A data file name
+%   *             fn: A data file name
 %   ┌────────conversion [ struct ] with fields
 %   ├──────────.from: Original units to convert from: 'pixel', a metric distance
 %   │                 unit, or 'degree'
@@ -29,7 +29,7 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 %   └.channel_action: Channel action for sps data, add / replace existing sps
 %                     data (default: add)
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 4.3.1
 %   Written in 2020 by Sam Maxwell (University College London)
@@ -133,8 +133,8 @@ for i = 1:numel(channel)
     if lsts < 1, return, end
 end
 
-% map channel index from list of channels with correct units to list of all channels 
-pos_of_channel = channels_correct_units(pos_of_channel); 
+% map channel index from list of channels with correct units to list of all channels
+pos_of_channel = channels_correct_units(pos_of_channel);
 
 % find eye of channels to use
 eye = {};

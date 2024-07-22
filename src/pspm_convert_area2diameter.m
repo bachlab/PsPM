@@ -6,8 +6,8 @@ function [sts, outchannel] = pspm_convert_area2diameter(varargin)
 %   [sts, converted_data] = pspm_convert_area2diameter(area)
 %   [sts, channel_index]  = pspm_convert_area2diameter(fn, options)
 % ● Arguments
-%                 fn: a numeric vector of milimeter values
-%               area: a numeric vector of area values (the unit is not
+%   *             fn: a numeric vector of milimeter values
+%   *           area: a numeric vector of area values (the unit is not
 %                     important)
 %   ┌────────options:
 %   ├───────.channel: [optional][numeric/string] [Default: 'both']
@@ -16,18 +16,18 @@ function [sts, outchannel] = pspm_convert_area2diameter(varargin)
 %   │                 'pupil_r' and 'pupil_l'.
 %   │                 To process a specific eye, use 'pupil_l' or 'pupil_r'.
 %   │                 To process the combined left and right eye, use 'pupil_c'.
-%   │                 The identifier 'pupil' will use the first existing 
+%   │                 The identifier 'pupil' will use the first existing
 %   │                 option out of the following:
 %   │                 (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
 %   │                 eye pupil, (4) any pupil channel. If there are multiple
 %   │                 channels of the specified type, only last one will be
-%   │                 processed. 
+%   │                 processed.
 %   │                 You can also specify the number of a channel.
 %   └.channel_action: ['add'/'replace', default as 'add']
 %                     Defines whether the new channel should be added or the
 %                     previous outputs of this function should be replaced.
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
