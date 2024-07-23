@@ -4,17 +4,17 @@ function [sts, import] = pspm_get_events(import)
 % ● Format
 %   [sts, data] = pspm_get_events(import)
 % ● Arguments
-%      import:  import job structure with mandatory fields
-%       .data:  mandatory
-%     .marker:  mandatory, accepts 'timestamps' and 'continuous'.
-%         .sr:  timestamps: timeunits in seconds, continuous: sample rate in
-%               1/seconds)
-%      .flank:  optional for continuous channels; default: both; accepts
-%               'ascending', 'descending', 'both', 'all'.
-%    .denoise:  for continuous marker channels: only retains markers of duration
-%               longer than the value given here (in seconds).
+%   ┌────import : import job structure with mandatory fields
+%   ├─────.data : mandatory
+%   ├───.marker : mandatory, accepts 'timestamps' and 'continuous'.
+%   ├───────.sr : timestamps: timeunits in seconds, continuous: sample rate
+%   │             in 1/seconds)
+%   ├────.flank : optional for continuous channels; default: both; accepts
+%   │             'ascending', 'descending', 'both', 'all'.
+%   └──.denoise : for continuous marker channels: only retains markers of
+%                 duration longer than the value given here (in seconds).
 % ● Output
-%       import: returns event timestamps in seconds in import.data
+%   *    import : returns event timestamps in seconds in import.data
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 by Dominik R Bach & Tobias Moser (University of Zurich)
