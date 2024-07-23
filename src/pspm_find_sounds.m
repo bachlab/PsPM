@@ -6,21 +6,21 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 % ● Format
 %   [sts, channel_index, info] = pspm_find_sounds(fn, options)
 % ● Arguments
-%             fn: path and filename of the pspm file holding the sound
+%   *         fn: path and filename of the pspm file holding the sound
 % ┌─────── options
-% ├───────.channel: [optional, numeric/string, default: 'snd', i.e. last 
+% ├───────.channel: [optional, numeric/string, default: 'snd', i.e. last
 % │                 sound channel in the file]
 % │                 Channel type or channel ID to be preprocessed.
-% │                 Channel can be specified by its index (numeric) in the 
+% │                 Channel can be specified by its index (numeric) in the
 % │                 file, or by channel type (string).
 % │                 If there are multiple channels with this type, only
 % │                 the last one will be processed. If you want to
 % │                 preprocess several sound in a PsPM file,
 % │                 call this function multiple times with the index of
-% │                 each channel.  In this case, set the option 
+% │                 each channel.  In this case, set the option
 % │                 'channel_action' to 'add',  to store each
 % │                 resulting channel separately.
-% ├.channel_action: ['add'/'replace'] 
+% ├.channel_action: ['add'/'replace']
 % │                 sound events are written as marker channel to the
 % │                 specified pspm file. Onset times then correspond to marker
 % │                 events and duration is written to markerinfo. The
@@ -66,13 +66,12 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 % │                 will be accepted as a sound event. Default is 0.1.
 % ├.marker_chan_num: [integer] number of a channel holding markers.
 % │                 By default first 'marker' channel.
-% │   EXPERIMENTAL, use with caution!
 % └.expectedSoundCount: [integer] Checks for correct number of detected sounds.
 %                   If too few are found, lowers threshhold until at least
 %                   specified count is reached. Thresh is lowered by .01 until
-%                   0.05 is reached for a max of 95 iterations.
+%                   0.05 is reached for a max of 95 iterations. This is a EXPERIMENTAL variable, use with caution!
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ┌──────────info: struct with fields
 % ├──.snd_markers: vector of begining of sound sound events
 % └───────.delays: vector of delays between markers and detected sounds.
@@ -107,7 +106,7 @@ fprintf('Processing sound in file %s\n',fn);
 
 % Load Data
 [lsts, snd] = pspm_load_channel(fn, options.channel, 'snd');
-if lsts < 1 
+if lsts < 1
   return;
 end
 

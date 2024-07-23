@@ -6,20 +6,20 @@ function [sts, channel_index] = pspm_gaze_pp(fn, options)
 %   [sts, channel_index] = pspm_gaze_pp(fn) or
 %   [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Arguments
-%                 fn: [string] Path to the PsPM file which contains the gaze data.
+%   *             fn: [string] Path to the PsPM file which contains the gaze data.
 %   ┌────────options: [struct] options for processing, please check pspm_options.
-%   ├───────.channel: gaze_x_r/gaze_x_l/gaze_y_r/gaze_y_l channels to work on. 
+%   ├───────.channel: gaze_x_r/gaze_x_l/gaze_y_r/gaze_y_l channels to work on.
 %   │                 This can be a 4-element vector of channel numbers, or 'gaze',
 %   │                 which will use the last channel of the types
 %   │                 specified above. Default is 'gaze'.
 %   └.channel_action: 'replace' existing gaze_x_c and gaze_y_c channels, or
 %                     'add' new ones (default)
 % ● Output
-%                sts: Status determining whether the execution was
+%   *            sts: Status determining whether the execution was
 %                     successfull (sts == 1) or not (sts == -1)
-%      channel_index: Index of the generated combined gaze channels.
-%                     This can be in the end if channel action is specified to be 'add', 
-%                     or around the old left/right channels if channel_action is specified 
+%   *  channel_index: Index of the generated combined gaze channels.
+%                     This can be in the end if channel action is specified to be 'add',
+%                     or around the old left/right channels if channel_action is specified
 %                     to be 'replace'.
 % ● History
 %   Written in 2021 by Teddy
