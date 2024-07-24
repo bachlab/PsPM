@@ -169,9 +169,9 @@ for iType = 1:(numel(datatype) - 1)
         newt = (1/sr):(1/sr):infos.duration;
         if ~isempty(respdata)
           % assign rp/ra/RFR to following zero crossing
-          writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap');
-          % 'extrap' option may introduce falsely negative values
-          writedata(writedata < 0) = 0;
+          writedata = interp1(respstamp(2:end), respdata, newt, 'linear');
+          nanindx = isnan(writedata);
+          writedata = interp1(find(~nanindx),writedata(~nanindx),nanindx, 'nearest', 'extrap'); % avoid out-of-range values at the edges by nearest neighbour extrapolation
         else
           writedata = NaN(length(newt), 1);
         end
