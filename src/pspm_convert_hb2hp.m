@@ -84,7 +84,9 @@ newt = (1/sr):(1/sr):dinfos.duration;
 try
   newhp = interp1(hb(idx+1), hp(idx), newt, 'linear', NaN); % assign hr to following heart beat
   nanindx = isnan(newhp);
-  newhp = interp1(find(~nanindx),newhp(~nanindx),nanindx, 'nearest', 'extrap'); % avoid out-of-range values at the edges by nearest neighbour extrapolation
+  if any(nanindx)
+    newhp(nanindx) = interp1(find(~nanindx),newhp(~nanindx),find(nanindx), 'nearest', 'extrap'); % avoid out-of-range values at the edges by nearest neighbour extrapolation
+  end
 catch
   warning('ID:too_strict_limits', ['Interpolation failed because there weren''t enough heartbeats within the ',...
     'required period limits. Filling the heart period channel with NaNs.']);

@@ -171,7 +171,9 @@ for iType = 1:(numel(datatype) - 1)
           % assign rp/ra/RFR to following zero crossing
           writedata = interp1(respstamp(2:end), respdata, newt, 'linear');
           nanindx = isnan(writedata);
-          writedata = interp1(find(~nanindx),writedata(~nanindx),nanindx, 'nearest', 'extrap'); % avoid out-of-range values at the edges by nearest neighbour extrapolation
+          if any(nanindx)
+            writedata(nanindx) = interp1(find(~nanindx),writedata(~nanindx),find(nanindx), 'nearest', 'extrap'); % avoid out-of-range values at the edges by nearest neighbour extrapolation
+          end
         else
           writedata = NaN(length(newt), 1);
         end
