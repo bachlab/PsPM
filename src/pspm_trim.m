@@ -3,7 +3,7 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 %   and 'to' and writes it to a file with a prepended 't'
 % ● Format
-%   newdatafile = pspm_trim (datafile, from, to, reference, options)
+%   [sts, newdatafile, newepochfile] = pspm_trim (datafile, from, to, reference, options)
 % ● Arguments
 %            datafile:  [char] the name of the file to be trimmed, or a
 %                       struct accepted by pspm_load_data.
