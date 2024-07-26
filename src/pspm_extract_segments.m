@@ -157,6 +157,9 @@ case 'model'
         warning('ID:invalid_input', 'Unknown model type.');
         return;
     end
+    % GLM stores sample rate for each session separately, but checks if
+    % they are the same and errors if not. So we can assume the first
+    % element is the same as the other ones.
     sr = data.input.sr(1);
 end
 
