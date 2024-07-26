@@ -157,7 +157,7 @@ case 'model'
         warning('ID:invalid_input', 'Unknown model type.');
         return;
     end
-    sr = data.input.sr;
+    sr = data.input.sr(1);
 end
 
 if options.norm
