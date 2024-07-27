@@ -7,7 +7,7 @@ function [bs, x] = pspm_bf_spsrf_box(varargin)
 %   [bs, x] = pspm_bf_spsrf_box(td, soa)
 %   [bs, x] = pspm_bf_spsrf_box([td, soa])
 % ● Arguments
-%   * td: time resolution in second
+%   *    td : time resolution in second.
 % ● References
 %   Xia Y, Melinscak F, Bach DR (2020)
 %   Saccadic Scanpath Length: An Index for Human Threat Conditioning

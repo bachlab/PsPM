@@ -1,28 +1,24 @@
 function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 % ● Description
-%   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and
-%   writes them as heart beat channel into the datafile. This function
-%   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
+%   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and writes
+%   them as heart beat channel into the datafile. This function implements the algorithm
+%   by Pan & Tompkins (1985) with some adjustments.
 % ● Format
 %   [sts, channel_index, quality_info] = pspm_convert_ecg2hb(fn, options)
 % ● Arguments
-%   *             fn: data file name
-%   ┌─────── options
-%   ├───────.channel: [optional, numeric/string, default: 'ecg', i.e. last
-%   │                 ECG channel in the file]
-%   │                 Channel type or channel ID to be preprocessed.
-%   │                 Channel can be specified by its index (numeric) in the
-%   │                 file, or by channel type (string).
-%   │                 If there are multiple channels with this type, only
-%   │                 the last one will be processed. If you want to detect
-%   │                 R-peaks for several ECG channels in a PsPM file,
-%   │                 call this function multiple times with the index of
-%   │                 each channel.  In this case, set the option
-%   │                 'channel_action' to 'add',  to store each
-%   │                 resulting 'hb' channel separately.
-%   ├──────────.semi: activates the semi automatic mode, allowing the
-%   │                 handcorrection of all IBIs that fulfill:
-%   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
+%   *            fn : data file name
+%   ┌───────options
+%   ├──────.channel : [optional, numeric/string, default: 'ecg', i.e. last ECG channel
+%   │                 in the file] Channel type or channel ID to be preprocessed.
+%   │                 Channel can be specified by its index (numeric) in the file, or by
+%   │                 channel type (string). If there are multiple channels with this
+%   │                 type, only the last one will be processed. If you want to detect
+%   │                 R-peaks for several ECG channels in a PsPM file, call this function
+%   │                 multiple times with the index of each channel. In this case, set
+%   │                 the option 'channel_action' to 'add', to store each resulting 'hb'
+%   │                 channel separately.
+%   ├──────────.semi: activates the semi automatic mode, allowing the handcorrection of
+%   │                 all IBIs that fulfill: >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
 %   ├─────────.minHR: sets minimal HR [def. 20bpm].
 %   ├─────────.maxHR: sets maximal HR [def. 200bpm].
 %   ├─────.debugmode: [numeric, default as 0]

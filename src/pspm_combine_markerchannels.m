@@ -9,8 +9,8 @@ function [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 %   [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 % ● Arguments
 %   * datafile:         data file name(s): char
-%   ┌────────options
-%   ├.channel_action:
+%   ┌─────────options
+%   ├─.channel_action :
 %   │                   Accepted values: 'add'/'replace'
 %   │                   Defines whether the new channel should be added
 %   │                   on top of combined marker channels ('add'), or all
@@ -19,7 +19,7 @@ function [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 %   │                   the first option is used, then use marker channel
 %   │                   indexing in further processing which by default
 %   │                   takes the first marker channel as input
-%   └.marker_chan_num:  any number of marker channel numbers - if undefined
+%   └.marker_chan_num : any number of marker channel numbers - if undefined
 %                       or 0, all marker channels of each file are used
 % ● History
 %   Introduced In PsPM 6.1.2

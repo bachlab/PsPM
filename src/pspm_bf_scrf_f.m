@@ -1,14 +1,14 @@
 function [ft, p, t] = pspm_bf_scrf_f(td, p)
 % ● Description
 %   pspm_bf_scrf_f is the canonical skin conductance response function.
-%   (exponentially modified gaussian, EMG)
+%   (exponentially modified gaussian, EMG).
 % ● Format
 %   [bf p] = pspm_bf_scrf_f(td, p)
 % ● Arguments
-%   *     td: time resolution in s
-%   *   p(1): time to peak
-%   *   p(2): variance of rise defining gaussian
-%   * p(3:4): decay constants
+%   *     td: Time resolution in s.
+%   *   p(1): Time to peak.
+%   *   p(2): Variance of rise defining gaussian.
+%   * p(3:4): Decay constants.
 % ● Reference
 %   Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related skin
 %   conductance responses. International Journal of Psychophysiology, 75, 349-356.

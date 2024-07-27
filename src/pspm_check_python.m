@@ -6,11 +6,11 @@ function sts = pspm_check_python(pythonPath)
 %   to update the Python environment to use the provided path.
 %   It returns a status argument sts with values 0 or 1.
 % ● Arguments
-%   * pythonPath: A string specifying the path to the Python executable.
-%                 If this is empty or not provided, the function simply
-%                 reports the current Python environment without making changes.
+%   * pythonPath : A string specifying the path to the Python executable.
+%                  If this is empty or not provided, the function simply reports the
+%                  current Python environment without making changes.
 % ● Outputs
-%   *        sts: Status of the operation (1 for success, 0 for failure).
+%   *        sts : Status of the operation (1 for success, 0 for failure).
 % ● History
 %   Written in 2024 by Dominik R Bach (Uni Bonn)
 
