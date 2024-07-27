@@ -8,13 +8,13 @@ function [bs, x] = pspm_bf_lcrf_gm(varargin)
 %   [bs, x] = pspm_bf_lcrf_gm(td, n, offset, a, b, A)
 %   [bs, x] = pspm_bf_lcrf_gm([td, n, offset, a, b, A])
 % ● Arguments
-%   * td    : time resolution in s
-%   * n     : duration of the function in s [20s]
+%   *    td : time resolution in second.
+%   *     n : duration of the function in s. Default as 20 s.
 %   * offset: offset in s. tells the function where to start with
-%             the response function [0.2s]
-%   * a     : shape of the function
-%   * b     : scale of the function
-%   * A     : quantifier or amplitude of the function
+%             the response function. Default as 0.2 s.
+%   *     a : shape of the function.
+%   *     b : scale of the function.
+%   *     A : quantifier or amplitude of the function
 % ● References
 %   Korn CW, Bach DR.
 %   A solid frame for the window on cognition: Modeling event-related pupil responses.
@@ -22,7 +22,7 @@ function [bs, x] = pspm_bf_lcrf_gm(varargin)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings

@@ -7,11 +7,13 @@ function [bf, x] = pspm_bf_data(td)
 % ● Format
 %   [bf, x] = pspm_bf_data(td)
 % ● Arguments
-%   *    td : the time interval in points for sampling
+%   *    td : Time interval in points for sampling.
+% ● Outputs
+%   *    bf : Created basis function.
 % ● History
 %   Introduced in PsPM 5.1.1
-%   Written in 2021 by Dominik R Bach (University College London)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Written    in 2021 by Dominik R Bach (University College London)
+%   Maintained in 2022 by Teddy
 
 %% Constants
 % CHANGE THIS TO CREATE YOUR FUNCTION

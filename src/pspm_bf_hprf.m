@@ -2,10 +2,10 @@ function [bf, x ,p] = pspm_bf_hprf(td,p)
 % ● Description
 %   pspm_bf_hprf is the heart period response function (scaled gamma functions).
 % ● Format
-%   [bf, x, p] = pspm_bf_hprf(td, p)
+%   [bf,x,p] = pspm_bf_hprf(td, p)
 % ● Arguments
-%   * td: time resolution in s
-%   *  p: '3' vs '4' basis function solution
+%   *     td : time resolution in second.
+%   *      p : '3' vs '4' basis function solution.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

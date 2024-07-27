@@ -1,14 +1,14 @@
 function [fx, x, p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Description
-%   pspm_bf_hprf_fc_f is the basis function for...
+%   pspm_bf_hprf_fc_f is the basis function for heart period response function.
 % ● Format
 %   [bf p] = pspm_bf_hprf_fc_f(td, soa, p)
 % ● Arguments
-%   *   td: time resolution in second
-%   * p(1): a
-%   * p(2): b
-%   * p(3): x0
-%   * p(4): A
+%   *   td : time resolution in second,
+%   * p(1) : variable a
+%   * p(2) : variable b
+%   * p(3) : x0
+%   * p(4) : A
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)
