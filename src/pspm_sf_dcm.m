@@ -7,34 +7,26 @@ function [sts, out] = pspm_sf_dcm(model, options)
 %   [sts, dcm] = pspm_sf_dcm(model, options)
 % ● Arguments
 %   ┌────────model
-%   ├─────────.scr:  skin conductance epoch (maximum size depends on computing
-%   │                power, a sensible size is 60 s at 10 Hz)
-%   ├──────────.sr:  [numeric] [unit: Hz] sampling rate.
-%   └.missing_data:  [Optional] missing epoch data, originally loaded as model.missing
+%   ├─────────.scr : skin conductance epoch (maximum size depends on computing power,
+%   │                a sensible size is 60 s at 10 Hz)
+%   ├──────────.sr : [numeric] [unit: Hz] sampling rate.
+%   └.missing_data : [Optional] missing epoch data, originally loaded as model.missing
 %                    from pspm_sf, but calculated into .missing_data (created
 %                    in pspm_sf and then transferred to pspm_sf_dcm.
-%
-%   ┌────options
-%   ├─.threshold:  [numeric] [default: 0.1] [unit: mcS]
-%   │              threshold for SN detection (default 0.1 mcS)
-%   ├─────.theta:  [vector] [default: read from pspm_sf_theta]
-%   │               a (1 x 5) vector of theta values for f_SF
-%   ├─────.fresp:  [numeric] [unit: Hz] [default: 0.5]
-%   │              frequency of responses to model
-%   ├───.dispwin:  [logical] [default: 1]
-%   │              display progress window.
-%   ├.dispsmallwin:[logical] [default: 0]
-%   │              display intermediate windows.
-%   └.missingthresh:
-%                  [numeric] [default: 2] [unit: second]
-%                  threshold value for controlling missing epochs,
-%                  which is originally inherited from SF
-% 
+%   ┌──────options
+%   ├───.threshold : [numeric] [default: 0.1] [unit: mcS]
+%   │                threshold for SN detection (default 0.1 mcS)
+%   ├───────.theta : [vector] [default: read from pspm_sf_theta]
+%   │                a (1 x 5) vector of theta values for f_SF
+%   ├───────.fresp : [numeric] [unit: Hz] [default: 0.5] frequency of responses to model
+%   ├─────.dispwin : [logical] [default: 1] display progress window.
+%   ├.dispsmallwin : [logical] [default: 0] display intermediate windows.
+%   └.missingthresh: [numeric] [default: 2] [unit: second] threshold value for controlling
+%                    missing epochs, which is originally inherited from SF.
 % ● References
 %   Bach DR, Daunizeau J, Kuelzow N, Friston KJ, & Dolan RJ (2011). Dynamic
 %   causal modelling of spontaneous fluctuations in skin conductance.
 %   Psychophysiology, 48, 252-57.
-% 
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

@@ -4,25 +4,23 @@ function [sts, auc] = pspm_sf_auc(model, options)
 % ● Format
 %   [sts, auc] = pspm_sf_auc(scr, sr, options)
 % ● Arguments
-%       scr:
-%        sr:
-%   options:
+%   *     scr : the SCR time series
+%   *      sr : sampling rate.
+%   * options : the options struct.
 % ● Outputs
-%       auc:
+%   *     auc : The calculated area under the curve.
 % ● Reference
 %   Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
 %   quantification of arousal from spontanaeous skin conductance
 %   fluctuations. International Journal of Psychophysiology, 76, 52-55.
-% 
 % ● References
 %   [1] Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
 %       quantification of arousal from spontanaeous skin conductance
 %       fluctuations. International Journal of Psychophysiology, 76, 52-55.
-% 
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings
