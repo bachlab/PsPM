@@ -115,7 +115,7 @@ if any(spm_path_idx)
 end
 
 % 2.7 Add required paths ---
-required_folders = {{}, {'pspm_cfg'}, {'ext', 'SPM'}; {'ext','VBA'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
+required_folders = {{'pspm_cfg'}, {'ext', 'SPM'}, {'ext','VBA'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}, {'ext', 'matlabbatch'}};
 for k = 1:numel(required_folders)
     required_path = pspm_path(required_folders{k}{:});
     if ~any(strcmp(initial_paths, required_path))
