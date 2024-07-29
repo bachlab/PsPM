@@ -7302,17 +7302,17 @@ General introduction of the function.
 
 \begin_layout Standard
 \noindent
-  ┌─input3
+┌─input3
 \end_layout
 
 \begin_layout Standard
 \noindent
-  ├─.subfield1 : description of subfield1.
+├─.subfield1 : description of subfield1.
 \end_layout
 
 \begin_layout Standard
 \noindent
-  └-.subfield2 : description of subfield2.
+└─.subfield2 : description of subfield2.
 \end_layout
 
 \begin_layout Standard
@@ -7322,12 +7322,27 @@ General introduction of the function.
 
 \begin_layout Standard
 \noindent
-  * output1    : description of output1.
+* output1    : description of output1.
 \end_layout
 
 \begin_layout Standard
 \noindent
-  * output2    : description of output2.
+* output2    : description of output2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+┌─output3
+\end_layout
+
+\begin_layout Standard
+\noindent
+├─.subfield1 : description of subfield1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+└─.subfield2 : description of subfield2.
 \end_layout
 
 \begin_layout Standard
