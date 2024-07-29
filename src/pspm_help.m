@@ -16,7 +16,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-fid = fopen([settings.path,filesep,func_name,'.m'],'r');
+fid = fopen([settings.path,filesep,func_name,'.m'],'r','n','UTF-8');
 % read the file into a cell array, one cell per line
 i = 1;
 tline = fgetl(fid);
@@ -71,15 +71,15 @@ D = {'Description', ...
 % sort
 A = struct();
 for i_D = 1:length(D)
-  N_target = find(strcmp(B, ['● ', D{i_D}]),1);
+  N_target = find(strcmp(B, [char(9679),' ', D{i_D}]),1);
   if ~isempty(N_target)
     str = '';
-    while ( ~strcmp(B{N_target+1,1}(1),'●') )
+    while ( ~strcmp(B{N_target+1,1}(1),char(9679)) )
       str = [str, B{N_target+1, 1}, newline];
       N_target = N_target + 1;
       if N_target == length(B)
         break
-      elseif strcmp(B{N_target+1,1}(1),'●')
+      elseif strcmp(B{N_target+1,1}(1),char(9679))
         break
       elseif strcmp(B{N_target+1,1}(1),'%')
         break
@@ -94,29 +94,29 @@ end
 
 function args = sort_args(A)
 B = A;
-B(strfind(B,[newline, '│'])) = '';
-B(strfind(B,[newline, ' │'])) = ' ';
-B(strfind(B,[newline, '│'])) = '';
-B(strfind(B,'│')) = '';
+B(strfind(B,[newline, char(9474)])) = '';
+B(strfind(B,[newline, ' ', char(9474)])) = ' ';
+B(strfind(B,[newline, char(9474)])) = '';
+B(strfind(B,char(9474))) = '';
 checklist = strfind(B,newline);
-checklist_valid = [strfind(B,[newline,'├']),...
-  strfind(B,[newline,'└']),...
+checklist_valid = [strfind(B,[newline,char(9500)]),...
+  strfind(B,[newline,char(9492)]),...
   strfind(B,[newline,'*']),...
-  strfind(B,[newline,'┌'])]  ;
+  strfind(B,[newline,char(9484)])]  ;
 checklist = checklist(~ismember(checklist, checklist_valid));
 B(checklist) = '';
-B(strfind(B,'─'))='';
+B(strfind(B,char(9472)))='';
 levels = B([1,strfind(B,newline)+1]);
 level_ends = [strfind(B,newline),length(B)];
 level_starts = [1,level_ends(1:end-1)+1];
 args = struct();
 for i_level = 1:length(levels)
   C = B((level_starts(i_level)):(level_ends(i_level)));
-  if ~strcmp(levels(i_level),'├') && ~strcmp(levels(i_level),'└')
+  if ~strcmp(levels(i_level),char(9500)) && ~strcmp(levels(i_level), char(9492))
     % this is a field
-    if strcmp(levels(i_level),'┌')
+    if strcmp(levels(i_level),char(9484))
       fieldname = C;
-      while strcmp(fieldname(1),'┌')
+      while strcmp(fieldname(1),char(9484))
         fieldname = fieldname(2:end);
       end
       fieldcontent = '';
@@ -133,7 +133,7 @@ for i_level = 1:length(levels)
     [var_name_start,var_name_end] = regexp(C,'(?<=^)(.*?)(?=:)'); % get subfields
     [var_name_start2,var_name_end2] = regexp(C,'(?<=:)(.*?)(?=$)'); % get explainations
     varname = C(var_name_start:var_name_end);
-    while strcmp(varname(1),' ') || strcmp(varname(1),'├') || strcmp(varname(1),'└') || strcmp(varname(1),'.')
+    while strcmp(varname(1),' ') || strcmp(varname(1),char(9500)) || strcmp(varname(1),char(9492)) || strcmp(varname(1),'.')
       varname = varname(2:end);
     end
     content = C(var_name_start2:var_name_end2);
@@ -177,7 +177,7 @@ end
 function B = sort_content(A)
 B = A;
 if ~isempty(B)
-  while B(1)==' ' || B(1)=='.' || B(1)=='*' || B(1)=='├' || B(1)=='└'
+  while ismember(B(1), {' ','.','*',char(9500),char(9492)})
     B = B(2:end);
   end
   while contains(B,newline)
