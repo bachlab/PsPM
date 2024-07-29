@@ -518,7 +518,7 @@ if ~options.getrf
 
     % estimate trial-by-trial
     % =======================================================================
-    if isinf(options.depth)
+    if options.depth > trlno
         trlindx = 1;
     else
         trlindx = 1:trlno;
@@ -714,10 +714,22 @@ if ~options.getrf
           rmscltrl(k) = 1;
         end
       end
-      if rmscltrl(1) == 1
-        scl_lb(trl) = -1; scl_ln(trl) = -1;
+      % if all trials are estimated at once, then retain this information
+      % for all trials; otherwise just extract the first trial.
+      if trlindx == 1
+          for k = 1:numel(trls)
+              if rmscltrl(k) == 1
+                  scl_lb(k) = -1; scl_ln(k) = -1;
+              else
+                  scl_lb(k) = scllb(k) + win(1)/sr; scl_ln(k) = sclub(k) - scllb(k);
+              end
+          end
       else
-        scl_lb(trl) = scllb(1) + win(1)/sr; scl_ln(trl) = sclub(1) - scllb(1);
+          if rmscltrl(1) == 1
+              scl_lb(trl) = -1; scl_ln(trl) = -1;
+          else
+              scl_lb(trl) = scllb(1) + win(1)/sr; scl_ln(trl) = sclub(1) - scllb(1);
+          end
       end
       % -- insert priors
       u(5, :) = numel(scllb);
@@ -826,7 +838,7 @@ if ~options.getrf
       newzfactor = model.zfactor;
     end
 
-    for trl = 1:trlno
+    for trl = trlindx
       for k = 1:aSCRno
         sig.G0 = aSCR_ln(k, trl);
         aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);
