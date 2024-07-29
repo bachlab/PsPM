@@ -113,7 +113,7 @@ end
 % Check if SPM software is on the current Path.
 % Dialog Window open to ask whether to remove program from the path or quit pspm_init.
 % Default is to quit pspm_init.
-spm_folders = {'spm'}; %, 'cfg_ui'
+spm_folders = {'spm', 'cfg_ui'}; %, 
 for k = 1:numel(spm_folders)
     spm_path{k} = fileparts(which(spm_folders{k}));
 end
