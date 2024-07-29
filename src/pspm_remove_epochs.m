@@ -42,7 +42,8 @@ options = pspm_options(options, 'remove_epochs');
 if options.invalid
   return
 end
-[lsts, ~, data, pos_of_channels] = pspm_load_data(datafile, channel);
+[lsts, ~, data, filestruct] = pspm_load_data(datafile, channel);
+pos_of_channels = filestruct.posofchannels;
 if lsts == -1
   return;
 end

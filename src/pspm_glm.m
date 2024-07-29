@@ -1,4 +1,4 @@
-function [sts, glm] = pspm_glm(model, options)
+    function [sts, glm] = pspm_glm(model, options)
 % ● Description
 %   pspm_glm specifies a within-subject general linear convolution model 
 %   (GLM) of predicted signals and calculates amplitude estimates for these 
@@ -434,7 +434,7 @@ for iSn = 1:nFile
       if strcmpi(model.timeunits, 'samples')
           sn_sr = newsr/sr(iSn);
       else
-          sn_sr = sr(iSn);
+          sn_sr = newsr;
       end
       [msts, newonsets, newdurations] = pspm_multi2index(model.timeunits, ...
           multi(iSn), sn_sr, tmp.snduration(iSn), events(iSn));
@@ -620,7 +620,7 @@ for iCond = 1:numel(names)
 
   % orthogonalize after convolution if there is more than one column per
   % condition
-  if size(tmp.XC{iCond}, 2) > 1
+  if size(tmp.XC{iCond}, 2) > 1 && ~(all(tmp.XC{iCond}(:)==0))
     foo=spm_orth(tmp.XC{iCond});
     % catch zero matrices (unclear yet why this happens, 01-Apr-2012)
     if ~(all(foo(:) == 0))

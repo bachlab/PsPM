@@ -10,7 +10,7 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %   addition, pspm_trim can modify an associated (missing) epochs file to
 %   the same limits.
 % ● Format
-%   newdatafile = pspm_trim (datafile, from, to, reference, options)
+%   [sts, newdatafile, newepochfile] = pspm_trim (datafile, from, to, reference, options)
 % ● Arguments
 %            datafile:  [char] the name of the file to be trimmed, or a
 %                       struct accepted by pspm_load_data.
@@ -172,18 +172,12 @@ end
 % 2.2 Calculate markers if needed
 if getmarker == 1
     % 2.2.1 Verify the markers
-    [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
-    if ~strcmp(ndata{1}.header.chantype, 'marker')
-        warning('ID:invalid_option', ['Channel %i is no marker ', ...
-            ' channel. The first marker channel in the file is ', ...
-            'used instead'], options.marker_chan_num);
-        [nsts, ~, ndata] = pspm_load_data(datafile, 'marker');
-    end
-    if nsts > 0
-        events = ndata{1}.data;
-    else
+    [nsts, data_struct, infos, pos_of_channel, chantype_sts] = ...
+            pspm_load_channel(datafile, options.marker_chan_num, 'marker');
+    if (nsts < 1 || chantype_sts < 1)
         return
     end
+    events = data_struct.data;
     if isempty(events)
         warning('ID:marker_out_of_range', 'Marker channel (%i) is empty. Cannot use as a reference.', options.marker_chan_num);
         return
@@ -328,15 +322,14 @@ if ~isempty(options.missing)
     if lsts < 1, return; end
     if ~isempty(epochs)
         index = epochs(:, 2) < sta_time | ...
-                epochs(:, 1) > sto_time | ...
-                epochs(:, 1) > infos.duration;
+                epochs(:, 1) > sto_time;
         epochs(index, :) = [];
         epochs = epochs - sta_time;
         if ~isempty(epochs)
             epochs(1, 1) = max([0, epochs(1, 1)]);
             epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
         end
-        lsts = pspm_get_timing('epochs', epochs, 'seconds');
+        [lsts, epochs] = pspm_get_timing('epochs', epochs, 'seconds');
         if lsts < 1, return; end
     else
         % do nothing and keep the empty epochs array
