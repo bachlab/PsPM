@@ -5,20 +5,6 @@ function [sts, out] = pspm_sf_mp(model, options)
 %   the input data is assumed to be in mcS, and sampling rate in Hz
 % ● Format
 %   [sts, mp] = pspm_sf_mp(model, options)
-% ● Output
-%        out: output
-%         .n: number of responses above threshold
-%         .f: frequency of responses above threshold in Hz
-%        .ma: mean amplitude of responses above threshold
-%         .t: timing of responses
-%         .a: amplitude of responses (re-estimated)
-%      .rawa: amplitude of responses (initial estimate)
-%     .theta: parameters used for f_SF
-% .threshold: threshold
-%      .yhat: fitted time series (reestimated amplitudes)
-%   .yhatraw: fitted time series (original amplitudes)
-%         .S: inversion settings
-%         .D: inversion dictionary
 % ● Arguments
 %        scr: skin conductance epoch (maximum size depends on computing
 %             power, a sensible size is 60 s at 10 Hz)
@@ -33,15 +19,28 @@ function [sts, out] = pspm_sf_mp(model, options)
 %             add further diagnostics to the output. Is disabled if set to
 %             false. If set to true this will add a further field 'D' to the
 %             output struct. Default is false.
+% ● Output
+%        out: output
+%         .n: number of responses above threshold
+%         .f: frequency of responses above threshold in Hz
+%        .ma: mean amplitude of responses above threshold
+%         .t: timing of responses
+%         .a: amplitude of responses (re-estimated)
+%      .rawa: amplitude of responses (initial estimate)
+%     .theta: parameters used for f_SF
+% .threshold: threshold
+%      .yhat: fitted time series (reestimated amplitudes)
+%   .yhatraw: fitted time series (original amplitudes)
+%         .S: inversion settings
+%         .D: inversion dictionary
 % ● References
-%   [1] Bach DR, Staib M (2015). A matching pursuit algorithm for inferring 
-%       tonic sympathetic arousal from spontaneous skin conductance 
+%   [1] Bach DR, Staib M (2015). A matching pursuit algorithm for inferring
+%       tonic sympathetic arousal from spontaneous skin conductance
 %       fluctuations. Psychophysiology, 52, 1106-12.
-% 
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN) last edited 18.08.2014
-%   Maintained in 2022 by Teddy Chao
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

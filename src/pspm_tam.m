@@ -1,11 +1,11 @@
 function tam = pspm_tam(model, options)
 % ● Description
-%   TAM stands for Trial Average Model and allows to fit models on
-%   trial-averaged data. pspm_tam starts by extracting and averaging signal segments of
-%   length `model.window` from each data file individually, then averages
-%   these mean segments and finally fits an LTI model.
+%   TAM stands for Trial Average Model and allows to fit models on trial-averaged data.
+%   pspm_tam starts by extracting and averaging signal segments of length `model.window`
+%   from each data file individually, then averages these mean segments and finally fits
+%   an LTI model.
 % ● Arguments
-%   ┌───────model:  [struct]
+%   ┌───────model
 %   │ ▶︎ mandatory
 %   ├──.modelfile:  a file name for the model output
 %   ├───.datafile:  a file name (single session) OR
@@ -67,7 +67,7 @@ function tam = pspm_tam(model, options)
 %   │               DEFAULT: 'none'
 %   └───────.norm_max:  set the first peak at 1 before model fitting.
 %                   DEFAULT: 0 (not normalize)
-%   ┌─────options:  [struct]
+%   ┌─────options
 %   ├.marker_chan:  marker channel number
 %   │               DEFAULT: 'marker' (i.e. last marker channel)
 %   └──.overwrite:  (optional) overwrite existing model output;
@@ -75,24 +75,22 @@ function tam = pspm_tam(model, options)
 %                   Define whether to overwrite existing output files or not.
 %                   Default value: determined by pspm_overwrite.
 % ● Outputs
-%   tam: a structure 'tam' which is also written to file
-% 
+%   * tam: a structure 'tam' which is also written to file
 % ● Reference
 %   [1] Model development:
-%       Korn CW & Bach DR (2016). A solid frame for the window on cognition: 
+%       Korn CW & Bach DR (2016). A solid frame for the window on cognition:
 %       Modelling event-related pupil responses. Journal of Vision, 16:28,
 %       1-6. https://doi.org/10.1167/16.3.28
 %   [2] Model application:
-%       Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR 
-%       (2023). Acceleration of inferred neural responses to oddball 
-%       targets in an individual with bilateral amygdala lesion compared to 
+%       Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR
+%       (2023). Acceleration of inferred neural responses to oddball
+%       targets in an individual with bilateral amygdala lesion compared to
 %       healthy controls. Scientific Reports, 13, 41357.
 %       https://doi.org/10.1038/s41598-023-41357-1
-% 
 % ● History
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 % ● Developer's Notes
 %   The fitting process is a residual least square minimisation where the
 %   predicted value is calculated as following:

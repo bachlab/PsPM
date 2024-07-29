@@ -1,13 +1,13 @@
 function [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Description
-%   pspm_gaze_pp combines left/right gaze x and gaze y channels at
-%   the same time and will add a combined gaze channel.
+%   pspm_gaze_pp combines left/right gaze x and gaze y channels at the same time and will
+%   add a combined gaze channel.
 % ● Format
 %   [sts, channel_index] = pspm_gaze_pp(fn) or
 %   [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Arguments
 %   *             fn: [string] Path to the PsPM file which contains the gaze data.
-%   ┌────────options: [struct] options for processing, please check pspm_options.
+%   ┌────────options
 %   ├───────.channel: gaze_x_r/gaze_x_l/gaze_y_r/gaze_y_l channels to work on.
 %   │                 This can be a 4-element vector of channel numbers, or 'gaze',
 %   │                 which will use the last channel of the types

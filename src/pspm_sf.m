@@ -4,11 +4,10 @@ function [sts, sf] = pspm_sf(model, options)
 % ● Format
 %   [sts, sf] = pspm_sf(model, options)
 % ● Arguments
-%   ┌───────────model
-%   │ Mandantory
-%   ├───────.datafile:  one data filename or cell array of filenames.
-%   ├──────.modelfile:  one data filename or cell array of filenames.
-%   ├─────────.timing:  can be one of the following
+%   ┌──────────model
+%   ├──────.datafile :  one data filename or cell array of filenames.
+%   ├─────.modelfile :  one data filename or cell array of filenames.
+%   ├────────.timing :  can be one of the following
 %   │                   - an SPM style onset file with two event types: onset &
 %   │                     offset (names are ignored)
 %   │                   - a .mat file with a variable 'epochs', see below
@@ -16,64 +15,56 @@ function [sts, sf] = pspm_sf(model, options)
 %   │                   - e x 2 array of epoch on- and offsets, with
 %   │                   e: number of epochs
 %   │                   or cell array of any of these, for multiple files
-%   ├──────.timeunits:  seconds, samples, markers, whole (in the last case,
-%   │                   'timing' will be ignored and the entire file will be
-%   │                   used).
-%   │ Optional
-%   ├──────────method:  [string/cell_array]
-%   │                   [string] accept 'auc', 'scl', 'dcm', or 'mp', default
-%   │                   as 'dcm'
+%   ├─────.timeunits :  seconds, samples, markers, whole (in the last case, 'timing' will
+%   │                   be ignored and the entire file will be used).
+%   ├────────.method :  [optional, string/cell_array]
+%   │                   [string] accept 'auc', 'scl', 'dcm', or 'mp', default as 'dcm'.
 %   │                   [cell_array] a cell array of methods mentioned above.
-%   ├─────────.filter:  filter settings; modality specific default
-%   ├────────.missing:  [string/cell_array] [default: no missing values]
-%   │                   Allows to specify missing (e.g. artefact) epochs in the
-%   │                   data file. See pspm_get_timing for epoch definition; specify
-%   │                   a cell array for multiple input files. This must always be
-%   │                   specified in SECONDS.
-%   └────────.channel:  [integer] [default: last SCR channel]
-%                       channel number.
-%   ┌─────────options
-%   ├──────.overwrite:  [logical] [default: determined by pspm_overwrite]
+%   ├────────.filter :  [optional] filter settings; modality specific default
+%   ├───────.missing :  [optional, string/cell_array] [default: no missing values]
+%   │                   Allows to specify missing (e.g. artefact) epochs in the data file.
+%   │                   See pspm_get_timing for epoch definition; specify a cell array
+%   │                   for multiple input files. This must always be specified in SECONDS.
+%   └───────.channel :  [optional, integer] [default: last SCR channel] channel number.
+%   ┌────────options
+%   ├─────.overwrite :  [logical] [default: determined by pspm_overwrite]
 %   │                   Define whether to overwrite existing output files or not.
-%   ├.marker_chan_num:  [integer]
-%   │                   marker channel number
+%   ├.marker_chan_num:  [integer] marker channel number
 %   │                   if undefined or 0, first marker channel is used.
-%   │ * Additional options for individual methods:
-%   │ dcm related options
-%   ├──────.threshold:  [numeric] [default: 0.1] [unit: mcS]
+%   ├─────.threshold :  [DCM only] [numeric] [default: 0.1] [unit: mcS]
 %   │                   threshold for SN detection (default 0.1 mcS)
-%   ├──────────.theta:  [vector] [default: read from pspm_sf_theta]
+%   ├─────────.theta :  [DCM only] [vector] [default: read from pspm_sf_theta]
 %   │                   A (1 x 5) vector of theta values for f_SF.
-%   ├──────────.fresp:  [numeric] [unit: Hz] [default: 0.5]
+%   ├─────────.fresp :  [DCM only] [numeric] [unit: Hz] [default: 0.5]
 %   │                   frequency of responses to model.
-%   ├────────.dispwin:  [logical] [default: 1]
+%   ├───────.dispwin :  [DCM only] [logical] [default: 1]
 %   │                   display progress window.
-%   ├───.dispsmallwin:  [logical] [default: 0]
+%   ├──.dispsmallwin :  [DCM only] [logical] [default: 0]
 %   │                   display intermediate windows.
-%   └──.missingthresh:  [numeric] [default: 2] [unit: second]
+%   └─.missingthresh :  [DCM only] [numeric] [default: 2] [unit: second]
 %                       threshold value for controlling missing epochs.
-% 
+%
 % ● References
 %   [1] DCM for SF:
 %       Bach DR, Daunizeau J, Kuelzow N, Friston KJ, Dolan RJ (2010). Dynamic
 %       causal modelling of spontaneous fluctuations in skin conductance.
 %       Psychophysiology, 48, 252-257.
 %   [2] MP approximation:
-%       Bach DR, Staib M (2015). A matching pursuit algorithm for inferring 
-%       tonic sympathetic arousal from spontaneous skin conductance 
+%       Bach DR, Staib M (2015). A matching pursuit algorithm for inferring
+%       tonic sympathetic arousal from spontaneous skin conductance
 %       fluctuations. Psychophysiology, 52, 1106-12.
-%   [3] AUC for SF: 
+%   [3] AUC for SF:
 %       Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
 %       quantification of arousal from spontanaeous skin conductance
 %       fluctuations. International Journal of Psychophysiology, 76, 52-55.
-% 
+%
 % ● Developer's Note
 %   the output also contains a field .time that contains the inversion time
 %   in ms (for DCM and MP)
 % ● Copyright
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (WCHN, UCL and UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% 1 Initialise
 global settings
@@ -95,7 +86,7 @@ if model.invalid
     return
 end
 
-% 2.3 check options 
+% 2.3 check options
 options = pspm_options(options, 'sf');
 if options.invalid
   return
@@ -137,7 +128,7 @@ switch model.method{k}
   otherwise
     warning('Method %s not supported', model.method{k}); return;
 end
-  
+
 end
 % 2.6 Get timing --
 if strcmpi(model.timeunits, 'whole')
@@ -158,7 +149,7 @@ nFile = numel(model.datafile);
 for iFile = 1:nFile
   % 3.1 User output
   fprintf('SF analysis: %s ...', model.datafile{iFile});
-  
+
   % 3.2 get and filter data --
   [sts_load_data, data] = pspm_load_channel(model.datafile{iFile}, model.channel, 'scr');
   if sts_load_data < 0, return; end

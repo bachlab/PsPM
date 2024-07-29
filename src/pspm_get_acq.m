@@ -10,18 +10,18 @@ function [sts, import, sourceinfo] = pspm_get_acq(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import);
 % ● Arguments
-%       datafile: The .acq data file to be imported
-%   ┌─────import: The stucture of importing settings, check pspm_import
-%   ├───.channel: The channel to be imported, check pspm_import
-%   ├──────.type: The type of channel, check pspm_import
-%   ├────────.sr: The sampling rate of the acq file.
-%   ├──────.data: The data read from the acq file.
-%   └────.marker: The type of marker, such as 'continuous'
+%   *   datafile : The .acq data file to be imported
+%   ┌─────import : The stucture of importing settings, check pspm_import
+%   ├───.channel : The channel to be imported, check pspm_import
+%   ├──────.type : The type of channel, check pspm_import
+%   ├────────.sr : The sampling rate of the acq file.
+%   ├──────.data : The data read from the acq file.
+%   └────.marker : The type of marker, such as 'continuous'
 % ● Output
-%         import: The import struct that saves importing information
-%     sourceinfo: The struct that saves information of original data source
+%   *     import : The import struct that saves importing information
+%   * sourceinfo : The struct that saves information of original data source
 % ● Developer's Notes
-%   The main part of this function is shared with pspm_get_acq_python. 
+%   The main part of this function is shared with pspm_get_acq_python.
 %   The function acqread is stored in the path /Import/acq.
 % ● History
 %   Introduced in PsPM 3.0
@@ -36,7 +36,7 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','acq'));
-%% Load data 
+%% Load data
 [sts, header, inputdata] = evalc('acqread(datafile)');
 %% Extract individual channels
 for k = 1:numel(import)

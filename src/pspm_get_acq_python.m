@@ -5,7 +5,7 @@ function [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import);
 % ● Arguments
-%       datafile: The .acq data file to be imported
+%   *   datafile: The .acq data file to be imported
 %   ┌─────import: The stucture of importing settings, check pspm_import
 %   ├───.channel: The channel to be imported, check pspm_import
 %   ├──────.type: The type of channel, check pspm_import
@@ -13,8 +13,8 @@ function [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import)
 %   ├──────.data: The data read from the acq file.
 %   └────.marker: The type of marker, such as 'continuous'
 % ● Output
-%         import: The import struct that saves importing information
-%     sourceinfo: The struct that saves information of original data source
+%   *     import: The import struct that saves importing information
+%   * sourceinfo: The struct that saves information of original data source
 % ● History
 %   Introduced in PsPM 7.0
 %   Written in 2024 by Teddy

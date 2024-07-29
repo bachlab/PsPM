@@ -5,13 +5,11 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 % ● Format
 %   newdatafile = pspm_trim (datafile, from, to, reference, options)
 % ● Arguments
-%            datafile:  [char] the name of the file to be trimmed, or a
+%   *        datafile:  [char] the name of the file to be trimmed, or a
 %                       struct accepted by pspm_load_data.
-%                from:  either numbers, or 'none'
-%                       the start of trimming period
-%                  to:  a numeric value or 'none'
-%                       the end of trimming period
-%           reference:  string/vector
+%   *            from:  either numbers, or 'none', the start of trimming period.
+%   *              to:  a numeric value or 'none', the end of trimming period.
+%   *       reference:  string/vector
 %                       [string]
 %                       'marker' from and to are set in seconds with respect
 %                                to the first and last scanner/marker pulse
@@ -23,7 +21,7 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %                       [cell_array] a 2-element cell array containing
 %                       either the value (numeric or char) or name (char)
 %                       of the two markers defining from and to
-%   ┌─────────options:
+%   ┌─────────options
 %   ├──────.overwrite:  [logical] (0 or 1)
 %   │                   Define whether to overwrite existing output files or not.
 %   │                   Default value: determined by pspm_overwrite.
@@ -40,15 +38,15 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. Default is 0.
 % ● Outputs
-%                  sts: status variable indicating whether function run successfully.
-%          newdatafile: a filename for the updated file (or a struct with 
+%   *              sts: status variable indicating whether function run successfully.
+%   *      newdatafile: a filename for the updated file (or a struct with
 %                       fields .data and .infos if data file is a struct)
-%         newepochfile: missing epoch filename for the individual
+%   *     newepochfile: missing epoch filename for the individual
 %                       sessions (empty if options.missing not specified)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% 1 Pre-settings
 % 1.1 Initialise
@@ -301,7 +299,7 @@ for k = 1:numel(data)
         remove_index = any([remove_early, remove_late], 2);
         data{k}.data(remove_index) = [];
         data{k}.data = data{k}.data - sta_time;
-        
+
         if isfield(data{k}, 'markerinfo')
             % also trim marker info if available
             data{k}.markerinfo.value(remove_index) = [];
