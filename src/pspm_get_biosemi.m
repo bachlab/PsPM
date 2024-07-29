@@ -5,20 +5,19 @@ function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import);
 % ● Arguments
-%       datafile:
-%   ┌─────import:
-%   ├────.typeno:
-%   ├───.channel:
-%   ├────────.sr:
-%   ├──────.data:
-%   ├────.marker:
-%   └.markerinfo:
-%     ├───.value:
-%     └────.name:
+%   *   datafile : The BioSemi bdf data file to be imported.
+%   ┌─────import
+%   ├────.typeno : The number of channel type.
+%   ├───.channel : The channel to be imported, check pspm_import.
+%   ├──────.type : The type of channel, check pspm_import.
+%   ├────────.sr : The sampling rate of the file.
+%   ├──────.data : The data read from the file.
+%   ├────.marker : The type of marker, such as 'continuous'.
+%   └.markerinfo : The information of the marker, has two fields, value and name.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

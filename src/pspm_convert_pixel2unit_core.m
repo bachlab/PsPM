@@ -4,15 +4,13 @@ function [out_data, out_range] = pspm_convert_pixel2unit_core(data, data_range, 
 % ● Format
 %   [sts, out_data, out_range] = pspm_convert_pixel2unit_core(data, screen_length)
 % ● Arguments
-%               data: Original data in pixels. No checks are performed.
-%              range: Original range in pixels.
-%      screen_length: Screen width for gaze_x data, or screen height for
-%                     gaze_y data, in mm
+%   *          data: Original data in pixels. No checks are performed.
+%   *         range: Original range in pixels.
+%   * screen_length: Screen width for gaze_x data, or screen height for gaze_y data, in mm
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 by Tobias Moser (University of Zurich)
 %   Refactored in 2024 by Dominik Bach (Uni Bonn)
-
 
 % length per pixel along width or height
 length_per_pixel = screen_length ./ (diff(data_range) + 1);

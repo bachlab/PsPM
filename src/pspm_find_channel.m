@@ -6,17 +6,18 @@ function varargout = pspm_find_channel(headercell, channeltype)
 %   [sts, channel] = pspm_find_channel(headercell, channeltype) or
 %   channel = pspm_find_channel(headercell, channeltype)
 % ● Arguments
-%   headercell: cell array of names (e.g. from acq import)
-%     channeltype: an allowed channel type (char) (or a cell array of possible
-%               channel names for operations on non-allowed input channel types)
+%   *  headercell: cell array of names (e.g. from acq import)
+%   * channeltype: an allowed channel type (char) (or a cell array of
+%                  possible channel names for operations on non-allowed
+%                  input channel types)
 % ● Outputs
-%   the channel number (not physical channel number) that matches namestrings
-%   0 if no channel matches namestrings
-%   -1 if more than one channel matches namestrings
+%   *     channel: the channel number (not physical channel number) that
+%                  matches namestrings. 0 if no channel matches namestrings
+%                  -1 if more than one channel matches namestrings
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Updated in 2022 by Teddy Chao
+%   Updated in 2022 by Teddy
 
 %% 0 Initialise
 global settings

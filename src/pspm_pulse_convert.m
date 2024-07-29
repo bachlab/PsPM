@@ -13,13 +13,13 @@ function varargout = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % ● Format
 %   wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % ● Arguments
-%        pulsedata: timestamps in ms
-%   resamplingrate: for interpolation
-%     samplingrate: to be downsampled to
+%   *      pulsedata : timestamps in ms
+%   * resamplingrate : for interpolation
+%   *   samplingrate : to be downsampled to
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings

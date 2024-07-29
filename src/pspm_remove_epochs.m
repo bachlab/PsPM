@@ -4,20 +4,18 @@ function [sts, outchannel] = pspm_remove_epochs(datafile, channel, epochfile, op
 % ● Format
 %   [sts, channel_index] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % ● Arguments
-%    datafile:  a filename or a cell of filenames
-%     channel:  defines which channels should be affected by epoch removal. 
-%               This can be a numerical vector or channel identifier
-%               accepted by pspm_load_data.
-%   epochfile:  a filename which defines the epoch to be set to NaN. The epochs
-%               must be in seconds. This parameter is passed to pspm_get_timing().
-%   timeunits:  timeunits of the epochfile.
-%   ┌─options:  [struct]
-%   └.channel_action:
-%               ['add'/'replace'] Defines whether the new channels should be
-%               added or the corresponding channel should be replaced.
-%               (Default: 'add')
+%   *  datafile:  a filename or a cell of filenames
+%   *   channel:  defines which channels should be affected by epoch removal. This can be
+%                 a numerical vector or channel identifier accepted by pspm_load_data.
+%   * epochfile:  a filename which defines the epoch to be set to NaN. The epochs must
+%                 be in seconds. This parameter is passed to pspm_get_timing().
+%   * timeunits:  timeunits of the epochfile.
+%   ┌───options
+%   └─.channel_action:
+%                 ['add'/'replace'] Defines whether new channels should be added or
+%                 corresponding channels should be replaced. The default value is 'add'.
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   * channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 by Tobias Moser (University of Zurich)

@@ -7,8 +7,7 @@ function [sts, data] = pspm_check_data(data, infos)
 % ● Format
 %   [sts, data] = pspm_check_data(data, infos)
 % ● Developer's notes
-%   This code is taken from pspm_load_data; it could be improved using
-%   cellfun
+%   This code is taken from pspm_load_data; it could be improved using cellfun.
 
 global settings
 if isempty(settings)

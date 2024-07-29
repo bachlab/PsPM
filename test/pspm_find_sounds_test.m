@@ -3,7 +3,7 @@ classdef pspm_find_sounds_test < matlab.unittest.TestCase
   % unittest class for the pspm_find_sounds function
   % ● Authorship
   % (C) 2015 Tobias Moser (University of Zurich)
-  %     2022 Teddy Chao (UCL)
+  %     2022 Teddy
   properties
     testdata_fn = 'find_sounds_test';
   end

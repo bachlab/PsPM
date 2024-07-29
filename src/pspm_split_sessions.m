@@ -1,60 +1,56 @@
 function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Description
-%   pspm_split_sessions splits experimental sessions/blocks, based on
-%   regularly incoming markers, for example volume or slice markers from an
-%   MRI scanner, or based on a vector of split points that is defined in
-%   terms of markers. The first and the last marker will define the start of
-%   the first session and the end of the last session.
+%   pspm_split_sessions splits experimental sessions/blocks, based on regularly incoming
+%   markers, for example volume or slice markers from an MRI scanner, or based on a
+%   vector of split points that is defined in terms of markers. The first and the last
+%   marker will define the start of the first session and the end of the last session.
 % ● Format
 %   [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Arguments
-%            datafile:  a file name
-%   ┌─────────options:
-%   ├.marker_chan_num: [integer] number of the channel holding the markers.
-%   │                   By default first 'marker' channel.
-%   ├──────.overwrite:  [logical] (0 or 1)
-%   │                   Define whether to overwrite existing output files or not.
-%   │                   Default value: determined by pspm_overwrite.
-%   ├─────────.max_sn:  Define the maximum of sessions to look for.
-%   │                   Default is 10 (defined by settings.split.max_sn)
-%   ├.min_break_ratio:  Minimum for ratio
-%   │                   [(session distance)/(maximum marker distance)]
-%   │                   Default is 3 (defined by settings.split.min_break_ratio)
-%   ├────.splitpoints:  Alternatively, directly specify session start
-%   │                   (excluding the first session starting at the
-%   │                   first marker) in terms of markers (vector of integer)
-%   ├─────────.prefix:  [numeric, unit:second, default:0]
-%   │                   Defines how long data before start trim point should
-%   │                   also be included. First marker will be at
-%   │                   t = options.prefix.
-%   ├─────────.suffix:  [positive numeric, unit:second, default: mean marker distance in the file]
-%   │                   Defines how long data after the end trim point should be
-%   │                   included. Last marker will be at t = duration (of
-%   │                   session) - options.suffix. If options.suffix == 0,
-%   │                   it will be set to the mean marker distance.
-%   ├───────.randomITI: [default:0]
-%   │                   Tell the function to use all the markers to evaluate
-%   │                   the mean distance between them.
-%   │                   Usefull for random ITI since it reduces the variance.
-%   ├─────────.verbose: [default:1]
-%   │                   printing processing messages
-%   └─────────.missing: Optional name of an epoch file, e.g. containing a
-%                       missing epochs definition in s. This is then split
-%                       accordingly.
+%   *        datafile :  a file name
+%   ┌─────────options
+%   ├.marker_chan_num : [integer] number of the channel holding the markers.
+%   │                    By default first 'marker' channel.
+%   ├──────.overwrite :  [logical] (0 or 1)
+%   │                    Define whether to overwrite existing output files or not.
+%   │                    Default value: determined by pspm_overwrite.
+%   ├─────────.max_sn :  Define the maximum of sessions to look for.
+%   │                    Default is 10 (defined by settings.split.max_sn)
+%   ├.min_break_ratio :  Minimum for ratio
+%   │                    [(session distance)/(maximum marker distance)]
+%   │                    Default is 3 (defined by settings.split.min_break_ratio)
+%   ├────.splitpoints :  Alternatively, directly specify session start
+%   │                    (excluding the first session starting at the
+%   │                    first marker) in terms of markers (vector of integer)
+%   ├─────────.prefix :  [numeric, unit:second, default:0]
+%   │                    Defines how long data before start trim point should
+%   │                    also be included. First marker will be at t = options.prefix.
+%   ├─────────.suffix :  [positive numeric, unit:second, default: mean marker distance
+%   │                    in the file] Defines how long data after the end trim point
+%   │                    should be included. Last marker will be at t = duration (of
+%   │                    session) - options.suffix. If options.suffix == 0, it will be
+%   │                    set to the mean marker distance.
+%   ├───────.randomITI : [default:0]
+%   │                    Tell the function to use all the markers to evaluate the mean
+%   │                    distance between them. Usefull for random ITI since it reduces
+%   │                    the variance.
+%   ├─────────.verbose : [default:1] printing processing messages.
+%   └─────────.missing : Optional name of an epoch file, e.g. containing a missing epochs
+%                        definition in s. This is then split accordingly.
 % ● Outputs
-%          newdatafile: cell array of filenames for the individual sessions
-%         newepochfile: cell array of missing epoch filenames for the individual
-%                       sessions (empty if options.missing not specified)
+%   *      newdatafile : cell array of filenames for the individual sessions
+%   *     newepochfile : cell array of missing epoch filenames for the individual
+%                        sessions (empty if options.missing not specified).
 % ● Developer's notes
 %   epochs have a fixed sampling rate of 10000
 %   REMARK for suffix and prefix:
 %   Markers in the prefix and suffix intervals are ignored. Only markers
 %   between the splitpoints are considered for each session, to avoid
-%   duplication of markers. 
+%   duplication of markers.
 % ● History
 %   Introduced in PsPM 5.1.1
 %   Written in 2021 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Updated and maintained in 2022 by Teddy Chao (UCL)
+%   Updated and maintained in 2022 by Teddy
 
 %% 1 Initialise
 global settings

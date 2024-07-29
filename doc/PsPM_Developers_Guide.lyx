@@ -7195,6 +7195,181 @@ The new GUI is currently using the colour
  Windows, macOS, and Linux, respectively.
 \end_layout
 
+\begin_layout Subsection
+Help Text
+\end_layout
+
+\begin_layout Subsubsection
+Introduction
+\end_layout
+
+\begin_layout Standard
+Help text refers to the descriptive text that is included in the initial
+ couple of lines of source code.
+ Such help text can be sorted by calling the function 
+\family typewriter
+pspm_help
+\family default
+ into a struct.
+ Typically, the help text shall be written into sections as 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Description The general introduction of a function.
+ This is normally describing the use of the function and how it works, such
+ as importing a specific type of data and how information is read and managed.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Format The format of a function as how it can be called.
+ If the function has some varabile arguments, then the details can be listed
+ as multiple lines.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Arguments The list of input variables of a function with their descriptions.
+ Every individual input variable shall be lead by a star mark.
+ Structs and their subfields shall be managed with table symbols.
+ An example of how this is managed is given below.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Outputs The list of output variables of a function with their descriptions,
+ similar to Arguments.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Developer's_notes This section can be used as a paragraph of technical notes
+ for the function.
+ Such information is typically useful for developing the function, and it
+ is relatively more useful for developers than for users.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+History The section includes some notes about who has contributed to a function,
+ which may be useful for future checking.
+\end_layout
+
+\begin_layout Subsubsection
+Typical example
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Description 
+\end_layout
+
+\begin_layout Standard
+\noindent
+General introduction of the function.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Format
+\end_layout
+
+\begin_layout Standard
+\noindent
+  [output1, output2, output3] = pspm_xxx(varargin);
+\end_layout
+
+\begin_layout Standard
+\noindent
+  [output1, output2, output3] = pspm_xxx(input1, input2);
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Arguments
+\end_layout
+
+\begin_layout Standard
+\noindent
+* input1     : description of input1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+* input2     : description of input2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+┌─input3
+\end_layout
+
+\begin_layout Standard
+\noindent
+├─.subfield1 : description of subfield1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+└─.subfield2 : description of subfield2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Outputs
+\end_layout
+
+\begin_layout Standard
+\noindent
+* output1    : description of output1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+* output2    : description of output2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+┌─output3
+\end_layout
+
+\begin_layout Standard
+\noindent
+├─.subfield1 : description of subfield1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+└─.subfield2 : description of subfield2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Developer's notes
+\end_layout
+
+\begin_layout Standard
+\noindent
+  A few sentences of technical information for this function.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● History
+\end_layout
+
+\begin_layout Standard
+\noindent
+Introduced in PsPM version a.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Written in 2024 by developer a.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset

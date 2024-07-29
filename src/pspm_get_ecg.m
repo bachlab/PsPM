@@ -4,8 +4,9 @@ function [sts, data] = pspm_get_ecg(import)
 % ● Format
 %   [sts, data]= pspm_get_ecg(data, import)
 % ● Arguments
-%     data: column vector of waveform data
-%   import: import job structure with mandatory fields .data and .sr
+%   ┌────import
+%   ├─────.data : ECG data
+%   └───────.sr : sample rate
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

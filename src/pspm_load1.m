@@ -2,35 +2,32 @@ function varargout = pspm_load1(fn, action, savedata, options)
 % ● Format
 %   [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % ● Arguments
-%         fn: filename, or model structure
-%     action: (default 'none'):
-%             'none':   check whether file is valid at all
-%             'stats':  retrieve stats struct with fields .stats
-%                       and .names
-%             'cond':   for GLM - retrieve stats struct using only
+%   *     fn : filename, or model structure
+%   * action : (default 'none'):
+%              'none' : check whether file is valid at all
+%              'stats': retrieve stats struct with fields .stats and .names
+%              'cond' : for GLM - retrieve stats struct using only
 %                       first regressor/basis function for each condition
 %                       for models with 2D stats structure - retrieve
 %                       mean parameter values per condition, based on
 %                       unique trial names
-%             'recon':  (for GLM) retrieve stats struct using
+%              'recon' :  (for GLM) retrieve stats struct using
 %                       reconstructed responses (which are at the same
 %                       time written into the glm struct as glm.recon)
-%               'con':  retrieve full con structure
-%               'all':  retrieve the full first level structure
-%           'savecon':  add contrasts to file, use an additional
+%              'con':  retrieve full con structure
+%              'all':  retrieve the full first level structure
+%              'savecon':  add contrasts to file, use an additional
 %                       input argument data that contains the contrasts
 %              'save':  check and save first levle model, use an additional
 %                       input argument data that contains the model struct
-%   savedata: for 'save' option - a struct containing the model as only field
-%             for 'savecon' option - contains the con structure
-%    options: .zscored. zscore data - substract the mean and divide
-%                         by the standard deviation.
-%             .overwrite for 'save'
-%                        [logical] (0 or 1)
-%                        Define whether to overwrite existing output files or not.
-%                        Default value: determined by pspm_overwrite.
+%  * savedata : for 'save' option - a struct containing the model as only field
+%               for 'savecon' option - contains the con structure
+%   ┌─options
+%   ├.zscored : zscore data - substract the mean and divide by the standard deviation.
+%   └.overwrite : [for 'save'] [logical] (0 or 1) Define whether to overwrite existing
+%                 output files or not. Default value: determined by pspm_overwrite.
 % ● Output
-%       data:   depending on option
+%  *     data : depending on option
 %             - none (for 'none', 'savecon', 'save')
 %             - data.stats, data.names, (and data.trlnames if existing) (for
 %                        'stats', 'recon', 'cond')
@@ -52,7 +49,7 @@ function varargout = pspm_load1(fn, action, savedata, options)
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (WTCN, UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

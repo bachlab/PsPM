@@ -1,44 +1,43 @@
 function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 % ● Description
-%   pspm_resp_pp preprocesses raw respiration traces. The function detects
-%   respiration cycles for bellows and cushion systems, computes respiration
-%   period, amplitude and RFR, assigns these measures to the start of each
-%   cycle and linearly interpolates these (expect rs = respiration time
-%   stamps). Results are written to new channels in the same file
+%   pspm_resp_pp preprocesses raw respiration traces. The function detects respiration
+%   cycles for bellows and cushion systems, computes respiration period, amplitude and
+%   RFR, assigns these measures to the start of each cycle and linearly interpolates these
+%   (expect rs = respiration time stamps). Results are written to new channels in the same
+%   file.
 % ● Format
 %   [sts, channel_index] = pspm_resp_pp(fn, sr, options)
 % ● Arguments
-%                 fn: data file name
-%                 sr: sample rate for new interpolated channel
+%   *             fn: data file name
+%   *             sr: sample rate for new interpolated channel
 %   ┌─────── options
-%   ├───────.channel: [optional, numeric/string, default: 'resp', i.e. last 
+%   ├───────.channel: [optional, numeric/string, default: 'resp', i.e. last
 %   │                 respiration channel in the file]
 %   │                 Channel type or channel ID to be preprocessed.
-%   │                 Channel can be specified by its index (numeric) in the 
+%   │                 Channel can be specified by its index (numeric) in the
 %   │                 file, or by channel type (string).
 %   │                 If there are multiple channels with this type, only
 %   │                 the last one will be processed. If you want to
 %   │                 preprocess several respiration in a PsPM file,
 %   │                 call this function multiple times with the index of
-%   │                 each channel.  In this case, set the option 
+%   │                 each channel.  In this case, set the option
 %   │                 'channel_action' to 'add',  to store each
 %   │                 resulting channel separately.
 %   ├────.systemtype: ['bellows'(default) /'cushion']
 %   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
-%   │                   'rs', 'all' (default)
-%   ├───.diagnostics:
+%   │                   'rs', 'all' (default).
 %   ├──────────.plot: 1 creates a respiratory cycle detection plot
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
 %                     corresponding channel should be replaced.
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 %
 % ● References
 %   [1] Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model
-%       for event-related respiration responses. Journal of Neuroscience 
+%       for event-related respiration responses. Journal of Neuroscience
 %       Methods, 270, 174-155.
-%   
+%
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -59,7 +58,7 @@ elseif nargin < 2
   warning('ID:invalid_input','No sample rate given.'); return;
 elseif ~isnumeric(sr)
   warning('ID:invalid_input','Sample rate needs to be numeric.'); return;
-elseif nargin < 3   
+elseif nargin < 3
     options = struct();
 end
 

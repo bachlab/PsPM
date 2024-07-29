@@ -1,45 +1,41 @@
 function [sts, outdata] = pspm_interpolate(indata, varargin)
 % ● Description
 %   pspm_interpolate interpolates NaN values passed with the indata parameter.
-%   Indata can be a numeric array or a filename. If indata is a filename, 
-%   then the function either acts on one selected channel and 
-%   writes the result to the same file, or on all channels in the file and 
-%   writes a new file if the input is a file name. 
+%   Indata can be a numeric array or a filename. If indata is a filename,
+%   then the function either acts on one selected channel and
+%   writes the result to the same file, or on all channels in the file and
+%   writes a new file if the input is a file name.
 % ● Format
 %   [sts, outdata] = pspm_interpolate(numeric_array, options)
 %   [sts, channel_index] = pspm_interpolate(filename, channel, options)
 %   [sts, newfile] = pspm_interpolate(filename, channel, options)
 % ● Arguments
-%          indata:  [char/numeric] contains the data to be interpolated
-%          channel: a single channel identifier accepted by pspm_load_channel
-%                   (numeric or char), or 'all', which will work on all 
-%                   channels. If indata is a file name and channel is 'all' 
+%   *      indata : [char/numeric] contains the data to be interpolated
+%   *     channel : a single channel identifier accepted by pspm_load_channel
+%                   (numeric or char), or 'all', which will work on all
+%                   channels. If indata is a file name and channel is 'all'
 %                   then the result is written to a new file called 'i'+<old filename>.
-%   ┌─────options:
-%   ├─────.method:  Defines the interpolation method, see interp1() for
-%   │               possible interpolation methods.
-%   │               [optional; default: linear]
-%   ├─.extrapolate: Determine should extrapolate for data out of the data
-%   │               range.
+%   ┌─────options
+%   ├─────.method : Defines the interpolation method, see interp1() for
+%   │               possible interpolation methods. [optional; default: linear]
+%   ├.extrapolate : Determine should extrapolate for data out of the data range.
 %   │               [optional; not recommended; accept: 1, 0; default: 0]
-%   ├──.overwrite:  Defines if existing datafiles should be overwritten.
-%   │               [logical] (0 or 1)
+%   ├──.overwrite : Defines if existing datafiles should be overwritten. [logical] (0 or 1)
 %   │               Define whether to overwrite existing output files or not.
-%   │               Default value: do not overwrite. Only used if 'channel'
-%   │               is 'all'
-%   └.channel_action:
+%   │               Default value: do not overwrite. Only used if 'channel' is 'all'
+%   └.channel_action :
 %                   Defines whether the interpolated data should be added
 %                   or the corresponding channel should be replaced.
 %                   [optional; accept: 'add', 'replace'; default: 'add']
 %                   Only used if 'channel' is not 'all'.
 % ● Output
-%         outdata:  interpolated numeric array.
-%   channel_index: index of new channel if no new file is created
-%         newfile: name of new file if channel == 'all'
+%   *     outdata : interpolated numeric array.
+%   * channel_index : index of new channel if no new file is created
+%   *     newfile : name of new file if channel == 'all'
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 %   Refactored in 2024 by Dominik Bach (Uni Bonn)
 
 %% 1 Initialise
@@ -47,7 +43,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-outdata = []; 
+outdata = [];
 sts = -1;
 
 % 1.1 check input arguments
@@ -59,7 +55,7 @@ elseif isempty(indata)
   return;
 end
 
-if isnumeric(indata) 
+if isnumeric(indata)
     if nargin >= 2
         options = varargin{1};
     else

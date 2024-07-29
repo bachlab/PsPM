@@ -3,7 +3,7 @@ classdef pspm_path_test < pspm_testcase
   % unittest class for the pspm_path function
   % ● Authorship
   % (C) 2019 Eshref Yozdemir (University of Zurich)
-  %     2022 Teddy Chao (UCL)
+  %     2022 Teddy
   properties(Constant)
     pspm_root_dir = pspm_path();
   end

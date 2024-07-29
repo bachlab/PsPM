@@ -6,12 +6,12 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import);
 % ● Arguments
-%     datafile:
-%       import:
+%   *   datafile : datafile.
+%   *     import : import.
 % ● Outputs
-%          sts:
-%       import:
-%   sourceinfo:
+%   *        sts : status.
+%   *     import : the import structure.
+%   * sourceinfo : the source information structure.
 % ● Developer's Notes
 %   * NOTE
 %     This info is inherited from the old labchart export code but I
@@ -31,7 +31,7 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_in(datafile, import)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
