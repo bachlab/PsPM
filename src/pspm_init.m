@@ -81,27 +81,36 @@ pspm_vers = pspm_version('check');
 pspm_text([pspm_root, filesep]);
 load(fullfile(pspm_root,'pspm_text.mat'))
 
-% 2.5 Check if subfolders are already in path --
+% 2.5 Add required paths ---
+required_folders = {{}, {'pspm_cfg'}, {'ext', 'SPM'}; {'ext','VBA'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
+for k = 1:numel(required_folders)
+    required_path{k} = pspm_path(required_folders{k}{:});
+    if ~any(strcmp(initial_paths, required_path{k}))
+        added_paths{end+1} = required_path{k};
+    end
+end
+
+% 2.6 Check if subfolders are already in path --
 filelist = dir(fullfile(pspm_root, ['**',filesep,'*.*']));
 subfolders_full = unique({filelist.folder});
 subfolders = erase(subfolders_full,pspm_root);
 subfolders = subfolders(~strcmp(subfolders,pspm_root));
 subfolders = subfolders(contains(subfolders,filesep));
 subfolders = append(pspm_root,subfolders);
+subfolders = setdiff(subfolders, required_path);
 contained_subfolder_index = ismember(subfolders,initial_paths);
 flag_contain_subfolder = any(contained_subfolder_index);
 if flag_contain_subfolder
   if strcmp(questdlg(sprintf(warntext_subfolder),...
       'Subfolder detected',...
       'Yes', 'No', 'Yes'), 'Yes')
-    cellfun(@(x) rmpath(x),subfolders(contained_subfolder_index),'UniformOutput',0);
     removed_paths = [removed_paths, subfolders(contained_subfolder_index)];
   else
     error(errortext_subfolder);
   end
 end
 
-% 2.6 Check for SPM and Matlabbatch conflicts--
+% 2.7 Check for SPM and Matlabbatch conflicts--
 % Check if SPM software is on the current Path.
 % Dialog Window open to ask whether to remove program from the path or quit pspm_init.
 % Default is to quit pspm_init.
@@ -109,12 +118,12 @@ spm_folders = {'spm'}; %, 'cfg_ui'
 for k = 1:numel(spm_folders)
     spm_path{k} = fileparts(which(spm_folders{k}));
 end
+spm_path = setdiff(spm_path, required_path);
 spm_path_idx = cellfun(@(x) ~isempty(x), spm_path);
 if any(spm_path_idx)
   if strcmp(questdlg(sprintf(warntext_spm_remove),...
       'Interference with SPM software',...
       'Yes', 'No', 'No'), 'Yes')
-    cellfun(@(x) rmpath(x),initial_paths_spm,'UniformOutput',0);
     removed_paths = [removed_paths, spm_path(spm_path_idx)];
   else
     % quit pspm_init
@@ -132,9 +141,11 @@ for k = 1:numel(required_folder_list)
 end
 
 % 2.8 Execute path handling
+removed_paths = unique(removed_paths);
 for k = 1:numel(removed_paths)
     rmpath(removed_paths{k});
 end
+added_paths = unique(added_paths);
 for k = 1:numel(added_paths)
     addpath(added_paths{k});
 end

@@ -73,13 +73,14 @@ classdef pspm_pupil_pp_test < pspm_testcase
     function check_channel_combining_2(this)
       opt.channel = 1;
       opt.channel_combine = 2;
-      opt.chan_valid_cutoff = 0.163;
+      opt.chan_valid_cutoff = 0.001;
       % channel 1 (pupil_r) is good and channel 2 (pupil_l) (to combine) is bad
-      % so only to use channel 1, and the "combined" channel fully inherit
-      % channel 1, including tags such as chantype
+      % so both channels should be pre-processed separately, and their
+      % order retained in the created channels
       [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
       testdata = load(this.pspm_input_filename);
-      this.verifyEqual(testdata.data{out_chan}.header.chantype, 'pupil_l');
+      this.verifyEqual(testdata.data{out_chan(1)}.header.chantype, 'pupil_r');
+      this.verifyEqual(testdata.data{out_chan(2)}.header.chantype, 'pupil_l');
     end
     function check_segments(this)
       opt.channel = 'pupil_r';
