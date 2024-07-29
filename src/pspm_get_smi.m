@@ -13,7 +13,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 %                 above. The optional second string in the cell array can be
 %                 the event file containing blink/saccade events.
 %                 The file must be stored in ASCII format.
-%   ┌────import : [struct] import job structure
+%   ┌────import
 %   ├─────.type : Type of the channel. Must be one of pupil_l, pupil_r,
 %   │             gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
 %   │             saccade_l, saccade_r, marker, custom. If the given

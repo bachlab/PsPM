@@ -7,10 +7,10 @@ function [sts, outfile] = pspm_merge(infile1, infile2, reference, options)
 % ● Format
 %   [sts, outfile] = pspm_merge(infile1, infile2, reference, options)
 % ● Arguments
-%    infile1, infile2:  data file name(s) (char)
-%           reference:  'marker' aligns with respect to first marker
+%   *infile1, infile2:  data file name(s) (char)
+%   *       reference:  'marker' aligns with respect to first marker
 %                       'file'   aligns with respect to file start
-%   ┌─────────options:
+%   ┌─────────options
 %   ├──────.overwrite:  overwrite existing file by default
 %   │                   [logical] (0 or 1)
 %   │                   Default value: determined by pspm_overwrite.
@@ -19,7 +19,7 @@ function [sts, outfile] = pspm_merge(infile1, infile2, reference, options)
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

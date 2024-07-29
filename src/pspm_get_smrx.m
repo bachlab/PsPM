@@ -4,14 +4,14 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_smr(datafile, import);
 % ● Arguments
-%     datafile: path to the smrx file
-%   ┌───import: [struct]  The struct that stores required parameters.
-%   ├─.channel: [integer] The number of the channel to load. Use '0' to
-%   │                     load all channels.
-%   ├───.flank: [string]
-%   ├.transfer: [string]  The transfer function, use a file, an input or 'none'.
-%   ├────.type: [string]  The type of input channel, such as 'scr'.
-%   └──.typeno: [integer] The number of channel type, please see pspm_init.
+%   * datafile : path to the smrx file
+%   ┌───import
+%   ├─.channel : [integer] The number of the channel to load. Use '0' to load all
+%   │                      channels.
+%   ├───.flank : [string]
+%   ├.transfer : [string]  The transfer function, use a file, an input or 'none'.
+%   ├────.type : [string]  The type of input channel, such as 'scr'.
+%   └──.typeno : [integer] The number of channel type, please see pspm_init.
 % ● Output
 %   sts: the status recording whether the function runs successfully.
 %   import: the struct that stores read information.
@@ -31,7 +31,7 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 %   * units     | via CEDS64ChanUnits
 % ● History
 %   Introduced in PsPM 6.2
-%   Written in 2024 by Teddy Chao & Dominik Bach
+%   Written in 2024 by Teddy & Dominik Bach
 
 %% 1 Initialise
 global settings
@@ -137,7 +137,7 @@ for iImport = 1:numel(import)
             end
             i64Times = reshape(i64Times, 2, [])';
             sr = 1./CEDS64TicksToSecs(fhand, 1);
-            index = pspm_epochs2logical(i64Times, fileinfo.maxtime, 1); % epochs are specified in samples, so sr = 1 (see pspm_epochs2logical)   
+            index = pspm_epochs2logical(i64Times, fileinfo.maxtime, 1); % epochs are specified in samples, so sr = 1 (see pspm_epochs2logical)
             import{iImport}.data      = index;
             import{iImport}.length    = numel(index);
             import{iImport}.sr        = sr;

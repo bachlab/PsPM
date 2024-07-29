@@ -7,12 +7,12 @@ function path_to_folder = pspm_path(varargin)
 % ● Format
 %   path_to_folder = pspm_path(varargin)
 % ● Arguments
-%   varargin: Pass any number of string arguments to pspm_path. Each argument
+%   * varargin: Pass any number of string arguments to pspm_path. Each argument
 %             is assumed to be the name of a folder. For example, if you want
 %             to get the path to <PSPM_ROOT>/a/b/c folder, call
 %             pspm_path('a', 'b', 'c').
 % ● Outputs
-%   path_to_folder: Constructed absolute path
+%   * path_to_folder: Constructed absolute path
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Maintained in 2022 by Teddy Chao (UCL)
