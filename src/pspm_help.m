@@ -17,7 +17,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-fid = fopen([settings.path,func_name,'.m'],'r');
+fid = fopen(fullfile(settings.path, [func_name,'.m']),'r');
 % read the file into a cell array, one cell per line
 i = 1;
 tline = fgetl(fid);

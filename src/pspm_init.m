@@ -855,10 +855,6 @@ else
   settings = defaults;
 end
 
-
-% 11.2 Initialise the help texts
-settings.help = pspm_help_init;
-
 % 11.2 Save variables --
 settings.added_paths      = added_paths;
 settings.removed_paths    = removed_paths;
@@ -869,4 +865,8 @@ settings.path             = pspm_root;
 settings.pspm_version     = pspm_vers;
 settings.signal           = signal;
 settings.developmode = 0;
+
+% 11.3 Initialise the help texts
+settings.help = pspm_help_init;
+
 
