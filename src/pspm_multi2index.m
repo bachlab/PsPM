@@ -1,22 +1,19 @@
 function [sts, onsets, durations] = pspm_multi2index(timeunits, multi, sr, session_duration, varargin)
 % ● Description
-%   pspm_multi2index converts a multi onsets structure from pspm_get_timing to a
-%   cell array of numerical indices. This function is used by pspm_glm and
-%   pspm_extract_segments.
+%   pspm_multi2index converts a multi onsets structure from pspm_get_timing to a cell
+%   array of numerical indices. This function is used by pspm_glm and pspm_extract_segments.
 % ● Format
 %   [onsets, durations] = pspm_multi2index('samples', multi, sr_ratio, session_duration)
 %   [onsets, durations] = pspm_multi2index('seconds', multi, sr, session_duration)
 %   [onsets, durations] = pspm_multi2index('markers', multi, sr, session_duration, events)
 % ● Arguments
-%           multi: multi structure from pspm_get_timing
-%             sr: sampling rate, or vector of sampling rates with the same 
-%                 number of elements as multi
-%       sr_ratio: if data was downsampled wrt onset definition, ratio of
-%                 new_sr/old_sr; or vector of sampling rate ratios.
-%                 Otherwise, should be 1.
-% session_duration: vector of session duration (number of elements in data
-%                 vector)
-%         events: cell array of event definitions (in seconds)
+%   *    multi : multi structure from pspm_get_timing
+%           sr : sampling rate, or vector of sampling rates with the same  number of
+%                elements as multi
+%   * sr_ratio : If data was downsampled wrt onset definition, ratio of new_sr/old_sr; or
+%                vector of sampling rate ratios. Otherwise, should be 1.
+%   * session_duration: vector of session duration (number of elements in data vector)
+%   *   events : cell array of event definitions (in seconds).
 % ● History
 %   Introduced in PsPM 6.2
 %   Written in 2024 by Dominik Bach (Uni Bonn)
@@ -34,8 +31,8 @@ if ~isempty(multi)
             % convert onsets to samples
             switch timeunits
                 case {'samples', 'seconds'}
-                    onsets{n}{iSn}    = pspm_time2index(multi(iSn).onsets{n}, sr(iSn), session_duration);
-                    durations{n}{iSn}  = pspm_time2index(multi(iSn).durations{n}, sr(iSn), session_duration, 1);
+                    onsets{n}{iSn}    = pspm_time2index(multi(iSn).onsets{n}, sr(iSn), session_duration(iSn));
+                    durations{n}{iSn}  = pspm_time2index(multi(iSn).durations{n}, sr(iSn), session_duration(iSn), 1);
                 case 'markers'
                     if nargin == 0
                         warning('ID:invalid_input', 'No event definition provided.'); return;

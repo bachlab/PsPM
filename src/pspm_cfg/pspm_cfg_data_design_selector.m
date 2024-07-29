@@ -18,9 +18,9 @@ if strcmpi(modeltype, 'run')
         model.datafile{iSession,1} = job.session(iSession).datafile{1};
         % missing epochs
         if isfield(job.session(iSession).missing,'epochfile') 
-            model.missing{1,iSession} = job.session(iSession).missing.epochs.epochfile{1};
+            model.missing{1,iSession} = job.session(iSession).missing.epochfile{1};
         elseif isfield(job.session(iSession).missing,'epochentry')
-            model.missing{1,iSession} = job.session(iSession).missing.epochs.epochentry;
+            model.missing{1,iSession} = job.session(iSession).missing.epochentry;
         end
         % data & design
         if isfield(job.session(iSession).data_design,'no_condition')

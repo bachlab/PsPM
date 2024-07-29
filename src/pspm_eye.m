@@ -4,8 +4,11 @@ function Y = pspm_eye(X, feature)
 % ● Format
 %   Y = pspm_eye(X)
 % ● Arguments
-%   X:
-%   Y:
+%   * X: The input eye marker.
+%   * feature: The feature used for converting eye marker. Accepted values
+%   are 'lr2c', 'char2cell' and 'channel2lateral'.
+% ● Outputs
+%   * Y: The converted eye marker.
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2015 by Teddy

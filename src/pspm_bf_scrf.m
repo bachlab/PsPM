@@ -1,20 +1,20 @@
 function [bs, x] = pspm_bf_scrf(varargin)
 % ● Description
 %   pspm_bf_scrf constructs an informed basis set with a biexponentially
-%   modified gaussian function and derivatives to time and dispersion
+%   modified gaussian function and derivatives to time and dispersion.
 % ● Format
 %   [bs, x] = pspm_bf_scrf(TD, D)
 %   [bs, x] = pspm_bf_scrf([TD, D])
 % ● Arguments
-%   td: time resolution in second
-%    d: number of derivatives (default 0)
+%   *    td : Time resolution in second.
+%   *     d : Number of derivatives. Default as 0.
 % ● Reference
 %   Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
 %   skin conductance responses. International Journal of Psychophysiology,
 %   75, 349-356.
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written    in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy
 
 %% initialise

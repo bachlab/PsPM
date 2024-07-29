@@ -59,7 +59,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %       for 'param'
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
+%   Written    in 2009-2015 by Dominik R Bach (WTCN, UZH)
 %   Maintained in 2022 by Teddy
 
 %% Initialise
@@ -291,7 +291,7 @@ switch model
         temptiming(iFile).durations = in.durations;
         if isfield(in, 'pmod')
           temptiming(iFile).pmod  = in.pmodnew;
-        end  
+        end
       end
       % ensure same names exist for all sessions and re-sort if
       % necesssary; collect number and names of all pmods
@@ -329,7 +329,7 @@ switch model
                       pmodno(iFile, iCond) = 0;
                   end
                   outtiming(iFile).names{iCond}  = allnames{iCond};
-              end        
+              end
           end
           if nFiles > 1
               pmodno = max(pmodno);
@@ -464,6 +464,14 @@ switch model
       else
         warning('Unknown epoch definition format.');  return;
       end
+    end
+
+    % remove negative values
+    if any(outtiming(:) < 0)
+        indx = outtiming(:,2) < 0;
+        outtiming(indx,:) = [];
+        indx = outtiming(:,1) < 0;
+        outtiming(indx,1) = 0;
     end
 
     % check time units --

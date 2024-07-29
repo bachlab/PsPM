@@ -1,26 +1,14 @@
 function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
 % ● Description
-%   pspm_pupil_correct performs pupil foreshortening error (PFE) correction for
-%   arbitrary eye tracker measurements according to equations (3) and (4) in
-%   [1].
-% ● Developer's Notes
-%   In particular,
-%   1. Target points (T_x, T_y, T_z) are calculated using gaze x and y
-%      positions at each timestep
-%   2. Cosine of the oblique angle is computed using the dot products of
-%      unitary vectors corresponding to camera C and target T.
-%   3. Diameter values are scaled using 1/sqrt(cos). Hence, the corrected pupil
-%      values are at least as big as the input pupil values.
+%   pspm_pupil_correct performs pupil foreshortening error (PFE) correction for arbitrary
+%   eye tracker measurements according to equations (3) and (4) in [1].
 % ● Format
 %   [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
 % ● Arguments
-%            pupil: Numeric array containing pupil diameter. (Unit: any unit)
-%        gaze_x_mm: Numeric array containing gaze x positions. (Unit: mm)
-%        gaze_y_mm: Numeric array containing gaze y positions. (Unit: mm)
-%   geometry_setup: Struct with the following geometry setup fields.
-%   │               When defining these coordinate system parameters, we
-%   │               assume that the origin O of the 3D coordinate system
-%   │               is the center of the pupil.
+%   *        pupil: Numeric array containing pupil diameter. (Unit: any unit)
+%   *    gaze_x_mm: Numeric array containing gaze x positions. (Unit: mm)
+%   *    gaze_y_mm: Numeric array containing gaze y positions. (Unit: mm)
+%   ┌─geometry_setup
 %   ├─────────.C_x: Horizontal displacement of the center of camera lens,
 %   │               i.e. how much to the left or to the right the camera
 %   │               looks for a sitting person whose pupil is at O. (Unit: mm)
@@ -40,8 +28,18 @@ function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm
 %   └─────────.S_z: The distance between pupil center and top left corner of
 %                   screen if they have same x and y coordinates. (Unit: mm)
 % ● Outputs
-%  pupil_corrected: PFE corrected pupil data.
-%                   (Unit: unit of the input pupil data)
+%   * pupil_corrected: PFE corrected pupil data. (Unit: unit of the input pupil data)
+% ● Developer's Notes
+%   geometry_setup is a struct with the geometry setup fields. When defining these
+%   coordinate system parameters, we assume that the origin O of the 3D coordinate system
+%   is the center of the pupil.
+%   In particular,
+%   1. Target points (T_x, T_y, T_z) are calculated using gaze x and y
+%      positions at each timestep
+%   2. Cosine of the oblique angle is computed using the dot products of
+%      unitary vectors corresponding to camera C and target T.
+%   3. Diameter values are scaled using 1/sqrt(cos). Hence, the corrected pupil
+%      values are at least as big as the input pupil values.
 % ● References
 %   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
 %       influence of gaze position on pupil size measurements." Behavior

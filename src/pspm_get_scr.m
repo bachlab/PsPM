@@ -4,12 +4,12 @@ function [sts, data] = pspm_get_scr(import)
 % ● Format
 %   [sts, data] = pspm_get_scr(import)
 % ● Arguments
-%     import:  import job structure with mandatory fields
-%         .sr:
-%       .data:
-%   .transfer:  transfer parameters, either a struct with fields .Rs, .c,
-%               .offset, .recsys, or a file containing variables 'Rs' 'c',
-%               'offset', 'recsys'.
+%   ┌───import
+%   ├────.data : column vector of SCR data
+%   ├──────.sr : sampling rate
+%   └.transfer : transfer parameters, either a struct with fields .Rs, .c,
+%                .offset, .recsys, or a file containing variables 'Rs' 'c',
+%                'offset', 'recsys'.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

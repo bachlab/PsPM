@@ -8,14 +8,14 @@ function [sts, import, sourceinfo] = pspm_get_acq_bioread(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acq_bioread(datafile, import);
 % ● Arguments
-%   datafile: the path of the BIOPAC/AcqKnowledge file to be imported
-%     import:
-%        .sr:
-%      .data:
-%     .units:
-%    .marker:
+%   * datafile : the path of the BIOPAC/AcqKnowledge file to be imported
+%   ┌───import
+%   ├──────.sr : sampling rate.
+%   ├────.data : The data read from the acq file.
+%   ├───.units : the unit of data.
+%   └──.marker : The type of marker, such as 'continuous'.
 % ● Reference
-%   [1] https://github.com/njvack/bioread
+%   https://github.com/njvack/bioread
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)

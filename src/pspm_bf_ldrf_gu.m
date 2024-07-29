@@ -5,24 +5,24 @@ function [bs, x] = pspm_bf_ldrf_gu(varargin)
 %   diameter values. Therefore pupil size data analyzed using these models
 %   should also be in diameter.
 % ● Format
-%   [bs, x] = pspm_bf_ldrf_gu(td, n, offset, p1, p2, p3, p4)
-%   [bs, x] = pspm_bf_ldrf_gu([td, n, offset, p1, p2, p3, p4])
+%   [bs, x]  = pspm_bf_ldrf_gu(td, n, offset, p1, p2, p3, p4)
+%   [bs, x]  = pspm_bf_ldrf_gu([td, n, offset, p1, p2, p3, p4])
 % ● Arguments
-%       td: time resolution in s
-%        n: duration of the function in s [20s]
-%   offset: offset in s. tells the function where to start with
-%           the response function [0.2s]
-%       p1:
-%       p2:
-%       p3:
-%       p4:
+%   *     td : Time resolution in second.
+%   *      n : Duration of the function in second. Default as 20 s.
+%   * offset : Offset in s. tells the function where to start with the response function.
+%              Default as 0.2 s.
+%   *     p1 : Shape for Gaussian response function, or a, default as 0.27.
+%   *     p2 : Scale for Gaussian response function, or b, default as 2.04.
+%   *     p3 : Parameter for Gaussian response function, or x0, default as 1.48.
+%   *     p4 : Quantifier or amplitude for Gaussian response function, or A, default as 0.004.
 % ● Reference
 %   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
 %   cognition: Modeling event-related pupil responses. Journal of Vision,
 %   16(3), 28. https://doi.org/10.1167/16.3.28
 % ● History
 %   Introduced in PsPM 3.1
-%   Written in 2015 by Tobias Moser (University of Zurich)
+%   Written    in 2015 by Tobias Moser (University of Zurich)
 %   Maintained in 2022 by Teddy
 
 %% initialise

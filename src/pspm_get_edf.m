@@ -5,8 +5,8 @@ function [sts, import, sourceinfo] = pspm_get_edf(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_edf(datafile, import);
 % ● Arguments
-%   datafile:
-%     import:
+%   * datafile: the EDF data file to be imported
+%   *   import: the struct of import settings
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Tobias Moser (University of Zurich)

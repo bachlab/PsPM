@@ -12,19 +12,17 @@ function varargout = pspm_overwrite(varargin)
 %      a. the file has existed
 %      b. users use the GUI to stop overwriting
 % ● Arguments
-%   fn:         the name of the file to possibly overwrite
-%               can be a link if necessary
-%   overwrite:  a numerical value or a struct
-%               option of overwrite if this option is presented
-%               can be a value or a struct
-%               if a value, can be 0 (not to overwrite) or 1 (to overwrite)
-%               if a struct, check if the field `overwrite` exist
+%   *        fn : the name of the file to possibly overwrite can be a link if necessary.
+%   * overwrite : a numerical value or a struct option of overwrite if this option is
+%                 presented can be a value or a struct.
+%                 If a value, can be 0 (not to overwrite) or 1 (to overwrite).
+%                 If a struct, check if the field `overwrite` exist.
 % ● Examples
 %   [sts, overwrite_final] = pspm_overwrite(fn, overwrite)
 % ● Outputs
-%   overwrite_final  option of overwriting determined by pspm_overwrite
-%                     0: not to overwrite
-%                     1: to overwrite
+%   * overwrite_final:  option of overwriting determined by pspm_overwrite
+%                       0: not to overwrite
+%                       1: to overwrite
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 by Teddy

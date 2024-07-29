@@ -5,12 +5,9 @@ function [sts, converted] = pspm_convert_unit(data, from, to)
 % ● Format
 %   [sts, converted] = pspm_convert_unit(data, from, to)
 % ● Arguments
-%   data: The data which should be converted. Must be a numeric
-%         array of any shape.
-%   from: Unit of the input vector.
-%         Valid units are currently mm, cm, dm, m, km, in, inches
-%     to: Unit of the output vector.
-%         Valid units are currently mm, cm, dm, m, km, in, inches
+%   * data: The data which should be converted. Must be a numeric array of any shape.
+%   * from: Unit of the input vector. Valid units are currently mm, cm, dm, m, km, in, inches
+%   *   to: Unit of the output vector. Valid units are currently mm, cm, dm, m, km, in, inches
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2018 by Tobias Moser (University of Zurich)

@@ -1,11 +1,9 @@
 function app = pspm_ui_app (app)
 % ● Descrition
-%   pspm_ui_app handles the ui controlling elements for app designer based
-%   GUI files. Details of font styles can be found in the developer's
-%   guide.
+%   pspm_ui_app handles the ui controlling elements for app designer based GUI files.
+%   Details of font styles can be found in the developer's guide.
 % ● History
-%   Written in 2022 by Teddy
-%   Updated in 2024 by Teddy
+%   Written and updated in 2022 and 2024 by Teddy
 
 %% General Settings
 OS = ispc*1 + ismac*2 + (isunix-ismac)*3;
@@ -53,7 +51,9 @@ update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontSize', pspm_font_size);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal');
 % update colour
-app.GridLayout.BackgroundColor = pspm_colour;
+if isfield(app.GridLayout, 'BackgroundColor')
+  app.GridLayout.BackgroundColor = pspm_colour;
+end
 update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]);
 %% Window specific settings
 switch app.layout.Name

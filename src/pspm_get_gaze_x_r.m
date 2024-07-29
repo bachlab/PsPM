@@ -5,9 +5,9 @@ function [sts, data] = pspm_get_gaze_x_r(import)
 % ● Format
 %   [sts, data]= pspm_get_gaze_x_r(import)
 % ● Arguments
-%   import
-%     .data: column vector of waveform data
-%       .sr: sample rate
+%   ┌import
+%   ├─.data : column vector of right gaze x data
+%   └───.sr : sample rate
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)

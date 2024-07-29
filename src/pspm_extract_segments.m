@@ -15,16 +15,16 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   [sts, segments] = pspm_extract_segments('data', data, sr, timing, options)
 %   [sts, segments] = pspm_extract_segments('model', modelfile, options)
 % ● Arguments
-%                   mode:  Tells the function in which mode get the
+%   *               mode:  Tells the function in which mode get the
 %                          settings from. Either 'file', 'data', or 'model'.
-%              modelfile:  Path to the glm or dcm file or a glm/dcm structure.
-%                data_fn:  Path or cell of paths to data file from which
+%   *          modelfile:  Path to the glm or dcm file or a glm/dcm structure.
+%   *            data_fn:  Path or cell of paths to data file from which
 %                          the segments should be extracted.
-%                   data:  Numeric data or a cell array of numeric data.
-%                channel:  Channel identifier accepted by pspm_load_channel
-%                     sr:  Sample rate (ignored if options.timeunits ==
+%   *               data:  Numeric data or a cell array of numeric data.
+%   *            channel:  Channel identifier accepted by pspm_load_channel
+%   *                 sr:  Sample rate (ignored if options.timeunits ==
 %                          'samples')
-%                 timing:  An onsets definition or file, as accepted by
+%   *             timing:  An onsets definition or file, as accepted by
 %                          pspm_get_timing, or cell array thereof.
 %   ┌────────────options:
 %   ├─────────.timeunits: 'seconds' (default), 'samples' or 'markers'. In 'model'
@@ -157,15 +157,21 @@ case 'model'
         warning('ID:invalid_input', 'Unknown model type.');
         return;
     end
-    sr = data.input.sr;
+    % GLM stores sample rate for each session separately, but checks if
+    % they are the same and errors if not. So we can assume the first
+    % element is the same as the other ones.
+    sr = data.input.sr(1);
 end
 
 if options.norm
   newmat = cell2mat(data_raw(:));
-  zfactor = std(newmat(:));
-  offset  = mean(newmat(:));
-  for iSn = 1:numel(data_raw)
-    data_raw{iSn} = (data_raw{iSn} - offset) / zfactor;
+  newmat = newmat(~isnan(newmat));
+  if ~isempty(newmat)
+      zfactor = std(newmat(:));
+      offset  = mean(newmat(:));
+      for iSn = 1:numel(data_raw)
+        data_raw{iSn} = (data_raw{iSn} - offset) / zfactor;
+      end
   end
 end
 

@@ -4,7 +4,7 @@ classdef pspm_interpolate_test < matlab.unittest.TestCase
     % testEnvironment for PsPM version 6.0
     % ● Authorship
     % (C) 2015 Tobias Moser (University of Zurich)
-    %			2022 Teddy Chao (UCL)
+    %			2022 Teddy
     properties
         datafile = 'interpolate_test';
         testdata = {};

@@ -6,13 +6,12 @@ function [sts, glm] = pspm_glm_recon(modelfile)
 % ● Format
 %   glm = pspm_glm_recon(glmfile) or [sts, glm] = pspm_glm_recon(glmfile)
 % ● Arguments
-%   glmfile:
+%   * glmfile : the GLM file
 % ● Outputs
-%   sts:
-%   glm:
+%   *     glm : calculated GLM struct
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Written    in 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy
 
 % initialise

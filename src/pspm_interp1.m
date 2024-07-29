@@ -5,10 +5,10 @@ function Y = pspm_interp1(varargin)
 % ● Format
 %   Y = pspm_interp1(varargin)
 % ● Arguments
-%   X:              data that contains NaNs to be interpolated
-%   index_missing:  index of missing epochs with the same size of X in binary
-%                   values. 1 if NaNs, 0 if non-NaNs.
-%   Y:              processed data
+%   *             X : data that contains NaNs to be interpolated.
+%   * index_missing : index of missing epochs with the same size of X in binary values.
+%                     1 if NaNs, 0 if non-NaNs.
+%   *             Y : processed data.
 % ● History
 %   Introduced in PsPM 6.1
 %   Written in 2023 by Teddy
@@ -46,7 +46,7 @@ switch sum(~isnan(X))
     non_nan_percentage = sum(~isnan(X))/length(X);
     if non_nan_percentage<0.1
       warning('ID:invalid_input',...
-      'Input data contains less than 10% non-NaN. Interpolation can ',... 
+      'Input data contains less than 10% non-NaN. Interpolation can ',...
       'still be performed but results could be inaccurate.')
     end
 end

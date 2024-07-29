@@ -5,11 +5,11 @@ function [sts, data] = pspm_get_sps(import)
 % ● Format
 %   [sts, data] = pspm_get_sps(import)
 % ● Arguments
-%    import:
-%     .data: column vector of waveform data
-%       .sr: sample rate
-%    .units:
-%    .range:
+%   ┌───import
+%   ├────.data : Column vector of waveform data.
+%   ├──────.sr : Sample rate.
+%   ├───.units : Unit of waveform data.
+%   └───.range : Range of data.
 % ● History
 %   Introduced in PsPM version?
 %   Maintained in 2022 by Teddy

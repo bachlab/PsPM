@@ -7,16 +7,16 @@ function [lon, lat, lon_range, lat_range] = pspm_convert_visual_angle_core(x_dat
 % ● Format
 %   [lon, lat, lon_range, lat_range] = pspm_convert_visual_angle_core(x_data, y_data, width, height, distance)
 % ● Arguments
-%           x_data: X axis data
-%           y_data: y axis data
-%            width: screen width in same units as data
-%           height: screen height in same units as data
-%         distance: screen distance in same units as data
+%   *    x_data: X axis data
+%   *    y_data: y axis data
+%   *     width: screen width in same units as data
+%   *    height: screen height in same units as data
+%   *  distance: screen distance in same units as data
 % ● Output
-%              lat: the latitude in degrees (x-direction)
-%              lon: the longitude in degrees (y-direction)
-%        lat_range: the latitude range
-%        lon_range: the longitude range
+%   *       lat: the latitude in degrees (x-direction)
+%   *       lon: the longitude in degrees (y-direction)
+%   * lat_range: the latitude range
+%   * lon_range: the longitude range
 % ● History
 %   Introduced in PsPM 4.0
 %      Updated by Dominik R. Bach (Uni Bonn) in 2024

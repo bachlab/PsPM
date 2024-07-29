@@ -3,15 +3,13 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %   pspm_trim cuts an PsPM dataset to the limits set with the parameters 'from'
 %   and 'to' and writes it to a file with a prepended 't'
 % ● Format
-%   newdatafile = pspm_trim (datafile, from, to, reference, options)
+%   [sts, newdatafile, newepochfile] = pspm_trim (datafile, from, to, reference, options)
 % ● Arguments
-%            datafile:  [char] the name of the file to be trimmed, or a
+%   *        datafile:  [char] the name of the file to be trimmed, or a
 %                       struct accepted by pspm_load_data.
-%                from:  either numbers, or 'none'
-%                       the start of trimming period
-%                  to:  a numeric value or 'none'
-%                       the end of trimming period
-%           reference:  string/vector
+%   *            from:  either numbers, or 'none', the start of trimming period.
+%   *              to:  a numeric value or 'none', the end of trimming period.
+%   *       reference:  string/vector
 %                       [string]
 %                       'marker' from and to are set in seconds with respect
 %                                to the first and last scanner/marker pulse
@@ -23,7 +21,7 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %                       [cell_array] a 2-element cell array containing
 %                       either the value (numeric or char) or name (char)
 %                       of the two markers defining from and to
-%   ┌─────────options:
+%   ┌─────────options
 %   ├──────.overwrite:  [logical] (0 or 1)
 %   │                   Define whether to overwrite existing output files or not.
 %   │                   Default value: determined by pspm_overwrite.
@@ -40,10 +38,10 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %                       option to 1 to drop markers which lie in the offset.
 %                       this is for event channels only. Default is 0.
 % ● Outputs
-%                  sts: status variable indicating whether function run successfully.
-%          newdatafile: a filename for the updated file (or a struct with 
+%   *              sts: status variable indicating whether function run successfully.
+%   *      newdatafile: a filename for the updated file (or a struct with
 %                       fields .data and .infos if data file is a struct)
-%         newepochfile: missing epoch filename for the individual
+%   *     newepochfile: missing epoch filename for the individual
 %                       sessions (empty if options.missing not specified)
 % ● History
 %   Introduced in PsPM 3.0
@@ -165,18 +163,12 @@ end
 % 2.2 Calculate markers if needed
 if getmarker == 1
     % 2.2.1 Verify the markers
-    [nsts, ~, ndata] = pspm_load_data(datafile, options.marker_chan_num);
-    if ~strcmp(ndata{1}.header.chantype, 'marker')
-        warning('ID:invalid_option', ['Channel %i is no marker ', ...
-            ' channel. The first marker channel in the file is ', ...
-            'used instead'], options.marker_chan_num);
-        [nsts, ~, ndata] = pspm_load_data(datafile, 'marker');
-    end
-    if nsts > 0
-        events = ndata{1}.data;
-    else
+    [nsts, data_struct, infos, pos_of_channel, chantype_sts] = ...
+            pspm_load_channel(datafile, options.marker_chan_num, 'marker');
+    if (nsts < 1 || chantype_sts < 1)
         return
     end
+    events = data_struct.data;
     if isempty(events)
         warning('ID:marker_out_of_range', 'Marker channel (%i) is empty. Cannot use as a reference.', options.marker_chan_num);
         return
@@ -301,7 +293,7 @@ for k = 1:numel(data)
         remove_index = any([remove_early, remove_late], 2);
         data{k}.data(remove_index) = [];
         data{k}.data = data{k}.data - sta_time;
-        
+
         if isfield(data{k}, 'markerinfo')
             % also trim marker info if available
             data{k}.markerinfo.value(remove_index) = [];
@@ -321,15 +313,14 @@ if ~isempty(options.missing)
     if lsts < 1, return; end
     if ~isempty(epochs)
         index = epochs(:, 2) < sta_time | ...
-                epochs(:, 1) > sto_time | ...
-                epochs(:, 1) > infos.duration;
+                epochs(:, 1) > sto_time;
         epochs(index, :) = [];
         epochs = epochs - sta_time;
         if ~isempty(epochs)
             epochs(1, 1) = max([0, epochs(1, 1)]);
             epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
         end
-        lsts = pspm_get_timing('epochs', epochs, 'seconds');
+        [lsts, epochs] = pspm_get_timing('epochs', epochs, 'seconds');
         if lsts < 1, return; end
     else
         % do nothing and keep the empty epochs array

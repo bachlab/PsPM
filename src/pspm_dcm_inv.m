@@ -10,72 +10,60 @@ function [sts, dcm] = pspm_dcm_inv(model, options)
 %   [sts, dcm] = pspm_dcm_inv(model, options)
 % ● Arguments
 %   ┌─────────model
-%   │ ▶︎ Mandatory
-%   ├──────────.scr:  [mandatory, cell_array]
-%   │                 normalised and min-adjusted time series
-%   ├──────.zfactor:  [mandatory]
-%   │                 normalisation denominator from pspm_dcm
-%   ├───────────.sr:  [mandatory, numeric]
-%   │                 sample rate (must be the same across sessions)
-%   ├───────.events:  [mandatory, a cell of cell array]
-%   │                 flexible and fixed events:
-%   │                 model.events{1}{sn} - flexible
-%   │                 model.events{2}{sn} - fixed
-%   ├─────.trlstart:  [mandatory, cell]
-%   │                 trial start for each trial (created in pspm_dcm)
-%   ├──────.trlstop:  [mandatory, cell]
-%   │                 trial end for each trial (created in pspm_dcm)
-%   ├──────────.iti:  [mandatory, cell]
-%   │                 ITI for each trial (created in pspm_dcm).
-%   │ ▶︎ Optional
+%   ├──────────.scr:  [cell_array] normalised and min-adjusted time series
+%   ├──────.zfactor:  Normalisation denominator from pspm_dcm
+%   ├───────────.sr:  [numeric] sampling rate (must be the same across sessions).
+%   ├───────.events:  [a cell of cell array] flexible and fixed events:
+%   │                 model.events{1}{sn} - flexible;
+%   │                 model.events{2}{sn} - fixed.
+%   ├─────.trlstart:  [cell] trial start for each trial (created in pspm_dcm)
+%   ├──────.trlstop:  [cell] trial end for each trial (created in pspm_dcm)
+%   ├──────────.iti:  [cell] ITI for each trial (created in pspm_dcm).
 %   ├─────────.norm:  [optional, default as 0]
 %   │                 whether to normalise data.
 %   │                 i. e. data are normalised during inversion but results
 %   │                 transformed back into raw data units.
-%   ├───.flexevents:  flexible events to adjust amplitude priors
-%   ├────.fixevents:  fixed events to adjust amplitude priors
-%   ├─.missing_data:  missing epoch data, originally loaded as model.missing
+%   ├───.flexevents:  [optional] flexible events to adjust amplitude priors
+%   ├────.fixevents:  [optional] fixed events to adjust amplitude priors
+%   ├─.missing_data:  [optional] missing epoch data, originally loaded as model.missing
 %   │                 from pspm_dcm, but calculated into .missing_data (created
 %   │                 in pspm_dcm and then transferred to pspm_dcm_inv.
-%   └──.constrained:  [optional]
-%                     constrained model for flexible responses which have
+%   └──.constrained:  [optional] constrained model for flexible responses which have
 %                     have fixed dispersion (0.3 s SD) but flexible latency
-%   ┌─────── options  (all optional)
-%   │ ▶︎ response function
-%   ├─────────.eSCR:  contains the data to estimate RF from
-%   ├─────────.aSCR:  contains the data to adjust the RF to
-%   ├──────.meanSCR:  data to adjust the response amplitude priors to
-%   ├────.crfupdate:  update CRF priors to observed SCRF, or use
+%   ┌───────options
+%   ├─────────.eSCR:  [optional] contains the data to estimate RF from
+%   ├─────────.aSCR:  [optional] contains the data to adjust the RF to
+%   ├──────.meanSCR:  [optional] data to adjust the response amplitude priors to
+%   ├────.crfupdate:  [optional] update CRF priors to observed SCRF, or use
 %   │                 pre-estimated priors (default)
-%   ├────────.getrf:  only estimate RF, do not do trial-wise DCM
-%   ├───────────.rf:  use pre-specified RF, provided in file, or as 4-element
+%   ├────────.getrf:  [optional] only estimate RF, do not do trial-wise DCM
+%   ├───────────.rf:  [optional] use pre-specified RF, provided in file, or as 4-element
 %   │                 vector in log parameter space
-%   │ ▶︎ inversion
-%   ├────────.depth:  [numeric, default as 2]
+%   ├────────.depth:  [optional, numeric, default as 2]
 %   │                 no of trials to invert at the same time.
-%   ├────────.sfpre:  [numeric, default as 2, unit: second]
+%   ├────────.sfpre:  [optional, numeric, default as 2, unit: second]
 %   │                 sf-free window before first event.
-%   ├───────.sfpost:  [numeric, default: 5, unit: second]
+%   ├───────.sfpost:  [optional, numeric, default: 5, unit: second]
 %   │                 sf-free window after last event.
-%   ├───────.sffreq:  [numeric, default: 0.5, unit: /second or Hz]
+%   ├───────.sffreq:  [optional, numeric, default: 0.5, unit: /second or Hz]
 %   │                 maximum frequency of SF in ITIs.
-%   ├───────.sclpre:  [numeric, default: 2, unit: second]
+%   ├───────.sclpre:  [optional, numeric, default: 2, unit: second]
 %   │                 scl-change-free window before first event.
-%   ├──────.sclpost:  [numeric, default: 5, unit: second]
+%   ├──────.sclpost:  [optional, numeric, default: 5, unit: second]
 %   │                 scl-change-free window after last event.
 %   ├─.aSCR_sigma_offset:
-%   │                 [numeric, default: 0.1, unit: second]
+%   │                 [optional, numeric, default: 0.1, unit: second]
 %   │                 minimum dispersion (standard deviation) for flexible
 %   │                 responses.
-%   │ ▶︎ display
-%   ├──────.dispwin:  [bool, default as 1]
+%   ├──────.dispwin:  [optional, bool, default as 1]
 %   │                 display progress window.
-%   └─.dispsmallwin:  [bool, default as 0]
+%   └─.dispsmallwin:  [optional, bool, default as 0]
 %                     display intermediate windows
 % ● Outputs
-%   Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-%   in SN units such that an eSCR SN pulse with 1 unit amplitude causes an eSCR
-%   with 1 mcS amplitude (unless model.norm = 1)
+%   *           dcm:  Output units, all timeunits are in seconds. eSCR
+%                     and aSCR amplitude are in SN units such that an
+%                     eSCR SN pulse with 1 unit amplitude causes an eSCR
+%                     with 1 mcS amplitude (unless model.norm = 1).
 % ● Developer Notes
 %   There are two event types: flexible and fixed. The terminology is to call
 %   flexible responses aSCR (anticipatory) and fixed responses eSCR (evoked
@@ -87,10 +75,10 @@ function [sts, dcm] = pspm_dcm_inv(model, options)
 %   estimates transformed back at the end (to standardise priors and
 %   precisions).
 % ● References
-%   (1) Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
+%   [1] Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
 %       Dynamic causal modelling of anticipatory skin conductance changes.
 %       Biological Psychology, 85(1), 163-70
-%   (2) Staib, M., Castegnetti, G., & Bach, D. R. (2015).
+%   [2] Staib, M., Castegnetti, G., & Bach, D. R. (2015).
 %       Optimising a model-based approach to inferring fear learning from skin
 %       conductance responses.
 %       Journal of Neuroscience Methods, 255, 131-138.
@@ -518,7 +506,7 @@ if ~options.getrf
 
     % estimate trial-by-trial
     % =======================================================================
-    if isinf(options.depth)
+    if options.depth > trlno
         trlindx = 1;
     else
         trlindx = 1:trlno;
@@ -714,10 +702,22 @@ if ~options.getrf
           rmscltrl(k) = 1;
         end
       end
-      if rmscltrl(1) == 1
-        scl_lb(trl) = -1; scl_ln(trl) = -1;
+      % if all trials are estimated at once, then retain this information
+      % for all trials; otherwise just extract the first trial.
+      if trlindx == 1
+          for k = 1:numel(trls)
+              if rmscltrl(k) == 1
+                  scl_lb(k) = -1; scl_ln(k) = -1;
+              else
+                  scl_lb(k) = scllb(k) + win(1)/sr; scl_ln(k) = sclub(k) - scllb(k);
+              end
+          end
       else
-        scl_lb(trl) = scllb(1) + win(1)/sr; scl_ln(trl) = sclub(1) - scllb(1);
+          if rmscltrl(1) == 1
+              scl_lb(trl) = -1; scl_ln(trl) = -1;
+          else
+              scl_lb(trl) = scllb(1) + win(1)/sr; scl_ln(trl) = sclub(1) - scllb(1);
+          end
       end
       % -- insert priors
       u(5, :) = numel(scllb);
@@ -826,7 +826,7 @@ if ~options.getrf
       newzfactor = model.zfactor;
     end
 
-    for trl = 1:trlno
+    for trl = trlindx
       for k = 1:aSCRno
         sig.G0 = aSCR_ln(k, trl);
         aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);

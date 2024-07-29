@@ -8,8 +8,8 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 % ● Format
 %   [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
-%                 fn: A data file name
-%   ┌────────conversion [ struct ] with fields
+%   *             fn: A data file name
+%   ┌─────conversion
 %   ├──────────.from: Original units to convert from: 'pixel', a metric distance
 %   │                 unit, or 'degree'
 %   ├────────.target: target unit of conversion: a metric distance unit,
@@ -29,7 +29,7 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 %   └.channel_action: Channel action for sps data, add / replace existing sps
 %                     data (default: add)
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 4.3.1
 %   Written in 2020 by Sam Maxwell (University College London)
@@ -113,7 +113,6 @@ end
 if lsts < 1, return, end
 channelunits_list = cellfun(@(x) x.header.units, alldata.data, 'uni', false);
 channels_correct_units = find(contains(channelunits_list, from));
-gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
 channeltypes = {'gaze_x', 'gaze_y'};
 data = {};
 for i = 1:numel(channel)
@@ -126,15 +125,15 @@ for i = 1:numel(channel)
                 channel{i}, alldata.data{channel{i}}.header.units, from);
             return
         end
-        % for channeltype specification, just consider channels in the correct units
     else
+        % for channeltype specification, just consider channels in the correct units
+        gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
         [lsts, data{i}, infos, pos_of_channel(i)] = pspm_load_channel(gazedata, channel{i}, channeltypes{i});
+        % map channel index from list of channels with correct units to list of all channels
+        pos_of_channel(i) = channels_correct_units(pos_of_channel(i)); 
     end
     if lsts < 1, return, end
 end
-
-% map channel index from list of channels with correct units to list of all channels 
-pos_of_channel = channels_correct_units(pos_of_channel); 
 
 % find eye of channels to use
 eye = {};

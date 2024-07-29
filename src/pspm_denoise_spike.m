@@ -1,13 +1,15 @@
-function [data]=pspm_denoise_spike(inputdata, header, kbdata, cutoff)
+function data = pspm_denoise_spike(inputdata, header, kbdata, cutoff)
 % ● Description
 %   pspm_denoise_spike removes noise from spike type 4 trigger channels
 % ● Format
-%   [data] = pspm_denoise_spike(inputdata, header, kbdata, cutoff)
+%   data = pspm_denoise_spike(inputdata, header, kbdata, cutoff)
 % ● Arguments
-%   inputdata:
-%      header:
-%      kbdata:
-%      cutoff:
+%   * inputdata : data for denoising.
+%   *    header : header of data
+%   *    kbdata : keyboard channel data
+%   *    cutoff : the cut off value for denoising
+% ● Arguments
+%   *    data: denoised data
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
