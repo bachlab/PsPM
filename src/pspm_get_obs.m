@@ -6,11 +6,11 @@ function [sts, import, sourceinfo] = pspm_get_obs(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_obs(datafile, import);
 % ● Arguments
-%   *   datafile : datafile.
-%   *     import : import.
+%   *   datafile : datafile to be imported.
+%   *     import : import settings.
 % ● Outputs
 %   *        sts : status.
-%   *     import : the import structure.
+%   *     import : the updated import structure.
 %   * sourceinfo : the source information structure.
 % ● History
 %   Introduced in PsPM 3.0

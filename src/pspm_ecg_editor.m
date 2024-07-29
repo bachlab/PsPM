@@ -9,7 +9,7 @@ function varargout = pspm_ecg_editor(varargin)
 %   *       pt:  A struct() from pspm_convert_ecg2hb detection.
 %   *       fn:  A file to  data file containing the ecg channel to be edited
 %   *  channel:  Channel id of ecg channel in the data file
-%   ┌──options:  A struct() of options
+%   ┌──options
 %   ├─.channel:  Channel id of the existing hb channel
 %   ├────.semi:  Defines whether to navigate between potentially wrong hb events
 %   │            only (semi = 1), or between all hb events (semi = 0 => manual

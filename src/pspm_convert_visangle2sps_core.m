@@ -1,5 +1,6 @@
 function arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Description
+%   pspm_convert_visangle2sps_core
 % ● Format
 %   arclen = pspm_convert_visangle2sps_core(lat, lon)
 % ● Arguments

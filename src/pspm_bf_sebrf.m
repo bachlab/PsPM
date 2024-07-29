@@ -1,8 +1,7 @@
 function [bf, x] = pspm_bf_sebrf(varargin)
 % ● Description
-%   pspm_bf_sebrf constructs the startle eyeblink response function
-%   consisting of gamma probability functions.
-%   Basis functions will be orthogonalized using spm_orth by default.
+%   pspm_bf_sebrf constructs the startle eyeblink response function consisting of gamma 
+%   probability functions. Basis functions will be orthogonalized using spm_orth by default.
 % ● Format
 %   [bf, x] = pspm_bf_sebrf(td, d, g)
 %   [bf, x] = pspm_bf_sebrf([td, d, g])

@@ -1,7 +1,6 @@
 function [sts, data] = pspm_get_pupil_r(import)
 % ● Description
-%   pspm_get_pupil_r is a common function for importing eyelink data
-%   (pupil_r data)
+%   pspm_get_pupil_r is a common function for importing eyelink data (pupil_r data)
 % ● Format
 %   [sts, data] = pspm_get_pupil_r(import)
 % ● Arguments
@@ -12,7 +11,7 @@ function [sts, data] = pspm_get_pupil_r(import)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings

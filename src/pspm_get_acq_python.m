@@ -6,7 +6,7 @@ function [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import)
 %   [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import);
 % ● Arguments
 %   *   datafile: The .acq data file to be imported
-%   ┌─────import: The stucture of importing settings, check pspm_import
+%   ┌─────import
 %   ├───.channel: The channel to be imported, check pspm_import
 %   ├──────.type: The type of channel, check pspm_import
 %   ├────────.sr: The sampling rate of the acq file.

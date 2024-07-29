@@ -9,12 +9,12 @@ function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import);
 % ● Arguments
-%   *   datafile:
-%   *     import:
+%   *   datafile : datafile.
+%   *     import : import.
 % ● Outputs
-%   *        sts:
-%   *     import:
-%   * sourceinfo:
+%   *        sts : status.
+%   *     import : the import structure.
+%   * sourceinfo : the source information structure.
 % ● Developer's Notes
 %   Tue Jun 08, 2010 12:25 am from
 %   http://www.adinstruments.com/forum/viewtopic.php?f=7&t=35&p=79#p79

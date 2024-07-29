@@ -8,10 +8,9 @@ function [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 % ● Format
 %   [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 % ● Arguments
-%   * datafile:         data file name(s): char
+%   *        datafile : data file name(s): char
 %   ┌─────────options
-%   ├─.channel_action :
-%   │                   Accepted values: 'add'/'replace'
+%   ├─.channel_action : Accepted values: 'add'/'replace'
 %   │                   Defines whether the new channel should be added
 %   │                   on top of combined marker channels ('add'), or all
 %   │                   combined marker channels should be deleted and

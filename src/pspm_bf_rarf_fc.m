@@ -1,5 +1,6 @@
 function [bs, x] = pspm_bf_rarf_fc(varargin)
 % ● Description
+%   pspm_bf_rarf_fc is a basis function.
 % ● Format
 %   [bs, x] = pspm_bf_rarf_fc(td, bf_type)
 %   [bs, x] = pspm_bf_rarf_fc([td, bf_type])

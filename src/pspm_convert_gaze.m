@@ -9,7 +9,7 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 %   [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
 %   *             fn: A data file name
-%   ┌────────conversion [ struct ] with fields
+%   ┌─────conversion
 %   ├──────────.from: Original units to convert from: 'pixel', a metric distance
 %   │                 unit, or 'degree'
 %   ├────────.target: target unit of conversion: a metric distance unit,

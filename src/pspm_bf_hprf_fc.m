@@ -1,5 +1,6 @@
 function [bs, x] = pspm_bf_hprf_fc(varargin)
 % ● Description
+%   pspm_bf_hprf_fc is a basis function.
 % ● Format
 %   [bs, x] = pspm_bf_hprf_fc(TD, D, soa)
 %   [bs, x] = pspm_bf_hprf_fc([TD, D, soa])

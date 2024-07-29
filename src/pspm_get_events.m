@@ -4,7 +4,7 @@ function [sts, import] = pspm_get_events(import)
 % ● Format
 %   [sts, data] = pspm_get_events(import)
 % ● Arguments
-%   ┌────import : import job structure with mandatory fields
+%   ┌────import
 %   ├─────.data : mandatory
 %   ├───.marker : mandatory, accepts 'timestamps' and 'continuous'.
 %   ├───────.sr : timestamps: timeunits in seconds, continuous: sample rate

@@ -6,7 +6,7 @@ function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 %   This function uses fieldtrip fileio functions
 % ● Arguments
 %   *   datafile : The data file to be imported.
-%   ┌─────import : The stucture of importing settings, check pspm_import.
+%   ┌─────import
 %   ├────.typeno : The number of channel type.
 %   ├───.channel : The channel to be imported, check pspm_import.
 %   ├──────.type : The type of channel, check pspm_import.

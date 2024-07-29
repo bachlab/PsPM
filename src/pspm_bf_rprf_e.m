@@ -1,5 +1,6 @@
 function [bs, x] = pspm_bf_rprf_e(varargin)
 % ● Description
+%   pspm_bf_rprf_e is a basis function.
 % ● Format
 %   [bs, x] = pspm_bf_rprf_e(td, bf_type)
 %   [bs, x] = pspm_bf_rprf_e([td, bf_type])

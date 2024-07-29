@@ -5,7 +5,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
 % ● Arguments
-%   ┌────────────import :  import job structure
+%   ┌────────────import
 %   ├───────────────.sr :  sampling rate
 %   ├─────────────.data :  except for custom channels, the field .channel
 %   │                      will be ignored. The id will be determined

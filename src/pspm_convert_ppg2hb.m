@@ -10,7 +10,7 @@ function [ sts, outchannel ] = pspm_convert_ppg2hb( fn , options )
 %   [sts, channel_index] = pspm_convert_ppg2hb( fn, options )
 % ● Arguments
 %   *             fn: file name with path
-%   ┌────────options: struct with following possible fields
+%   ┌────────options
 %   ├────────.method: 'classic' (default) or 'heartpy'.
 %   ├───────.channel: [optional, numeric/string, default: 'ppg', i.e. last
 %   │                 PPG channel in the file]

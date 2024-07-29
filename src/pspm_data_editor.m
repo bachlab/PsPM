@@ -9,7 +9,7 @@ function varargout = pspm_data_editor(varargin)
 %                   pspm_data_editor() to edit acquisition data, the actual
 %                   data vector has to be passed via the varargin
 %                   argmument. The data should be 1xn or nx1 double vector.
-%   ┌─────options:  [struct]
+%   ┌─────options 
 %   ├.output_file:  Use output_file to specify a file the changed data
 %   │               is saved to when clicking 'save' or 'apply'. Only
 %   │               works in 'file' mode.
