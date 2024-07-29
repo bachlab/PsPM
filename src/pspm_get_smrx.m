@@ -12,7 +12,7 @@ function [sts, import, sourceinfo] = pspm_get_smrx(datafile, import)
 %   ├.transfer : [string]  The transfer function, use a file, an input or 'none'.
 %   ├────.type : [string]  The type of input channel, such as 'scr'.
 %   └──.typeno : [integer] The number of channel type, please see pspm_init.
-% ● Output
+% ● Outputs
 %   sts: the status recording whether the function runs successfully.
 %   import: the struct that stores read information.
 %   sourceinfo: the struct that stores channel titles.
