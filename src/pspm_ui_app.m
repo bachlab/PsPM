@@ -51,7 +51,9 @@ update_app_struct(app, pspm_layout_component_list_full, 'FontName', pspm_font);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontSize', pspm_font_size);
 update_app_struct(app, pspm_layout_component_list_buttons, 'FontWeight', 'normal');
 % update colour
-app.GridLayout.BackgroundColor = pspm_colour;
+if isfield(app.GridLayout, 'BackgroundColor')
+  app.GridLayout.BackgroundColor = pspm_colour;
+end
 update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]);
 %% Window specific settings
 switch app.layout.Name
