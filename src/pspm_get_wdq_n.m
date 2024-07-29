@@ -4,12 +4,11 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_wdq_n(datafile, import);
 % ● Arguments
-%     datafile:
-%       import:
+%   *   datafile : The data file to be imported.
+%   *     import : The importing settings.
 % ● Outputs
-%          sts:
-%       import:
-%   sourceinfo:
+%   *     import : Struct that includes data obtained from wdq files.
+%   * sourceinfo : Struct that includes source information
 % ● Developer's Notes
 %   This function does not use the ActiveX control elements provided by
 %   Dataq developers. Instead it reads the binary file according to the
@@ -22,8 +21,8 @@ function [sts, import, sourceinfo]  = pspm_get_wdq_n(datafile, import)
 %   Matlab-Version.
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2012-2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Written    in 2012-2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings

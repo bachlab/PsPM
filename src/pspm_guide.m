@@ -18,7 +18,7 @@ function varargout = pspm_guide(varargin)
 % ● Copyright
 %   Introduced in PsPM 1.0 and terminated in PsPM 6.1.
 %   Written by Dominik R Bach (Wellcome Centre for Human Neuroimaging) in 2008-2021
-%   Lastly updated in PsPM 6.1 by Teddy Chao (UCL) in 2022
+%   Lastly updated in PsPM 6.1 by Teddy in 2022
 
 %% Initialise
 global settings

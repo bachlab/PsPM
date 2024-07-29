@@ -8,8 +8,8 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 % ● Format
 %   [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
-%                 fn: A data file name
-%   ┌────────conversion [ struct ] with fields
+%   *             fn: A data file name
+%   ┌─────conversion
 %   ├──────────.from: Original units to convert from: 'pixel', a metric distance
 %   │                 unit, or 'degree'
 %   ├────────.target: target unit of conversion: a metric distance unit,
@@ -29,7 +29,7 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 %   └.channel_action: Channel action for sps data, add / replace existing sps
 %                     data (default: add)
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 4.3.1
 %   Written in 2020 by Sam Maxwell (University College London)

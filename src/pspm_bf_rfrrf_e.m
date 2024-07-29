@@ -1,13 +1,14 @@
 function [bs, x] = pspm_bf_rfrrf_e(varargin)
 % ● Description
+%   pspm_bf_rfrrf_e is a basis function.
 % ● Format
 %   [bs, x] = pspm_bf_rfrrf_e(td, bf_type)
 %   [bs, x] = pspm_bf_rfrrf_e([td, bf_type])
 % ● Arguments
-%        td:  The time the response function should have.
-%   bf_type:  0: returns the response function only
-%             1: (default) returns the response function and the time
-%                derivative
+%   *      td:  The time the response function should have.
+%   * bf_type:  Type of the basis function, can be either 0 or 1. Default as 1.
+%               If 0, returns the response function only.
+%               If 1, returns the response function and the time derivative.
 % ● Reference
 %   Dominik R. Bach, Samuel Gerster, Athina Tzovara, Giuseppe Castegnetti,
 %   A linear model for event-related respiration responses,
@@ -15,7 +16,7 @@ function [bs, x] = pspm_bf_rfrrf_e(varargin)
 %   ISSN 0165-0270, doi:10.1016/j.jneumeth.2016.06.001.
 % ● History
 %   Introduced in PsPM 3.1
-%   Written in 2016 by Tobias Moser (University of Zurich)
+%   Written    in 2016 by Tobias Moser (University of Zurich)
 
 %% initialise
 global settings

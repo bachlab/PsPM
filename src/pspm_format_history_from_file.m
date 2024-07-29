@@ -6,9 +6,9 @@ function [sts, hist_str] = pspm_format_history_from_file(fn)
 % ● Format
 %   [sts, hist_str] = pspm_format_history_from_file(fn)
 % ● Argument
-%   fn: [string] Path to a PsPM file
+%   * fn: [string] Path to a PsPM file
 % ● Output
-%   hist_str: Formatted table string
+%   * hist_str: Formatted table string
 % ● History
 %   Written in 2019 by Eshref Yozdemir (UZH)
 

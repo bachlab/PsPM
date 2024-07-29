@@ -4,8 +4,7 @@ function [sts, data] = pspm_get_hp(import)
 % ● Format
 %   [sts, data]= pspm_get_hp(import)
 % ● Arguments
-%     data: column vector of waveform data with interpolated heart period data
-%           in ms
+%     data: column vector of waveform data with interpolated heart period data in ms
 %   import: import job structure with mandatory fields .data and .sr
 % ● History
 %   Introduced in PsPM 3.0

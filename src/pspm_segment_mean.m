@@ -5,9 +5,9 @@ function [sts, out] = pspm_segment_mean(segments, options)
 % ● Format
 %   [sts, out] = pspm_segment_mean(segments, options)
 % ● Arguments
-%         segments: Cell of multiple segments, each obtained with
+%   *     segments: Cell of multiple segments, each obtained with
 %                   pspm_extract_segments()
-%   ┌──────options:
+%   ┌──────options 
 %   ├─────────plot: Display plot of the mean of each condition over multiple
 %   │               subjects
 %   ├adjust_method: How to deal with different sampling rates. Accepted values
@@ -25,7 +25,7 @@ function [sts, out] = pspm_segment_mean(segments, options)
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2016 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings

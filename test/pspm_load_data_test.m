@@ -3,7 +3,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
   % unittest class for the pspm_load_data function
   % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
-  %     2022 Teddy Chao (UCL)
+  %     2022 Teddy
   properties(Constant)
     fn = 'load_data_test.mat';
     fn2 = 'load_data_test2.mat';

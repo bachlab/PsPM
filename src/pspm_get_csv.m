@@ -5,10 +5,10 @@ function [sts, import, sourceinfo] = pspm_get_csv(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_csv(datafile, import);
 % ● Arguments
-%   datafile: a .csv or .txt file containing numerical data with comma delimiter
-%             and optionally the channel names in the first line.
-%     import: import job structure
-%             A delimiter of ',' is applied to all import channels
+%   * datafile: a .csv or .txt file containing numerical data with comma
+%               delimiter and optionally the channel names in the first line.
+%   *   import: import job structure
+%               A delimiter of ',' is applied to all import channels
 % ● History
 %   Introduced in PsPM 5.0
 %   Written in 2008-2020 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

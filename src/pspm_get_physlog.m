@@ -28,16 +28,16 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
 % ● Arguments
-%     datafile:
-%       import:
+%   *   datafile : datafile to be imported.
+%   *     import : import settings.
 % ● Outputs
-%          sts:
-%       import:
-%   sourceinfo:
+%   *        sts : status.
+%   *     import : the updated import structure.
+%   * sourceinfo : the source information structure.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

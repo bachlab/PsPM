@@ -8,8 +8,8 @@ function varargout = pspm_prepdata(varargin)
 %   [sts, data, newsr] = pspm_prepdata(data, filt)
 %   [sts, data, newsr] = pspm_prepdata(data, filt, options)
 % ● Arguments
-%          data:  a column vector of data
-%   ┌──────filt:  a struct with fields:
+%   *      data:  a column vector of data
+%   ┌──────filt
 %   ├───────.sr:  current sample rate in Hz
 %   ├───.lpfreq:  low pass filt frequency or 'none'
 %   ├──.lporder:  low pass filt order
@@ -17,7 +17,7 @@ function varargout = pspm_prepdata(varargin)
 %   ├───.hpfreq:  high pass filt frequency or 'none'
 %   ├.direction:  filt direction
 %   └─────.down:  sample rate in Hz after downsampling or 'none'
-%   ┌───options:  a struct with fields
+%   ┌───options
 %   └──.fillnan:  0/1 specify whether to fill nan if there is. Default: 1
 % ● Developer's Notes
 %   Note that the order for bandpass and bandstop filters is equal to
@@ -28,7 +28,7 @@ function varargout = pspm_prepdata(varargin)
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

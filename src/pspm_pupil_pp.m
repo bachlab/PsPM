@@ -39,62 +39,57 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %   [sts, channel_index] = pspm_pupil_pp(fn)
 %   [sts, channel_index] = pspm_pupil_pp(fn, options)
 % ● Arguments
-%          fn:  [string]
-%               Path to the PsPM file which contains the pupil data.
-%   ┌──options: [struct]
-%   ├─.channel: [optional][numeric/string] [Default: 'pupil']
-%   │           Channel ID to be preprocessed.
-%   │           To process a specific eye, use 'pupil_l' or 'pupil_r'.
-%   │           To process the combined left and right eye, use 'pupil_c'.
-%   │           To combine both eyes, specify one eye here and the other
-%   │           under option 'channel_combine'. The identifier 'pupil' will
-%   │           use the first existing option out of the following:
-%   │           (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
-%   │           eye pupil, (4) any pupil channel. If there are multiple
-%   │           channels of the specified type, only last one will be
-%   │           processed. You can also specify the number of a channel.
-%   ├─.channel_combine:
-%   │           [optional][numeric/string][Default: 'none']
-%   │           Channel to be used for computing the mean pupil signal.
-%   │           The input format is exactly the same as the .channel field.
-%   │           However, the eye specified in this channel must be different
-%   │           from the one specified in .channel field. The output channel
-%   │           will then be of type 'pupil_c'.
-%   ├─.channel_action:
-%   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
-%   │           Defines whether corrected data should be added or the
-%   │           corresponding preprocessed channel should be replaced.
-%   ├─.custom_settings:
-%   │           [optional][Default: See pspm_pupil_pp_options]
-%   │           Settings structure to modify the preprocessing steps. If
-%   │           not specified, the default settings structure obtained from
-%   │           <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>
-%   │           will be used. To modify certain fields of this structure,
-%   │           you only need to specify those fields in custom_settings.
-%   │           For example, to modify settings.raw.PupilMin, you need to
-%   │           create a struct with a field .raw.PupilMin.
-%   ├─.segments:  [cell array of structures]
-%   │           Statistics about user defined segments can be calculated.
-%   │           When specified, segments will be stored in .header.segments
-%   │           field. Each structure must have the the following fields:
-%   ├─.start:   [decimal][Unit: second]
-%   │           Starting time of the segment.
-%   ├─.end:     [decimal][Unit: second]
-%   │           Ending time of the segment.
-%   ├─.name:    [string]
-%   │           Name of the segment. Segment will be stored by this name.
-%   ├─.plot_data:
-%   │           [Boolean][Default: false or 0]
-%   │           Plot the preprocessing steps if true.
-%   └.chan_valid_cutoff:
-%               [optional][Default: 0.2]
-%               A cut-off value for checking whether there the number of
-%               missing data in the channels is very different. If
-%               combination is requested and proportion of missing values 
-%               differs by more than this number, then the channels will be 
-%               processed separately and not combined. 
+%   *       fn : [string]
+%                Path to the PsPM file which contains the pupil data.
+%   ┌──options
+%   ├─.channel : [optional][numeric/string] [Default: 'pupil']
+%   │            Channel ID to be preprocessed.
+%   │            To process a specific eye, use 'pupil_l' or 'pupil_r'.
+%   │            To process the combined left and right eye, use 'pupil_c'.
+%   │            To combine both eyes, specify one eye here and the other
+%   │            under option 'channel_combine'. The identifier 'pupil' will
+%   │            use the first existing option out of the following:
+%   │            (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
+%   │            eye pupil, (4) any pupil channel. If there are multiple
+%   │            channels of the specified type, only last one will be
+%   │            processed. You can also specify the number of a channel.
+%   ├─.channel_combine :
+%   │            [optional][numeric/string][Default: 'none']
+%   │            Channel to be used for computing the mean pupil signal.
+%   │            The input format is exactly the same as the .channel field.
+%   │            However, the eye specified in this channel must be different
+%   │            from the one specified in .channel field. The output channel
+%   │            will then be of type 'pupil_c'.
+%   ├─.channel_action :
+%   │            [optional][string][Accepts: 'add'/'replace'][Default: 'add']
+%   │            Defines whether corrected data should be added or the
+%   │            corresponding preprocessed channel should be replaced.
+%   ├─.custom_settings :
+%   │            [optional][Default: See pspm_pupil_pp_options]
+%   │            Settings structure to modify the preprocessing steps. If
+%   │            not specified, the default settings structure obtained from
+%   │            <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>
+%   │            will be used. To modify certain fields of this structure,
+%   │            you only need to specify those fields in custom_settings.
+%   │            For example, to modify settings.raw.PupilMin, you need to
+%   │            create a struct with a field .raw.PupilMin.
+%   ├.segments : [cell array of structures]
+%   │            Statistics about user defined segments can be calculated.
+%   │            When specified, segments will be stored in .header.segments
+%   │            field. Each structure must have the the following fields:
+%   ├───.start : [decimal][Unit: second] Starting time of the segment.
+%   ├─────.end : [decimal][Unit: second] Ending time of the segment.
+%   ├────.name : [string] Name of the segment. Segment will be stored by this name.
+%   ├.plot_data: [Boolean][Default: false or 0] Plot the preprocessing steps if true.
+%   ├─.chan_valid_cutoff : [optional][Default: 0.01]
+%   │            A cut-off value for checking whether there are too many missing values
+%   │            in the data channel. Valid data channels should have NaNs fewer than
+%   │            this cut-off value. If combination is requested and only one of the
+%   │            two channels has fewer than this percentage of missing values, then only
+%   │            this channel will be used and no combination will be performed.
+%   └.out_chan : Channel ID of the preprocessed output.
 % ● Outputs
-%      channel_index: index of channel(s) containing the processed data
+%   * channel_index: index of channel containing the processed data.
 % ● References
 %   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
 %       data: Guidelines and code." Behavior research methods (2018): 1-7.

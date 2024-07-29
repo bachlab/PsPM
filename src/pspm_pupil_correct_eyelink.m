@@ -17,51 +17,45 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Format
 %   [sts, channel_index] = pspm_pupil_correct_eyelink(fn, options)
 % ● Arguments
-%              fn:  Path to a PsPM imported Eyelink data.
-%   ┌─────options:
-%   │ * mandatory
-%   ├────────mode:  Conversion mode. Must be one of 'auto' or 'manual'.
-%   │               If 'auto', then optimized conversion parameters in
-%   │               Table 3 of [1] will be used. In 'auto' mode,
-%   │               options struct must contain C_z parameter described
-%   │               below. Further, C_z must be one of 495, 525 or 625.
-%   │               The other parameters will be set according to which
-%   │               of these three C_z is equal to.
-%   │               If 'manual', then all of C_x, C_y, C_z, S_x, S_y, S_z
-%   │               fields must be provided according to your recording
-%   │               setup. Note that in order to use 'auto' mode, your
-%   │               camera-screen-eye setup must match exactly one of the three
-%   │               sample setups given in [1].
-%   ├─────────C_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   │ * optional
-%   ├screen_size_px:Screen size (width x height). This field is required only
-%   │               if the gaze data in the given PsPM file is in pixels.
-%   │               (Unit: pixel)
-%   ├screen_size_mm:Screen size (width x height). This field is required only
-%   │               if the gaze data in the given PsPM file is in pixels.
-%   │               (Unit: mm)
+%   *          fn : Path to a PsPM imported Eyelink data.
+%   ┌─────options
+%   ├────────mode : Conversion mode. Must be one of 'auto' or 'manual'. If 'auto', then
+%   │               optimized conversion parameters in Table 3 of [1] will be used. In
+%   │               'auto' mode, options struct must contain C_z parameter described
+%   │               below. Further, C_z must be one of 495, 525 or 625. The other
+%   │               parameters will be set according to which of these three C_z is equal to.
+%   │               If 'manual', then all of C_x, C_y, C_z, S_x, S_y, S_z fields must be
+%   │               provided according to your recording setup. Note that in order to
+%   │               use 'auto' mode, your camera-screen-eye setup must match exactly one
+%   │               of the three sample setups given in [1].
+%   ├─────────C_z : See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├screen_size_px:[optional] Screen size (width x height). This field is required only
+%   │               if the gaze data in the given PsPM file is in pixels. (Unit: pixel)
+%   ├screen_size_mm:[optional] Screen size (width x height). This field is required only
+%   │               if the gaze data in the given PsPM file is in pixels. (Unit: mm)
 %   │               See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a>
 %   │               if you need inch to mm conversion.
-%   ├─────────C_x:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├─────────C_y:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├─────────S_x:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├─────────S_y:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├─────────S_z:  See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├─.channel:     [optional][numeric/string] [Default: 'pupil']
-%   │               Channel ID to be preprocessed.
-%   │               To process a specific eye, use 'pupil_l' or 'pupil_r'.
-%   │               To process the combined left and right eye, use 'pupil_c'.
-%   │               The default identifier 'pupil' will
-%   │               use the first existing option out of the following: 
-%   │               (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
-%   │               eye pupil, (4) any pupil channel. If there are multiple
-%   │               channels of the specified type, only last one will be
-%   │               processed. You can also specify the number of a channel.
-%   └channel_action:  ['add'/'replace'] Defines whether output data should
-%                     be added or the corresponding preprocessed channel
-%                     should be replaced. (Default: 'add')
+%   ├─────────C_x : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────C_y : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────S_x : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────S_y : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├─────────S_z : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
+%   ├────.channel : [optional][numeric/string] [Default: 'pupil'] Channel ID to be
+%   │               preprocessed. To process a specific eye, use 'pupil_l' or 'pupil_r'.
+%   │               To process the combined left and right eye, use 'pupil_c'. The default
+%   │               identifier 'pupil' will use the first existing option out of the
+%   │               following:
+%   │               (1) L-R-combined pupil;
+%   │               (2) non-lateralised pupil;
+%   │               (3) best eye pupil;
+%   │               (4) any pupil channel.
+%   │               If there are multiple channels of the specified type, only last one
+%   │               will be processed. You can also specify the number of a channel.
+%   └channel_action:  [optional] ['add'/'replace'] Defines whether output data should be
+%                   added or the corresponding preprocessed channel should be replaced.
+%                   (Default: 'add')
 % ● Outputs
-%      channel_index: index of channel containing the processed data
+%   *  channel_index: index of channel containing the processed data
 % ● Reference
 %   [1] Hayes, Taylor R., and Alexander A. Petrov. "Mapping and correcting the
 %       influence of gaze position on pupil size measurements." Behavior
@@ -69,7 +63,7 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● History
 %   Introduced in PsPM 5.1.2
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Maintained in 2021-2022 by Teddy Chao (UCL)
+%   Maintained in 2021-2022 by Teddy
 
 %% Initialise
 global settings

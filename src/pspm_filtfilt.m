@@ -4,10 +4,10 @@ function varargout = pspm_filtfilt(b,a,x)
 % ● Format
 %   [sts, y] = pspm_filtfilt(b,a,x) or y = pspm_filtfilt(b,a,x)
 % ● Arguments
-%   b:  filter parameters (numerator)
-%   a:  filter parameters (denominator)
-%   x:  input data vector (if matrix, filter over columns)
-%   y:  filtered data
+%   * b:  filter parameters (numerator)
+%   * a:  filter parameters (denominator)
+%   * x:  input data vector (if matrix, filter over columns)
+%   * y:  filtered data
 % ● Developer's notes
 %   The filter is described by the difference equation:
 %   y(n) = b(1)*x(n) + b(2)*x(n-1) + ... + b(nb+1)*x(n-nb)

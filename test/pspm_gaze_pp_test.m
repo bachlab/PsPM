@@ -2,7 +2,7 @@ classdef pspm_gaze_pp_test < pspm_testcase
   % Definition
   % pspm_gaze_pp_test unittest classes for the pspm_gaze_pp function
   % PsPM TestEnvironment
-  % (C) 2021 Teddy Chao (UCL)
+  % (C) 2021 Teddy
   properties
     raw_input_fn = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');
     pspm_input_fn = '';

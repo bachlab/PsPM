@@ -5,20 +5,19 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
 % ● Arguments
-%   ┌────────────import:  import job structure with
-%   │ [mandatory fields]
-%   ├───────────────.sr:
-%   ├─────────────.data:  except for custom channels, the field .channel will
-%   │                     be ignored. The id will be determined according to
-%   │                     the channel type.
-%   │ [optional fields]
-%   ├.eyelink_trackdist:  A numeric value representing the distance between
-%   │                     camera and recorded eye. Disabled if 0 or negative.
-%   │                     If it is a positive numeric value, causes the
-%   │                     conversion from arbitrary units to distance unit
-%   │                     according to the set distance.
-%   └────.distance_unit:  The unit to which the data should be converted and
-%                         in which eyelink_trackdist is given.
+%   ┌────────────import
+%   ├───────────────.sr :  sampling rate
+%   ├─────────────.data :  except for custom channels, the field .channel
+%   │                      will be ignored. The id will be determined
+%   │                      according to the channel type.
+%   ├.eyelink_trackdist :  [optional] A numeric value representing the
+%   │                      distance between camera and recorded eye.
+%   │                      Disabled if 0 or negative.
+%   │                      If it is a positive numeric value, causes the
+%   │                      conversion from arbitrary units to distance unit
+%   │                      according to the set distance.
+%   └────.distance_unit :  [optional] The unit to which the data should be
+%                          converted and in which eyelink_trackdist is given.
 % ● Developer's Notes
 %   In this function, channels related to eyes will not produce an error, if
 %   they do not exist. Instead they will produce an empty channel (a channel
@@ -26,7 +25,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % ● History
 %   Introduced in PsPM 3.0 and updated in PsPM 5.1.2
 %   Written in 2008-2017 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -118,7 +117,7 @@ else
     n_diff = round((start_time - last_time)*sr/1000);
     if n_diff > 0
 
-      % channels 
+      % channels
       channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
       counter = counter + n_diff;
     end
