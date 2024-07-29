@@ -34,7 +34,7 @@ function varargout = pspm_jobman(varargin)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008 by Wellcome Trust Centre for Neuroimaging and Freiburg Brain Imaging
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

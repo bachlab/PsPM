@@ -20,7 +20,7 @@ function [sts, channel_index] = pspm_multi_channel(fhandle, channels, varargin)
 %                     will be expanded to all channels of this type in the file.
 %                     4. Any numerical vector or cell array will work on
 %                     the specified channels exactly.
-%   * argument1,... : all input arguments for the pre-processing function
+%   *     argument1 : all input arguments for the pre-processing function
 %   *       options : must always be specified as the last input argument
 % ● Output
 %   *           sts : Status determining whether the execution was

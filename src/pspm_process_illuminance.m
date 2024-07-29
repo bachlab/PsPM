@@ -11,7 +11,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Arguments
 %   *          ldata: illuminance data as (cell of) 1x1 double or filename.
 %   *             sr: sample rate in Hz of the input data.
-%   ┌────────options: struct with optional settings.
+%   ┌────────options
 %   ├────────────.fn: [filename] if specified ldata{i,j} will be saved to a file
 %   │                 with filename options.fn{i,j} into the variable 'R'.
 %   ├─────.overwrite: [logical] (0 or 1)

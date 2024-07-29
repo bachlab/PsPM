@@ -31,8 +31,7 @@ function [sts, infos] = pspm_write_channel(fn, newdata, channel_action, options)
 %                    'all':    removes all occurences
 % ● Outputs
 %   *         sts : the status of the function
-%   ┌──────.infos : Outputs will be written into the .info struct.
-%   │               The structure depends on the passed action and options.
+%   ┌───────infos
 %   └────.channel : contains channel id of added / replaced / deleted channels.
 % ● History
 %   Introduced in PsPM 3.0

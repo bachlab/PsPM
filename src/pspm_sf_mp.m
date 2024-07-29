@@ -9,7 +9,7 @@ function [sts, out] = pspm_sf_mp(model, options)
 %   *     scr : skin conductance epoch (maximum size depends on computing power, a
 %               sensible size is 60 s at 10 Hz)
 %   *      sr : sampling rate in Hz
-%   ┌─options : options structure
+%   ┌─options
 %   ├─.threshold: threshold for SN detection (default 0.1 mcS)
 %   ├──.theta : a (1 x 5) vector of theta values for f_SF (default: read from pspm_sf_theta)
 %   ├──.fresp : maximum frequency of modelled responses (default 0.5 Hz).

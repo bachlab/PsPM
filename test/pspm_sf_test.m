@@ -2,7 +2,7 @@ classdef pspm_sf_test < matlab.unittest.TestCase
   % ● Description
   % unittest class for the pspm_sf
   % ● Authorship
-  % (C) 2022 Teddy Chao (UCL)
+  % (C) 2022 Teddy
   properties(Constant)
     fn = 'sf_test.mat';
   end

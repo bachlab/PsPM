@@ -21,7 +21,7 @@ function [sts, outchannel] = pspm_pp(varargin)
 %   *         n :  [numeric, only if method=='median'] number of timepoints for median filter
 %   *       tau :  [numeric, only if method=='leaky_integrator'] Time constant for
 %                  the leaky integrator in seconds.
-%   ┌──────filt :  [struct, only if method=='butter'] a struct with following fields.
+%   ┌──────filt
 %   ├───.lpfreq :  low pass filt frequency or 'none' (default)
 %   ├──.lporder :  low pass filt order (default: 1)
 %   ├───.hpfreq :  high pass filt frequency or 'none' (default)

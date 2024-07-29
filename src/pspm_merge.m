@@ -7,14 +7,15 @@ function [sts, outfile] = pspm_merge(infile1, infile2, reference, options)
 % ● Format
 %   [sts, outfile] = pspm_merge(infile1, infile2, reference, options)
 % ● Arguments
-%   *infile1, infile2:  data file name(s) (char)
-%   *       reference:  'marker' aligns with respect to first marker
+%   *         infile1 : data file name(s) (char)
+%   *         infile2 : data file name(s) (char)
+%   *       reference : 'marker' aligns with respect to first marker
 %                       'file'   aligns with respect to file start
 %   ┌─────────options
-%   ├──────.overwrite:  overwrite existing file by default
+%   ├──────.overwrite : overwrite existing file by default
 %   │                   [logical] (0 or 1)
 %   │                   Default value: determined by pspm_overwrite.
-%   └.marker_chan_num:  2 marker channel numbers - if undefined
+%   └.marker_chan_num : 2 marker channel numbers - if undefined
 %                       or 0, first marker channel of either file is used
 % ● History
 %   Introduced In PsPM 3.0
