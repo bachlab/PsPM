@@ -4,8 +4,8 @@ function [bs, x] = pspm_bf_hprf_f( td, soa )
 % ● Format
 %   [bf p] = pspm_bf_hprf_f(td, soa)
 % ● Arguments
-%    td: time resolution in second.
-%   soa: stimuli onset asynchrony.
+%   *   td : time resolution in second.
+%   *  soa : stimuli onset asynchrony.
 % ● History
 %   Introduced in PsPM 4.0
 

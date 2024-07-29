@@ -6,68 +6,54 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● Format
 %   [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● Arguments
-%              datafile:  [char] file name
-%              datatype:  supported datatypes are defined in pspm_init (see
-%                         manual).
-%   ┌────────────import:  a cell array of struct with one job (imported channel)
-%   │                     per cell
-%   ├─────────────.type:  (mandatory for all data types and each job) not all
-%   │                     data types support all channel types.
-%   ├───────────────.sr:  (mandatory for some data types and each channel)
-%   │                     sampling rate for waveforms or time units in second
-%   │                     for event channels, in Hz.
-%   ├──────────.channel:  (mandatory for some data types and each channel)
-%   │                     channel or column number in the original file.
-%   ├────────────.flank:  [optional, string]
-%   │                     The flank option specifies which
-%   │                     of the rising edge (ascending), falling edge
-%   │                     (descending), both edges or their mean (middle) of a
-%   │                     marker impulse should be imported into the marker
-%   │                     channel;
-%   │                     The flank option is applicable for
-%   │                     continuous channels only and accepts
-%   │                     'ascending', 'descending', or 'both';
-%   │                     The default value is 'both' that means to select the
-%   │                     middle of the impulse;
-%   │                     Some exceptions are Eyelink, ViewPoint and
-%   │                     SensoMotoric Instruments data, for which the default
-%   │                     are respectively ''both'', ''ascending'',
-%   │                     ''ascending'';
-%   │                     If the numbers of rising and falling edges differ,
-%   │                     PsPM will throw an error.
-%   ├─────────.transfer:  [optional, string] name of a .mat file containing
-%   │                     values for the transfer function, OR a struct array
-%   │                     containing the values OR 'none', when no conversion
-%   │                     is required (c and optional Rs and offset; See
-%   │                     pspm_transfer_function for more information).
-%   ├.eyelink_trackdist:  The distance between eyetracker and the participants'
-%   │                     eyes; If is a numeric value the data in
-%   │                     a pupil channel obtained with an eyelink eyetracking
-%   │                     system are converted from arbitrary units to distance
-%   │                     unit; If value is 'none' the conversion is disabled;
-%   │                     (only for Eyelink imports).
-%   ├────.distance_unit:  Unit in which the eyelink_trackdist is measured;
-%   │                     If eyelink_trackdist contains a numeric value, the
-%   │                     default value is 'mm' otherwise the distance unit is
-%   │                     ''; Accepted values include 'mm', 'cm',
-%   │                     'm', and 'inches'.
-%   ├──────────.denoise:  for continuous marker channels or those recorded as
-%   │                     digital level with two values (e.g. CED spike);
-%   │                     retains markers of duration longer than the
-%   │                     value given here (in seconds).
-%   └────────.delimiter:  for delimiter separated values, value used as
-%                         delimiter for file read.
-%   ┌───────────options:  a struct.
-%   └────────.overwrite:  overwrite existing files by default.
-%                         [logical] (0 or 1)
+%   *          datafile : [char] file name
+%   *          datatype : supported datatypes are defined in pspm_init (see manual).
+%   ┌────────────import
+%   ├─────────────.type : (mandatory for all data types and each job) not all data
+%   │                     types support all channel types.
+%   ├───────────────.sr : (mandatory for some data types and each channel) sampling rate
+%   │                     for waveforms or time units in second for event channels, in Hz.
+%   ├──────────.channel : (mandatory for some data types and each channel) channel or
+%   │                     column number in the original file.
+%   ├────────────.flank : [optional, string] The flank option specifies which of the
+%   │                     rising edge (ascending), falling edge (descending), both
+%   │                     edges or their mean (middle) of a marker impulse should be
+%   │                     imported into the marker channel;
+%   │                     The flank option is applicable for continuous channels only
+%   │                     and accepts 'ascending', 'descending', or 'both';
+%   │                     The default value is 'both' that means to select the middle of
+%   │                     the impulse; Some exceptions are Eyelink, ViewPoint and
+%   │                     SensoMotoric Instruments data, for which the default are
+%   │                     respectively ''both'', ''ascending'', ''ascending'';
+%   │                     If the numbers of rising and falling edges differ, PsPM will
+%   │                     throw an error.
+%   ├─────────.transfer : [optional, string] name of a .mat file containing values for
+%   │                     the transfer function, OR a struct array containing the values
+%   │                     OR 'none', when no conversion is required (c and optional
+%   │                     Rs and offset; See pspm_transfer_function for more information).
+%   ├.eyelink_trackdist : The distance between eyetracker and the participants' eyes; If
+%   │                     is a numeric value the data in a pupil channel obtained with
+%   │                     an eyelink eyetracking system are converted from arbitrary
+%   │                     units to distance unit; If value is 'none' the conversion is
+%   │                     disabled; (only for Eyelink imports).
+%   ├────.distance_unit : Unit in which the eyelink_trackdist is measured; If
+%   │                     eyelink_trackdist contains a numeric value, the default value is
+%   │                     'mm' otherwise the distance unit is ''; Accepted values include
+%   │                     'mm', 'cm', 'm', and 'inches'.
+%   ├──────────.denoise : for continuous marker channels or those recorded as digital level
+%   │                     with two values (e.g. CED spike); retains markers of duration
+%   │                     longer than the value given here (in seconds).
+%   └────────.delimiter : for delimiter separated values, value used as delimiter for
+%                         file read.
+%   ┌───────────options
+%   └────────.overwrite : overwrite existing files by default. [logical] (0 or 1)
 %                         Define whether to overwrite existing output files or not.
 %                         Default value: determined by pspm_overwrite.
 % ● Output
-%               outfile:  [char] name of a .mat file on the input file path containing the
-%                         imported data. For datatypes that support
-%                         multiple sessions of non-contiguous data in one
-%                         file (e.g. ADInstruments LabChart), these will be
-%                         saved separately, and outfile will be a cell
+%   *           outfile : [char] name of a .mat file on the input file path containing the
+%                         imported data. For datatypes that support multiple sessions
+%                         of non-contiguous data in one file (e.g. ADInstruments LabChart),
+%                         these will be saved separately, and outfile will be a cell
 %                         array of file names.
 % ● Developer notes
 %   Structure of PsPM import
@@ -104,7 +90,7 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% 1 Initialise
 global settings
@@ -125,11 +111,11 @@ elseif ~ischar(datafile)
     return
 elseif ~exist(datafile, 'file')
     warning('ID:nonexistent_file', ...
-        'Input file %s does not exist.', datafile); 
+        'Input file %s does not exist.', datafile);
     return
 elseif nargin < 2
     warning('ID:invalid_input', ...
-        'No data type'); 
+        'No data type');
     return
 elseif ~ischar(datatype)
     warning('ID:invalid_input', ...

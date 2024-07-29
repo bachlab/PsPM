@@ -3,10 +3,11 @@ function [sts, data] = pspm_get_custom(import)
 %   pspm_get_custom is a common function for importing custom data in this case
 %   the function was made for the blink-data in the pspm_get_eyelink function
 % ● Format
-%   [sts, data]= pspm_get_custom(import)
+%   [sts, data] = pspm_get_custom(import)
 % ● Arguments
-%   import.data: column vector of waveform data
-%     import.sr: sample rate
+%   ┌────import
+%   ├─────.data : column vector of waveform data
+%   └───────.sr : sample rate
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2009-2014 by Tobias Moser (University of Zurich)

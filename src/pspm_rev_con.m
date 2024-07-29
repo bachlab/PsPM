@@ -4,7 +4,7 @@ function varargout = pspm_rev_con(model)
 % ● Format
 %   fighandle = pspm_rev_con(modelfile)
 % ● Arguments
-%   modelfile: filename and path of modelfile
+%   * modelfile: filename and path of modelfile
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN)

@@ -11,8 +11,8 @@ fileoptions={settings.import.datatypes.long};
 channeltypesDescription = {settings.channeltypes.description};
 channeltypesData = {settings.channeltypes.data};
 cd(settings.path)
-[information, arguments] = pspm_help('pspm_import');
-cd([settings.path,'pspm_cfg/'])
+information = pspm_help('pspm_import');
+cd([settings.path,filesep,'pspm_cfg/'])
 
 %% Predefined struct
 % Channel/Column Search
@@ -29,8 +29,9 @@ sample_rate.name    = 'Sample Rate';
 sample_rate.tag     = 'sample_rate';
 sample_rate.strtype = 'r';
 sample_rate.num     = [1 1];
-sample_rate.help    = arguments(contains(arguments(:,1),'import.sr'),2);
-% 'Sample rate in Hz (i. e. samples per second).'
+sample_rate.help    = {'Sample rate in Hz (i. e. samples per second).'};
+% arguments(contains(arguments(:,1),'import.sr'),2);
+% will restore when it is finished.
 
 % Transfer function
 scr_file         = cfg_files;
@@ -237,7 +238,8 @@ for datatype_i=1:length(fileoptions)
   flank_option.values = {'ascending', 'descending', 'all', 'both', 'default'};
   flank_option.labels = {'ascending', 'descending', 'both', 'middle', 'default'};
   flank_option.val    = {'default'};
-  flank_option.help   = arguments(contains(arguments(:,1),'import.flank'),2);
+  flank_option.help   = {''};%arguments(contains(arguments(:,1),'import.flank'),2);
+  % will restore when this is finished
 
   %% Channel/Column Type Items
   importtype_item = cell(1,length(channeltypes));

@@ -13,77 +13,68 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 % ● Format
 %   [sts, channel_index, info] = pspm_find_sounds(fn, options)
 % ● Arguments
-%             fn: path and filename of the pspm file holding the sound
-% ┌─────── options
-% ├───────.channel: [optional, numeric/string, default: 'snd', i.e. last 
-% │                 sound channel in the file]
-% │                 Channel type or channel ID to be preprocessed.
-% │                 Channel can be specified by its index (numeric) in the 
-% │                 file, or by channel type (string).
-% │                 If there are multiple channels with this type, only
-% │                 the last one will be processed. If you want to
-% │                 preprocess several sound in a PsPM file,
-% │                 call this function multiple times with the index of
-% │                 each channel.  In this case, set the option 
-% │                 'channel_action' to 'add',  to store each
-% │                 resulting channel separately.
-% ├.channel_action: ['add'/'replace'] 
-% │                 sound events are written as marker channel to the
-% │                 specified pspm file. Onset times then correspond to marker
-% │                 events and duration is written to markerinfo. The
-% │                 values 'add' or 'replace' state whether existing marker
-% │                 channels should be replaced (last found marker channel will
-% │                 be overwritten) or whether the new channel should be added
-% │                 at the end of the data file. Default is 'add'.
-% ├.channel_output: ['all'/'corrected'] (default: 'all') defines
-% │                 whether all sound markers or only sound markers which have
-% │                 been assigned to a marker from a marker channel should
-% │                 be added as channel to the original file. 'corrected'
-% │                 requires enabled diagnostics, but does not force it (the
-% │                 option will otherwise not work).
-% ├───.diagnostics: [TRUE/false] computes the delay between trigger and
-% │                 displays the mean delay and standard deviation and
-% │                 removes triggers which could not be assigned to a trigger
-% │                 from existing trigger channel.
-% ├──────.maxdelay: [number] Upper limit (in seconds) of the window in
-% │                 which pspm_find_sounds will accept sounds to belong to a
-% │                 marker. default is 3s.
-% ├──────.mindelay: [number] Lower limit (in seconds) of the window in
-% │                 which pspm_find_sounds will accept sounds to belong to a
-% │                 marker. default is 0s.
-% ├──────────.plot: [true/FALSE] displays a histogramm of the delays found and
-% │                 a plot with the detected sound, the trigger and the onset
-% │                 of the sound events. These are color coded for delay, from
-% │                 green (smallest delay) to red (longest). Forces the
-% │                 'diagnostics' option to true.
-% ├──────.resample: [integer] spline interpolates the sound by the factor
-% │                 specified. (1 for no interpolation, by default).
-% │                 Caution must be used when using this option. It should only
-% │                 be used when following conditions are met :
-% │                 1. all frequencies are well below the Nyquist frequency
-% │                 2. the signal is sinusoidal or composed of multiple sin
-% │                 waves all respecting condition 1
-% │                 Resampling will restore more or less the original signal
-% │                 and lead to more accurate timings.
-% ├───────────.roi: [vector of 2 floats] Region of interest for discovering
-% │                 sounds. Especially usefull if pairing events with triggers.
-% │                 Only sounds included inbetween the 2 timestamps will be
-% │                 considered.
-% ├─────.threshold: [0...1] percent of the max of the power in the signal that
-% │                 will be accepted as a sound event. Default is 0.1.
-% ├.marker_chan_num: [integer] number of a channel holding markers.
-% │                 By default first 'marker' channel.
-% │   EXPERIMENTAL, use with caution!
-% └.expectedSoundCount: [integer] Checks for correct number of detected sounds.
-%                   If too few are found, lowers threshhold until at least
-%                   specified count is reached. Thresh is lowered by .01 until
-%                   0.05 is reached for a max of 95 iterations.
+%   *             fn : path and filename of the pspm file holding the sound
+%   ┌─────── options
+%   ├───────.channel : [optional, numeric/string, default: 'snd', i.e. last sound channel
+%   │                  in the file] Channel type or channel ID to be preprocessed. Channel
+%   │                  can be specified by its index (numeric) in the file, or by channel
+%   │                  type (string). If there are multiple channels with this type, only
+%   │                  the last one will be processed. If you want to preprocess several
+%   │                  sound in a PsPM file, call this function multiple times with the
+%   │                  index of each channel. In this case, set the option
+%   │                  'channel_action' to 'add',  to store each resulting channel
+%   │                  separately.
+%   ├.channel_action : ['add'/'replace'] sound events are written as marker channel to the
+%   │                  specified pspm file. Onset times then correspond to marker events
+%   │                  and duration is written to markerinfo. The values 'add' or
+%   │                  'replace' state whether existing marker channels should be
+%   │                  replaced (last found marker channel will be overwritten) or
+%   │                  whether the new channel should be added at the end of the data
+%   │                  file. Default is 'add'.
+%   ├.channel_output : ['all'/'corrected'] (default: 'all') defines whether all sound
+%   │                  markers or only sound markers which have been assigned to a marker
+%   │                  from a marker channel should be added as channel to the original
+%   │                  file. 'corrected' requires enabled diagnostics, but does not force
+%   │                  it (the option will otherwise not work).
+%   ├───.diagnostics : [TRUE/false] computes the delay between trigger and displays the
+%   │                  mean delay and standard deviation and removes triggers which could
+%   │                  not be assigned to a trigger from existing trigger channel.
+%   ├──────.maxdelay : [number] Upper limit (in seconds) of the window in which
+%   │                  pspm_find_sounds will accept sounds to belong to a marker.
+%   │                  Default as 3s.
+%   ├──────.mindelay : [number] Lower limit (in seconds) of the window in which
+%   │                  pspm_find_sounds will accept sounds to belong to a marker.
+%   │                  Default is 0s.
+%   ├──────────.plot : [true/FALSE] displays a histogramm of the delays found and a plot
+%   │                  with the detected sound, the trigger and the onset of the sound
+%   │                  events. These are color coded for delay, from green (smallest
+%   │                  delay) to red (longest). Forces the 'diagnostics' option to true.
+%   ├──────.resample : [integer] Spline interpolates the sound by the factor specified.
+%   │                  (1 for no interpolation, by default). Caution must be used when
+%   │                  using this option. It should only be used when following
+%   │                  conditions are met:
+%   │                  (1) All frequencies are well below the Nyquist frequency;
+%   │                  (2) The signal is sinusoidal or composed of multiple sin waves
+%   │                      all respecting condition 1.
+%   │                  Resampling will restore more or less the original signal and lead
+%   │                  to more accurate timings.
+%   ├───────────.roi : [vector of 2 floats] Region of interest for discovering sounds.
+%   │                  Especially usefull if pairing events with triggers. Only sounds
+%   │                  included inbetween the 2 timestamps will be considered.
+%   ├─────.threshold : [0...1] percent of the max of the power in the signal that will be
+%   │                  accepted as a sound event. Default as 0.1.
+%   ├.marker_chan_num: [integer] number of a channel holding markers. By default first
+%   │                  'marker' channel.
+%   └.expectedSoundCount : [integer] Checks for correct number of detected sounds. If too
+%                      few are found, lowers threshhold until at least specified count is
+%                      reached. Thresh is lowered by .01 until 0.05 is reached for a max
+%                      of 95 iterations. This is a EXPERIMENTAL variable, use with caution!
 % ● Output
-%      channel_index: index of channel containing the processed data
-% ┌──────────info: struct with fields
-% ├──.snd_markers: vector of begining of sound sound events
-% └───────.delays: vector of delays between markers and detected sounds.
-%                  Only available with option 'diagnostics' turned on.
+%   *  channel_index : index of channel containing the processed data
+%   ┌───────────info
+%   ├───.snd_markers : vector of begining of sound sound events
+%   └────────.delays : vector of delays between markers and detected sounds. Only
+%                      available with option 'diagnostics' turned on.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Samuel Gerster (University of Zurich)
@@ -114,7 +105,7 @@ fprintf('Processing sound in file %s\n',fn);
 
 % Load Data
 [lsts, snd] = pspm_load_channel(fn, options.channel, 'snd');
-if lsts < 1 
+if lsts < 1
   return;
 end
 

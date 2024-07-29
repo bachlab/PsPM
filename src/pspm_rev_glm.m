@@ -5,22 +5,22 @@ function varargout = pspm_rev_glm(modelfile, plotNr)
 % ● Format
 %   fig = pspm_rev_glm(modelfile, plotNr)
 % ● Arguments
-%   modelfile:  filename and path of modelfile
-%         glm:  loaded model
-%      plotNr:  defines which figure shall be plotted
-%               (several plots can be defined by a vector)
-%               1 - design matrix, SPM style
-%               2 - design orthogonality, SPM style
-%               3 - predicted & observed
-%               4 - print regressor names
-%               5 - reconstructed responses
+%   * modelfile : filename and path of modelfile
+%   *       glm : loaded model
+%   *    plotNr : defines which figure shall be plotted
+%                 (several plots can be defined by a vector)
+%                 1 - design matrix, SPM style
+%                 2 - design orthogonality, SPM style
+%                 3 - predicted & observed
+%                 4 - print regressor names
+%                 5 - reconstructed responses
 % ● Outputs
-%         sts:  status variable indicating whether the function run successfully
-%         fig:  returns the figure handles
+%   *       sts : status variable indicating whether the function run successfully
+%   *       fig : returns the figure handles
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings

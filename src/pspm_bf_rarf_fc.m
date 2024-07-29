@@ -1,19 +1,18 @@
 function [bs, x] = pspm_bf_rarf_fc(varargin)
 % ● Description
+%   pspm_bf_rarf_fc is a basis function.
 % ● Format
 %   [bs, x] = pspm_bf_rarf_fc(td, bf_type)
 %   [bs, x] = pspm_bf_rarf_fc([td, bf_type])
 % ● Arguments
-%        td:  The time the response function should have.
-%   bf_type:  Which type of response function should be generated
-%             1: first type response function is generated
-%                (default) = gamma_early + gamma_late
-%             2: second type response function is generated
-%                = gamma_early + gamma_early'
+%   *      td:  The time the response function should have.
+%   * bf_type:  Which type of response function should be generated. Can be either 1 or 2.
+%               If 1, first type response function is generated, (default) = gamma_early + gamma_late.
+%               If 2, second type response function is generated, (default) = gamma_early + gamma_early'.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by G Castegnetti, Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings

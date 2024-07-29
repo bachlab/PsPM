@@ -15,8 +15,7 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   [sts, channel_index]       = pspm_scr_pp(data, options)
 %   [sts, missing_epochs_file] = pspm_scr_pp(data, options)
 % ● Arguments
-%      datafile:  a file name
-%   [Optional]
+%   *  datafile:  a file name
 %   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default: 'scr', i.e. last
 %   │                 SCR channel in the file]
@@ -30,17 +29,17 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   │                 each channel.  In this case, set the option
 %   │                 'channel_action' to 'add',  to store each
 %   │                 resulting 'scr' channel separately.
-%   ├──────.min:  Minimum value in microsiemens (default: 0.05).
-%   ├──────.max:  Maximum value in microsiemens (default: 60).
-%   ├────.slope:  Maximum slope in microsiemens per sec (default: 10).
+%   ├──────.min:  [Optional] Minimum value in microsiemens (default: 0.05).
+%   ├──────.max:  [Optional] Maximum value in microsiemens (default: 60).
+%   ├────.slope:  [Optional] Maximum slope in microsiemens per sec (default: 10).
 %   ├.missing_epochs_filename:
-%   │             If provided will create a .mat file saving the epochs.
+%   │             [Optional] If provided will create a .mat file saving the epochs.
 %   │             The path can be specified, but if not the file will be saved
 %   │             in the current folder. If saving to the missing epochs file,
 %   │             no data in the original datafile will be changed. For
 %   │             instance, abc will create abc.mat
 %   ├.deflection_threshold:
-%   │             Define an threshold in original data units for a slope to pass
+%   │             [Optional] Define an threshold in original data units for a slope to pass
 %   │             to be considered in the filter. This is useful, for example,
 %   │             with oscillatory wave data due to limited A/D bandwidth.
 %   │             The slope may be steep due to a jump between voltages but we
@@ -48,24 +47,24 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   │             A value of 0.1 would filter oscillatory behaviour with
 %   │             threshold less than 0.1v but not greater. Default: 0.1
 %   ├.data_island_threshold:
-%   │             A float in seconds to determine the maximum length of data
+%   │             [Optional] A float in seconds to determine the maximum length of data
 %   │             between NaN epochs.
 %   │             Islands of data shorter than this threshold will be removed.
 %   │             Default: 0 s - no effect on filter
 %   ├.expand_epochs:
-%   │             A float in seconds to determine by how much data on the flanks
+%   │             [Optional] A float in seconds to determine by how much data on the flanks
 %   │             of artefact epochs will be removed. Default: 0.5 s
 %   ├.clipping_step_size:
-%   │             A numerical value specifying the step size in moving average
+%   │             [Optional] A numerical value specifying the step size in moving average
 %   │             algorithm for detecting clipping. Default: 10
 %   ├.clipping_window_size:
-%   │             A numerical value specifying the window size in moving average
+%   │             [Optional] A numerical value specifying the window size in moving average
 %   │             algorithm for detecting clipping. Default: 100
 %   ├.clipping_threshold:
-%   │             A float between 0 and 1 specifying the proportion of local
+%   │             [Optional] A float between 0 and 1 specifying the proportion of local
 %   │             maximum in a step. Default: 0.1
 %   ├.baseline_jump:
-%   │             A numerical value to determine how many times of data
+%   │             [Optional] A numerical value to determine how many times of data
 %   │             jumpping will be considered for detecting baseline
 %   │             alteration. For example, when .baseline is set to be 2,
 %   │             if the maximum value of the window is more than 2 times
@@ -73,23 +72,22 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   │             periods will be considered as baseline alteration.
 %   │             Default: 1.5
 %   ├.include_baseline:
-%   │             A bool value to determine if detected baseline alteration
+%   │             [Optional] A bool value to determine if detected baseline alteration
 %   │             will be included in the calculated clippings.
 %   │             Default: 0 (not to include baseline alteration in clippings)
 %   ├─.overwrite: [logical] (0 or 1)
-%   │             Define whether to overwrite existing missing epochs files 
+%   │             [Optional] Define whether to overwrite existing missing epochs files 
 %   │             or not (default). Will only be used if
 %   │             options.missing_epochs_filename is specified.
 %   └.channel_action:
-%                 Accepted values: 'add'/'replace'
+%                 [Optional] Accepted values: 'add'/'replace'
 %                 Defines whether the new channel should be added or the previous
 %                 outputs of this function should be replaced. Default: 'add'. 
 %                 Will not be used if options.missing_epochs_filename is 
 %                 specified.
 % ● Outputs
-% ● Output
-%      channel_index: index of channel containing the processed data
-%      missing_epochs_file: file that contains the missing epochs
+%   *  channel_index: index of channel containing the processed data
+%   *  missing_epochs_file: file that contains the missing epochs
 % ● Internal Functions
 %   filter_to_epochs
 %                 Return the start and end points of epoches (2D array) by the

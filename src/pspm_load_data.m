@@ -8,7 +8,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %   ┌─────fn:   [char] filename / [struct] with fields
 %   ├─.infos:
 %   └──.data:
-%    channel:   [numeric vector] / [char] / [struct]
+%   * channel:   [numeric vector] / [char] / [struct]
 %               ▶ vector
 %                 0 or empty: returns all channels
 %                 vector of channels: returns only these channels
@@ -29,9 +29,9 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %                 ├────.data (mandatory)
 %                 └─.options (mandatory)
 % ● Outputs
-%                sts: [logical] 1 as default, -1 if check is unsuccessful
-%              infos: [struct] variable from data file
-%               data: cell array of channels as specified
+%   *            sts: [logical] 1 as default, -1 if check is unsuccessful
+%   *          infos: [struct] variable from data file
+%   *           data: cell array of channels as specified
 %   ┌─────filestruct: [struct]
 %   ├─────.numofchan: number of channels
 %   ├─.numofwavechan: number of wave channels
@@ -60,7 +60,6 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %       this feature will be removed in the future
 % ● History
 %   Written in 2008-2021 by Dominik R. Bach (Wellcome Centre for Human Neuroimaging, UCL)
-%     2022 Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings
@@ -212,7 +211,7 @@ end
 %% 9 Return channels, or save file
 if ischar(channel) && strcmp(channel, 'none')
     sts = 1; return;
-elseif isstruct(channel) 
+elseif isstruct(channel)
     infos = channel.infos;
     data = channel.data;
     filestruct.posofchannels = 1:numel(data);

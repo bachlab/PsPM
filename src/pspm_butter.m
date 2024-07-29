@@ -6,14 +6,14 @@ function [sts, b, a] = pspm_butter(order, freqratio, pass)
 % ● Format
 %   [sts, b, a] = pspm_butter(order, freqratio)
 % ● Arguments
-%       order: the order of the Butterworth filter to be designed
-%   freqratio: the cut-off frequency of the Butterworth filter to be designed
+%   *     order: the order of the Butterworth filter to be designed
+%   * freqratio: the cut-off frequency of the Butterworth filter to be designed
 % ● Output
-%         sts: = -1 if non-standard filters are requested
+%   *       sts: -1 if non-standard filters are requested
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

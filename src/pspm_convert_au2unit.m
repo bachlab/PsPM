@@ -1,7 +1,7 @@
 function [sts, outchannel] = pspm_convert_au2unit(varargin)
 % ● Description
-%   pspm_convert_au2unit converts arbitrary unit values to unit values. It
-%   works on a PsPM file and is able to replace a channel or add the data as
+%   pspm_convert_au2unit converts arbitrary unit values to unit values. It works on a
+%   PsPM file and is able to replace a channel or add the data as
 %   a new channel.
 % ● Features
 %   Given arbitrary unit values are converted using a recording distance D
@@ -16,47 +16,45 @@ function [sts, outchannel] = pspm_convert_au2unit(varargin)
 %   2. x ← A*(Dconv/Dref)*x
 %   3. Convert x from ref_unit to unit.
 % ● Format
-%   [sts, channel_index] = pspm_convert_au2unit(fn, unit, distance, record_method, multiplicator,
-%                reference_distance, reference_unit, options)
+%   [sts, channel_index]  = pspm_convert_au2unit(fn, unit, distance, record_method,
+%                           multiplicator, reference_distance, reference_unit, options)
 %   [sts, converted_data] = pspm_convert_au2unit(data, unit, distance, record_method,
-%                multiplicator, reference_distance, reference_unit, options)
+%                           multiplicator, reference_distance, reference_unit, options)
 % ● Arguments
-%                 fn: filename which contains the channels to be converted
-%               data: a one-dimensional vector which contains the data to be
-%                     converted
-%               unit: To which unit the data should be converted. possible
-%                     values are mm, cm, dm, m, in, inches.
-%           distance: distance between camera and eyes in units as specified in
-%                     the parameter unit
-%      record_method: either 'area' or 'diameter', tells the function what the
-%                     format of the recorded data is
-%      multiplicator: the multiplicator in the linear conversion.
-% reference_distance: distance at which the multiplicator value was obtained,
-%                     as specified in the parameter unit.
-%                     The values will be proportionally translated to this
-%                     distance before applying the conversion function.
-%     reference_unit: reference unit with which the multiplicator and
-%                     reference_distance values were obtained.
-%                     Possible values are mm, cm, dm, m, in, inches
-%   ┌────────options:
-%   ├───────.channel: [optional][numeric/string] [Default: 'both']
+%   *            fn : Filename which contains the channels to be converted.
+%   *          data : A one-dimensional vector which contains the data to be converted.
+%   *          unit : To which unit the data should be converted. possible values are mm,
+%                     cm, dm, m, in, inches.
+%   *      distance : Distance between camera and eyes in units as specified in the
+%                     parameter unit.
+%   * record_method : Either 'area' or 'diameter', tells the function what the format of
+%                     the recorded data is.
+%   * multiplicator : The multiplicator in the linear conversion.
+%   * reference_distance: Distance at which the multiplicator value was obtained, as
+%                     specified in the parameter unit. The values will be proportionally
+%                     translated to this distance before applying the conversion function.
+%   * reference_unit : Reference unit with which the multiplicator and reference_distance
+%                     values were obtained. Possible values are mm, cm, dm, m, in, inches.
+%   ┌───────options
+%   ├──────.channel : [optional][numeric/string] [Default: 'both']
 %   │                 Channel ID to be preprocessed.
-%   │                 To process both eyes, use 'both', which will work on
-%   │                 'pupil_r' and 'pupil_l'.
+%   │                 To process both eyes, use 'both', which will work on 'pupil_r' and
+%   │                 'pupil_l'.
 %   │                 To process a specific eye, use 'pupil_l' or 'pupil_r'.
 %   │                 To process the combined left and right eye, use 'pupil_c'.
-%   │                 The identifier 'pupil' will use the first existing 
+%   │                 The identifier 'pupil' will use the first existing
 %   │                 option out of the following:
-%   │                 (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
-%   │                 eye pupil, (4) any pupil channel. If there are multiple
-%   │                 channels of the specified type, only last one will be
-%   │                 processed. 
-%   │                 You can also specify the number of a channel.
-%   └.channel_action: ['add'/'replace', default as 'add']
-%                     Defines whether the new channel should be added or the
-%                     previous outputs of this function should be replaced.
+%   │                 (1) L-R-combined pupil;
+%   │                 (2) non-lateralised pupil;
+%   │                 (3) best eye pupil;
+%   │                 (4) any pupil channel.
+%   │                 If there are multiple channels of the specified type, only last one
+%   │                 will be processed. You can also specify the number of a channel.
+%   └.channel_action : ['add'/'replace', default as 'add']
+%                     Defines whether the new channel should be added or the previous
+%                     outputs of this function should be replaced.
 % ● Output
-%      channel_index: index of channel containing the processed data
+%   * channel_index : Index of channel containing the processed data.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
@@ -122,7 +120,7 @@ if options.invalid
     return
 end
 
-if ~(ismember(record_method, {'area', 'diameter'})) 
+if ~(ismember(record_method, {'area', 'diameter'}))
     warning('ID:invalid_input', 'record_method must be ''area'' or ''diameter''');
     return;
 end

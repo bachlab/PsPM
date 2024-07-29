@@ -5,11 +5,10 @@ function [sts, eye, new_chantype] = pspm_find_eye(chantype)
 % ● Format
 %   [sts, eye, new_chantype] = pspm_find_eye(chantype)
 % ● Arguments
-%   Input
-%     chantype: the field header.chantype as returned by pspm_load_data
-%   Output
-%            eye:  one of {'r', 'l', 'c', ''}
-%   new_chantype:  chantype with eye marker removed
+%   *     chantype: the field header.chantype as returned by pspm_load_data
+% ● Outputs
+%   *          eye:  one of {'r', 'l', 'c', ''}
+%   * new_chantype:  chantype with eye marker removed
 % ● History
 %   Introduced in PsPM version 5.1.2
 %   Written in 2021 by Teddy

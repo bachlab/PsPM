@@ -20,8 +20,7 @@ function [sts, dcm] = pspm_dcm(model, options)
 % ● Format
 %   [sts, dcm] = pspm_dcm(model, options)
 % ● Arguments
-%   ┌──────model:
-%   │ ▶︎ Mandatory
+%   ┌──────model
 %   ├─.modelfile: [string/cell array]
 %   │             The name of the model output file.
 %   ├──.datafile: [string/cell array]
@@ -36,36 +35,34 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             rows, i.e. the event structure must be the same for every
 %   │             trial. If this is not the case, include `dummy` events with
 %   │             negative onsets.
-%   │ ▶︎ Optional
-%   ├───.missing: Allows to specify missing (e.g. artefact) epochs in the
+%   ├───.missing: [optional] Allows to specify missing (e.g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition; specify
 %   │             a cell array for multiple input files. This must always be
 %   │             specified in SECONDS.
 %   │             Default: no missing values
 %   ├─.lasttrialcutoff:
-%   │             If there fewer data after the end of then last trial in a
+%   │             [optional] If there fewer data after the end of then last trial in a
 %   │             session than this cutoff value (in s), then estimated
 %   │             parameters from this trial will be assumed inestimable
 %   │             and set to NaN after the
 %   │             inversion. This value can be set as inf to always retain
 %   │             parameters from the last trial.
 %   │             Default: 7 s
-%   ├─.substhresh:Minimum duration (in seconds) of NaN periods to cause
+%   ├─.substhresh:[optional] Minimum duration (in seconds) of NaN periods to cause
 %   │             splitting up into subsessions which get evaluated
 %   │             independently (excluding NaN values).
 %   │             Default: 2.
-%   ├────.filter: Filter settings.
+%   ├────.filter: [optional] Filter settings.
 %   │             Modality specific default.
-%   ├───.channel: Channel number.
+%   ├───.channel: [optional] Channel number.
 %   │             Default: last SCR channel
-%   ├──────.norm: Normalise data.
+%   ├──────.norm: [optional] Normalise data.
 %   │             i.e. Data are normalised during inversion but results
 %   │             transformed back into raw data units.
 %   │             Default: 0.
-%   └─.constrained: Constrained model for flexible responses which have fixed
-%                 dispersion (0.3 s SD) but flexible latency.
-%   ┌────options:
-%   │ ▶︎ Response function
+%   └─.constrained: [optional] Constrained model for flexible responses
+%                 which have fixed dispersion (0.3 s SD) but flexible latency.
+%   ┌────options
 %   ├─.crfupdate: Update CRF priors to observed SCRF, or use pre-estimated
 %   │             priors (default). Default as 0, optional as 1.
 %   ├─────.indrf: Estimate the response function from the data.
@@ -73,7 +70,6 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   ├─────.getrf: Only estimate RF, do not do trial-wise DCM
 %   ├────────.rf: Call an external file to provide response function
 %   │             (for use when this is previously estimated by pspm_get_rf)
-%   │ ▶︎ Inversion
 %   ├─────.depth: No of trials to invert at the same time. Estimation will
 %   │             progress trial-by-trial until the last trial of a session. If set to
 %   |             inf, then an entire sessin will be inverted at the same time.
@@ -92,18 +88,15 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             Minimum dispersion (standard deviation) for flexible
 %   │             responses.
 %   │             Default: 0.1s.
-%   │ Display
-%   ├─.dispwin    Display progress window.
+%   ├─.dispwin:   Display progress window.
 %   │             Default: 1.
-%   ├─.dispsmallwin
+%   ├─.dispsmallwin:
 %   │             display intermediate windows.
 %   │             Default: 0.
-%   │ ▶︎ Output
 %   ├────.nosave: Don't save dcm structure (e.g. used by pspm_get_rf)
 %   ├─.overwrite: [logical] (0 or 1)
 %   │             Define whether to overwrite existing output files or not.
 %   │             Default value: determined by pspm_overwrite.
-%   │ ▶︎ Naming
 %   ├──.trlnames: Cell array of names for individual trials,
 %   │             is used for contrast manager only (e.g. condition
 %   │             descriptions)
@@ -111,12 +104,11 @@ function [sts, dcm] = pspm_dcm(model, options)
 %                 in the order they are specified in the model.timing array -
 %                 to be used for display and export only
 % ● Output
-%   fn:   Name of the model file.
-%   dcm: Model struct.
-%
-%   Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-%   in SN units such that an eSCR SN pulse with 1 unit amplitude causes an
-%   eSCR with 1 mcS amplitude
+%   * fn        : Name of the model file.
+%   * dcm       : Model struct. Output units: all timeunits are in seconds;
+%                 eSCR and aSCR amplitude are in SN units such that an
+%                 eSCR SN pulse with 1 unit amplitude causes an eSCR with
+%                 1 mcS amplitude.
 % ● Developer's Notes
 %   pspm_dcm can handle NaN values in data channels. Either by specifying
 %   missing epochs manually using model.missing, or by detecting NaN epochs
@@ -152,18 +144,16 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   the trials use much less than available amount of samples in both case
 %   (1) and (2). Instead, we aim to use as much data as possible in (1), and
 %   perform (2) only if this edge case is not present.
-% 
 % ● References
 %   [1] Model development:
-%       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal 
-%       modelling of anticipatory skin conductance changes. Biological 
+%       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal
+%       modelling of anticipatory skin conductance changes. Biological
 %       Psychology, 85(1), 163-70
 %   [2] Model validation and improvement:
 %       Staib, M., Castegnetti, G., & Bach, D. R. (2015). Optimising a
-%       model-based approach to inferring fear learning from skin  
-%       conductance responses. Journal of Neuroscience Methods, 255, 
+%       model-based approach to inferring fear learning from skin
+%       conductance responses. Journal of Neuroscience Methods, 255,
 %       131-138.
-%       
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2010-2021 by Dominik R Bach (Wellcome Centre for Human Neuroimaging, UCL)
@@ -180,7 +170,7 @@ dcm = [];
 % by a `return` function
 warnings = {};
 
-%% 2 Check input 
+%% 2 Check input
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
@@ -191,7 +181,7 @@ if model.invalid
     return
 end
 
-% 2.3 check options 
+% 2.3 check options
 options = pspm_options(options, 'dcm');
 if options.invalid
   return
@@ -246,7 +236,7 @@ missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
   [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
-  if sts < 1 
+  if sts < 1
     return;
   else
      y{iSn} = data.data;
@@ -261,7 +251,7 @@ for iSn = 1:numel(model.datafile)
   else
     missing{iSn} = [];
   end
- 
+
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);
 
@@ -276,7 +266,7 @@ for iSn = 1:numel(model.datafile)
           y{iSn}(flanks(1):flanks(2)) = NaN;
       end
   end
- 
+
   % find NaN in data, which might originate in previous step or exist in
   % the data already. This will update the previous miss_epochs definition.
   nan_epochs = isnan(y{iSn});

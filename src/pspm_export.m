@@ -8,8 +8,7 @@ function sts = pspm_export(modelfile, options)
 % ● Format
 %   pspm_exp(modelfile, options)
 % ● Arguments
-%           modelfile:  [mandatory, string/cell_array]
-%                       a filename, or cell array of filenames
+%   *       modelfile:  [string/cell_array] a filename, or cell array of filenames.
 %   ┌─────────options
 %   ├─────────.target:  [optional, string, default as 'screen']
 %   │                   'screen' (default), or a name of an output text file.
