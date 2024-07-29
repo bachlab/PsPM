@@ -82,7 +82,6 @@ pspm_text([pspm_root, filesep]);
 load(fullfile(pspm_root,'pspm_text.mat'))
 
 % 2.5 Add required paths ---
-required_folders = {{}, {'pspm_cfg'}, {'ext', 'SPM'}; {'ext','VBA'}, {'ext','VBA','subfunctions'}, {'ext','VBA','stats&plots'}};
 for k = 1:numel(required_folders)
     required_path{k} = pspm_path(required_folders{k}{:});
     if ~any(strcmp(initial_paths, required_path{k}))
