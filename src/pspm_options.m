@@ -340,7 +340,7 @@ switch FunName
     options = autofill(options, 'channel_combine',        'none',     '*Int*Char'       );
     options = autofill(options, 'plot_data',              0,          1                 );
     options = autofill(options, 'segments',               {},         '*Cell'           );
-    options = autofill(options, 'chan_valid_cutoff',      0.1,        '*Num'            );
+    options = autofill(options, 'chan_valid_cutoff',      0.2,        '*Num'            );
   case 'python'
     options = autofill(options, 'python_path',            '',         '*Char'           );
   case 'remove_epochs'

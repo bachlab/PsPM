@@ -466,6 +466,14 @@ switch model
       end
     end
 
+    % remove negative values
+    if any(outtiming(:) < 0)
+        indx = outtiming(:,2) < 0;
+        outtiming(indx,:) = [];
+        indx = outtiming(:,1) < 0;
+        outtiming(indx,1) = 0;
+    end
+
     % check time units --
     if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
         ~all(outtiming(:) == ceil(outtiming(:)))
