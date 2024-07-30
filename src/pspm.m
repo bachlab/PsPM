@@ -12,6 +12,7 @@ function pspm(varargin)
 
 release_date_current = datetime(version('-date'));
 release_date_win = datetime('01-Jan-2018');
+release_date_appdesigner_cutoff = datetime('01-Jan-2020');
 release_date_mac = datetime('01-Jan-2018');
 release_date_linux = datetime('01-Jan-2022');
 if ispc
@@ -20,7 +21,11 @@ if ispc
       'Please consider updating your MATLAB to 2018a or newer, ',...
       'or alternatively using scripts only.']);
   else
-    pspm_appdesigner
+    if release_date_current < release_date_appdesigner_cutoff % MATLAB 2018
+      pspm_appdesigner2019
+    else
+      pspm_appdesigner
+    end
   end
 elseif ismac
   if release_date_current < release_date_mac % MATLAB 2018
@@ -29,7 +34,11 @@ elseif ismac
       'or alternatively using scripts only.']);
     % pspm_guide
   else
-    pspm_appdesigner
+    if release_date_current < release_date_appdesigner_cutoff % MATLAB 2018
+      pspm_appdesigner2019
+    else
+      pspm_appdesigner
+    end
   end
 else % Linux
   if release_date_current < release_date_linux % MATLAB 2022
@@ -38,7 +47,11 @@ else % Linux
       'or alternatively using scripts only.']);
     % pspm_guide
   else
-    pspm_appdesigner
+    if release_date_current < release_date_appdesigner_cutoff % MATLAB 2018
+      pspm_appdesigner2019
+    else
+      pspm_appdesigner
+    end
   end
 end
 return
