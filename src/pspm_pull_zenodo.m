@@ -26,7 +26,7 @@ for iFiles = 1:2
         end
         matfileno(2) = numel(dir(fullfile(datapath, '*.mat')));
         if zipflag || diff(matfileno)==0
-            warning('Error unzipping data set. This can happen for large files (> 2 GB). Please unzip manually');
+            warning('Error unzipping data set. This is a known Matlab problem which can happen for large files (> 2 GB). Please unzip manually.');
         else
             delete(zipfn);
             newdir = dir(datapath);
