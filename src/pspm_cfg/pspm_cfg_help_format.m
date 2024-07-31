@@ -15,11 +15,11 @@ helptext = {
 
 if isfield(settings.help, funcname)
     if isfield(settings.help.(funcname), 'Description')
-        helptext{end+1} = settings.help.(funcname).Description;
+        helptext = [helptext(:); settings.help.(funcname).Description];
     end
     if isfield(settings.help.(funcname), 'References')
         helptext = [ helptext(:); ...
-        '------------------------------------------------------------------------------------------------',...
+        '------------------------------------------------------------------------------------------------';...
         'References:'; ...
         settings.help.(funcname).References(:)];
     end

@@ -16,6 +16,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+
 fid = fopen([settings.path,filesep,func_name,'.m'],'r','n','UTF-8');
 % read the file into a cell array, one cell per line
 i = 1;
@@ -36,6 +37,9 @@ A = A(cellfun(@ischar,A) & ~cellfun(@isempty,A));
 B = regexp(A,'^\s*%.*','match');
 B = vertcat(B{:});
 information = sort_info (B);
+if isfield(information, 'Description')
+    information.Description = sort_description(information.Description);
+end
 if isfield(information, 'Arguments')
   information.Arguments = sort_args(information.Arguments);
 end
@@ -91,6 +95,13 @@ for i_D = 1:length(D)
     A.(D{i_D}) = remove_multiple_space(str);
   end
 end
+
+function args = sort_description(A)
+linebreaks = strfind(A, newline);
+linebreaks = setdiff(linebreaks, strfind(A,['.', newline]) + 1);
+linebreaks = setdiff(linebreaks, strfind(A,['. ', newline]) + 2);
+A(linebreaks) = '';
+args = splitlines(A);
 
 function args = sort_args(A)
 B = A;
