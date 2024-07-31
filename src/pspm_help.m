@@ -90,10 +90,6 @@ for i_D = 1:length(D)
     end
     A.(D{i_D}) = remove_multiple_space(str);
   end
-<<<<<<< HEAD
-  A.(lower(D{i_D})) = remove_multiple_space(str);
-=======
->>>>>>> develop
 end
 
 function args = sort_args(A)
@@ -153,6 +149,7 @@ B = remove_multiple_space (A);
 B(strfind(B,newline)) = ' ';
 B(strfind(B,' [')) = newline;
 B(strfind(B,' *')) = newline;
+B = splitlines(B);
 
 function B = remove_multiple_space (A)
 % B is a string with multiple spaces

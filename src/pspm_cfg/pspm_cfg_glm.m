@@ -163,5 +163,5 @@ glm.val   = {output, chan, timeunits, session_rep, latency, ...
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_modelfile;
 glm.help  = ...
-    [pspm_cfg_help_format('pspm_glm'), vars.glmhelp];
+    [pspm_cfg_help_format('pspm_glm'); vars.glmhelp(:)];
 
