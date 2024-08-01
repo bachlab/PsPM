@@ -32,9 +32,11 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             Each cell should contain either one column (fixed response)
 %   │             or two columns (flexible response).
 %   │             All matrices in the array need to have the same number of
-%   │             rows, i.e. the event structure must be the same for every
-%   │             trial. If this is not the case, include `dummy` events with
-%   │             negative onsets.
+%   │             rows, i.e. the event structure should be the same for every
+%   │             trial. For trials that are not going to be analysed later,
+%   │             it is possible to include `dummy` events with negative 
+%   │             onsets.
+%   │             All event timings must be specified in SECONDS.
 %   ├───.missing: [optional] Allows to specify missing (e.g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition; specify
 %   │             a cell array for multiple input files. This must always be
@@ -97,9 +99,9 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   ├─.overwrite: [logical] (0 or 1)
 %   │             Define whether to overwrite existing output files or not.
 %   │             Default value: determined by pspm_overwrite.
-%   ├──.trlnames: Cell array of names for individual trials,
-%   │             is used for contrast manager only (e.g. condition
-%   │             descriptions)
+%   ├──.trlnames: Cell array of names for individual trials. This is only
+%   │             for housekeeping (e.g. condition descriptions), not 
+%   │             for model estimation. Default: no trial names.
 %   └.eventnames: Cell array of names for individual events,
 %                 in the order they are specified in the model.timing array -
 %                 to be used for display and export only

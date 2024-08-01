@@ -105,7 +105,6 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %                      mode "fixation" and distance or pixel units for mode
 %                      "bitmap".
 %                      Default is 'pupil'.
->>>>>>> develop
 % ● Developer note
 %   Additional i/o options for recursive calls are not included in the help.
 %   (1) fn can be a data structure as permitted by pspm_load_data,
