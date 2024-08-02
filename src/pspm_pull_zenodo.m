@@ -25,29 +25,29 @@ for iFiles = 1:2
             zipflag = 1;
         end
         matfileno(2) = numel(dir(fullfile(datapath, '*.mat')));
-        if zipflag || diff(matfileno)==0
+        newdir = dir(datapath);
+        newpathindx = (arrayfun(@(x) x.isdir & ~ismember(x.name, {'.', '..'}), newdir));
+        if zipflag || (diff(matfileno)==0 && sum(newpathindx) == 0)
             warning('Error unzipping data set. This is a known Matlab problem which can happen for large files (> 2 GB). Please unzip manually.');
+        elseif  sum(newpathindx) > 1
+            warning('Unknown error extracting data set.');
+            return
         else
             delete(zipfn);
-            newdir = dir(datapath);
-            newpathindx = (arrayfun(@(x) x.isdir & ~ismember(x.name, {'.', '..'}), newdir));
-            if any(newpathindx)
-                if sum(newpathindx) > 1
-                    warning('Error extracting data set.');
-                    return
-                else
-                    newpath = fullfile(datapath, newdir(newpathindx).name);
-                    filelist = dir(fullfile(newpath, '*.mat'));
-                    oldfile = fullfile(newpath, {filelist.name});
-                    newfile = fullfile(datapath, {filelist.name});
-                    for i_fn = 1:numel(oldfile)
-                        movefile(oldfile{i_fn}, newfile{i_fn});
-                    end
-                    rmdir(newpath);
-                end
+        end
+
+        if any(newpathindx)
+            newpath = fullfile(datapath, newdir(newpathindx).name);
+            filelist = dir(fullfile(newpath, '*.mat'));
+            oldfile = fullfile(newpath, {filelist.name});
+            newfile = fullfile(datapath, {filelist.name});
+            for i_fn = 1:numel(oldfile)
+                movefile(oldfile{i_fn}, newfile{i_fn});
             end
+            rmdir(newpath);
         end
     end
 end
+
 
 sts = 1;
