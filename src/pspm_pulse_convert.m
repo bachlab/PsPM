@@ -11,7 +11,7 @@ function [sts, wavedata] = pspm_pulse_convert(pulsedata, resamplingrate, samplin
 %   resolution of the 1401 and more likely to be a technical glitch. These
 %   time stamps are filtered out before re-sampling.
 % ● Format
-%   wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+%   [sts, wavedata] = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % ● Arguments
 %   *      pulsedata : timestamps in ms
 %   * resamplingrate : for interpolation
@@ -78,7 +78,7 @@ else
     filt.direction = 'bi';
     filt.down = samplingrate;
     filt.sr = resamplingrate;
-    [sts_prepdata, wavedata] = pspm_prepdata(wavedata, filt);
+    [sts_prepdata, wavedata, ~] = pspm_prepdata(wavedata, filt);
     if sts_prepdata ~= 1
       warning('ID:invalid_input', 'call of pspm_prepdata failed');
       return

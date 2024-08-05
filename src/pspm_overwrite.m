@@ -1,4 +1,4 @@
-function [sts, overwrite_final] = pspm_overwrite(varargin)
+function overwrite_final = pspm_overwrite(varargin)
 % ● Description
 %   pspm_overwrite generalises the overwriting operation
 %   pspm_overwrite considers the following situations
@@ -18,7 +18,7 @@ function [sts, overwrite_final] = pspm_overwrite(varargin)
 %                 If a value, can be 0 (not to overwrite) or 1 (to overwrite).
 %                 If a struct, check if the field `overwrite` exist.
 % ● Examples
-%   [sts, overwrite_final] = pspm_overwrite(fn, overwrite)
+%   overwrite_final = pspm_overwrite(fn, overwrite)
 % ● Outputs
 %   * overwrite_final:  option of overwriting determined by pspm_overwrite
 %                       0: not to overwrite

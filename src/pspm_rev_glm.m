@@ -3,7 +3,7 @@ function [sts, fig] = pspm_rev_glm(modelfile, plotNr)
 %   pspm_rev_glm is a tool for reviewing a first level GLM designs. It is
 %   meant to be called by pspm_review only.
 % ● Format
-%   fig = pspm_rev_glm(modelfile, plotNr)
+%   [sts, fig] = pspm_rev_glm(modelfile, plotNr)
 % ● Arguments
 %   * modelfile : filename and path of modelfile
 %   *    plotNr : defines which figure shall be plotted

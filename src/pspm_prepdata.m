@@ -117,7 +117,7 @@ if lowpass_filt
       data = filter(filt.b, filt.a, data);
       data = filter(filt.b, filt.a, data);
     else
-      data = pspm_filtfilt(filt.b, filt.a, data);
+      [~, data] = pspm_filtfilt(filt.b, filt.a, data);
     end
   end
 end
@@ -132,7 +132,7 @@ if ~ischar(filt.hpfreq) && ~isnan(filt.hpfreq)
     data = filter(filt.b, filt.a, data);
     data = filter(filt.b, filt.a, data);
   else
-    data = pspm_filtfilt(filt.b, filt.a, data);
+    [~, data] = pspm_filtfilt(filt.b, filt.a, data);
   end
 end
 % if uni, remove dummy data

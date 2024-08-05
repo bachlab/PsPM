@@ -1,9 +1,8 @@
-function [sts, channel] = pspm_find_channel(headercell, channeltype)
+function channel = pspm_find_channel(headercell, channeltype)
 % ● Description
 %   pspm_find_channel searches a cell arrays of channel headers and
 %   finds the channel that matches the desired type.
 % ● Format
-%   [sts, channel] = pspm_find_channel(headercell, channeltype) or
 %   channel = pspm_find_channel(headercell, channeltype)
 % ● Arguments
 %   *  headercell: cell array of names (e.g. from acq import)
@@ -69,6 +68,4 @@ elseif sum(channelflag) == 0
 else
   channel = find(channelflag==1);
 end
-%% 4 Sort output
-sts = 1;
 return
