@@ -180,7 +180,7 @@ else
           end
         end
         if write_file
-          newd.options.overwrite = pspm_overwrite(out_file, options);
+          newd.options.overwrite = pspm_overwrite(out_file, 1);
           [write_success, ~, ~] = pspm_load_data(out_file, newd);
           if disp_success
             if write_success
@@ -200,7 +200,7 @@ else
       ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
       epochs = cell2mat(ep)';
       if strcmpi(handles.input_mode, 'file')
-        ow = pspm_overwrite(out_file, handles.options.overwrite);
+        ow = pspm_overwrite(out_file, 1);
         if ow
           save(out_file, 'epochs');
         end
