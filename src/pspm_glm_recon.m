@@ -35,7 +35,7 @@ bfdur = size(bs, 1);
 
 % for ra_fc with bf.arg == 1 take regressor difference
 % -------------------------------------------------------------------------
-if strcmpi('ra_fc', glm.modelspec) && glm.bf.args == 1
+if strcmpi('ra_fc', glm.modelspec) && ~isempty(glm.bf.args) && glm.bf.args == 1
   regdiff = 1;
 else
   regdiff = 0;
