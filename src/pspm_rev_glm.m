@@ -6,7 +6,6 @@ function varargout = pspm_rev_glm(modelfile, plotNr)
 %   fig = pspm_rev_glm(modelfile, plotNr)
 % ● Arguments
 %   * modelfile : filename and path of modelfile
-%   *       glm : loaded model
 %   *    plotNr : defines which figure shall be plotted
 %                 (several plots can be defined by a vector)
 %                 1 - design matrix, SPM style
