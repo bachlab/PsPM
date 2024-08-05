@@ -110,6 +110,8 @@ try model.trlstop; catch, warning('Trial ends not defined.'); return; end
 try model.iti; catch, warning('ITIs not defined.'); return; end
 try model.norm; catch, model.norm = 0; end
 try model.constrained; catch, model.constrained = 0; end
+try model.constrained_upper; catch, model.constrained_upper = 0; end
+
 
 try model.aSCR; catch, model.aSCR = 0; end
 try model.eSCR; catch, model.eSCR = 0; end
@@ -385,6 +387,8 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
     u(5 + aSCRno + k, :)        = model.flexevents(k, 2);            % aSCR mean upper bound
     if model.constrained
       u(5 + 2 * aSCRno + k, :)    = fixedSD - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
+    elseif model.constrained_upper
+      u(5 + 2 * aSCRno + k, :)    = model.constrained_upper - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
     else
       u(5 + 2 * aSCRno + k, :)    = diff(model.flexevents(k, :))/2 - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
     end
@@ -599,9 +603,11 @@ if ~options.getrf
         aSCR_ln(1:aSCRno, trl) = foo(:, 1); % save first trial for transformation of parameter values into seconds
         % - get aSCR SD upper bound (zero for dummy events, fixed SD for constrained models)
         if model.constrained
-          u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(fixedSD, numel(foo), size(u, 2)) - settings.dcm{1}.sigma_offset;
+            u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(fixedSD, numel(foo), size(u, 2)) - settings.dcm{1}.sigma_offset;
+        elseif model.constrained_upper > 0
+            u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(model.constrained_upper, numel(foo), size(u, 2)) - settings.dcm{1}.sigma_offset;
         else
-          u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(foo(:)/2, 1, size(u, 2)) - settings.dcm{1}.sigma_offset;
+            u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(foo(:)/2, 1, size(u, 2)) - settings.dcm{1}.sigma_offset;
         end
         % tidy up
         clear aSCR_on foo aSCR_dummy
