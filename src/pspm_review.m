@@ -194,8 +194,7 @@ set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
     handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 1);
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 1);
 
   case 'dcm'
     sessionNr = checkSessionNr(handles);
@@ -228,8 +227,7 @@ set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
     handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 2);
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 2);
 
   case 'dcm'
     sessionNr = checkSessionNr(handles);
@@ -257,8 +255,7 @@ set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
     handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 3);
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 3);
 
   case 'dcm'
     sessionNr = checkSessionNr(handles);
@@ -280,8 +277,7 @@ set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
     handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 4);
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 4);
   case 'dcm'
     pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'names');
 end
@@ -298,8 +294,7 @@ set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
     handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 5);
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 5);
   case 'dcm'
     handles.modelData{handles.currentModel}.fig = ...
       pspm_rev_con(handles.modelData{handles.currentModel}.model);

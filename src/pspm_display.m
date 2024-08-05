@@ -489,8 +489,6 @@ if not(sts == 0)
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
 
-elseif numel(varargin)>1
-  warning('Too many input arguments. Inputs 2:end ignored. ');
 end
 
 % Update handles structure

@@ -132,7 +132,7 @@ end
 
 %% Sanity checks
 [sts_loading, indatas, infos, pos_of_channel] = pspm_load_channel(datafile, options.channel, 'scr'); % check and get datafile
-if sts_loading == -1
+if sts_loading < 1
     return;
 end
 indata = indatas.data;
