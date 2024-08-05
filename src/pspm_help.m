@@ -97,10 +97,17 @@ for i_D = 1:length(D)
 end
 
 function args = sort_description(A)
+% identify all line breaks
 linebreaks = strfind(A, newline);
+% find those line breaks that correspond to new paragraphs, and exclude
+% them
 linebreaks = setdiff(linebreaks, strfind(A,['.', newline]) + 1);
 linebreaks = setdiff(linebreaks, strfind(A,['. ', newline]) + 2);
-A(linebreaks) = '';
+% remove remaining line breaks and replace with space, remove multiple
+% spaces
+A(linebreaks) = ' ';
+A = remove_multiple_space(A);
+% split paragraphs into cells
 args = splitlines(A);
 
 function args = sort_args(A)
