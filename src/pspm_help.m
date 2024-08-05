@@ -122,8 +122,9 @@ checklist_valid = [strfind(B,[newline,char(9500)]),...
   strfind(B,[newline,'*']),...
   strfind(B,[newline,char(9484)])]  ;
 checklist = checklist(~ismember(checklist, checklist_valid));
-B(checklist) = '';
-B(strfind(B,char(9472)))='';
+B(checklist) = ' ';
+B(strfind(B,char(9472)))=' ';
+B = remove_multiple_space(B);
 levels = B([1,strfind(B,newline)+1]);
 level_ends = [strfind(B,newline),length(B)];
 level_starts = [1,level_ends(1:end-1)+1];

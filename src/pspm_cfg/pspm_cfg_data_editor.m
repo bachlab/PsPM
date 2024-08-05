@@ -38,4 +38,4 @@ data_editor.name = 'Data editor';
 data_editor.tag  = 'data_editor';
 data_editor.val  = {datafile, epochfile, outputfile};
 data_editor.prog = @pspm_cfg_run_data_editor;
-data_editor.help = {pspm_cfg_help_format('pspm_data_editor')};
+data_editor.help = pspm_cfg_help_format('pspm_data_editor');

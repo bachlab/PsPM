@@ -38,5 +38,5 @@ pp_emg.tag  = 'pp_emg_data';
 pp_emg.val  = {datafile, options};
 pp_emg.prog = @pspm_cfg_run_pp_emg_data;
 pp_emg.vout = @pspm_cfg_vout_outchannel;
-pp_emg.help = {pspm_cfg_help_format('pspm_emg_pp')};
+pp_emg.help = pspm_cfg_help_format('pspm_emg_pp');
 

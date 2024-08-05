@@ -13,24 +13,24 @@ function sts = pspm_export(modelfile, options)
 %   ├─────────.target:  [optional, string, default as 'screen']
 %   │                   'screen' (default), or a name of an output text file.
 %   ├──────.statstype:  [optional, string, accepts 'param'/'cond'/'recon']
-%   │                   'param':  export all parameter estimates (default)
-%   │                    'cond':  GLM - contrasts formulated in terms of
-%   │                             conditions, automatically detects number of
-%   │                             basis functions and uses only the first one
-%   │                             (i.e. without derivatives)
-%   │                             other models - contrasts based on unique trial
-%   │                             names.
-%   │                   'recon':  export all conditions in a GLM,
-%   │                             reconstructs estimated response from all basis
-%   │                             functions and export the peak of the estimated
-%   │                             response.
-%   ├──────────.delim:  [optional, default as tab('\t')]
+%   │                    By default, all parameter estimates are exported.
+%   │                    The following options are available: 
+%   │                    1. 'param': export all parameter estimates (default)
+%   │                    2. 'cond':  For GLMs: automatically detects number of
+%   │                             basis functions and exports only the first one
+%   │                             (e.g.  without derivatives). 
+%   │                             For non-linear models: average estimate, based 
+%   │                             on unique trial names.
+%   │                   3. 'recon':  For GLMs only: reconstructs estimated response 
+%   │                             from all basis functions and exports the 
+%   │                             peak amplitude of the estimated response.
+%   ├──────────.delim:  [optional, default is tab('\t')]
 %   │                   delimiter for output file.
 %   └.exclude_missing:  [optional, default as 0]
-%                       exclude parameters from conditions with too many NaN
+%                       Exclude parameters from conditions with too many NaN
 %                       values. This option can only be used for GLM files when
-%                       exclude_missing was set during model setup.
-%                       Otherwise this argument is ignored.
+%                       exclude_missing was set during model setup. Otherwise 
+%                       this argument is ignored.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)

@@ -1,14 +1,15 @@
 function varargout = pspm_ecg_editor(varargin)
 % ● Description
-%   pspm_ecg_edtior allows manual correction of ecg data and creates a hb
-%   output. Function can be called seperately.
+%   pspm_ecg_editor allows manual correction of ecg data and creates a hb
+%   output. This function can be automatically called during data 
+%   conversion or separately.
 % ● Format
 %   [sts, R] = pspm_ecg_editor(pt)
 %   [sts, R] = pspm_ecg_editor(fn, channel, options)
 % ● Arguments
 %   *       pt:  A struct() from pspm_convert_ecg2hb detection.
-%   *       fn:  A file to  data file containing the ecg channel to be edited
-%   *  channel:  Channel id of ecg channel in the data file
+%   *       fn:  A PsPM file containing the ecg channel to be edited
+%   *  channel:  Index of ecg channel in the data file
 %   ┌──options
 %   ├─.channel:  Channel id of the existing hb channel
 %   ├────.semi:  Defines whether to navigate between potentially wrong hb events
