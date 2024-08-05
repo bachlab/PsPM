@@ -1,4 +1,4 @@
-function varargout = pspm_find_channel(headercell, channeltype)
+function [sts, channel] = pspm_find_channel(headercell, channeltype)
 % ● Description
 %   pspm_find_channel searches a cell arrays of channel headers and
 %   finds the channel that matches the desired type.
@@ -26,13 +26,6 @@ if isempty(settings)
 end
 sts = -1;
 channel = [];
-switch nargout
-  case 1
-    varargout{1} = channel;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = channel;
-end
 %% 1 check input
 if nargin < 2
   warning('ID:invalid_input', '\Not enough input arguments.\n');
@@ -78,11 +71,4 @@ else
 end
 %% 4 Sort output
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = channel;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = channel;
-end
 return

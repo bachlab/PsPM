@@ -1,4 +1,4 @@
-function varargout = pspm_filtfilt(b,a,x)
+function [sts, y] = pspm_filtfilt(b,a,x)
 % ● Description
 %   pspm_filtfilt. Zero-phase forward and reverse digital filtering
 % ● Format
@@ -39,13 +39,6 @@ if isempty(settings)
 end
 sts = -1;
 y = [];
-switch nargout
-  case 1
-    varargout{1} = y;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = y;
-end
 %% Check input data
 if nargin < 3
   warning('ID:invalid_input','Not enough parameters were specified.'); return;
@@ -97,11 +90,4 @@ y([1:nfact len+nfact+(1:nfact)]) = [];
 if m == 1, y = y.'; end
 %% Sort outputs
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = y;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = y;
-end
 return

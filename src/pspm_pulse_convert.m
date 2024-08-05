@@ -1,4 +1,4 @@
-function varargout = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+function [sts, wavedata] = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 % ● Description
 %   pspm_pulse_convert converts pulsed data into a data waveform, assuming
 %   milliseconds as time unit and a resamplingrate in Hz given as input argument
@@ -16,6 +16,9 @@ function varargout = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 %   *      pulsedata : timestamps in ms
 %   * resamplingrate : for interpolation
 %   *   samplingrate : to be downsampled to
+% ● Outputs
+%   *            sts : status of function processing
+%   *       wavedata : the waveform data that is converted from pulsed data
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -28,13 +31,6 @@ if isempty(settings)
 end
 sts = -1;
 wavedata = [];
-switch nargout
-  case 1
-    varargout{1} = wavedata;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = wavedata;
-end
 
 % check input arguments
 if nargin<1
@@ -90,11 +86,4 @@ else
   end
 end
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = wavedata;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = wavedata;
-end
 return

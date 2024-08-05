@@ -1,4 +1,4 @@
-function varargout = pspm_prepdata(varargin)
+function [sts, data, newsr] = pspm_prepdata(varargin)
 % ● Description
 %   pspm_prepdata is a shared PsPM function for twofold butterworth filting and
 %   downsampling raw data `on the fly`. This data is usually stored in results
@@ -47,17 +47,6 @@ switch nargin
 end
 outdata = data;
 newsr = 0;
-switch nargout
-  case 1
-    varargout{1} = outdata;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = outdata;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = outdata;
-    varargout{3} = newsr;
-end
 
 %% Check input
 options = pspm_options(options, 'prepdata');
@@ -197,15 +186,4 @@ end
 %% Prepare the final data
 outdata = data;
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = outdata;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = outdata;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = outdata;
-    varargout{3} = newsr;
-end
 return

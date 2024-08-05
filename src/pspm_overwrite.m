@@ -1,4 +1,4 @@
-function varargout = pspm_overwrite(varargin)
+function [sts, overwrite_final] = pspm_overwrite(varargin)
 % ● Description
 %   pspm_overwrite generalises the overwriting operation
 %   pspm_overwrite considers the following situations
@@ -35,13 +35,6 @@ if isempty(settings)
 end
 sts = -1;
 overwrite_final = 0;
-switch nargout
-  case 1
-    varargout{1} = overwrite_final;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = overwrite_final;
-end
 %% 2 Check inputs
 switch numel(varargin)
   case 0
@@ -105,15 +98,5 @@ end
 if overwrite_final ~= 0 && overwrite_final ~= 1
   warning('ID:invalid_input', 'overwrite can be only 0 or 1');
   return
-end
-%% 5 Check outputs
-switch nargout
-  case 1
-    varargout{1} = overwrite_final;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = overwrite_final;
-  otherwise
-    varargout{1} = overwrite_final;
 end
 return

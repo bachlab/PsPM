@@ -222,7 +222,7 @@ end
 
 return
 
-function varargout  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
+function [sts, smooth_signal, model]  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
 global settings
 if isempty(settings)
   pspm_init;

@@ -1,15 +1,14 @@
-function varargout = pspm_data_editor(varargin)
+function [sts, out] = pspm_data_editor(varargin)
 % ● Description
 %   pspm_data_editor MATLAB code for pspm_data_editor.fig
 % ● Format
-%   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
 %   *      indata:  Can be multiple kinds of data types. In order to use
 %                   pspm_data_editor() to edit acquisition data, the actual
 %                   data vector has to be passed via the varargin
 %                   argmument. The data should be 1xn or nx1 double vector.
-%   ┌─────options 
+%   ┌─────options
 %   ├.output_file:  Use output_file to specify a file the changed data
 %   │               is saved to when clicking 'save' or 'apply'. Only
 %   │               works in 'file' mode.
@@ -46,7 +45,7 @@ if nargin && ischar(varargin{1}) && ...
 end
 
 if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+  [sts, out] = gui_mainfcn(gui_State, varargin{:});
 else
   gui_mainfcn(gui_State, varargin{:});
 end
@@ -357,7 +356,7 @@ if numel(handles.plots) >= chan_id
 end
 guidata(hObject, handles);
 
-function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
+function handles.output = pspm_data_editor_OutputFcn(hObject, ~, handles)
 % Comments
 %   It used to be function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
 %   Where the varargout seems not modified?
@@ -371,7 +370,6 @@ function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % UIWAIT makes pspm_data_editor wait for user response (see UIRESUME)
 % handles.lbEpochsvarargout{1} = handles.output;
-varargout{1} = handles.output;
 delete(hObject);
 
 function lbEpochs_Callback(hObject, ~, ~)
