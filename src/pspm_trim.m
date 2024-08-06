@@ -12,22 +12,32 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 % ● Format
 %   [sts, newdatafile, newepochfile] = pspm_trim (datafile, from, to, reference, options)
 % ● Arguments
-%   *        datafile:  [char] the name of the file to be trimmed, or a
+%   *        datafile:  [char] Name of the file to be trimmed, or a
 %                       struct accepted by pspm_load_data.
-%   *            from:  either numbers, or 'none', the start of trimming period.
-%   *              to:  a numeric value or 'none', the end of trimming period.
-%   *       reference:  string/vector
-%                       [string]
-%                       'marker' from and to are set in seconds with respect
-%                                to the first and last scanner/marker pulse
-%                       'file'   from and to are set in seconds with respect
-%                                to start of datafile
-%                       [vector] a 2-element vector:
-%                       from and to are set in seconds with respect to the two
-%                       markers defined here
-%                       [cell_array] a 2-element cell array containing
-%                       either the value (numeric or char) or name (char)
-%                       of the two markers defining from and to
+%   *            from:  [numeric or 'none'] Trim point in seconds after 
+%                       chosen reference (negative values for trimming
+%                       before chosen reference)
+%   *              to:  [numeric or 'none'] Trim point in seconds after 
+%                       chosen reference (negative values for trimming
+%                       before chosen reference)
+%   *       reference:  The reference for trimming can be set in 4 
+%                       different ways:
+%                       1. 'file':   from and to are set in seconds with 
+%                                    respect to start of datafile.
+%                       2. 'marker': from and to are defined in seconds 
+%                                    with respect to the first and last 
+%                                    marker.
+%                       3. A 2-element numerical vector: from and to are  
+%                                     defined in seconds with respect to 
+%                                     the two markers with numbers defined 
+%                                     here.
+%                       4. Marker names/values [2-element cell_array 
+%                          containing either two marker values (numeric or 
+%                          char) or two marker names (char)]: from and to   
+%                                     are defined in seconds with respect  
+%                                     to the two markers with names or 
+%                                     values defined here. These names or  
+%                                     values must be unique.
 %   ┌─────────options
 %   ├──────.overwrite:  [logical] (0 or 1)
 %   │                   Define whether to overwrite existing output files or not.
@@ -189,9 +199,9 @@ if getmarker == 1
             try_num_start = str2double(marker_sta_vals);
         end
         if ~isempty(try_num_start)
-            startmarker = find(ndata{1}.markerinfo.value == try_num_start,1);
+            startmarker = find(data_struct.markerinfo.value == try_num_start,1);
         elseif ischar(marker_sta_vals)
-            startmarker = find(strcmpi(ndata{1}.markerinfo.name,marker_sta_vals),1);
+            startmarker = find(strcmpi(data_struct.markerinfo.name,marker_sta_vals),1);
         else
             warning('ID:invalid_input', 'The value or name of the starting marker must be numeric or a string');
             return
@@ -202,17 +212,19 @@ if getmarker == 1
         else
             try_num_end = str2double(marker_end_vals);
         end
-        try_num_end = str2double(marker_end_vals);
         if ~isempty(try_num_end)
-            g_endmarker = find(ndata{1}.markerinfo.value == try_num_end,1);
+            g_endmarker = find(data_struct.markerinfo.value == try_num_end,1);
         elseif ischar(marker_end_vals)
-            g_endmarker = find(strcmpi(ndata{1}.markerinfo.name,marker_end_vals),1);
+            g_endmarker = find(strcmpi(data_struct.markerinfo.name,marker_end_vals),1);
         else
             warning('ID:invalid_input', 'The value or name of the ending marker must be numeric or a string');
             return
         end
         % check if the markers are valid
-        if startmarker < 1 || g_endmarker < startmarker
+        if numel(startmarker) ~= 1 || ...
+                numel(g_endmarker) ~= 1 || ...
+                startmarker < 1 || ...
+                g_endmarker < startmarker
             warning('ID:invalid_input', 'No valid reference markers.\n'); return
         end
     end
