@@ -18,7 +18,10 @@ if nargin < 2
     
     if isfield(settings.help, funcname)
         if isfield(settings.help.(funcname), 'Description')
-            helptext = [helptext(:); ''; settings.help.(funcname).Description];
+            A = settings.help.(funcname).Description;
+            A = strrep(A, newline, [newline, newline]);
+            A = splitlines(A);
+            helptext = [helptext(:); ''; A];
         end
         if isfield(settings.help.(funcname), 'References')
             helptext = [ helptext(:); ''; ...

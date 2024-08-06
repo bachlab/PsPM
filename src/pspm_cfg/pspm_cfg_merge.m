@@ -24,21 +24,18 @@ first_file.help     = {['Specify the first of the two files to be ', ...
 second_file         = datafile;
 second_file.name    = 'Second file';
 second_file.tag     = 'second_file';
-second_file.help    = {['Specify the second of the two files to be merged. ']};
+second_file.help    = {'Specify the second of the two files to be merged.'};
 
 %% Data files
 datafiles           = cfg_branch;
 datafiles.name      = 'Datafiles';
 datafiles.tag       = 'datafiles';
 datafiles.val       =  {first_file, second_file};
-datafiles.help      = {['Specify the PsPM datafiles to be merged.']};
+datafiles.help      = {'Specify the PsPM datafiles to be merged.'};
 
 %% Marker channel
 marker_chan.val     = {[0 0]};
-marker_chan.help    = {['Specify for both files a numerical ', ...
-    'channel index, which should be used as marker reference. A 1x2 vector is ', ...
-    'expected. If equal to 0, the first marker channel is used. ', ...
-    'Default: [0 0]']};
+marker_chan.help    = pspm_cfg_help_format('pspm_merge', 'options.marker_chan_num');
 
 %% Reference
 file            = cfg_const;
@@ -48,18 +45,17 @@ file.val        = {'file'};
 file.help       = {''};
 
 markers         = cfg_branch;
-markers.name    = 'Markers';
-markers.tag     = 'markers';
+markers.name    = 'Marker';
+markers.tag     = 'marker';
 markers.val     = {marker_chan};
 markers.help    = {''};
 
 reference           = cfg_choice;
 reference.name      = 'Reference';
 reference.tag       = 'reference';
-reference.values    = {markers, file};
+reference.values    = {marker, file};
 reference.val       = {file};
-reference.help      = {['Specify whether to align the files with respect ', ...
-    'to the first marker or with respect to the file start.']};
+reference.help      = pspm_cfg_help_format('pspm_merge', 'reference');
 
 
 
@@ -70,10 +66,6 @@ merge.tag  = 'merge';
 merge.val  = {datafiles, reference, overwrite};
 merge.prog = @pspm_cfg_run_merge;
 merge.vout = @pspm_cfg_vout_outfile;
-merge.help = {['Allows to merge (i.e. stack) two files that were acquired ', ...
-    'simultaneously but contain different channels. The files are ', ...
-    'aligned according to the first event of a given marker channel or ', ...
-    'to the start of the file. The output file name consists of an ''m'' ', ...
-    'prepended to the name of the first file. ']};
+merge.help = pspm_cfg_help_format('pspm_merge');
 
 
