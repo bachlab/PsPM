@@ -1,15 +1,18 @@
 function [sts, out] = pspm_extract_segments(method, data, varargin)
 % ● Description
-%   pspm_extract_segments extracts segments of a fixed
-%   length after defined onsets and creates summary statistics
-%   (mean, SD, SEM, % NaN) for these segments. 
+%   pspm_extract_segments extracts data segments of fixed length after 
+%   defined onsets, groups them by condition, and computes summary 
+%   statistics (mean, SD, SEM, NaN) for each condition. This is a 
+%   first-level (subject-level) function. 
 %   The function supports automated extraction from a model file, or
-%   from a PsPM data file with manually defining timing definition.  
-%   When called directly, the function returns a cell array of struct 
-%   named ''segments'' with c elements, where c is the number of conditions 
+%   manually defining timing definitions and extracting from a PsPM data 
+%   file. For non-linear models, each trial will be treated as a separate 
+%   condition unless trial names were specified in the model setup.
+%   The function returns a cell array of struct named 'segments'
+%   with c elements, where c is the number of conditions 
 %   specified. Each element contains the following fields: data, mean, std, 
 %   sem, trial_nan_percent, and total_nan_percent. 
-%   The output can also be written to file. 
+%   The output can also be written to a matlab file. 
 % ● Format
 %   [sts, segments] = pspm_extract_segments('file', data_fn, channel, timing, options)
 %   [sts, segments] = pspm_extract_segments('data', data, sr, timing, options)
@@ -29,12 +32,12 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   ┌────────────options:
 %   ├─────────.timeunits: 'seconds' (default), 'samples' or 'markers'. In 'model'
 %   │                     mode the value will be ignored and taken from
-%   │                     the model file. In the case
-%   │                     of 'data', the timeunits must be samples or seconds.
-%   ├────────────.length: Length of the segments in the 'timeunits'.
+%   │                     the model file. In case a data vector is passed
+%   │                     as input, timeunits must be 'samples' or 'seconds'.
+%   ├────────────.length: Length of the segments in the specified 'timeunits'.
 %   │                     The default value is 10.
-%   ├──────────────.plot: If 1 mean values (solid) and standard error of
-%   │                     the mean (dashed) will be ploted. Default is 0.
+%   ├──────────────.plot: [0/1] Plot mean values (solid) and standard error of
+%   │                     the mean (dashed) will be ploted. Default is no plot.
 %   ├────────.outputfile: Define filename to store segments. If is equal
 %   │                     to '', no file will be written. Default is 0.
 %   ├─────────.overwrite: Define if already existing files should be
@@ -49,12 +52,10 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   │                     'model', then this option overides the missing
 %   │                     values given in the model
 %   │                     Default: no missing values
-%   ├────────.nan_output: This option defines whether the user wants to output
-%   │                     the NaN ratios of the trials for each condition.
-%   │                     If so,  we values can be printed on the screen (on
-%   │                     MATLAB command window) or written to a created file.
-%   │                     The field can be set to 'screen', 'File Output'or
-%   │                     'none'. 'none' is the default value.
+%   ├────────.nan_output: ['screen', filename, or 'none']. Output
+%   │                     NaN ratios of the trials for each condition.
+%   │                     Values can be printed on the screen or written to 
+%   │                     a matlab file. Default is no NaN output.
 %   └──────────────.norm: If 1, z-scores the entire data time series
 %                         (default: 0).
 % ● History
