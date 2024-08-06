@@ -26,7 +26,7 @@ outdir.name    = sprintf('%s directory', outtype);
 outdir.tag     = 'dir';
 outdir.filter  = 'dir';
 outdir.num     = [1 1];
-outdir.help    = {sprintf('Specify directory where the mat file with the resulting %s will be written.', lower(outtype))};
+outdir.help    = {sprintf('Specify directory where the resulting %s file will be written.', lower(outtype))};
 
 % overwrite settings
 overwrite = pspm_cfg_selector_overwrite;
@@ -36,5 +36,5 @@ output       = cfg_branch;
 output.name  = sprintf('%s file', outtype);
 output.tag   = 'output';
 output.val   = {outfile, outdir, overwrite};
-output.help  = {sprintf('Specify location for the resulting %s.', lower(outtype))};
+output.help  = {sprintf('Specify location for the resulting %s file.', lower(outtype))};
 
