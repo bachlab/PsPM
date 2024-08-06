@@ -44,11 +44,11 @@ file.tag        = 'file';
 file.val        = {'file'};
 file.help       = {''};
 
-markers         = cfg_branch;
-markers.name    = 'Marker';
-markers.tag     = 'marker';
-markers.val     = {marker_chan};
-markers.help    = {''};
+marker         = cfg_branch;
+marker.name    = 'Marker';
+marker.tag     = 'marker';
+marker.val     = {marker_chan};
+marker.help    = {''};
 
 reference           = cfg_choice;
 reference.name      = 'Reference';
