@@ -17,17 +17,16 @@ box_degree.name         = 'Visual angle';
 box_degree.tag          = 'box_degree';
 box_degree.strtype      = 'i';
 box_degree.num          = [1 1];
-box_degree.help         = {['Range of valid fixations (around a ', ...
-                            'fixation point). The value has to be ', ...
-                            'in degree visual angle.']};
+box_degree.help         = pspm_cfg_help_format('pspm_find_valid_fixations', 'circle_degree');
+
 %% Distance
 distance                = cfg_entry;
 distance.name           = 'Distance';
 distance.tag            = 'distance';
 distance.strtype        = 'r';
 distance.num            = [1 1];
-distance.help           = {['Distance between eyes and screen in ', ...
-                            'length units.']};
+distance.help           = pspm_cfg_help_format('pspm_find_valid_fixations', 'distance');
+
 %% unit
 unit                    = cfg_menu;
 unit.name               = 'Unit';
@@ -35,7 +34,7 @@ unit.tag                = 'unit';
 unit.values             = {'mm', 'cm', 'm', 'inches'};
 unit.labels             = {'mm', 'cm', 'm', 'inches'};
 unit.val                = {'mm'};
-unit.help               = {'Unit in which the distance is given'};
+unit.help               = pspm_cfg_help_format('pspm_find_valid_fixations', 'unit');
 %% Resolution
 Resol                   = cfg_entry;
 Resol.name              = 'Resolution';
@@ -43,20 +42,13 @@ Resol.tag               = 'resolution';
 Resol.strtype           = 'i';
 Resol.num               = [1 2];
 Resol.val               = {[1280 1024]};
-Resol.help              = {['Resolution to which the fixation ', ...
-                            'point refers (maximum value of the x- ', ...
-                            'and y-coordinates). This can ', ...
-                            'be the resolution set in cogent / ', ...
-                            'psychtoolbox (e.g. [1280 1024]) ', ...
-                            'or the width and height of the screen ', ...
-                            'in length values (e.g. [50 40]).']};
+Resol.help              = pspm_cfg_help_format('pspm_find_valid_fixations', 'options.resolution');
 %% Fixation point default
 FixPtDefault            = cfg_const;
 FixPtDefault.name       = 'Default';
 FixPtDefault.tag        = 'default';
 FixPtDefault.val        = {1};
-FixPtDefault.help       = {['If default is set, the middle of the ', ...
-                            'screen will be defined as fixation point.']};
+FixPtDefault.help       = {['Middle of the screen.']};
 
 %% Fixation point file
 FixPtFile               = cfg_files;
@@ -74,69 +66,42 @@ FixPtVal.name           = 'Point';
 FixPtVal.tag            = 'fixpoint';
 FixPtVal.strtype        = 'r';
 FixPtVal.num            = [1 2];
-FixPtVal.help           = {['If the fixation point does not change ', ...
-                            'during the acquisition, specify x- and ', ...
-                            'y-coordinates of the constant fixation ', ...
-                            'point.']};
+FixPtVal.help           = {['x/y coordinates of constant fixation point.']};
+
 %% Fixation point
 FixPt                   = cfg_choice;
 FixPt.name              = 'Fixation point';
 FixPt.tag               = 'fixation_point';
 FixPt.val               = {FixPtDefault};
 FixPt.values            = {FixPtDefault, FixPtFile, FixPtVal};
-FixPt.help              = {['X- and y-coordinates for the point',...
-                            'of fixation with respect to the given ',...
-                            'resolution.']};
+FixPt.help              = pspm_cfg_help_format('pspm_find_valid_fixations', 'options.fixation_point');
 %% Validation settings
 ValidSet                = cfg_branch;
 ValidSet.name           = 'Fixation point';
 ValidSet.tag            = 'validation_settings';
 ValidSet.val            = {box_degree, distance, unit, Resol, FixPt};
-ValidSet.help           = {['Settings to validate fixations within a ', ...
-                            'given range on the screen (in degree ',...
-                            'visual angle).']};
+ValidSet.help           = {};
+
 %% Validate on bitmap
 bitmap                  = cfg_files;
 bitmap.name             = 'Bitmap file';
 bitmap.tag              = 'bitmap_file';
 bitmap.num              = [1 1];
-bitmap.help             = {['.mat file containing a variable bitmap ',...
-                            'with an n x m matrix. The matrix bitmap ',...
-                            'represents the display (n = height and ',...
-                            'm = width) and holds for each position. ',...
-                            'A 1, where a gaze point is valid, and a ',...
-                            '0 otherwise.',...
-                            'Gaze data at invalid positions (indicated ',...
-                            'by bitmap or outside the display) are ',...
-                            'set to NaN.']};
+bitmap.help             = pspm_cfg_help_format('pspm_find_valid_fixations', 'bitmap');
 %% Validation method
 val_method              = cfg_choice;
 val_method.name         = 'Validation method';
 val_method.tag          = 'val_method';
 val_method.values       = {ValidSet,bitmap};
-val_method.help         = {['You can either validate the data by ',...
-                            'indicating a range on the screen (in ',...
-                            'degree visual angle) and fixation point(s) ',...
-                            'or by passing a bitmap representing the ',...
-                            'screen and holding a 1 for all the ',...
-                            'fixations that are valid.']};
+val_method.help         = {};
 %% Missing
 missing                 = cfg_menu;
-missing.name            = 'Enable missing validation';
+missing.name            = 'Add channel with information invalid data points';
 missing.tag             = 'missing';
 missing.labels          = {'Yes', 'No'};
 missing.values          = {1, 0};
 missing.val             = {0};
-missing.help            = {['If enabled an additional channel ', ...
-                            'containing additional information about ', ...
-                            'valid data points will be written. ', ...
-                            'Data points equal to 1 describe epochs ', ...
-                            'which have been discriminated ', ...
-                            'as invalid during validation (=missing). ', ...
-                            'Data points equal to 0 describe epochs of ', ...
-                            'valid data. This function may be enabled ', ...
-                            'in combination with enabled interpolation.']};
-
+missing.help            = pspm_cfg_help_format('pspm_find_valid_fixations', 'options.add_invalid');
 %% plot_gaze_coords
 plot_gaze_coords        = cfg_menu;
 plot_gaze_coords.name   = 'Plot gaze coords and fixation point(s)';
@@ -144,9 +109,7 @@ plot_gaze_coords.tag    = 'plot_gaze_coords';
 plot_gaze_coords.val    = {false};
 plot_gaze_coords.labels = {'No', 'Yes'};
 plot_gaze_coords.values = {false, true};
-plot_gaze_coords.help   = {['Define whether to plot the gaze coordinates ',...
-                            'for visual inspection of the validation ',...
-                            'process. Default is false.']};
+plot_gaze_coords.help   = pspm_cfg_help_format('pspm_find_valid_fixations', 'options.plot_gaze_coords');
 %% Output settings
 output                  = cfg_branch;
 output.name             = 'Output settings';

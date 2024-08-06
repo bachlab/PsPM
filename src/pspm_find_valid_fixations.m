@@ -11,9 +11,9 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %   After finding the invalid fixations from the gaze channels, the 
 %   corresponding data values in the pupil channel are set to NaN. In this 
 %   usage of the function, a circle around fixation point defines the valid 
-%   fixations. (Note: an alternative or complement to this strategy is to 
+%   fixations. Note: an alternative or complement to this strategy is to 
 %   explicitly correct the pupil foreshortening error, see 
-%   pspm_pupil_correct and pspm_pupil_correct_eyelink.)
+%   pspm_pupil_correct and pspm_pupil_correct_eyelink.
 %   An alternative usage of this function is to find fixations on a
 %   particular screen area, e.g. to define overt attention. In this usage,
 %   a bitmap of valid fixation points can be provided, as an alternative to
@@ -38,10 +38,11 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %                      corresponding data is set to NaN. IMPORTANT: the bitmap has to
 %                      be defined in terms of the eyetracker coordinate system, i.e.
 %                      bitmap(1,1) must correpond to the origin of the eyetracker
-%                      coordinate system.
-%   *  circle_degree : size of boundary circle given in degree visual angles.
-%   *       distance : distance between eye and screen in length units.
-%   *           unit : unit in which distance is given.
+%                      coordinate system, and must be of the same size as
+%                      the display.
+%   *  circle_degree : Size of boundary circle given in degree visual angles.
+%   *       distance : Distance between eye and screen in length units.
+%   *           unit : Unit in which distance is given.
 %   ┌────────options
 %   ├.fixation_point : A nx2 vector containing x and y of the fixation point (with respect
 %   │                  to the given resolution, and in the eyetracker coordinate system).
@@ -59,12 +60,10 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %   │                 inspection of the validation process. Default is false.
 %   ├.channel_action: Define whether to add or replace the data. Default is
 %   │                 'add'. Possible values are 'add' or 'replace'
-%   ├───.add_invalid: If missing is enabled (=1), an extra channel will be
-%   │                 written containing information about the validated data.
-%   │                 Data points equal to 1 describe epochs which have been
-%   │                 discriminated as invalid during validation. Data points
-%   │                 equal to 0 describe epochs of valid data (= no blink &
-%   │                 valid fixation). Default is disabled (=0)
+%   ├───.add_invalid: [0/1] If this option is enabled, an extra channel will be
+%   │                 written containing information about the valid samples.
+%   │                 Data points equal to 1 correspond to invalid fixation. 
+%   │                 Default is not to add this channel.
 %   └───────.channel: Choose channels in which the data should be set to NaN
 %                     during invalid fixations. This can be a channel
 %                     number, any channel type including 'pupil' (which

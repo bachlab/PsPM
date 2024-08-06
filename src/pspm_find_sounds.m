@@ -31,21 +31,22 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 %   │                  replaced (last found marker channel will be overwritten) or
 %   │                  whether the new channel should be added at the end of the data
 %   │                  file. Default is 'add'.
-%   ├.channel_output : ['all'/'corrected'] (default: 'all') defines whether all sound
-%   │                  markers or only sound markers which have been assigned to a marker
-%   │                  from a marker channel should be added as channel to the original
-%   │                  file. 'corrected' requires enabled diagnostics, but does not force
-%   │                  it (the option will otherwise not work).
-%   ├───.diagnostics : [TRUE/false] computes the delay between trigger and displays the
-%   │                  mean delay and standard deviation and removes triggers which could
-%   │                  not be assigned to a trigger from existing trigger channel.
+%   ├.channel_output : ['all'/'corrected'; 'corrected' requires enabled 
+%   │                  diagnostics, but does not force it (the option will 
+%   │                  otherwise not work).] Defines whether all sound
+%   │                  events or only sound events which were related to an 
+%   │                  existing marker should be written into the output 
+%   │                  marker channel. Default is all sound events.
+%   ├───.diagnostics : [TRUE/false] Computes the delay between marker and detected sound, displays the
+%   │                  mean delay and standard deviation, and removes sounds which could
+%   │                  not be assigned to an existing marker.
 %   ├──────.maxdelay : [number] Upper limit (in seconds) of the window in which
-%   │                  pspm_find_sounds will accept sounds to belong to a marker.
-%   │                  Default as 3s.
+%   │                  pspm_find_sounds will accept sounds as relating to a marker.
+%   │                  Default as 3 s.
 %   ├──────.mindelay : [number] Lower limit (in seconds) of the window in which
-%   │                  pspm_find_sounds will accept sounds to belong to a marker.
-%   │                  Default is 0s.
-%   ├──────────.plot : [true/FALSE] displays a histogramm of the delays found and a plot
+%   │                  pspm_find_sounds will accept sounds as relating to a marker.
+%   │                  Default is 0 s.
+%   ├──────────.plot : [true/FALSE] Display a histogramm of the delays found and a plot
 %   │                  with the detected sound, the trigger and the onset of the sound
 %   │                  events. These are color coded for delay, from green (smallest
 %   │                  delay) to red (longest). Forces the 'diagnostics' option to true.
@@ -59,15 +60,15 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 %   │                  Resampling will restore more or less the original signal and lead
 %   │                  to more accurate timings.
 %   ├───────────.roi : [vector of 2 floats] Region of interest for discovering sounds.
-%   │                  Especially usefull if pairing events with triggers. Only sounds
+%   │                  Especially useful if pairing events with markers. Only sounds
 %   │                  included inbetween the 2 timestamps will be considered.
 %   ├─────.threshold : [0...1] percent of the max of the power in the signal that will be
-%   │                  accepted as a sound event. Default as 0.1.
+%   │                  accepted as a sound event. Default is 0.1.
 %   ├.marker_chan_num: [integer] number of a channel holding markers. By default first
 %   │                  'marker' channel.
 %   └.expectedSoundCount : [integer] Checks for correct number of detected sounds. If too
-%                      few are found, lowers threshhold until at least specified count is
-%                      reached. Thresh is lowered by .01 until 0.05 is reached for a max
+%                      few are found, lowers threshold until at least specified count is
+%                      reached. Threshold is lowered by .01 until 0.05 is reached for a max
 %                      of 95 iterations. This is a EXPERIMENTAL variable, use with caution!
 % ● Output
 %   *  channel_index : index of channel containing the processed data
