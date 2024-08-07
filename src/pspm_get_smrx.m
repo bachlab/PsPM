@@ -100,7 +100,7 @@ for iImport = 1:numel(import)
     if import{iImport}.channel > 0
         channel = chanindx(import{iImport}.channel);
     else
-        [sts, channel] = pspm_find_channel({fileinfo.chaninfo.kind},...
+        channel = pspm_find_channel({fileinfo.chaninfo.kind},...
             import{iImport}.type);
         if sts < 1, return; end
     end

@@ -403,11 +403,4 @@ end
 %% User output
 fprintf('done. \n');
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = tam;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = tam;
-end
 return

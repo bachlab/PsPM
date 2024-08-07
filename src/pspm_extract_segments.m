@@ -75,7 +75,7 @@ if nargin < 2 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'})
         (~strcmpi(method, 'model') && nargin < 4)
     warning('ID:invalid_input', 'Don''t know what to do'); return
 elseif strcmpi(method, 'model')
-     data = pspm_load1(data, 'all');
+     [~, data, ~] = pspm_load1(data, 'all');
     if nargin > 2
         options = varargin{1};
     end

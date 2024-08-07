@@ -1,4 +1,4 @@
-function varargout = pspm_jobman(varargin)
+function job_id = pspm_jobman(varargin)
 % ● Description
 %   Main interface for PsPM Batch System
 %   Initialise jobs configuration and set MATLAB path accordingly.
@@ -53,7 +53,7 @@ isInitCfg = true;
 
 if ~nargin
   h = cfg_ui;
-  if nargout > 0, varargout = {h}; end
+  if nargout > 0, job_id = {h}; end
   return;
 end
 
@@ -113,19 +113,19 @@ switch cmd
     end
     cfg_ui('local_showjob', findobj(0,'tag','cfg_ui'), cjob);
     if nargout > 0
-      varargout{1} = cjob;
+      job_id = cjob;
     end
 
   case {'run'}
     cjob = cfg_util('initjob', mljob);
     cfg_util('run', cjob);
     if nargout > 0
-      varargout{1} = cfg_util('getalloutputs', cjob);
+      job_id = cfg_util('getalloutputs', cjob);
     end
     cfg_util('deljob', cjob);
 
   otherwise
-    error([varargin{1} ': unknown option']);
+    error([job_id ': unknown option']);
 end
 sts = 1;
 return
