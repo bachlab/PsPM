@@ -1,4 +1,4 @@
-function varargout = pspm_ecg_editor(varargin)
+function [sts, R] = pspm_ecg_editor(varargin)
 % ● Description
 %   pspm_ecg_editor allows manual correction of ecg data and creates a hb
 %   output. This function can be automatically called during data 
@@ -51,7 +51,7 @@ if nargin && ischar(varargin{1}) && ...
 end
 
 if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+  [sts, R] = gui_mainfcn(gui_State, varargin{:});
 else
   gui_mainfcn(gui_State, varargin{:});
 end
