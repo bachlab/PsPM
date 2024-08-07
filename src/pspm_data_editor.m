@@ -356,10 +356,7 @@ if numel(handles.plots) >= chan_id
 end
 guidata(hObject, handles);
 
-function handles.output = pspm_data_editor_OutputFcn(hObject, ~, handles)
-% Comments
-%   It used to be function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
-%   Where the varargout seems not modified?
+function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
 % Feature
 %   Outputs from this function are returned to the command line.
 % Varargout
