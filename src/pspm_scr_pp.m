@@ -33,9 +33,10 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   ├──────.max:  [Optional] Maximum value in microsiemens (default: 60).
 %   ├────.slope:  [Optional] Maximum slope in microsiemens per sec (default: 10).
 %   ├.missing_epochs_filename:
-%   │             [Optional] This will create a .mat file saving the epochs.
-%   │             If saving to the missing epochs file, data in the 
-%   │             original datafile will remain unchanged. 
+%   │             [Optional] If a missing epochs file name is specified, 
+%   │             then the missing epochs will be saved to this file. In 
+%   │             this case, data in the original datafile will remain 
+%   │             unchanged; otherwise a channel will be written to the same file.
 %   ├.deflection_threshold:
 %   │             [Optional] Define an threshold in original data units for a slope to pass
 %   │             to be considered in the filter. This is useful, for example,

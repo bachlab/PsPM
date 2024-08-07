@@ -115,7 +115,7 @@ pp_scr.vout         = @pspm_cfg_vout_pp_scr;
 pp_scr.help         = pspm_cfg_help_format('pspm_scr_pp');
 end
 
-function pspm_cfg_vout_pp_scr(job)
+function vout = pspm_cfg_vout_pp_scr(job)
 if isfield(job.outputtype, 'channel_action')
     vout = pspm_cfg_vout_outchannel(job);
 else
