@@ -86,8 +86,11 @@ for k = 1:numel(data)
                                 numel(data{k}.markerinfo.value) ~= numel(data{k}.data) || ...
                                 ~iscell(data{k}.markerinfo.name) || ...
                                 ~isvector(data{k}.markerinfo.value)
-                            warning('ID:invalid_data_structure', 'Invalid markerinfo structure.')
-                            return
+                            % invalid markerinfo structure is removed to
+                            % ensure backwards compatibility (introduced in
+                            % v7.0)
+                            warning('ID:invalid_data_structure', 'Invalid markerinfo structure removed. This will become an error in the future.')
+                            data{k} = rmfield(data{k}, 'markerinfo');
                         end
                     end
                 else
