@@ -47,7 +47,7 @@ end
 if n>1 && m>1
   y = zeros(size(x));
   for i=1:n
-    y(:,i) = pspm_filtfilt(b,a,x(:,i));
+    [~, y(:,i)] = pspm_filtfilt(b,a,x(:,i));
   end
   return
 end
