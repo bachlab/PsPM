@@ -13,9 +13,6 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'RPR';
 vars.modspec = 'rp_e';
-vars.glmref = {['Bach, Gerster, Tzovara, & Castegnetti (2016) ', ...
-    'Psychophysiology (Development of the GLM evoked RPR)']};
-vars.glmhelp = '';
 
 % load default settings
 glm_rp_e = pspm_cfg_glm(vars);

@@ -13,10 +13,6 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'preprocessed EMG';
 vars.modspec = 'sebr';
-vars.glmref = { ...
-        ['Khemka, Tzovara, Gerster, Quednow & Bach (2016) Psychophysiology'] ...
-    };
-vars.glmhelp = '';
 
 % load default settings
 glm_seb = pspm_cfg_glm(vars);

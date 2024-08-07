@@ -9,8 +9,6 @@ function [glm] = pspm_cfg_glm(vars)
 % vars is a struct with char fields:
 %   - modality
 %   - modspec
-%   - glmref
-%   - glmhelp
 %__________________________________________________________________________
 % PsPM 3.0
 % (C) 2015 Tobias Moser (University of Zurich)
@@ -33,21 +31,20 @@ excl_segment_length.name    = 'Segment length';
 excl_segment_length.tag     = 'segment_length';
 excl_segment_length.strtype = 'i';
 excl_segment_length.num     = [1 1];
-excl_segment_length.help    = {['Length of segments after each event onset over',...
-                                ' which the NaN-ratio is computed.']};
+excl_segment_length.help    = {};
 
 excl_cutoff         = cfg_entry;
 excl_cutoff.name    = 'Cutoff';
 excl_cutoff.tag     = 'cutoff';
 excl_cutoff.strtype = 'r';
 excl_cutoff.num     = [1 1];
-excl_cutoff.help    = {'Maximum NaN ratio for a condition to be accepted for further analysis.'};
+excl_cutoff.help    = {};
 
 exclude_missing_yes      = cfg_branch;
 exclude_missing_yes.name = 'Settings for stats exclude';
 exclude_missing_yes.tag  = 'exclude_missing_yes';
 exclude_missing_yes.val  = {excl_segment_length,excl_cutoff};
-exclude_missing_yes.help = {'Need to define the segment length and a cutoff value to do the statistics.'};
+exclude_missing_yes.help = {};
 
 %settings if Create Stats Exclude = no
 excl_no                  = cfg_const;
@@ -62,11 +59,8 @@ exclude_missing.name     = 'Create information on missing data values';
 exclude_missing.tag      = 'exclude_missing';
 exclude_missing.val      = {excl_no};
 exclude_missing.values   = {excl_no, exclude_missing_yes};
-exclude_missing.help   = {'Option to extract information over missing values in each',...
-                          ' condition of the GLM. This option extractes the ratio of NaN-values',...
-                          ' over all trials for each condition, and whether this ratio exceeds',...
-                          ' a cutoff value. The information is stored in the GLM structure and',...
-                          ' will be used in future releases for excluding vales during extraction and first-level contrasts'};
+exclude_missing.help     = pspm_cfg_help_format('pspm_glm', 'options.exclude_missing');
+
 
 
 %% Modality dependent items
@@ -123,10 +117,7 @@ time_window.name     = 'Time window';
 time_window.tag      = 'time_window';
 time_window.strtype  = 'r';
 time_window.num      = [1 2];
-time_window.help     = {['A 2-element vector in seconds, specifies over which time window ', ...
-    'latencies should be evaluated. Positive values mean that the ', ...
-    'response function is shifted to later time points, negative values ', ...
-    'that it is shifted to earlier time points.']};
+time_window.help     = pspm_cfg_help_format('pspm_glm', 'model.window');
 
 fixed_latency   = cfg_const;
 fixed_latency.name = 'Fixed latency';
@@ -147,11 +138,7 @@ latency.val     = {fixed_latency};
 latency.values  = {fixed_latency, free_latency};
 % is hidden per default
 latency.hidden  = true;
-latency.help    = {['Latency is either ''fixed'' or ''free''. If latency is ''free''', ...
-    ', the model estimates the best latency within the given time window ', ...
-    'for each regressor (using a dictionary matching algorithm) and ', ...
-    'then inverts the GLM with these latencies. See Khemka et al. 2016 ', ...
-    'in the context of SEBR.']};
+latency.help    = pspm_cfg_help_format('pspm_glm', 'model.latency');
 
 %% Executable Branch
 glm       = cfg_exbranch;
@@ -162,6 +149,5 @@ glm.val   = {output, chan, timeunits, session_rep, latency, ...
 
 %glm_scr.prog  = ;
 glm.vout  = @pspm_cfg_vout_modelfile;
-glm.help  = ...
-    [pspm_cfg_help_format('pspm_glm'); vars.glmhelp(:)];
+glm.help  = pspm_cfg_help_format('pspm_glm');
 

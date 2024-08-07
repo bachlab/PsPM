@@ -10,10 +10,6 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'HPR';
 vars.modspec = 'hp_e';
-vars.glmref = { ...
-        'Paulus, Castegnetti & Bach (2016) Psychophysiology (Development of the GLM for evoked HPR)' ...
-    };
-vars.glmhelp = '';
 
 % load default settings
 glm_hp_e = pspm_cfg_glm(vars);
