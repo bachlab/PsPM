@@ -1,7 +1,7 @@
 function [sts, outchannel] = pspm_emg_pp(fn, options)
 % ● Description
 %   pspm_emg_pp pre-processes startle eyeblink EMG data in 3 steps, which
-%   were optimised in reference [1]:
+%   were optimised in reference [1].
 %   (1)  Initial filtering:
 %       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies. 
 %   (2)  Removing mains noise:
@@ -14,15 +14,15 @@ function [sts, outchannel] = pspm_emg_pp(fn, options)
 % ● Format
 %   [sts, channel_index]  = pspm_emg_pp(fn, options)
 % ● Arguments
-%                fn:  [string]
+% *              fn:  [string]
 %                     Path to the PsPM file which contains the EMG data.
-%           options:
-%       .mains_freq:  [integer] Frequency of mains noise to remove
-%                     with notch filter (default: 50 Hz).
-%          .channel:  [numeric/string] Channel to be preprocessed.
-%                     Can be a channel ID or a channel name.
-%                     Default is 'emg' (i.e. last EMG channel)
-%   .channel_action:  ['add'/'replace'] Defines whether the new channel should
+%   ┌─────── options:
+%   ├────.mains_freq: [integer] Frequency of mains noise to remove
+%   │                 with notch filter (default: 50 Hz).
+%   ├───────.channel: [numeric/string] Channel to be preprocessed.
+%   │                 Can be a channel ID or a channel name.
+%   │                 Default is 'emg' (i.e. last EMG channel)
+%   └.channel_action: ['add'/'replace'] Defines whether the new channel should
 %                     be added or the previous outputs of this function should
 %                     be replaced. (Default: 'replace')
 % ● Output

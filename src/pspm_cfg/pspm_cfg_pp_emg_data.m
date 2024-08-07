@@ -4,8 +4,6 @@ function [pp_emg] = pspm_cfg_pp_emg_data
 % * History
 %   Updated in 2024 by Teddy
 
-%% Initialise
-global settings
 
 %% Standard items
 datafile         = pspm_cfg_selector_datafile;
@@ -21,15 +19,14 @@ mains.tag               = 'mains_freq';
 mains.strtype           = 'r';
 mains.num               = [1 1];
 mains.val               = {50};
-mains.help              = {['The frequency of the alternating current (AC)',...
-    ' which will be filtered out using bandstop filter.']};
+mains.help              = pspm_cfg_help_format('pspm_emg_pp', 'options.mains_freq');
 
 % Options
 options             = cfg_branch;
 options.name        = 'Options';
 options.tag         = 'options';
 options.val         = {chan, mains, chan_action};
-options.help        = {['']};
+options.help        = {};
 
 % Executable Branch
 pp_emg = cfg_exbranch;

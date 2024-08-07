@@ -27,7 +27,7 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 %   │                     respectively ''both'', ''ascending'', ''ascending'';
 %   │                     If the numbers of rising and falling edges differ, PsPM will
 %   │                     throw an error.
-%   ├─────────.transfer : [optional, string] name of a .mat file containing values for
+%   ├─────────.transfer : [optional, string/struct] name of a .mat file containing values for
 %   │                     the transfer function, OR a struct array containing the values
 %   │                     OR 'none', when no conversion is required (c and optional
 %   │                     Rs and offset; See pspm_transfer_function for more information).
