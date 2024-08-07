@@ -3,38 +3,35 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 %   pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE)
 %   correction specifically for data recorded and imported with an SR Research
 %   Eyelink eyetracker, following the steps described in reference [1]. 
-%   For details of the exact scaling, see 
-%   <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>.
+%   For details of the exact scaling, see pspm_pupil_correct.
 %   In order to perform PFE, we need both pupil and gaze data. If the gaze data
 %   in the given file is in pixels, we need information about the screen
 %   dimensions and resolution to calculate the pixel to milimeter ratio. On the
 %   other hand, if the gaze data is in mm, cm, inches, etc., there is no need
 %   to enter any screen size related information. If the gaze data is in pixels
 %   and screen information is not given, the function emits a warning and exits
-%   early. Once the pupil data is preprocessed, according to the option
-%   'channel_action', it will either replace an existing preprocessed pupil
-%   channel or add it as new channel to the provided file.
+%   early. 
 % ● Format
 %   [sts, channel_index] = pspm_pupil_correct_eyelink(fn, options)
 % ● Arguments
 %   *          fn : Path to a PsPM imported Eyelink data.
 %   ┌─────options
 %   ├────────mode : Conversion mode. Must be one of 'auto' or 'manual'. If 'auto', then
-%   │               optimized conversion parameters in Table 3 of [1] will be used. In
+%   │               optimized conversion parameters in Table 3 of the reference will be used. In
 %   │               'auto' mode, options struct must contain C_z parameter described
 %   │               below. Further, C_z must be one of 495, 525 or 625. The other
 %   │               parameters will be set according to which of these three C_z is equal to.
 %   │               If 'manual', then all of C_x, C_y, C_z, S_x, S_y, S_z fields must be
 %   │               provided according to your recording setup. Note that in order to
 %   │               use 'auto' mode, your camera-screen-eye setup must match exactly one
-%   │               of the three sample setups given in [1].
+%   │               of the three sample setups given in the reference.
 %   ├─────────C_z : See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├screen_size_px:[optional] Screen size (width x height). This field is required only
 %   │               if the gaze data in the given PsPM file is in pixels. (Unit: pixel)
 %   ├screen_size_mm:[optional] Screen size (width x height). This field is required only
 %   │               if the gaze data in the given PsPM file is in pixels. (Unit: mm)
-%   │               See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a>
-%   │               if you need inch to mm conversion.
+%   │               [See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a>
+%   │               if you need inch to mm conversion.]
 %   ├─────────C_x : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────C_y : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────S_x : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
@@ -56,7 +53,7 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 %                   (Default: 'add')
 % ● Outputs
 %   *  channel_index: index of channel containing the processed data
-% ● Reference
+% ● References
 %   [1] Hayes, Taylor R., and Alexander A. Petrov  (2016). Mapping and correcting the
 %       influence of gaze position on pupil size measurements. Behavior
 %       Research Methods 48.2, 510-527.
