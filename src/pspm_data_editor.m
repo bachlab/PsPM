@@ -10,12 +10,14 @@ function varargout = pspm_data_editor(varargin)
 %   ┌─────options 
 %   ├.output_file:  When this is specified, marked epochs will be saved
 %   │               to a missing epochs file when clicking 'save' or 'apply'.
-%   │               It is also possible to specificy this from the
-%   │               interactive data editor.
+%   │               It is also possible to specificy this file from within 
+%   │               the interactive data editor.
 %   ├─.epoch_file:  When this is specified, epochs will be imported from 
 %   │               this file and can be changed further. This file must 
 %   │               contain a variable 'epochs' which is an n x 2 matrix 
-%   │               of epoch on- and offsets (n: number of epochs).
+%   │               of epoch on- and offsets (n: number of epochs). It is 
+%   │               also possible to specificy this file from within the
+%   │               interactive data editor.
 %   └──.overwrite:  [logical] (0 or 1)
 %                   Define whether to overwrite existing output file or not.
 %                   Default: 0.
