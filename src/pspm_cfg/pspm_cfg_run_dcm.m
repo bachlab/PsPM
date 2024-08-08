@@ -93,5 +93,7 @@ end
 if eventnameflag
   options.eventnames = eventnames;
 end
-[sts, out] = pspm_dcm(model, options);
+pspm_dcm(model, options);
+out = {model.modelfile};
+
 
