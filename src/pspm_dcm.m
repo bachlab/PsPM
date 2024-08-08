@@ -3,6 +3,10 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   pspm_dcm sets up a non-linear SCR model, prepares and normalises the
 %   data, passes it over to the model inversion routine, and saves both the
 %   forward model and its inversion.
+%   Non-linear SCR models are required if response timing is not known and 
+%   has to be estimated from data. A typical example are anticipatory SCR 
+%   in fear conditioning. These occur at some point between CS and US, but
+%   this time point is not known. 
 %   Both flexible-latency (within a response window) and fixed-latency
 %   (evoked after a specified event) responses can be modelled.
 %   For fixed responses, delay and dispersion are assumed to be constant
@@ -10,13 +14,18 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   responses, both are estimated for each individual trial.
 %   Flexible responses can for example be anticipatory, decision-related,
 %   or evoked with unknown onset.
-%   Non-linear SCR models are required if response timing is not known and 
-%   has to be estimated from data. A typical example are anticipatory SCR 
-%   in fear conditioning. These occur at some point between CS and US, but
-%   this time point is not known. 
 %   PsPM implements an iterative trial-by-trial algorithm. Different from 
 %   GLM, response parameters are always estimated per trial, and the 
 %   algorithm is not informed about the condition.
+%   For each session, experimental timing is defined by providing a 1-column 
+%   vector of event onsets in seconds for each fixed event, and a 2-column  
+%   matrix for each flexible event. Each event must occur in each trial of 
+%   a session, i.e. all these vectors and matrices must have the same
+%   number of rows. (For example, in fear conditioning where the US occurs
+%   only on a subset of trials, each trial includes an event "US onset"
+%   even if it does not occur, to avoid bias). A timing file should contain
+%   a variable 'events' which is a cell array; each cell should contain
+%   either a one-column vector or a 2-column matrix.
 % ● Format
 %   [sts, dcm] = pspm_dcm(model, options)
 % ● Arguments
@@ -43,17 +52,20 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             specified in SECONDS.
 %   │             Default: no missing values
 %   ├─.lasttrialcutoff:
-%   │             [optional] If there fewer data after the end of then last trial in a
+%   │             [optional] If there fewer data after the end of the last trial in a
 %   │             session than this cutoff value (in s), then estimated
 %   │             parameters from this trial will be assumed inestimable
-%   │             and set to NaN after the
-%   │             inversion. This value can be set as inf to always retain
-%   │             parameters from the last trial.
-%   │             Default: 7 s
-%   ├─.substhresh:[optional] Minimum duration (in seconds) of NaN periods to cause
-%   │             splitting up into subsessions which get evaluated
-%   │             independently (excluding NaN values).
-%   │             Default: 2.
+%   │             and set to NaN after the inversion. 
+%   │             This value can be set as inf to always retain parameters
+%   │             from the last trial.
+%   │             Default: 7 s, corresponding to the time at which the 
+%   │             canonical SCRF has decayed to around 80% of its peak value.
+%   ├─.substhresh:[optional] Maximum duration (in seconds) of missing data periods 
+%   │             allowed within a session (these data points will be ignored). 
+%   │             For missing data periods longer than this threshold, the 
+%   │             algorithm will split up the data into subsessions which 
+%   │             are evaluated independently (excluding NaN values).
+%   │             Default: 2 s.
 %   ├────.filter: [optional] Filter settings.
 %   │             Modality specific default.
 %   ├───.channel: [optional] Channel number.
@@ -65,38 +77,51 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   └─.constrained: [optional] Constrained model for flexible responses
 %                 which have fixed dispersion (0.3 s SD) but flexible latency.
 %   ┌────options
-%   ├─.crfupdate: Update CRF priors to observed SCRF, or use pre-estimated
-%   │             priors (default). Default as 0, optional as 1.
-%   ├─────.indrf: Estimate the response function from the data.
+%   ├─.crfupdate: [0/1] Re-estimate RF parameters from canonical SCRF, 
+%   │             or use pre-estimated RF parameters. This can be used when
+%   │             f_SCR has been changed.   
+%   ├─────.indrf: Estimate the response function from the data. This is
+%   │             only recommended for long inter-trial-intervals and 
+%   │             should be used with caution. In reference 2, this option 
+%   │             lead to worse quality of the trial-by-trial amplitude 
+%   │             estimation (potenetially due to overfitting the data 
+%   │             available to estimate the response function).
 %   │             Default: 0.
-%   ├─────.getrf: Only estimate RF, do not do trial-wise DCM
+%   ├─────.getrf: Only estimate response function, do not do trial-wise DCM.
 %   ├────────.rf: Call an external file to provide response function
-%   │             (for use when this is previously estimated by pspm_get_rf)
-%   ├─────.depth: No of trials to invert at the same time. Estimation will
-%   │             progress trial-by-trial until the last trial of a session. If set to
-%   |             inf, then an entire sessin will be inverted at the same time.
-%   │             Default: 2.
-%   ├─────.sfpre: sf-free window before first event.
-%   │             Default: 2s.
-%   ├────.sfpost: sf-free window after last event.
-%   │             Default: 5s.
-%   ├────.sffreq: maximum frequency of SF in ITIs.
+%   │             (for use when this is previously estimated by
+%   │             pspm_get_rf).
+%   ├─────.depth: Number of trials to invert at the same time. The iterative estimation will
+%   │             progress trial-by-trial and consider this number of 
+%   │             trials into the future, until the last trial of a session. 
+%   │             If this parameter is larger than the number of trials in 
+%   │             a session, the entire sessin will be inverted at 
+%   │             the same time. In reference 2, this parameter (set to 2
+%   │             or 3) had no impact on the quality of the estimation. 
+%   │             Unpublished data suggest that if a session with 24 trials 
+%   │             and two events per trial is estimated in one go, then
+%   │             the quality of the estimation suffers (potentially 
+%   │             because in the larger parameter landscape, it is more 
+%   │             difficult to find the global minimum). Default: 2.
+%   ├─────.sfpre: SF-free interval before first event of a trial.
+%   │             Default: 2 s.
+%   ├────.sfpost: SF-free interval after last event of a trial.
+%   │             Default: 5 s.
+%   ├────.sffreq: Maximum frequency of SF in ITIs.
 %   │             Default: 0.5/s.
-%   ├────.sclpre: scl-change-free window before first event.
-%   │             Default: 2s.
-%   ├───.sclpost: scl-change-free window after last event.
-%   │             Default: 5s.
+%   ├────.sclpre: SCR-change-free interval before first event of a trial.
+%   │             Default: 2 s.
+%   ├───.sclpost: SCR-change-free interval after last event of a trial.
+%   │             Default: 5 s.
 %   ├.aSCR_sigma_offset:
 %   │             Minimum dispersion (standard deviation) for flexible
-%   │             responses.
-%   │             Default: 0.1s.
-%   ├─.dispwin:   Display progress window.
-%   │             Default: 1.
-%   ├─.dispsmallwin:
-%   │             display intermediate windows.
-%   │             Default: 0.
+%   │             responses, in seconds. Default: 0.1 s.
+%   ├─.dispwin:   [0/1] Display progress plot. Default: display.
+%   ├─.dispsmallwin: [0/1]
+%   │             Display intermediate progress plots.
+%   │             Default: no display.
 %   ├────.nosave: Don't save dcm structure (e.g. used by pspm_get_rf)
-%   ├─.overwrite: [logical] (0 or 1)
+%   ├─.overwrite: [0/1]
 %   │             Define whether to overwrite existing output files or not.
 %   │             Default value: determined by pspm_overwrite.
 %   ├──.trlnames: Cell array of names for individual trials. This is only

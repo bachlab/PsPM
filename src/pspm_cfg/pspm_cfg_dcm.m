@@ -1,7 +1,5 @@
 function dcm = pspm_cfg_dcm
-
 global settings
-
 %% Standard items
 datafile            = pspm_cfg_selector_datafile('PsPM');
 chan                = pspm_cfg_selector_channel('SCR');
@@ -9,6 +7,7 @@ modelfile           = pspm_cfg_selector_outputfile('Model');
 filter              = pspm_cfg_selector_filter(settings.dcm{1,1}.filter);
 norm                = pspm_cfg_selector_norm;
 epochfile           = pspm_cfg_selector_datafile('epochs');
+rf_file             = pspm_cfg_selector_datafile('response function');
 
 %% Specific items
 % Parameter estimation
@@ -16,8 +15,9 @@ timingfile         = cfg_files;
 timingfile.name    = 'Timing File';
 timingfile.tag     = 'timingfile';
 timingfile.num     = [1 1];
-%timingfile.filter  = '.*\.(mat|MAT)$';
-timingfile.help    = {settings.help.pspm_dcm.Arguments.model.timing};
+timingfile.filter  = '.*\.(mat|MAT)$';
+timingfile.help    = {'See general help for this item for more information on how to specify timings'};
+
 
 name         = cfg_entry;
 name.name    = 'Name';
@@ -44,24 +44,14 @@ timing_man_rep.name   = 'Enter Timing Manually (discouraged, will be removed in 
 timing_man_rep.tag    = 'timing_man_rep';
 timing_man_rep.values = {timing_man};
 timing_man_rep.num   = [1 Inf];
-timing_man_rep.help   = {['In the DCM framework, a session is structured in n individual trials. Each trial ' ...
-    'contains m fixed and/or flexible event types. All trials need to have the same structure.'], '', ...
-    'Create m event types to define the structure of a trial and enter the timings for all events.'};
+timing_man_rep.help   = {'See general help for this item for more information on how to specify timings'};
 
 
 timing        = cfg_choice;
 timing.name   = 'Design';
 timing.tag    = 'timing';
 timing.values = {timingfile, timing_man_rep};
-timing.help   = {['Specify the timings of individual events from your design either by creating a timing file ' ...
-    'or by entering the timings manually.'], 'The DCM framework allows you to specify two types of events:', '', ...
-    ['Fixed latency (evoked): An event is assumed to elicit an immediate response. The amplitude of the sympathetic ' ...
-    'arousal will be estimated, while the timing latency  and duration of the response are fixed. This event type ' ...
-    'is meant to model evoked responses.'], '', ['Flexible latency and duration (event-related): An event is ' ...
-    'assumed to elicit sympathetic arousal within a known response window, but with unknown amplitude, latency and ' ...
-    'duration. For each event of this type, specify a time window in which the response is expected. PsPM will ' ...
-    'then estimate the amplitude, duration and latency of the response. An example for this type of event is an ' ...
-    'anticipatory response which might vary in timing between trials (e. g. in fear conditioning).']};
+timing.help   = {};
 
 % Condition name
 condname         = cfg_entry;
@@ -113,47 +103,14 @@ epochs        = cfg_choice;
 epochs.name   = 'Define Missing Epochs';
 epochs.tag    = 'epochs';
 epochs.values = {epochfile, epochentry};
-epochs.help   = {['Define the start and end points of the missing ', ...
-    'epochs either as epoch files or manually. Start and end ', ...
-    'points have to be defined in seconds starting from the ', ...
-    'beginning of the session.']};
+epochs.help   = {};
 
 missing        = cfg_choice;
 missing.name   = 'Missing Epochs';
 missing.tag    = 'missing';
 missing.val    = {no_epochs};
 missing.values = {no_epochs, epochs};
-missing.help   = {['Indicate epochs in your data in which the ', ...
-    'signal is missing or corrupted (e.g., due to artifacts). ', ...
-    'Data around missing epochs are split into subsessions and ', ...
-    'are evaluated independently if the missing epoch is at least as long ', ...
-    'as subsession threshold. NaN periods within the ', ...
-    'evaluated subsessions will be interpolated for averages ', ...
-    'and principal response components.'], ...
-    ['Note: pspm_dcm calculates the inter-trial intervals as the ',...
-    'duration between the end of a trial and the start of the next ',...
-    'one. ITI value for the last trial in a session is calculated as ',...
-    'the duration between the end of the last trial and the end of ',...
-    'the whole session. Since this value may differ significantly ',...
-    'from the regular ITI duration values, it is not used when computing ',...
-    'the minimum ITI duration of a session.'], ...
-    ['Minimum of session specific min ITI values is used'], ...
-    ['  1. when computing mean SCR signal'], ...
-    ['  2. when computing the PCA from all the trials in all the sessions.'],...
-    ['In case of case (2), after each trial, all the samples in the period ',...
-    'with duration equal to the just mentioned overall min ITI value is used ',...
-    'as a row of the input matrix. Since this minimum does not use the min ',...
-    'ITI value of the last trial in each session, the sample period may be ',...
-    'longer than the ITI value of the last trial. In such a case, pspm_dcm ',...
-    'is not able to compute the PCA and emits a warning. ',...
-    'The rationale behind this behaviour is that we observed that ITI value ',...
-    'of the last trial in a session might be much smaller than the usual ITI ',...
-    'values. For example, this can happen when a long missing data section ',...
-    'starts very soon after the beginning of a trial. If this very small ITI ',...
-    'value is used to define the sample periods after each trial, nearly all ',...
-    'the trials use much less than available amount of samples in both case (1) ',...
-    'and (2). Instead, we aim to use as much data as possible in (1), and ',...
-    'perform (2) only if this edge case is not present.']};
+missing.help   = pspm_cfg_help_format('pspm_dcm', 'model.missing');
 
 % Sessions
 session        = cfg_branch;
@@ -167,7 +124,7 @@ session_rep.name    = 'Data & design';
 session_rep.tag     = 'session_rep';
 session_rep.values  = {session};
 session_rep.num     = [1 Inf];
-session_rep.help    = {'Add the appropriate number of sessions here.'};
+session_rep.help    = {'Add the number of sessions here.'};
 
 
 %% Data options
@@ -177,11 +134,7 @@ substhresh.tag      = 'substhresh';
 substhresh.val      = {2};
 substhresh.strtype  = 'r';
 substhresh.num      = [1 1];
-substhresh.help     = {['Specify the minimum duration (in seconds) ', ...
-    'of NaN periods to be considered as missing epochs. Data around ', ...
-    'missing epochs is then split into subsessions, which are ', ...
-    'evaluated independently. This setting is ignored for sessions ', ...
-    'having set missing epochs manually.']};
+substhresh.help     = pspm_cfg_help_format('pspm_dcm', 'model.substhresh');
 
 lasttrialfiltering      = cfg_entry;
 lasttrialfiltering.name = 'Last trial cutoff';
@@ -189,15 +142,7 @@ lasttrialfiltering.tag  = 'lasttrialcutoff';
 lasttrialfiltering.val  = {7};
 lasttrialfiltering.strtype  = 'r';
 lasttrialfiltering.num      = [1 1];
-lasttrialfiltering.help = {['Define a cutoff value for using the parameters ', ...
-    'estimated from the last trial. If there are fewer data after the end of ', ...
-    'the last trial in a session than the given cutoff value (in second), the ', ...
-    'estimated parameters from this trial will be assumed inestimable and set ', ...
-    'to NaN after the inversion. This value can be set as inf to always retain ', ...
-    'the parameters in the last trial. The default value for this field is 7 s, ', ...
-    'corresponding to the time at which the canonical SCRF has decayed to around ', ...
-    '80% of its peak value.']};
-
+lasttrialfiltering.help = pspm_cfg_help_format('pspm_dcm', 'model.lasttrialcutoff');
 % constrained model
 constrained_model       = cfg_entry;
 constrained_model.name  ='Constrained model';
@@ -205,11 +150,7 @@ constrained_model.tag   ='constr_model';
 constrained_model.val   = {0};
 constrained_model.strtype = 'i';
 constrained_model.num   = [1 1];
-constrained_model.help = {['This option can be set to one if the flexible ', ...
-                           'responses have fixed dispersion (0.3 s SD) but', ...
-                           ' flexible latency.', ...
-                           ' If the option is set, the value must be 0 or 1.',...
-                           ' The default value is 0']};
+constrained_model.help = pspm_cfg_help_format('pspm_dcm', 'model.constrained');
 
 
 data_options         = cfg_branch;
@@ -224,11 +165,10 @@ data_options.help    = {''};
 crfupdate         = cfg_menu;
 crfupdate.name    = 'CRF Update';
 crfupdate.tag     = 'crfupdate';
-crfupdate.labels  = {'Use Pre-Estimated Priors', 'Update CRF Priors to Observed SCRF'};
+crfupdate.labels  = {'Use pre-estimated parameters', 'Update CRF parameters to observed canonical SCRF'};
 crfupdate.val     = {0};
 crfupdate.values  = {0,1};
-crfupdate.help    = {['Update the priors of the canonical response function to observed skin conductance ' ...
-    'response function, or use pre-estimated priors (default)']};
+crfupdate.help    = pspm_cfg_help_format('pspm_dcm', 'options.crfupdate');
 crfupdate.hidden = true;
 
 % Estimate the response function from the data
@@ -238,9 +178,7 @@ indrf.tag     = 'indrf';
 indrf.labels  = {'No', 'Yes'};
 indrf.val     = {0};
 indrf.values  = {0,1};
-indrf.help    = {['A response function can be estimated from the data and used instead of the canonical ' ...
-    'response function. This is not ' ...
-    'normally recommended unless you have long inter trial intervals in the range of 20-30 s (see Staib, Castegnetti & Bach, 2015)']};
+indrf.help    = pspm_cfg_help_format('pspm_dcm', 'options.indrf');
 
 % Only estimate RF
 getrf         = cfg_menu;
@@ -249,18 +187,21 @@ getrf.tag     = 'getrf';
 getrf.labels  = {'No', 'Yes'};
 getrf.val     = {0};
 getrf.values  = {0,1};
-getrf.help    = {['This option can be used to estimate an individual response function to be used in ' ...
-    'analysis of another experiment.']};
+getrf.help    = pspm_cfg_help_format('pspm_dcm', 'options.getrf');
 
 % Call External File to Provide Response Function
-rf         = cfg_menu;
+rf_disabled         = cfg_const;
+rf_disabled.name    = 'RF disabled';
+rf_disabled.tag     = 'disabled';
+rf_disabled.val     = {0};
+rf_disabled.help   = {};
+
+rf         = cfg_choice;
 rf.name    = 'Use External File to Provide Response Function';
 rf.tag     = 'rf';
-rf.labels  = {'No', 'Yes'};
-rf.val     = {0};
-rf.values  = {0,1};
-rf.help    = {['Call an external file to provide a response function, which was previously estimated ' ...
-    'using the option "only estimate RF"']};
+rf.val     = {rf_disabled};
+rf.values  = {rf_disabled,rf_file};
+rf.help    = pspm_cfg_help_format('pspm_dcm', 'options.rf');
 
 resp_options         = cfg_branch;
 resp_options.name    = 'Response Function Options';
@@ -277,8 +218,8 @@ depth.tag     = 'depth';
 depth.strtype = 'i';
 depth.num     = [1 1];
 depth.val     = {2};
-depth.help    = {['The iterative DCM algorithm accounts for response overlap by cosidering several trials at a time. ' ...
-    'This can be set here.']};
+depth.help    = pspm_cfg_help_format('pspm_dcm', 'options.depth');
+
 
 % SF-free window before first event
 sfpre         = cfg_entry;
@@ -287,8 +228,8 @@ sfpre.tag     = 'sfpre';
 sfpre.strtype = 'r';
 sfpre.num     = [1 1];
 sfpre.val     = {2};
-sfpre.help    = {['The DCM algorithm automatically models spontaneous fluctuations in inter trial intervals. Here, you can ' ...
-    'define a time window before the first event in every trial in which no spontaneous fluctuation will be estimated.']};
+sfpre.help    = pspm_cfg_help_format('pspm_dcm', 'options.sfpre');
+
 
 % SF-free window after last event
 sfpost         = cfg_entry;
@@ -297,8 +238,8 @@ sfpost.tag     = 'sfpost';
 sfpost.strtype = 'r';
 sfpost.num     = [1 1];
 sfpost.val     = {5};
-sfpost.help    = {['The DCM algorithm automatically models spontaneous fluctuations in inter trial intervals. Here, you can ' ...
-    'define a time window after the last event in every trial in which no spontaneous fluctuation will be estimated.']};
+sfpost.help    = pspm_cfg_help_format('pspm_dcm', 'options.sfpost');
+
 
 % Maximum frequency of SF in ITIs
 sffreq         = cfg_entry;
@@ -307,8 +248,8 @@ sffreq.tag     = 'sffreq';
 sffreq.strtype = 'r';
 sffreq.num     = [1 1];
 sffreq.val     = {0.5};
-sffreq.help    = {['The DCM algorithm automatically models spontaneous fluctuations in inter trial intervals. Here you can ' ...
-'define the minimal delay between two subsequent spontaneous fluctuations.']};
+sffreq.help    = pspm_cfg_help_format('pspm_dcm', 'options.sffreq');
+
 
 % SCL-change-free window before first event
 sclpre         = cfg_entry;
@@ -317,8 +258,7 @@ sclpre.tag     = 'sclpre';
 sclpre.strtype = 'r';
 sclpre.num     = [1 1];
 sclpre.val     = {2};
-sclpre.help    = {['The DCM algorithm automatically models baseline drifts in inter trial intervals. Here, you can ' ...
-    'define a window before the first event in every trial in which no change of the skin conductance level will be assumed.']};
+sclpre.help    = pspm_cfg_help_format('pspm_dcm', 'options.sclpre');
 
 % SCL-change-free window after last event
 sclpost         = cfg_entry;
@@ -327,8 +267,7 @@ sclpost.tag     = 'sclpost';
 sclpost.strtype = 'r';
 sclpost.num     = [1 1];
 sclpost.val     = {5};
-sclpost.help    = {['The DCM algorithm automatically models baseline drifts in inter trial intervals. Here, you can ' ...
-    'define a window after the last event in every trial in which no change of the skin conductance level will be assumed.']};
+sclpost.help    = pspm_cfg_help_format('pspm_dcm', 'options.sclpost');
 
 % minimum dispersion (standard deviation) for flexible responses
 ascr_sigma_offset         = cfg_entry;
@@ -337,9 +276,7 @@ ascr_sigma_offset.tag     = 'ascr_sigma_offset';
 ascr_sigma_offset.strtype = 'r';
 ascr_sigma_offset.num     = [1 1];
 ascr_sigma_offset.val     = {0.1};
-ascr_sigma_offset.help    = {['Responses in a flexible design are modeled as Gaussians with a flexible standard deviation ' ...
-    '(while fixed responses assume a fixed standard deviation). While the maximum standard deviation is limited by half ' ...
-    'the window size of the response window, the minimum standard deviation can be changed by the user.']};
+ascr_sigma_offset.help    = pspm_cfg_help_format('pspm_dcm', 'options.aSCR_sigma_offset');
 ascr_sigma_offset.hidden = true;
 
 inv_options         = cfg_branch;
@@ -358,7 +295,8 @@ dispwin.tag     = 'dispwin';
 dispwin.labels  = {'Yes', 'No'};
 dispwin.val     = {1};
 dispwin.values  = {1,0};
-dispwin.help    = {'Show a on-line diagnostic plot for each iteration of the estimation process.'};
+dispwin.help    = pspm_cfg_help_format('pspm_dcm', 'options.dispwin');
+
 
 % Display intermediate windows
 dispsmallwin         = cfg_menu;
@@ -367,7 +305,7 @@ dispsmallwin.tag     = 'dispsmallwin';
 dispsmallwin.labels  = {'No', 'Yes'};
 dispsmallwin.val     = {0};
 dispsmallwin.values  = {0,1};
-dispsmallwin.help    = {'Show small plots displaying the progress of each iteration in the estimation process.'};
+dispsmallwin.help    = pspm_cfg_help_format('pspm_dcm', 'options.dispsmallwin');
 
 disp_options         = cfg_branch;
 disp_options.name    = 'Display Options';
