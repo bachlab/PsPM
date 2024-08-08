@@ -23,17 +23,7 @@ ChanCutoff.name   = 'Cut-off';
 ChanCutoff.tag    = 'chan_valid_cutoff';
 ChanCutoff.num    = [1 1];
 ChanCutoff.val    = {10};
-ChanCutoff.help   = {['Determine the percentage of missing values ',...
-                      '(NaNs) in the dataset. The default value is ',...
-                      '10%. Any value from 0-100 can be entereed. ',...
-                      'A warning will be thrown if any data channel contains ',...
-                      'more missing values than this cutoff. ',...
-                      'If channel combination is requested and only one ',...
-                      'channel has fewer missing values than the cutoff, ',...
-                      'then the better channel will be used ',...
-                      'and no combination will be performed. ',...
-                      'Otherwise, the channels will be combined, ',...
-                      'even if both have more missing values.']};
+ChanCutoff.help   = pspm_cfg_help_format('pspm_pupil_pp', 'options.chan_valid_cutoff');
 
 %% Parameters
 % Pupil diameter minimum
@@ -243,33 +233,33 @@ CustomSet.val           = {RawCustomSet, ValidCustomSet};
 DefaultSet              = cfg_const;
 DefaultSet.name         = 'Default settings';
 DefaultSet.tag          = 'default_settings';
-DefaultSet.val          = {'Default settings'};
+DefaultSet.val          = {};
 % Settings
 Set                     = cfg_choice;
 Set.name                = 'Settings';
 Set.tag                 = 'settings';
 Set.values              = {DefaultSet, CustomSet};
 Set.val                 = {DefaultSet};
-Set.help                = {'Define settings to modify preprocessing'};
+Set.help                = {};
 %% Segments
 % Segement start in second
 SegStart                = cfg_entry;
 SegStart.name           = 'Segment start (seconds)';
 SegStart.tag            = 'start';
 SegStart.num            = [1 1];
-SegStart.help           = {'Segment start, in seconds.'};
+SegStart.help           = {};
 % Segment end in second
 SegEnd                  = cfg_entry;
 SegEnd.name             = 'Segment end (seconds)';
 SegEnd.tag              = 'end';
 SegEnd.num              = [1 1];
-SegEnd.help             = {'Segment end, in seconds.'};
+SegEnd.help             = {};
 % Segment name
 SegName                 = cfg_entry;
 SegName.name            = 'Segment name';
 SegName.strtype         = 's';
 SegName.tag             = 'name';
-SegName.help            = {'Segment name'};
+SegName.help            = {};
 % Segment
 Seg                     = cfg_branch;
 Seg.name                = 'Segment';
@@ -281,11 +271,8 @@ SegRep.name             = 'Segments';
 SegRep.tag              = 'segments_rep';
 SegRep.values           = {Seg};
 SegRep.num              = [0 Inf];
-SegRep.help             = {['Define segments to calculate statistics ',...
-                            'on. These segments will be stored in ',...
-                            'the output channel and also will be ',...
-                            'show if plotting is enabled']...
-                           };
+SegRep.help             = pspm_cfg_help_format('pspm_pupil_pp', 'options.segments');
+
 %% Plot data
 PlotData                = cfg_menu;
 PlotData.name           = 'Plot data';
@@ -293,7 +280,7 @@ PlotData.tag            = 'plot_data';
 PlotData.values         = {true, false};
 PlotData.labels         = {'True', 'False'};
 PlotData.val            = {false};
-PlotData.help           = {'Please choose whether to plot the data.'};
+PlotData.help           = pspm_cfg_help_format('pspm_pupil_pp', 'options.plot_data');
 %% Executable branch
 PupilPP                 = cfg_exbranch;
 PupilPP.name            = 'Pupil preprocessing';

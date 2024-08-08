@@ -9,7 +9,7 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %   1.  Pupil preprocessing is performed in two main steps. In the first
 %       step, the “valid” samples are determined. The samples that are not
 %       valid are not used in the second step. Determining valid samples is
-%       done by
+%       done by the following procedures.
 %       (a) Range filtering: Pupil size values outside a predefined range
 %           are considered invalid. This range is configurable.
 %       (b) Speed filtering: Speed is computed as the 1st difference of
@@ -81,13 +81,13 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %   ├───.start : [decimal][Unit: second] Starting time of the segment.
 %   ├─────.end : [decimal][Unit: second] Ending time of the segment.
 %   ├────.name : [string] Name of the segment. Segment will be stored by this name.
-%   ├.plot_data: [Boolean][Default: false or 0] Plot the preprocessing steps if true.
+%   ├.plot_data: [Boolean][Default: false or 0] Plot the preprocessing steps.
 %   ├─.chan_valid_cutoff : [optional][Default: 0.01]
 %   │            A cut-off value for checking whether there are too many missing values
-%   │            in the data channel. Valid data channels should have NaNs fewer than
-%   │            this cut-off value. If combination is requested and only one of the
-%   │            two channels has fewer than this percentage of missing values, then only
-%   │            this channel will be used and no combination will be performed.
+%   │            in a data channel for combination. If the difference in 
+%   │            missing data percentage between the two channels exceeds 
+%   │            this cutoff, then combining will be skipped, and both 
+%   │            channels will be processed separately.
 %   └.out_chan : Channel ID of the preprocessed output.
 % ● Outputs
 %   * channel_index: index of channel containing the processed data.

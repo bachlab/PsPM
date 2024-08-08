@@ -18,7 +18,7 @@ area2diameter       = cfg_const;
 area2diameter.name  = 'Area to diameter';
 area2diameter.tag   = 'area2diameter';
 area2diameter.val   = {'area2diameter'};
-area2diameter.help  = {['']};
+area2diameter.help  = {};
                
 %% Mode
 mode                = cfg_choice;
@@ -26,7 +26,7 @@ mode.name           = 'Mode';
 mode.tag            = 'mode';
 mode.val            = {area2diameter};
 mode.values         = {area2diameter};
-mode.help           = {['Choose conversion mode.']};
+mode.help           = {};
 
 
 %% Executable branch
