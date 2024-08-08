@@ -2,7 +2,8 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● Description
 %   pspm_import imports data from different formats and writes them to
 %   a file on the same path, with the original file name prepended with 
-%   'pspm_'.
+%   'pspm_'. Please refer to the PsPM manual or the help of the individual 
+%   'pspm_get_[datatype] functions for data-type specific information.
 % ● Format
 %   [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● Arguments
@@ -11,10 +12,17 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 %   ┌────────────import
 %   ├─────────────.type : (mandatory for all data types and each job) not all data
 %   │                     types support all channel types.
-%   ├───────────────.sr : (mandatory for some data types and each channel) sampling rate
+%   ├───────────────.sr : [mandatory for some data types and each channel] sampling rate
 %   │                     for waveforms or time units in second for event channels, in Hz.
-%   ├──────────.channel : (mandatory for some data types and each channel) channel or
-%   │                     column number in the original file.
+%   ├──────────.channel : [mandatory for some data types and each channel, 
+%   │                     positive integer; will search if set to 0 and data type allows] 
+%   │                     Specify where in the data file to find the channel; 
+%   │                     should be a positive integer (i. e. the n-th channel 
+%   │                     in the file); for some data types it is also 
+%   │                     possible to search for the channel by its name. 
+%   │                     Note: the channel number refers to the n-th recorded 
+%   │                     channel, not to its number or index in the 
+%   │                     recording software. For some data types, these can differ.
 %   ├────────────.flank : [optional, string] The flank option specifies which of the
 %   │                     rising edge (ascending), falling edge (descending), both
 %   │                     edges or their mean (middle) of a marker impulse should be
@@ -27,7 +35,7 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 %   │                     respectively ''both'', ''ascending'', ''ascending'';
 %   │                     If the numbers of rising and falling edges differ, PsPM will
 %   │                     throw an error.
-%   ├─────────.transfer : [optional, string/struct] name of a .mat file containing values for
+%   ├─────────.transfer : [optional, string/struct] For SCR data only. Name of a .mat file containing values for
 %   │                     the transfer function, OR a struct array containing the values
 %   │                     OR 'none', when no conversion is required (c and optional
 %   │                     Rs and offset; See pspm_transfer_function for more information).

@@ -29,7 +29,7 @@ sample_rate.name    = 'Sample Rate';
 sample_rate.tag     = 'sample_rate';
 sample_rate.strtype = 'r';
 sample_rate.num     = [1 1];
-sample_rate.help    = {'Sample rate in Hz (i. e. samples per second).'};
+sample_rate.help    = pspm_cfg_help_format('pspm_import', 'import.sr');
 % arguments(contains(arguments(:,1),'import.sr'),2);
 % will restore when it is finished.
 
@@ -178,7 +178,7 @@ exclude_columns.tag       = 'exclude_columns';
 exclude_columns.strtype   = 'r';
 exclude_columns.val       = {0};
 exclude_columns.help      = {['The number of columns which have to be excluded for the importing. By default 0. ',...
-  'It is usefull if the first columns have non numeric data (e.g. timestamps). ', ...
+  'It is useful if the first columns have non numeric data (e.g. timestamps). ', ...
   'Be aware that if you exclude some columns you have to adapt the channel number.']};
 
 %% Datatype dependend items
@@ -218,18 +218,13 @@ for datatype_i=1:length(fileoptions)
   chan_nr_spec.tag     = 'chan_nr_spec';
   chan_nr_spec.strtype = 'i';
   chan_nr_spec.num     = [1 1];
-  chan_nr_spec.help    = {['Specify the n-th channel. ',...
-    'This counts the number of channels actually recorded.']};
+  chan_nr_spec.help    = {};
 
   % Channel/Column Nr. (variable choice options)
   chan_nr        = cfg_choice;
   chan_nr.name   = [description ' Number'];
   chan_nr.tag    = 'chan_nr';
-  chan_nr.help   = {['Specify where in the original file to find the channel. You can ' ...
-    'either specify a number (i. e. the n-th channel in the file), or search for ' ...
-    'this channel by its name. Note: the channel number refers to the n-th recorded ' ...
-    'channel, not to its number during acquisition (if you did not save all recorded ' ...
-    'channels, these might be different for some data types).']};
+  chan_nr.help   = pspm_cfg_help_format('pspm_import', 'import.channel');
 
   %% Flank option for 'event' channel types
   flank_option        = cfg_menu;
