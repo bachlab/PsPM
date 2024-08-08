@@ -1,7 +1,6 @@
 function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 % ● Description
-%   pspm_get_smi is the main function for import of SensoMotoric Instruments
-%   iView X EyeTracker files.
+%   pspm_get_smi imports SensoMotoric Instruments iView X EyeTracker files.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_smi(datafile, import);
 % ● Arguments

@@ -3,6 +3,7 @@ function helptext = pspm_cfg_help_format(funcname, argname)
 % pspm_help_init and combines them into a text block for the matlabbatch
 % GUI
 % Format: helptext = pspm_cfg_help_format(funcname, [argname])
+%         helptext = pspm_cfg_help_format('import', helptext)
 %                funcname: PsPM function name (char)
 %                argname: function argument (potentially a chain of nested
 %                struct fields, e.g. 'options.overwrite')
@@ -30,6 +31,9 @@ if nargin < 2
             settings.help.(funcname).References(:)];
         end
     end
+elseif strcmpi(funcname, 'import')
+    A = strrep(argname, newline, [newline, newline]);
+    helptext = splitlines(A);
 else
     % this syntax allows chaining several nested structs into one argname
     evalc(sprintf('helptext = settings.help.%s.Arguments.%s;', funcname, argname));

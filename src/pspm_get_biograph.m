@@ -1,7 +1,8 @@
 function [sts, import, sourceinfo] = pspm_get_biograph(datafile, import)
 % ● Description
-%   pspm_get_biograph is the main function for import of text-exported
-%   BioGraph Infiniti files
+%   pspm_get_biograph imports text-exported BioGraph Infiniti files. Export
+%   the data using 'Export data to text format', both 'Export Channel Data'
+%   and 'Export Interval Data' are supported; a header is required.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_biograph(datafile, import);
 % ● Arguments

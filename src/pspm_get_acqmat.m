@@ -1,7 +1,9 @@
 function [sts, import, sourceinfo] = pspm_get_acqmat(datafile, import)
 % ● Description
-%   pspm_get_acqmat is the main function for import of exported
-%   biopac/acknowledge files, version 4.0 or higher (tested on 4.2.0)
+%   pspm_get_acqmat imports exported Biopac Acknowledge files from version 
+%   4.0 or higher. Export into matlab format from within the Acknowledge
+%   software. This function has been tested for Acknowledge version 4.2.0
+%   only. 
 %   This function is based on sample files, not on proper documentation of the
 %   file format. Always check your imported data before using it.
 % ● Format

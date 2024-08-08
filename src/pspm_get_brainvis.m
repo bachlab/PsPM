@@ -1,7 +1,9 @@
 function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 % ● Description
-%   pspm_get_brainvis is the main function for import of BrainVision files
-%   this function uses fieldtrip fileio functions
+%   pspm_get_brainvis imports BrainVision files using FieldTrip fileio
+%   functions.
+%   This function has not been tested on sample files. Always check your 
+%   imported data before using it. 
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import);
 % ● Arguments

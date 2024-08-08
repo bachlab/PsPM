@@ -1,6 +1,11 @@
 function [sts, import, sourceinfo] = pspm_get_wdq(datafile, import)
 % ● Description
-%   pspm_get_wdq is the main function for import of Dataq/Windaq files
+%   pspm_get_wdq imports Dataq/Windaq files (e.g. used by Coulbourn
+%   psychophysiology systems). This function uses the conversion routine 
+%   ReadDataq.m provided by Dataq developers and contained in the PsPM 
+%   distribution. ActiveX control elements provided in the file activex.exe 
+%   provided by Dataq must be installed, too. The ActiveX plugin only runs 
+%   under 32 bit Matlab on Windows.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_wdq(datafile, import);
 % ● Arguments
@@ -9,10 +14,6 @@ function [sts, import, sourceinfo] = pspm_get_wdq(datafile, import)
 % ● Outputs
 %   *     import : Struct that includes data obtained from wdq files.
 %   * sourceinfo : Struct that includes source information
-% ● Developer's Notes
-%   This function uses the conversion routine ReadDataq.m provided by Dataq developers.
-%   ActiveX control elements provided in the file activex.exe provided by Dataq must be
-%   installed, too.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written    in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

@@ -1,23 +1,18 @@
-function information = pspm_help(func_name)
+function information = pspm_help(mfile)
 % ● Description
 %   pspm_help returns the description and arguments of
 %   a specified function
 % ● Format
-%   information = pspm_help(func_name)
+%   information = pspm_help(mfile)
 % ● Arguments
-%   * func_name  : the name of the function for help information
+%   * mfile  : the full file name of the function for help information
 % ● Outputs
 %   * information: the description of the specific function
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2022 and updated in 2024 by Teddy
 
-global settings
-if isempty(settings)
-  pspm_init;
-end
-
-fid = fopen([settings.path,filesep,func_name,'.m'],'r','n','UTF-8');
+fid = fopen(mfile,'r','n','UTF-8');
 % read the file into a cell array, one cell per line
 i = 1;
 tline = fgetl(fid);

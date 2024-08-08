@@ -11,7 +11,6 @@ fileoptions={settings.import.datatypes.long};
 channeltypesDescription = {settings.channeltypes.description};
 channeltypesData = {settings.channeltypes.data};
 cd(settings.path)
-information = pspm_help('pspm_import');
 cd([settings.path,filesep,'pspm_cfg/'])
 
 %% Predefined struct
@@ -201,7 +200,7 @@ for datatype_i=1:length(fileoptions)
   channeltypes    = settings.import.datatypes(datatype_i).channeltypes;
   short        = settings.import.datatypes(datatype_i).short;
   ext          = settings.import.datatypes(datatype_i).ext;
-  help         = {settings.import.datatypes(datatype_i).help};
+  help         = pspm_cfg_help_format('import', settings.import.datatypes(datatype_i).help);
 
 
   %% Channel/Column Number
