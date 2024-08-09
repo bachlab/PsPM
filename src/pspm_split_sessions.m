@@ -32,14 +32,17 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   ├────.splitpoints :  [Vector of integer] Explicitly specify start of  
 %   │                    each session in terms of markers, excluding the 
 %   │                    first session which is assumed to start with the first marker.
-%   ├─────────.prefix :  [numeric, unit:second, default:0]
-%   │                    Defines how long data before start trim point should
-%   │                    also be included. First marker will be at t = options.prefix.
+%   ├─────────.prefix :  [numeric, unit:second, default: 0]
+%   │                    Defines how many seconds of data before start trim point should
+%   │                    also be included. Negative values required. 
+%   │                    First marker will be at t = - prefix for all
+%   │                    sessions. Markers within the prefix period will be dropped. 
 %   ├─────────.suffix :  [positive numeric, unit:second, default: mean marker distance
-%   │                    in the file] Defines how long data after the end trim point
+%   │                    in the file] Defines how how many seconds of data after the end trim point
 %   │                    should be included. Last marker will be at t = duration (of
-%   │                    session) - options.suffix. If options.suffix == 0, it will be
-%   │                    set to the mean marker distance.
+%   │                    session) - suffix for all sessions. If set to 0, suffix will be
+%   │                    set to the mean marker distance across the entire
+%   │                    file. Markers within the suffix period will be dropped.
 %   ├───────.randomITI : [default:0]
 %   │                    Tell the function to use all the markers to evaluate the mean
 %   │                    distance between them. Usefull for random ITI since it reduces
@@ -147,7 +150,7 @@ if isempty(splitpoint)
   return;
 else
   % initialise
-  preffix = num2cell(zeros(1,(numel(splitpoint)+1)));
+  prefix = num2cell(zeros(1,(numel(splitpoint)+1)));
   suffix = num2cell(zeros(1,(numel(splitpoint)+1)));
   for sn = 1:(numel(splitpoint)+1)
     if sn == 1
@@ -168,12 +171,6 @@ else
       suffix{sn} = options.suffix;
     end
     prefix{sn} = options.prefix;
-
-    if sn == 1
-        prefix{sn} = 'none'; % don't trim start for first session
-    elseif sn > numel(splitpoint)
-        suffix{sn} = 'none'; % don't trim end for last session
-    end
   end
 
   % 2.4 Split files
