@@ -1,4 +1,4 @@
-function [sts, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
+function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 % ● Description
 %   pspm_find_valid_fixations finds deviations from a specified gaze
 %   fixation area. The primary usage of this function is to improve 
@@ -85,6 +85,7 @@ function [sts, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %   (1) fn can be a data structure as permitted by pspm_load_data,
 %   (2) the output argument pos_of_channels is an index of the channel(s)
 %   that was/were replaced or added
+%   (3) The third output argument is required for recursive calls
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 Tobias Moser (University of Zurich)
@@ -375,7 +376,7 @@ elseif strcmpi(options.channel, 'both')
         options.channel = channels{i_channel};
         varargin{end} = options;
         % varargin{:} unpacks the cell array into single arguments:
-        [rsts(i_channel), alldata, pos_of_channel(i_channel)] = pspm_find_valid_fixations(alldata, varargin{:});
+        [rsts(i_channel), pos_of_channel(i_channel), alldata] = pspm_find_valid_fixations(alldata, varargin{:});
     end
     if (rsts(1) < 1 && rsts(2) < 1)
         return;
