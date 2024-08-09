@@ -36,6 +36,10 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %       data is preprocessed, according to the option 'channel_action',
 %       it will either replace an existing preprocessed pupil channel or
 %       add it as new channel to the provided file.
+%   3. If combining is requested, then a new channel with combined signal
+%      will be created. Information about the underlying left and right
+%      pupil channels will be written into the data structure (field
+%      'header.valid_samples'). 
 % ● Format
 %   [sts, channel_index] = pspm_pupil_pp(fn)
 %   [sts, channel_index] = pspm_pupil_pp(fn, options)
@@ -195,7 +199,7 @@ else
 end
 
 %% 5 preprocess
-[lsts, smooth_signal, ~] = pspm_preprocess_pupil(data, data_combine, ...
+[lsts, smooth_signal] = pspm_preprocess_pupil(data, data_combine, ...
   options.segments, options.custom_settings, options.plot_data);
 if lsts ~= 1
   return
@@ -223,11 +227,7 @@ end
 
 return
 
-function varargout  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
-global settings
-if isempty(settings)
-  pspm_init;
-end
+function [sts, smooth_signal]  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
 sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine.data);
@@ -320,14 +320,8 @@ catch err
 end
 rmpath(libpath{:});
 sts = 1;
-varargout{1} = sts;
-switch nargout
-  case 2
-    varargout{2} = smooth_signal;
-  case 3
-    varargout{2} = smooth_signal;
-    varargout{3} = model;
-end
+
+
 function data = pspm_complete_with_nans(data, t_beg, sr, output_samples)
 % Complete the given data that possibly has missing samples at the
 % beginning and at the end. The amount of missing samples is determined
