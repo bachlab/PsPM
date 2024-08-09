@@ -5,7 +5,7 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   occur in breaks (e.g. caused by participant movement or disconnection
 %   from the recording system) which can have an impact on pre-processing 
 %   (e.g. filtering) and modelling. 
-%   Splitting can be based on regularly incoming markers (e.g. trial 
+%   Splitting can be automated, based on regularly incoming markers (e.g. trial 
 %   markers or volume/slice markers from an MRI scanner), or based on 
 %   a vector of split points that is defined in terms of markers. In all 
 %   cases, the first and the last markers will define the start of the 
@@ -29,9 +29,9 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   ├.min_break_ratio :  Minimum for ratio
 %   │                    [(session distance)/(maximum marker distance)]
 %   │                    Default is 3 (defined by settings.split.min_break_ratio)
-%   ├────.splitpoints :  Explicitly specify session start
-%   │                    (excluding the first session starting at the
-%   │                    first marker) in terms of markers (vector of integer)
+%   ├────.splitpoints :  [Vector of integer] Explicitly specify start of  
+%   │                    each session in terms of markers, excluding the 
+%   │                    first session which is assumed to start with the first marker.
 %   ├─────────.prefix :  [numeric, unit:second, default:0]
 %   │                    Defines how long data before start trim point should
 %   │                    also be included. First marker will be at t = options.prefix.

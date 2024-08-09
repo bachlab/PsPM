@@ -10,14 +10,14 @@ overwrite        = pspm_cfg_selector_overwrite;
 
 %% split auto
 split_auto          = cfg_const;
-split_auto.name     = 'Automatic';
+split_auto.name     = 'Automatically determine split points';
 split_auto.tag      = 'auto';
 split_auto.val      = {0};
 split_auto.help     = {};
 
 %% split manual
 split_manual        = cfg_entry;
-split_manual.name   = 'Marker';
+split_manual.name   = 'Explicit define of splitpoints';
 split_manual.tag    = 'marker';
 split_manual.strtype = 'i';
 split_manual.num    = [1 inf];
