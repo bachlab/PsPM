@@ -228,6 +228,7 @@ end
 return
 
 function [sts, smooth_signal]  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
+global settings
 sts = -1;
 % 1 definitions
 combining = ~isempty(data_combine.data);

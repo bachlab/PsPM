@@ -57,7 +57,7 @@ if isnumeric(options.channel) && numel(options.channel) == 4
     [stsc(3), gaze_y_r] = pspm_load_channel(alldata, options.channel(3), 'gaze_y_r');
     [stsc(4), gaze_y_l] = pspm_load_channel(alldata, options.channel(4), 'gaze_y_l');
     if sum(stsc) < 4, return, end
-elseif (isnumeric(options.channel) && options.channel == 0) || ...
+elseif (isnumeric(options.channel) && numel(options.channel) == 1 && options.channel == 0) || ...
         (ischar(options.channel) && strcmp(options.channel, 'gaze'))
     [stsc(1), gaze_x_r, gaze_y_r] = pspm_load_gaze (fn, 'r');
     [stsc(2), gaze_x_l, gaze_y_l] = pspm_load_gaze (fn, 'l');
