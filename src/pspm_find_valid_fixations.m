@@ -1,4 +1,4 @@
-function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
+function [sts, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 % ● Description
 %   pspm_find_valid_fixations finds deviations from a specified gaze
 %   fixation area. The primary usage of this function is to improve 
@@ -26,8 +26,8 @@ function [sts, fn, pos_of_channel] = pspm_find_valid_fixations(fn, varargin)
 %   perpendicular to the vector from the eye to the fixation point (which 
 %   is approximately correct for large enough screen distance). 
 % ● Format
-%   [sts, out_file] = pspm_find_valid_fixations(fn, bitmap, options)
-%   [sts, out_file] = pspm_find_valid_fixations(fn, circle_degree, distance, unit,
+%   [sts, channel_index] = pspm_find_valid_fixations(fn, bitmap, options)
+%   [sts, channel_index] = pspm_find_valid_fixations(fn, circle_degree, distance, unit,
 %                                               options)
 % ● Arguments
 %   *             fn : The actual data file containing the eyelink recording with gaze
