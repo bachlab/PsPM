@@ -1,4 +1,4 @@
-function varargout = pspm_ui(hObject,handles,window)
+function [hObject, handles] = pspm_ui(hObject,handles,window)
 % ● Description
 %   pspm_ui controls the UI of the referred handle.
 % ● Arguments
@@ -309,13 +309,6 @@ if exist('CaptionComponents', 'var')
 end
 if exist('EmphComponents', 'var')
   ApplyStyle(handles, EmphComponents, FNEmph, FSText);
-end
-switch nargout
-  case 1
-    varargout{1} = hObject;
-  case 2
-    varargout{1} = hObject;
-    varargout{2} = handles;
 end
 return
 function ApplyStyle(handles, widgt, FN, FS)

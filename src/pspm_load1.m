@@ -1,4 +1,4 @@
-function varargout = pspm_load1(fn, action, savedata, options)
+function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % ● Format
 %   [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % ● Arguments
@@ -310,17 +310,5 @@ switch action
   otherwise
     warning('ID:unknown_action', 'Unknown action. Just checking file. File is valid.'); return;
 end
-
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = data;
-  case 2
-    varargout{1} = data;
-    varargout{2} = mdltype;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = data;
-    varargout{3} = mdltype;
-end
 return

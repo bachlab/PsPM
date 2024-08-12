@@ -223,7 +223,7 @@ end
 
 return
 
-function varargout  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
+function [sts, smooth_signal, model]  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
 global settings
 if isempty(settings)
   pspm_init;
@@ -320,14 +320,6 @@ catch err
 end
 rmpath(libpath{:});
 sts = 1;
-varargout{1} = sts;
-switch nargout
-  case 2
-    varargout{2} = smooth_signal;
-  case 3
-    varargout{2} = smooth_signal;
-    varargout{3} = model;
-end
 function data = pspm_complete_with_nans(data, t_beg, sr, output_samples)
 % Complete the given data that possibly has missing samples at the
 % beginning and at the end. The amount of missing samples is determined
