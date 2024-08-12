@@ -125,9 +125,9 @@ if numel(varargin) > 0
       handles.data = varargin{1};
       handles.input_mode = 'raw';
   end
-  handles = guidata(hObject);
-  guidata(hObject, handles);
-  PlotData(hObject);
+  %handles = guidata(hObject);
+  %guidata(hObject, handles);
+  %PlotData(hObject);
   % % enable the following code if output file module wants to be enabled
   % if isfield(handles, 'options') && isfield(handles.options, 'output_file')
   %   set(handles.pnlOutput, 'Visible', 'off');
@@ -260,7 +260,6 @@ PlotData(hObject);
 function PlotData(hObject)
 global settings
 handles = guidata(hObject);
-handles.axData.HandleVisibility = 'callback';
 channel = {};
 switch handles.input_mode % load data
   case 'file'
@@ -289,12 +288,10 @@ if ~isempty(channel)
   end
   set(handles.axData, 'NextPlot', np);
 end
-handles.axData.HandleVisibility = settings.handle;
 
 function AddPlot(hObject, chan_id, action)
 global settings
 handles = guidata(hObject);
-handles.axData.HandleVisibility = 'callback';
 if isempty(action)
   action = 'replace';
 end
@@ -344,13 +341,11 @@ for i=1:numel(handles.epochs) % add response plots
   handles.epochs{i}.response_plots{chan_id} = struct('p', p);
 end
 set(handles.axData, 'NextPlot', np);
-handles.axData.HandleVisibility = settings.handle;
 guidata(hObject, handles);
 
 function RemovePlot(hObject, chan_id)
 global settings
 handles = guidata(hObject);
-handles.axData.HandleVisibility = 'callback';
 if numel(handles.plots) >= chan_id
   for i = 1:numel(handles.epochs) % remove response plots
     if numel(handles.epochs{i}.response_plots) >= chan_id ...
@@ -365,7 +360,6 @@ if numel(handles.plots) >= chan_id
   delete(handles.plots{chan_id}.interpolate);
   handles.plots{chan_id} = []; % empty entry
 end
-handles.axData.HandleVisibility = settings.handle;
 guidata(hObject, handles);
 
 function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
@@ -1051,7 +1045,7 @@ function rbInterpolate_Callback(hObject, eventdata, handles)
 % selection changed callback
 bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 
-function pbOpenInputFile_Callback(hObject, ~, handles)
+function pbOpenInputFile_Callback(hObject, ~, handles, varargin)
 % Feature
 %   Executes on button press in pbOpenInputFile.
 % Variables
@@ -1059,6 +1053,9 @@ function pbOpenInputFile_Callback(hObject, ~, handles)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 [file, path] = uigetfile('*.mat', 'Select input file');
+if ~isempty(varargin)
+  file = varargin{1};
+end
 if file ~= 0
   fn = [path,file];
   handles.input_file = fn;

@@ -67,7 +67,6 @@ global settings;
 if isempty(settings)
   pspm_init;
 end
-handles.UIDisplay.HandleVisibility = settings.handle;
 % load channeltypes from settings variable
 
 j = 1 ; l = 1;
@@ -152,8 +151,11 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+handles.UIDisplay.HandleVisibility = settings.handle;
+
 % UIWAIT makes pspm_display wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+uiwait(handles.UIDisplay);
+
 end
 
 
@@ -519,10 +521,11 @@ saveas(q,savename);
 close(q)
 end
 % --------------------------------------------------------------------
-function exit_Callback(~, ~, ~)
+function exit_Callback(~, ~, handles)
 % hObject    handle to exit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.UIDisplay.HandleVisibility = 'off';
 close(gcbf);
 end
 
