@@ -16,7 +16,7 @@ if nargin < 2
         ['This GUI item calls the function %s. You can also call this function ', ...
          'directly. Type ''help %s'' in the command window for more information.'], funcname, funcname), ...
         '------------------------------------------------------------------------------------------------'};
-    
+
     if isfield(settings.help, funcname)
         if isfield(settings.help.(funcname), 'Description')
             A = settings.help.(funcname).Description;
@@ -39,7 +39,7 @@ else
     evalc(sprintf('helptext = settings.help.%s.Arguments.%s;', funcname, argname));
     % remove entries in square brackets
     [startindx, endindx] = regexp(helptext, '\[\s*([^\[\]]*)\s*\]'); % thanks ChatGPT for finding the regexp
-    for k = 1:numel(startindex)
+    for k = 1:numel(startindx)
         helptext(startindx(k):endindx(k)) = [];
     end
     % remove trailing space
