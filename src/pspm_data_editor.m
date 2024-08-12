@@ -256,6 +256,7 @@ PlotData(hObject);
 
 function PlotData(hObject)
 handles = guidata(hObject);
+handles.pspm_display.HandleVisibility = 'callback';
 channel = {};
 switch handles.input_mode % load data
   case 'file'
@@ -284,6 +285,7 @@ if ~isempty(channel)
   end
   set(handles.axData, 'NextPlot', np);
 end
+handles.pspm_display.HandleVisibility = 'off';
 
 function AddPlot(hObject, chan_id, action)
 handles = guidata(hObject);
