@@ -294,7 +294,7 @@ handles.axData.HandleVisibility = settings.handle;
 function AddPlot(hObject, chan_id, action)
 global settings
 handles = guidata(hObject);
-handles.axData.HandleVisibility = 'on';
+handles.axData.HandleVisibility = 'callback';
 if isempty(action)
   action = 'replace';
 end
@@ -350,7 +350,7 @@ guidata(hObject, handles);
 function RemovePlot(hObject, chan_id)
 global settings
 handles = guidata(hObject);
-handles.axData.HandleVisibility = 'on';
+handles.axData.HandleVisibility = 'callback';
 if numel(handles.plots) >= chan_id
   for i = 1:numel(handles.epochs) % remove response plots
     if numel(handles.epochs{i}.response_plots) >= chan_id ...

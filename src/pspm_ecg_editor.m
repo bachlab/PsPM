@@ -73,7 +73,7 @@ function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to pspm_ecg2hb_qc (see VARARGIN)
 
 pspm_ui(hObject, handles, 'ecg_editor');
-handles.UIEcgEditor.HandleVisibility = settings.handle;
+handles.UIEcgEditor.HandleVisibility = 'callback';
 % Choose default command line output for pspm_ecg2hb_qc
 handles.output = hObject;
 % -------------------------------------------------------------------------
@@ -663,7 +663,7 @@ end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
 handles.count=count; % set current position.
-handles.UIEcgEditor.HandleVisibility = 'off';
+handles.UIEcgEditor.HandleVisibility = settings.handle;
 % Update handles structure
 guidata(hObject,handles);
 

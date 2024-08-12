@@ -818,7 +818,7 @@ settings.added_paths      = added_paths;
 settings.removed_paths    = removed_paths;
 
 settings.developmode      = 0;
-settings.handle           = 'callback';
+settings.handle           = 'callback'; % the other option is 'off'
 settings.initial_paths    = initial_paths;
 settings.path             = pspm_root;
 settings.pspm_version     = pspm_vers;
