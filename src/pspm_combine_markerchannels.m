@@ -19,7 +19,6 @@ function [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 %   │                   indexing in further processing which by default
 %   │                   takes the first marker channel as input
 %   └.marker_chan_num:  any number of marker channel numbers - if undefined
-%   └.marker_chan_num : any number of marker channel numbers - if undefined
 %                       or 0, all marker channels of each file are used
 % ● History
 %   Introduced In PsPM 6.1.2

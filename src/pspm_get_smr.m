@@ -77,7 +77,7 @@ for iImport = 1:numel(import)
       % get minimum frequency for reporting resolution
       import{iImport}.minfreq = min(1./diff(chandata{channel}))*1000;
       % convert pulse to waveform
-      import{iImport}.data = pspm_pulse_convert(chandata{channel}, settings.import.rsr, settings.import.sr);
+      [~, import{iImport}.data] = pspm_pulse_convert(chandata{channel}, settings.import.rsr, settings.import.sr);
       import{iImport}.sr   = settings.import.sr;
       import{iImport}.minfreq = min(import{iImport}.data);
     elseif chanhead{channel}.kind == 4 % up and down timestamps
@@ -87,7 +87,7 @@ for iImport = 1:numel(import)
         pulse(1)=[];
       end
       pulse = pulse(1:2:end);
-      import{iImport}.data = pspm_pulse_convert(pulse, settings.import.rsr, settings.import.sr);
+      [~, import{iImport}.data] = pspm_pulse_convert(pulse, settings.import.rsr, settings.import.sr);
       import{iImport}.sr = settings.import.sr;
       import{iImport}.minfreq = min(import{iImport}.data);
     else

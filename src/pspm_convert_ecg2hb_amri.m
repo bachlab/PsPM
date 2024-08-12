@@ -34,9 +34,10 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   ├─.ecg_bandpass : [numeric, unit: Hz] Minimum and maximum frequencies to use during
 %   │                 bandpass filter of the raw ECG signal to construct filtered ECG
 %   │                 signal. Default as [0.5 40].
-%   ├─.teo_bandpass : [numeric, unit: Hz, default as [8 40]]
-%   │                 Minimum and maximum frequencies to use during bandpass filter of
+%   ├─.teo_bandpass : [numeric 2-element vector, unit: Hz] Minimum and 
+%   │                 maximum frequencies to use during bandpass filter of
 %   │                 filtered ECG signal to construct TEO input signal.
+%   │                 Default is 8-40 Hz.
 %   ├────.teo_order : [numeric, default as 1]
 %   │                 Order of the TEO operator. Must be integer. For a discrete time
 %   │                 signal x(t) and order k,

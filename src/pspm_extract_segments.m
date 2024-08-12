@@ -52,7 +52,7 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   │                     'model', then this option overides the missing
 %   │                     values given in the model
 %   │                     Default: no missing values
-%   ├────────.nan_output: ['screen', filename, or 'none']. Output
+%   ├────────.nan_output: ['screen', filename, or 'none'] Output
 %   │                     NaN ratios of the trials for each condition.
 %   │                     Values can be printed on the screen or written to 
 %   │                     a matlab file. Default is no NaN output.
@@ -76,7 +76,7 @@ if nargin < 2 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'})
         (~strcmpi(method, 'model') && nargin < 4)
     warning('ID:invalid_input', 'Don''t know what to do'); return
 elseif strcmpi(method, 'model')
-     data = pspm_load1(data, 'all');
+     [~, data, ~] = pspm_load1(data, 'all');
     if nargin > 2
         options = varargin{1};
     end
