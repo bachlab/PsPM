@@ -71,9 +71,9 @@ function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_ecg2hb_qc (see VARARGIN)
-
+global settings
 pspm_ui(hObject, handles, 'ecg_editor');
-handles.UIEcgEditor.HandleVisibility = 'callback';
+
 % Choose default command line output for pspm_ecg2hb_qc
 handles.output = hObject;
 % -------------------------------------------------------------------------
@@ -164,6 +164,8 @@ guidata(hObject, handles);
 set(handles.edtFactor, 'String', num2str(handles.plot.factr));
 set(handles.edtUpperLimit, 'String', num2str(handles.plot.limits.upper));
 set(handles.edtLowerLimit, 'String', num2str(handles.plot.limits.lower));
+% -------------------------------------------------------------------------
+handles.UIEcgEditor.HandleVisibility = settings.handle;
 % -------------------------------------------------------------------------
 % UIWAIT makes pspm_ecg2hb_qc wait for user response (see UIRESUME)
 uiwait(handles.UIEcgEditor);
@@ -576,7 +578,6 @@ guidata(hObject, handles);
 % --- plot data
 function pp_plot(hObject,handles)
 global settings
-handles.UIEcgEditor.HandleVisibility = 'callback';
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
   fl = handles.plot.faulties;
@@ -664,7 +665,6 @@ end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
 handles.count=count; % set current position.
-handles.UIEcgEditor.HandleVisibility = settings.handle;
 % Update handles structure
 guidata(hObject,handles);
 
