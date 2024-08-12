@@ -575,6 +575,7 @@ guidata(hObject, handles);
 
 % --- plot data
 function pp_plot(hObject,handles)
+global settings
 handles.UIEcgEditor.HandleVisibility = 'callback';
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode

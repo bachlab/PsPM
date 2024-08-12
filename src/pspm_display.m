@@ -899,11 +899,11 @@ set(handles.edit_y_min,'String',num2str(y(1)))
 set(handles.edit_y_max,'String',num2str(y(2)))
 set(handles.edit_start_x,'String',num2str(x(1)))
 set(handles.edit_winsize_x,'String',num2str(x(2)))
-handles.UIDisplay.HandleVisibility = 'off';
+handles.UIDisplay.HandleVisibility = settings.handle;
 end
 
 % --- Executes when pspm_display is resized.
-function pspm_display_ResizeFcn(~, ~, ~)
+function UIDisplay_ResizeFcn(~, ~, ~)
 % hObject    handle to pspm_display (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
