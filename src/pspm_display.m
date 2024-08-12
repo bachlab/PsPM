@@ -1,12 +1,12 @@
 function varargout = pspm_display(varargin)
 % ● Description
-%   UIDisplay opens a GUI for displaying data from PsPM files. A PsPM file
+%   pspm_display opens a GUI for displaying data from PsPM files. A PsPM file
 %   to be displayed can be specified in the function call or in the GUI
 %   itself.
 % ● Format
-%   UIDisplay
-%   UIDisplay(filename), such as UIDisplay('test.mat')
-%   UIDisplay(filepath), such as UIDisplay('~/Documents/test.mat')
+%   pspm_display
+%   pspm_display(filename), such as pspm_display('test.mat')
+%   pspm_display(filepath), such as pspm_display('~/Documents/test.mat')
 % ● Arguments
 %   * filename: the name of a file to be displayed, which must ends with '.mat'.
 %   * filepath: the path of a file to be displayed, which must ends with '.mat'.
@@ -52,7 +52,7 @@ end
 end
 
 
-% --- Executes just before UIDisplay is made visible.
+% --- Executes just before pspm_display is made visible.
 function pspm_display_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
@@ -146,13 +146,13 @@ elseif numel(varargin)>1
   warning('Too many input arguments. Inputs 2:end ignored. ');
 end
 
-% Choose default command line output for UIDisplay
+% Choose default command line output for pspm_display
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes UIDisplay wait for user response (see UIRESUME)
+% UIWAIT makes pspm_display wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 end
 
@@ -902,9 +902,9 @@ set(handles.edit_winsize_x,'String',num2str(x(2)))
 handles.UIDisplay.HandleVisibility = 'off';
 end
 
-% --- Executes when UIDisplay is resized.
+% --- Executes when pspm_display is resized.
 function pspm_display_ResizeFcn(~, ~, ~)
-% hObject    handle to UIDisplay (see GCBO)
+% hObject    handle to pspm_display (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 end
@@ -1050,9 +1050,9 @@ guidata(hObject, handles);
 % -------------------------------------------------------------------------
 end
 
-% --- Executes when UIDisplay is resized.
-function UIDisplay_SizeChangedFcn(~, ~, ~)
-% hObject    handle to UIDisplay (see GCBO)
+% --- Executes when pspm_display is resized.
+function pspm_display_SizeChangedFcn(~, ~, ~)
+% hObject    handle to pspm_display (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 end
