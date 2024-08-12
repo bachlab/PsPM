@@ -33,7 +33,14 @@ if nargin < 2
 else
     % this syntax allows chaining several nested structs into one argname
     evalc(sprintf('helptext = settings.help.%s.Arguments.%s;', funcname, argname));
+    % remove entries in square brackets
     [startindx, endindx] = regexp(helptext, '\[\s*([^\[\]]*)\s*\]'); % thanks ChatGPT for finding the regexp
-    helptext(startindx:endindx) = [];
+    for k = 1:numel(startindex)
+        helptext(startindx(k):endindx(k)) = [];
+    end
+    % remove trailing space
+    if strcmpi(helptext(1), ' ')
+        helptext = helptext(2:end);
+    end
     helptext = {helptext};
 end
