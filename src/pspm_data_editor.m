@@ -1,8 +1,6 @@
-function varargout = pspm_data_editor(varargin)
-%  ● Description
-%   pspm_data_editor allows to mark epochs (e.g. artefact epochs) in a PsPM 
-%   file. This can be done for an individual channel, or for multiple
-%   channels, by switching the viewed channel.
+function [sts, out] = pspm_data_editor(varargin)
+% ● Description
+%   pspm_data_editor MATLAB code for pspm_data_editor.fig
 % ● Format
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
@@ -47,7 +45,7 @@ if nargin && ischar(varargin{1}) && ...
 end
 
 if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+  [sts, out] = gui_mainfcn(gui_State, varargin{:});
 else
   gui_mainfcn(gui_State, varargin{:});
 end
@@ -359,9 +357,6 @@ end
 guidata(hObject, handles);
 
 function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
-% Comments
-%   It used to be function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
-%   Where the varargout seems not modified?
 % Feature
 %   Outputs from this function are returned to the command line.
 % Varargout
@@ -372,7 +367,6 @@ function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % UIWAIT makes pspm_data_editor wait for user response (see UIRESUME)
 % handles.lbEpochsvarargout{1} = handles.output;
-varargout{1} = handles.output;
 delete(hObject);
 
 function lbEpochs_Callback(hObject, ~, ~)

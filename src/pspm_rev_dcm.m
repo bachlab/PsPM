@@ -36,7 +36,7 @@ sts = -1;
 try, sn; catch, sn = 1; end;
 
 if ischar(dcm)
-    dcm = pspm_load1(dcm, 'all');
+    [~, dcm, ~] = pspm_load1(dcm, 'all');
 end
 
 % check input

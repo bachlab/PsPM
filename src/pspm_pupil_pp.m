@@ -228,6 +228,7 @@ end
 return
 
 function [sts, smooth_signal]  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
+
 global settings
 sts = -1;
 % 1 definitions
@@ -321,7 +322,6 @@ catch err
 end
 rmpath(libpath{:});
 sts = 1;
-
 
 function data = pspm_complete_with_nans(data, t_beg, sr, output_samples)
 % Complete the given data that possibly has missing samples at the

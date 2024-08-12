@@ -78,7 +78,7 @@ end
 % 2.3 Check PsPM version --
 pspm_vers = pspm_version('check');
 
-% 2.5 Add required paths ---
+% 2.4 Add required paths ---
 for k = 1:numel(required_folders)
     required_path{k} = pspm_path(required_folders{k}{:});
     if ~any(strcmp(initial_paths, required_path{k}))
@@ -86,7 +86,7 @@ for k = 1:numel(required_folders)
     end
 end
 
-% 2.6 Check if subfolders are already in path --
+% 2.5 Check if subfolders are already in path --
 filelist = dir(fullfile(pspm_root, ['**',filesep,'*.*']));
 subfolders_full = unique({filelist.folder});
 subfolders = erase(subfolders_full,pspm_root);
@@ -106,7 +106,7 @@ if flag_contain_subfolder
   end
 end
 
-% 2.7 Check for SPM and Matlabbatch conflicts--
+% 2.6 Check for SPM and Matlabbatch conflicts--
 % Check if SPM software is on the current Path.
 % Dialog Window open to ask whether to remove program from the path or quit pspm_init.
 % Default is to quit pspm_init.
@@ -127,16 +127,8 @@ if any(spm_path_idx)
   end
 end
 
-% 2.7 Add required paths ---
-required_folder_list = required_folders;
-for k = 1:numel(required_folder_list)
-    required_path = pspm_path(required_folder_list{k}{:});
-    if ~any(strcmp(initial_paths, required_path))
-        added_paths{end+1} = required_path;
-    end
-end
 
-% 2.8 Execute path handling
+% 2.7 Execute path handling
 removed_paths = unique(removed_paths);
 for k = 1:numel(removed_paths)
     rmpath(removed_paths{k});
