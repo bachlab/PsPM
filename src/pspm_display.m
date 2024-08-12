@@ -158,7 +158,7 @@ end
 
 
 % --- Outputs from this function are returned to the command line.
-function handles.output = pspm_display_OutputFcn(~, ~, handles)
+function varargout = pspm_display_OutputFcn(~, ~, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -689,7 +689,7 @@ end
 %% pp_plot
 
 function pp_plot(handles)
-
+handles.pspm_display.HandleVisibility = 'callback';
 global settings;
 if isempty(settings)
   pspm_init;
@@ -899,6 +899,7 @@ set(handles.edit_y_min,'String',num2str(y(1)))
 set(handles.edit_y_max,'String',num2str(y(2)))
 set(handles.edit_start_x,'String',num2str(x(1)))
 set(handles.edit_winsize_x,'String',num2str(x(2)))
+handles.pspm_display.HandleVisibility = 'off';
 end
 
 % --- Executes when pspm_display is resized.
