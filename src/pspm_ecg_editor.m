@@ -574,7 +574,7 @@ guidata(hObject, handles);
 
 % --- plot data
 function pp_plot(hObject,handles)
-handles.pspm_display.HandleVisibility = 'callback';
+handles.figure1.HandleVisibility = 'callback';
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
   fl = handles.plot.faulties;
@@ -662,7 +662,7 @@ end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
 handles.count=count; % set current position.
-handles.pspm_display.HandleVisibility = 'off';
+handles.figure1.HandleVisibility = 'off';
 % Update handles structure
 guidata(hObject,handles);
 

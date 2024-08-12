@@ -256,7 +256,7 @@ PlotData(hObject);
 
 function PlotData(hObject)
 handles = guidata(hObject);
-handles.pspm_display.HandleVisibility = 'callback';
+handles.axData.HandleVisibility = 'callback';
 channel = {};
 switch handles.input_mode % load data
   case 'file'
@@ -285,10 +285,11 @@ if ~isempty(channel)
   end
   set(handles.axData, 'NextPlot', np);
 end
-handles.pspm_display.HandleVisibility = 'off';
+handles.axData.HandleVisibility = 'off';
 
 function AddPlot(hObject, chan_id, action)
 handles = guidata(hObject);
+handles.axData.HandleVisibility = 'on';
 if isempty(action)
   action = 'replace';
 end
@@ -338,10 +339,12 @@ for i=1:numel(handles.epochs) % add response plots
   handles.epochs{i}.response_plots{chan_id} = struct('p', p);
 end
 set(handles.axData, 'NextPlot', np);
+handles.axData.HandleVisibility = 'off';
 guidata(hObject, handles);
 
 function RemovePlot(hObject, chan_id)
 handles = guidata(hObject);
+handles.axData.HandleVisibility = 'on';
 if numel(handles.plots) >= chan_id
   for i = 1:numel(handles.epochs) % remove response plots
     if numel(handles.epochs{i}.response_plots) >= chan_id ...
@@ -356,6 +359,7 @@ if numel(handles.plots) >= chan_id
   delete(handles.plots{chan_id}.interpolate);
   handles.plots{chan_id} = []; % empty entry
 end
+handles.axData.HandleVisibility = 'off';
 guidata(hObject, handles);
 
 function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
