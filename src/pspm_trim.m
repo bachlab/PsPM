@@ -180,7 +180,7 @@ end
 % 2.2 Calculate markers if needed
 if getmarker == 1
     % 2.2.1 Verify the markers
-    [nsts, data_struct, infos, pos_of_channel, chantype_sts] = ...
+    [nsts, data_struct, ninfos, pos_of_channel, chantype_sts] = ...
             pspm_load_channel(datafile, options.marker_chan_num, 'marker');
     if (nsts < 1 || chantype_sts < 1)
         return
@@ -234,7 +234,7 @@ if getmarker == 1
     else
         l_endmarker = g_endmarker;
     end
-    clear nsts ninfos ndata
+    clear nsts ninfos data_struct
 end
 
 % 2.3 Convert from and to from time points into seconds
