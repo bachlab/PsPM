@@ -1,6 +1,7 @@
 function [sts, outfile] = pspm_rename(filename, newfilename, options)
 % ● Description
-%   pspm_ren renames an SCR datafile and updates the infos field
+%   pspm_ren renames a PsPM datafile and updates the internal structure
+%   (the field 'infos') with the new file name. 
 % ● Format
 %   [sts, newfilename] = pspm_ren(filename, newfilename, options)
 % ● Arguments

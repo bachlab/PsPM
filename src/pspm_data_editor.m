@@ -4,21 +4,21 @@ function [sts, out] = pspm_data_editor(varargin)
 % ● Format
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
-%   *      indata:  Can be multiple kinds of data types. In order to use
-%                   pspm_data_editor() to edit acquisition data, the actual
-%                   data vector has to be passed via the varargin
-%                   argmument. The data should be 1xn or nx1 double vector.
-%   ┌─────options
-%   ├.output_file:  Use output_file to specify a file the changed data
-%   │               is saved to when clicking 'save' or 'apply'. Only
-%   │               works in 'file' mode.
-%   ├─.epoch_file:  Use epoch_file to specify a .mat file to import epoch data
-%   │               .mat file must be a struct with an 'epoch' field
-%   │               and a e x 2 matrix of epoch on- and offsets
-%   │               (n: number of epochs)
+%   *      indata:  a file name. 
+%   ┌─────options 
+%   ├.output_file:  When this is specified, marked epochs will be saved
+%   │               to a missing epochs file when clicking 'save' or 'apply'.
+%   │               It is also possible to specificy this file from within 
+%   │               the interactive data editor.
+%   ├─.epoch_file:  When this is specified, epochs will be imported from 
+%   │               this file and can be changed further. This file must 
+%   │               contain a variable 'epochs' which is an n x 2 matrix 
+%   │               of epoch on- and offsets (n: number of epochs). It is 
+%   │               also possible to specificy this file from within the
+%   │               interactive data editor.
 %   └──.overwrite:  [logical] (0 or 1)
-%                   Define whether to overwrite existing output files or not.
-%                   Default value: not to overwrite.
+%                   Define whether to overwrite existing output file or not.
+%                   Default: 0.
 % ● Outputs
 %   *         out:  The output depends on the actual output type chosen in
 %                   the graphical interface. At the moment either the

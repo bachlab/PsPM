@@ -1,13 +1,16 @@
 function [sts, out] = pspm_scr_pp(datafile, options)
 % ● Description
-%   pspm_scr_pp applies simple skin conductance response (SCR) quality
-%   assessment rulesets.
-%   Rule 1: Microsiemens values must be within range (0.05 to 60)
-%   Rule 2: Absolute slope of value change must be less than 10 microsiemens
-%           per second
-%   If option.missing_epochs_filename is specified, the detected epochs
+%   pspm_scr_pp implements a simple skin conductance response (SCR) quality
+%   check according to the following two rules. 
+%   (1) Microsiemens values must be within range (0.05 to 60). 
+%   (2) Absolute slope of value change must be less than 10 microsiemens
+%           per second. 
+%   Data points not corresponding to these rules are considered missing.   
+%   If a missing epochs filename is specified, the detected epochs
 %   will be written to a missing epochs file to be used for GLM
-%   (recommended). Otherwise, the respective data will be changed to NaN.
+%   (recommended). Otherwise, the function will create a channel in the 
+%   original data file in which the respective data are changed to NaN 
+%   (either adding this channel or replacing the original one).
 % ● Format
 %   [sts, channel_index]       = pspm_scr_pp(data, options)
 %   [sts, missing_epochs_file] = pspm_scr_pp(data, options)
@@ -30,11 +33,10 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   ├──────.max:  [Optional] Maximum value in microsiemens (default: 60).
 %   ├────.slope:  [Optional] Maximum slope in microsiemens per sec (default: 10).
 %   ├.missing_epochs_filename:
-%   │             [Optional] If provided will create a .mat file saving the epochs.
-%   │             The path can be specified, but if not the file will be saved
-%   │             in the current folder. If saving to the missing epochs file,
-%   │             no data in the original datafile will be changed. For
-%   │             instance, abc will create abc.mat
+%   │             [Optional] If a missing epochs file name is specified, 
+%   │             then the missing epochs will be saved to this file. In 
+%   │             this case, data in the original datafile will remain 
+%   │             unchanged; otherwise a channel will be written to the same file.
 %   ├.deflection_threshold:
 %   │             [Optional] Define an threshold in original data units for a slope to pass
 %   │             to be considered in the filter. This is useful, for example,
@@ -102,6 +104,11 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   Written in 2017      by Tobias Moser (University of Zurich)
 %   Updated in 2020      by Samuel Maxwell (UCL)
 %              2021-2024 by Teddy
+% ● References
+% [1] Kleckner IR et al. (2018). "Simple, Transparent, and Flexible 
+%     Automated Quality Assessment Procedures for Ambulatory Electrodermal 
+%     Activity Data. IEEE Transactions on Biomedical Engineering, 65 (7), 
+%     1460-1467.
 
 %% Initialise
 global settings

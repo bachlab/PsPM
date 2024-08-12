@@ -10,16 +10,18 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
 %   *             fn: A data file name
 %   ┌─────conversion
-%   ├──────────.from: Original units to convert from: 'pixel', a metric distance
-%   │                 unit, or 'degree'
-%   ├────────.target: target unit of conversion: a metric distance unit,
-%   │                 'degree' or 'sps'
-%   ├──.screen_width: with of the display in mm (not required if 'from' is
-%   │                 'degree', or both source and target are metric)
-%   ├─.screen_height: height of the display in mm (not required if 'from' is
-%   │                 'degree', or both source and target are metric)
-%   └.screen_distance: Subject distance from the screen in mm (not required
-%                     if 'from' is'degree', or if 'target' is metric)
+%   ├──────────.from: Original units of the source channel pair to convert 
+%   │                 from: 'pixel', a metric distance unit, or 'degree'. 
+%   │                 If in doubt, use the function 'pspm_display' to 
+%   │                 inspect the channels.
+%   ├────────.target: Target unit of conversion: a metric distance unit,
+%   │                 'degree' or 'sps'.
+%   ├──.screen_width: With of the display in mm (not required if 'from' is
+%   │                 'degree', or if both source and target are metric).
+%   ├─.screen_height: Height of the display in mm (not required if 'from' is
+%   │                 'degree', or if both source and target are metric).
+%   └.screen_distance: Eye distance from the screen in mm (not required
+%                     if 'from' is 'degree', or if 'target' is metric).
 %   ┌────────options
 %   ├───────.channel: gaze x and y channels to work on. This can be a pair
 %   │                 of channel numbers, any pair of channel types, 'gaze',

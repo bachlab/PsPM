@@ -10,6 +10,9 @@ if isempty(settings)
   pspm_init;
 end
 
+% close all windows - this should be done before paths are removed
+close all
+
 % Remove paths added during pspm_init
 if isfield(settings, 'added_paths') && ~isempty(settings.added_paths)
    cellfun(@rmpath, settings.added_paths);
@@ -28,7 +31,6 @@ if isfile(fullfile(settings.path,'pspm_text.mat'))
 end
 
 clear settings
-close all
 disp(' ');
 disp('Thanks for using PsPM.');
 disp(repelem('-',20));

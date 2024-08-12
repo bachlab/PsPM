@@ -16,6 +16,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+
 fid = fopen([settings.path,filesep,func_name,'.m'],'r','n','UTF-8');
 % read the file into a cell array, one cell per line
 i = 1;
@@ -36,6 +37,9 @@ A = A(cellfun(@ischar,A) & ~cellfun(@isempty,A));
 B = regexp(A,'^\s*%.*','match');
 B = vertcat(B{:});
 information = sort_info (B);
+if isfield(information, 'Description')
+    information.Description = sort_description(information.Description);
+end
 if isfield(information, 'Arguments')
   information.Arguments = sort_args(information.Arguments);
 end
@@ -92,6 +96,18 @@ for i_D = 1:length(D)
   end
 end
 
+function A = sort_description(A)
+% identify all line breaks
+linebreaks = strfind(A, newline);
+% find those line breaks that correspond to new paragraphs, and exclude
+% them
+linebreaks = setdiff(linebreaks, strfind(A,['.', newline]) + 1);
+linebreaks = setdiff(linebreaks, strfind(A,['. ', newline]) + 2);
+% remove remaining line breaks and replace with space, remove multiple
+% spaces
+A(linebreaks) = ' ';
+A = remove_multiple_space(A);
+
 function args = sort_args(A)
 B = A;
 B(strfind(B,[newline, char(9474)])) = '';
@@ -104,8 +120,9 @@ checklist_valid = [strfind(B,[newline,char(9500)]),...
   strfind(B,[newline,'*']),...
   strfind(B,[newline,char(9484)])]  ;
 checklist = checklist(~ismember(checklist, checklist_valid));
-B(checklist) = '';
-B(strfind(B,char(9472)))='';
+B(checklist) = ' ';
+B(strfind(B,char(9472)))=' ';
+B = remove_multiple_space(B);
 levels = B([1,strfind(B,newline)+1]);
 level_ends = [strfind(B,newline),length(B)];
 level_starts = [1,level_ends(1:end-1)+1];
@@ -149,6 +166,7 @@ B = remove_multiple_space (A);
 B(strfind(B,newline)) = ' ';
 B(strfind(B,' [')) = newline;
 B(strfind(B,' *')) = newline;
+B = splitlines(B);
 
 function B = remove_multiple_space (A)
 % B is a string with multiple spaces

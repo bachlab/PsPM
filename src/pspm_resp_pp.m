@@ -1,15 +1,17 @@
 function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 % ● Description
 %   pspm_resp_pp preprocesses raw respiration traces. The function detects respiration
-%   cycles for bellows and cushion systems, computes respiration period, amplitude and
-%   RFR, assigns these measures to the start of each cycle and linearly interpolates these
-%   (expect rs = respiration time stamps). Results are written to new channels in the same
-%   file.
+%   cycles for bellows and cushion systems and creates respiration time 
+%   stamps (rs), computes respiration period (rp), amplitude (ra) and
+%   respiratory flow rate (rfr), assigns these measures to the start of 
+%   each cycle and linearly interpolates these. The output data type can be
+%   restricted in options; otherwise all four outputs are created.
 % ● Format
 %   [sts, channel_index] = pspm_resp_pp(fn, sr, options)
 % ● Arguments
 %   *             fn: data file name
-%   *             sr: sample rate for new interpolated channel
+%   *             sr: sample rate for new interpolated channel. This will
+%   be ignored if the chosen output is only respiration time stamps.
 %   ┌─────── options
 %   ├───────.channel: [optional, numeric/string, default: 'resp', i.e. last
 %   │                 respiration channel in the file]
@@ -23,10 +25,12 @@ function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 %   │                 each channel.  In this case, set the option
 %   │                 'channel_action' to 'add',  to store each
 %   │                 resulting channel separately.
-%   ├────.systemtype: ['bellows'(default) /'cushion']
+%   ├────.systemtype: ['bellows'(default) /'cushion'] Bellows system
+%   │                 (increased air flow upon inspiration) or cushion 
+%   │                 system (increased air pressure upon inspiration).
 %   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
 %   │                   'rs', 'all' (default).
-%   ├──────────.plot: 1 creates a respiratory cycle detection plot
+%   ├──────────.plot: [0/1] Create a respiratory cycle detection plot
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
 %                     corresponding channel should be replaced.

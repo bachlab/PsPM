@@ -1,9 +1,19 @@
 function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Description
-%   pspm_split_sessions splits experimental sessions/blocks, based on regularly incoming
-%   markers, for example volume or slice markers from an MRI scanner, or based on a
-%   vector of split points that is defined in terms of markers. The first and the last
-%   marker will define the start of the first session and the end of the last session.
+%   pspm_split_sessions splits a continuous recording into experimental 
+%   sessions/blocks. This can be useful to suppress noise or artefacts that
+%   occur in breaks (e.g. caused by participant movement or disconnection
+%   from the recording system) which can have an impact on pre-processing 
+%   (e.g. filtering) and modelling. 
+%   Splitting can be based on regularly incoming markers (e.g. trial 
+%   markers or volume/slice markers from an MRI scanner), or based on 
+%   a vector of split points that is defined in terms of markers. In all 
+%   cases, the first and the last markers will define the start of the 
+%   first session and the end of the last session.
+%   In addition, the function can split a (missing) epochs file associated
+%   with the original PsPM file to the same limits.
+%   The individual session dat will be written to new files with a suffix 
+%   '_sn' and the session number.
 % ● Format
 %   [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
 % ● Arguments
@@ -19,7 +29,7 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   ├.min_break_ratio :  Minimum for ratio
 %   │                    [(session distance)/(maximum marker distance)]
 %   │                    Default is 3 (defined by settings.split.min_break_ratio)
-%   ├────.splitpoints :  Alternatively, directly specify session start
+%   ├────.splitpoints :  Explicitly specify session start
 %   │                    (excluding the first session starting at the
 %   │                    first marker) in terms of markers (vector of integer)
 %   ├─────────.prefix :  [numeric, unit:second, default:0]
