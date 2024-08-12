@@ -70,6 +70,7 @@ if isempty(settings)
 end
 sts = -1;
 pspm_ui(hObject, handles, 'data_editor');
+handles.UIDataEditor.HandleVisibility = settings.handle;
 if get(handles.rbInterpolate, 'Value')
   set(handles.cbInterpolate, 'Enable', 'on');
   handles.output_type = 'interpolate';
@@ -89,9 +90,9 @@ handles.data = {};
 handles.input_mode = '';
 handles.input_file = '';
 handles.output_file = '';
-set(handles.fgDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
-set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
-set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
+set(handles.UIDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
+set(handles.UIDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
+set(handles.UIDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   handles.options = varargin{2};
   handles.options = pspm_options(handles.options, 'data_editor');
@@ -139,7 +140,9 @@ if numel(varargin) > 0
     Add_Epochs(hObject, handles)
   end
 end
-uiwait(handles.fgDataEditor);
+uiwait(handles.UIDataEditor);
+
+
 
 function [sts] = CreateOutput(hObject)
 handles = guidata(hObject);
@@ -230,7 +233,7 @@ end
 [~, infos, data] = pspm_load_data(file); % load file
 channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
 set(handles.edOpenFilePath, 'String', file);
-corder = get(handles.fgDataEditor, 'defaultAxesColorOrder'); % format channels
+corder = get(handles.UIDataEditor, 'defaultAxesColorOrder'); % format channels
 cl = length(corder)-2;
 disp_names = cell(numel(channels), 1);
 for i = 1:numel(channels)
@@ -255,6 +258,7 @@ guidata(hObject, handles);
 PlotData(hObject);
 
 function PlotData(hObject)
+global settings
 handles = guidata(hObject);
 handles.axData.HandleVisibility = 'callback';
 channel = {};
@@ -285,9 +289,10 @@ if ~isempty(channel)
   end
   set(handles.axData, 'NextPlot', np);
 end
-handles.axData.HandleVisibility = 'off';
+handles.axData.HandleVisibility = settings.handle;
 
 function AddPlot(hObject, chan_id, action)
+global settings
 handles = guidata(hObject);
 handles.axData.HandleVisibility = 'on';
 if isempty(action)
@@ -295,7 +300,7 @@ if isempty(action)
 end
 np = get(handles.axData, 'NextPlot');
 set(handles.axData, 'NextPlot', action);
-corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
+corder = get(handles.UIDataEditor, 'defaultAxesColorOrder');
 cl = length(corder)-2;
 m = floor((chan_id-0.1)/cl);
 color = corder(chan_id - m*cl, :);
@@ -339,10 +344,11 @@ for i=1:numel(handles.epochs) % add response plots
   handles.epochs{i}.response_plots{chan_id} = struct('p', p);
 end
 set(handles.axData, 'NextPlot', np);
-handles.axData.HandleVisibility = 'off';
+handles.axData.HandleVisibility = settings.handle;
 guidata(hObject, handles);
 
 function RemovePlot(hObject, chan_id)
+global settings
 handles = guidata(hObject);
 handles.axData.HandleVisibility = 'on';
 if numel(handles.plots) >= chan_id
@@ -359,7 +365,7 @@ if numel(handles.plots) >= chan_id
   delete(handles.plots{chan_id}.interpolate);
   handles.plots{chan_id} = []; % empty entry
 end
-handles.axData.HandleVisibility = 'off';
+handles.axData.HandleVisibility = settings.handle;
 guidata(hObject, handles);
 
 function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
@@ -502,11 +508,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
   set(hObject,'BackgroundColor','white');
 end
 
-function fgDataEditor_CreateFcn(~, ~, ~)
+function UIDataEditor_CreateFcn(~, ~, ~)
 % Feature
 %   Executes during object creation, after setting all properties.
 % Variables
-%   hObject    handle to fgDataEditor (see GCBO)
+%   hObject    handle to UIDataEditor (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    empty - handles not created until after all CreateFcns called
 
@@ -923,7 +929,7 @@ function pbApply_Callback(hObject, ~, handles)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 if CreateOutput(hObject) == 1
-  uiresume(handles.fgDataEditor);
+  uiresume(handles.UIDataEditor);
 end
 
 function pbCancel_Callback(hObject, ~, handles)
@@ -935,8 +941,8 @@ function pbCancel_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 handles.output = {};
 guidata(hObject, handles);
-if isfield(handles, 'fgDataEditor')
-  uiresume(handles.fgDataEditor);
+if isfield(handles, 'UIDataEditor')
+  uiresume(handles.UIDataEditor);
 end
 
 function cbInterpolate_Callback(hObject, ~, ~)
@@ -964,18 +970,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
   set(hObject,'BackgroundColor','white');
 end
 
-function fgDataEditor_CloseRequestFcn(hObject, ~, handles)
+function UIDataEditor_CloseRequestFcn(hObject, ~, handles)
 % Feature
-%   Executes when user attempts to close fgDataEditor.
+%   Executes when user attempts to close UIDataEditor.
 % Variables
-%   hObject    handle to fgDataEditor (see GCBO)
+%   hObject    handle to UIDataEditor (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 % Hint
 %   delete(hObject) closes the figure
 handles.output = {};
-if isfield(handles, 'fgDataEditor')
-  uiresume(handles.fgDataEditor);
+if isfield(handles, 'UIDataEditor')
+  uiresume(handles.UIDataEditor);
 end
 delete(hObject);
 
