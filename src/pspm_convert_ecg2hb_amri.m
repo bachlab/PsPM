@@ -28,12 +28,11 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   │                     ECG signal before feeding it to R-peak finding part.
 %   │                 (3) If 'auto', the option that results in the higher maximal
 %   │                     auto-correlation will be used.
-%   ├──────.hrrange : [numeric, unit: beats per minute] Minimum and maximum heartbeat
-%   │                 rates (BPM) to use in the algorithm. Must be a numeric array of
-%   │                 length 2, i.e.[min_bpm max_bpm]. Default as [20 200].
+%   ├──────.hrrange : [numeric 2-element vector, unit: beats per minute] Minimum and maximum heartbeat
+%   │                 rates (BPM) to use in the algorithm. Default is 20-200 bpm.
 %   ├─.ecg_bandpass : [numeric, unit: Hz] Minimum and maximum frequencies to use during
 %   │                 bandpass filter of the raw ECG signal to construct filtered ECG
-%   │                 signal. Default as [0.5 40].
+%   │                 signal. Default is 0.5-40 Hz.
 %   ├─.teo_bandpass : [numeric 2-element vector, unit: Hz] Minimum and 
 %   │                 maximum frequencies to use during bandpass filter of
 %   │                 filtered ECG signal to construct TEO input signal.
