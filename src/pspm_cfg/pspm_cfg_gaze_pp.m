@@ -14,7 +14,7 @@ channel_action   = pspm_cfg_selector_channel_action;
            
 %% Executable branch
 gaze_pp        = cfg_exbranch;
-gaze_pp.name   = 'Preprocess gaze';
+gaze_pp.name   = 'Gaze preprocessing';
 gaze_pp.tag    = 'gaze_pp';
 gaze_pp.val    = {datafile, channel, channel_action};
 gaze_pp.prog   = @pspm_cfg_run_gaze_pp;

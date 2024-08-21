@@ -1,4 +1,4 @@
-function out = pspm_cfg_run_pp_emg_data(job)
+function out = pspm_cfg_run_emg_pp(job)
 % * Description
 %   Executes pspm_emg_pp
 % * History

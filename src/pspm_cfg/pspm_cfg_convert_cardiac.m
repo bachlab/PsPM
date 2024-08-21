@@ -1,4 +1,4 @@
-function pp_heart_data = pspm_cfg_pp_heart_data
+function pp_heart_data = pspm_cfg_convert_cardiac
 
 % Updated 27-Mar-2024 by Teddy
 
@@ -54,7 +54,7 @@ ecg2hb_opt.val      = {ecg2hb_minhr, ecg2hb_maxhr, ...
 ecg2hb_opt.help     = {''};
 
 ecg2hb              = cfg_exbranch;
-ecg2hb.name         = 'Convert ECG to Heart Beat (Pan & Tompkins)';
+ecg2hb.name         = 'Convert ECG to heart beat (Pan & Tompkins)';
 ecg2hb.tag          = 'ecg2hb';
 ecg2hb.help         = pspm_cfg_help_format('pspm_convert_ecg2hb'); 
 ecg2hb.val          = {ecg_chan, ecg2hb_opt};
@@ -125,7 +125,7 @@ ecg2hb_amri_opt.val  = {ecg2hb_amri_signal_to_use, ecg2hb_amri_hrrange, ...
 ecg2hb_amri_opt.help = {};
 
 ecg2hb_amri         = cfg_exbranch;
-ecg2hb_amri.name    = 'Convert ECG to Heart Beat (AMRI)';
+ecg2hb_amri.name    = 'Convert ECG to heart beat (AMRI)';
 ecg2hb_amri.tag     = 'ecg2hb_amri';
 ecg2hb_amri.help    = pspm_cfg_help_format('pspm_convert_ecg2hb_amri');
 ecg2hb_amri.val     = {ecg_chan, ecg2hb_amri_opt};
@@ -161,7 +161,7 @@ limit.val           = {limit_upper, limit_lower};
 limit.help          = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.limit');
 
 hb2hp               = cfg_exbranch;
-hb2hp.name          = 'Convert Heart Beat to Heart Period';
+hb2hp.name          = 'Convert heart beat to heart period';
 hb2hp.tag           = 'hb2hp';
 hb2hp.val           = {hb2hp_sr, hb_chan, limit};
 hb2hp.help          = pspm_cfg_help_format('pspm_convert_hb2hp');
@@ -183,7 +183,7 @@ ppg2hb_method.values    = {ppg2hb_classic, ppg2hb_heartpy};
 ppg2hb_method.help  = pspm_cfg_help_format('pspm_convert_ppg2hb', 'options.method');
 
 ppg2hb              = cfg_exbranch;
-ppg2hb.name         = 'Convert peripheral pulse oximetry to Heart Beat';
+ppg2hb.name         = 'Convert peripheral pulse oximetry to heart beat';
 ppg2hb.tag          = 'ppg2hb';
 ppg2hb.val          = {ppg_chan, ppg2hb_method};
 ppg2hb.help         = pspm_cfg_help_format('pspm_convert_ppg2hb');
@@ -203,10 +203,10 @@ pp.help             = {};
 
 % Executable Branch
 pp_heart_data      = cfg_exbranch;
-pp_heart_data.name = 'Preprocess heart data';
+pp_heart_data.name = 'Cardiac data conversion';
 pp_heart_data.tag  = 'pp_heart_data';
 pp_heart_data.val  = {datafile, pp, channel_action};
-pp_heart_data.prog = @pspm_cfg_run_pp_heart_data;
+pp_heart_data.prog = @pspm_cfg_run_convert_cardiac;
 pp_heart_data.vout = @pspm_cfg_vout_outchannel;
 pp_heart_data.help = {'See individual preprocessing options for help.'};
 

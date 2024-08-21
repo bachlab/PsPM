@@ -90,7 +90,7 @@ options.help   = {['Choose for each possible process datatype either ', ...
 
 % Executable Branch
 resp_pp      = cfg_exbranch;
-resp_pp.name = 'Preprocess respiration data';
+resp_pp.name = 'Respiration data conversion';
 resp_pp.tag  = 'resp_pp';
 resp_pp.val  = {datafile,sr,channel, channel_action ,options};
 resp_pp.prog = @pspm_cfg_run_resp_pp;
