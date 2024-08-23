@@ -1,38 +1,45 @@
 function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Description
-%   pspm_process_illuminance is used to process raw lux data and transfer
-%   it into two nuisance regressors (dilation and constriction) for glm
-% ● Developer's Notes
-%   Pupil size models were developed with pupil size data recorded in
-%   diameter values. Therefore pupil size data analyzed using these models
-%   should also be in diameter.
+%   pspm_process_illuminance transforms an illuminance time series into
+%   a convolved pupil response time series, to be used as nuisance file in 
+%   a GLM. This allows partialling out illuminance contributions to pupil 
+%   responses evoked by cognitive inputs. Alternatively it allows analysing 
+%   the illuminance responses as such, by extracting parameter estimates 
+%   relating to the nuisance regressors from the GLM.
+%   The illuminance file should be a .mat file with a vector variable 
+%   called Lx. In order to fulfill the requirements of a later nuisance 
+%   file there must be as many values as there are data values in the pupil 
+%   channel. Data must be given in lux (lm/m2) to account for the 
+%   non-linear mapping from illuminance to steady-state pupil size. To 
+%   transform luminance (cd/m2) to illuminance values, please see 
+%   https://en.wikipedia.org/wiki/Illuminance#Relation_to_luminance
 % ● Format
 %   [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Arguments
-%   *          ldata: illuminance data as (cell of) 1x1 double or filename.
-%   *             sr: sample rate in Hz of the input data.
+%   *          ldata: Illuminance data as (cell of) 1x1 double or filename.
+%   *             sr: Sample rate in Hz of the input data.
 %   ┌────────options
-%   ├────────────.fn: [filename] if specified ldata{i,j} will be saved to a file
+%   ├────────────.fn: [filename] Ff specified ldata{i,j} will be saved to a file
 %   │                 with filename options.fn{i,j} into the variable 'R'.
 %   ├─────.overwrite: [logical] (0 or 1)
 %   │                 Define whether to overwrite existing output files or not.
 %   │                 Default value: determined by pspm_overwrite.
-%   ├──────.transfer: params for the transfer function
-%   └┬───────────.bf: settings for the basis functions.
-%    ├┬.constriction: options to the constriction response function.
-%    │└─────.fhandle: function handle to the constriction response function.
+%   ├──────.transfer: Params for the transfer function
+%   └┬───────────.bf: Settings for the basis functions.
+%    ├┬.constriction: Options to the constriction response function.
+%    │└─────.fhandle: Function handle to the constriction response function.
 %    │                The allowed values are @pspm_bf_lcrf_gm.
-%    ├┬────.dilation: options for the dilation basis function.
-%    │└─────.fhandle: function handle to the dilation response function.
+%    ├┬────.dilation: Options for the dilation basis function.
+%    │└─────.fhandle: Function handle to the dilation response function.
 %    │                The allowed values are @pspm_bf_ldrf_gm and
 %    │                @pspm_bf_ldrf_gu.
-%    ├─────.duration: duration of the basis functions in second.
-%    └───────.offset: offset in second.
+%    ├─────.duration: Duration of the basis functions in second.
+%    └───────.offset: Offset in second.
 % ● Outputs
 %   *            sts: status
 %   *            out: has same size as ldata and contains either the
-%                     processed data or contains the path to the .mat file
-%                     where the data has been stored to
+%                     processed data (if options.fn is not provided) or 
+%                     the output file name(s)
 % ● References
 %   Korn CW & Bach DR (2016). A solid frame for the window on cognition:
 %   Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.

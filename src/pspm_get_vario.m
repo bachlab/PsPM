@@ -1,8 +1,8 @@
 function [sts, import, sourceinfo] = pspm_get_vario(datafile, import)
 % ● Description
-%   pspm_get_vario is the main function for import of VarioPort files this function
-%   uses the conversion routine getVarioPort.m written and maintained by Christoph
-%   Berger at the University of Rostock.
+%   pspm_get_vario imports VarioPort files using the conversion routine 
+%   getVarioPort.m written and maintained by Christoph Berger at the 
+%   University of Rostock.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_vario(datafile, import);
 % ● Arguments

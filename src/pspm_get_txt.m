@@ -1,6 +1,11 @@
 function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 % ● Description
-%   pspm_get_txt is the main function for import of text files
+%   pspm_get_txt imports text files with the following specifications: The
+%   file can only contain numbers (i.e. no header lines, such as channel 
+%   names) and one data column per channel. Data must use the decimal
+%   point. Any delimiter can be used; the delimiter is set in the import 
+%   structure (default: whitespace). At the moment, import of event 
+%   markers is not supported.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_txt(datafile, import);
 % ● Arguments

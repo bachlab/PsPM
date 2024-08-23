@@ -2,7 +2,8 @@ function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 % ● Description
 %   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and writes
 %   them as heart beat channel into the datafile. This function implements the algorithm
-%   by Pan & Tompkins (1985) with some adjustments.
+%   by Pan & Tompkins (1985) with some adjustments described in the function 
+%   help under Developer's notes.
 % ● Format
 %   [sts, channel_index, quality_info] = pspm_convert_ecg2hb(fn, options)
 % ● Arguments
@@ -17,15 +18,15 @@ function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 %   │                 multiple times with the index of each channel. In this case, set
 %   │                 the option 'channel_action' to 'add', to store each resulting 'hb'
 %   │                 channel separately.
-%   ├──────────.semi: activates the semi automatic mode, allowing the handcorrection of
+%   ├──────────.semi: Activates the semi automatic mode, allowing the handcorrection of
 %   │                 all IBIs that fulfill: >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
-%   ├─────────.minHR: sets minimal HR [def. 20bpm].
-%   ├─────────.maxHR: sets maximal HR [def. 200bpm].
+%   ├─────────.minHR: Minimal HR [def. 20bpm].
+%   ├─────────.maxHR: Maximal HR [def. 200bpm].
 %   ├─────.debugmode: [numeric, default as 0]
-%   │                 runs the algorithm in debugmode (additional results
+%   │                 Runs the algorithm in debugmode (additional results
 %   │                 in debug variable 'infos.pt_debug') and plots a graph
 %   │                 that allows quality checks.
-%   ├──────.twthresh: sets the threshold to perform the twave check.
+%   ├──────.twthresh: Sets the threshold to perform the twave check.
 %   │                 [def. 0.36s].
 %   └.channel_action: ['add'/'replace', default as 'replace']
 %                     Defines whether the new channel should be added or

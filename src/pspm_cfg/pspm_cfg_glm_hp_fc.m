@@ -13,11 +13,6 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'HPR';
 vars.modspec = 'hp_fc';
-vars.glmref = { ...
-        ['Castegnetti, Tzovara, Staib, Paulus, Hofer & Bach (2016) Psychophysiology ', ...
-        '(Development of the GLM for fear-conditioned HPR)'] ...
-    };
-vars.glmhelp = '';
 
 % load default settings
 glm_hp_fc = pspm_cfg_glm(vars);

@@ -4316,6 +4316,7 @@ Further settings
 \end_layout
 
 \begin_layout Standard
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="23" columns="8">
 <features tabularvalignment="middle">
@@ -7087,6 +7088,117 @@ wheel==0.41.3
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+HeartPy for processing PPG data
+\end_layout
+
+\begin_layout Standard
+The package 
+\family typewriter
+HeartPy
+\family default
+ (stylised to be in line with its official website) (https://pypi.org/project/hea
+rtpy/) is designed for analysing PPG signals and used for processing PPG
+ data in PsPM.
+\end_layout
+
+\begin_layout Standard
+The process of using HeartPy to process PPG data is described as following.
+ Initially, PsPM will check if python has been installed in the computer,
+ and this is done by using the function 
+\family typewriter
+pspm_check_python
+\family default
+.
+ In this process, 
+\family typewriter
+pspm_check_python
+\family default
+ requires a path of python that is provided by the user so that it can determine
+ if python has been installed there.
+ Secondly, PsPM checks if HeartPy package has been installed in the defined
+ python path, and this is handled with 
+\family typewriter
+pspm_check_python_modules
+\family default
+.
+ If both python and 
+\family typewriter
+HeartPy
+\family default
+ have been installed, it is then safe to use function family 
+\family typewriter
+py.heartpy
+\family default
+ to do analysis.
+ The details of available functions that are provided by 
+\family typewriter
+HeartPy
+\family default
+ can be found at https://python-heart-rate-analysis-toolkit.readthedocs.io/en/late
+st/heartpy.heartpy.html.
+ The details about how PPG data are processed can be found at 
+\family typewriter
+pspm_convert_ppg2hb
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection
+Bioread for importing biopac data
+\end_layout
+
+\begin_layout Standard
+The package 
+\family typewriter
+Bioread
+\family default
+ (https://pypi.org/project/bioread/) supports reading biopac files in any
+ version, and it has been included in PsPM for importing biopac files since
+ version 7.0.
+ 
+\family typewriter
+Bioread-based
+\family default
+ importing is set as an alternative method in parallel to previous methods,
+ and it is managed in 
+\family typewriter
+acqread_python
+\family default
+.
+ Users have to specify the functionality of importing biopac data with python
+ to use this method, but they can also call the function 
+\family typewriter
+acqread_python
+\family default
+ in command line or scripts to directly use this feature.
+ The method of checking python and 
+\family typewriter
+Bioread
+\family default
+ is identical to what has been checked for 
+\family typewriter
+HeartPy
+\family default
+.
+ The generic flowchart of 
+\family typewriter
+acqread_python
+\family default
+ is to get the main content and other metadata from original files and then
+ save such information to the corresponding places for meeting PsPM's data
+ storage requirements.
+ Further information is available in 
+\family typewriter
+acqread_python
+\family default
+ that is under the path 
+\family typewriter
+src/Import/acq
+\family default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -24091,7 +24203,7 @@ Function
 \begin_layout Standard
 
 \family typewriter
-wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+[sts, wavedata] = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 \end_layout
 
 \begin_layout Subsubsection

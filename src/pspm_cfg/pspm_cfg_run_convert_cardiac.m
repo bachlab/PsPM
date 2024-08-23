@@ -1,4 +1,4 @@
-function out = pspm_cfg_run_pp_heart_data(job)
+function out = pspm_cfg_run_convert_cardiac(job)
 % Updated on 26-03-2024 by Teddy
 fn = job.datafile{1};
 outputs = cell(size(job.pp_type));

@@ -1,7 +1,8 @@
 function varargout = pspm_display(varargin)
 % ● Description
-%   pspm_display is the code for the GUI that is used to display different data from scr
-%   datafiles.
+%   pspm_display opens a GUI for displaying data from PsPM files. A PsPM file
+%   to be displayed can be specified in the function call or in the GUI
+%   itself.
 % ● Format
 %   pspm_display
 %   pspm_display(filename), such as pspm_display('test.mat')
@@ -157,14 +158,14 @@ end
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = pspm_display_OutputFcn(~, ~, handles)
+function handles.output = pspm_display_OutputFcn(~, ~, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+
 end
 
 
@@ -488,8 +489,6 @@ if not(sts == 0)
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
 
-elseif numel(varargin)>1
-  warning('Too many input arguments. Inputs 2:end ignored. ');
 end
 
 % Update handles structure

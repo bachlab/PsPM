@@ -1,6 +1,6 @@
 function [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 % ● Description
-%   pspm_combine_markerchannels combines several marker channels into one.
+%   This function combines several marker channels into one.
 %   Index of original marker channel is converted into marker name and marker
 %   value of the new channel.
 %   This allows for example creating GLM timing definitions based on
@@ -18,7 +18,7 @@ function [sts, outchannel] = pspm_combine_markerchannels(datafile, options)
 %   │                   the first option is used, then use marker channel
 %   │                   indexing in further processing which by default
 %   │                   takes the first marker channel as input
-%   └.marker_chan_num : any number of marker channel numbers - if undefined
+%   └.marker_chan_num:  any number of marker channel numbers - if undefined
 %                       or 0, all marker channels of each file are used
 % ● History
 %   Introduced In PsPM 6.1.2

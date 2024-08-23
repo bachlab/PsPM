@@ -8,21 +8,38 @@ overwrite        = pspm_cfg_selector_overwrite;
 
 %% Specific items
 
+%% prefix
+split_prefix        = cfg_entry;
+split_prefix.name   = 'Prefix (data before split point)';
+split_prefix.tag    = 'prefix';
+split_prefix.strtype = 'i';
+split_prefix.num    = [1 1];
+split_prefix.val    = {0};
+split_prefix.help   = pspm_cfg_help_format('pspm_split_sessions', 'options.prefix');
+
+%% suffix
+split_suffix        = cfg_entry;
+split_suffix.name   = 'Suffix (data after split point)';
+split_suffix.tag    = 'suffix';
+split_suffix.strtype = 'i';
+split_suffix.num    = [1 1];
+split_suffix.val    = {0};
+split_suffix.help   = pspm_cfg_help_format('pspm_split_sessions', 'options.suffix');
+
 %% split auto
 split_auto          = cfg_const;
-split_auto.name     = 'Automatic';
+split_auto.name     = 'Automatically determine split points';
 split_auto.tag      = 'auto';
 split_auto.val      = {0};
-split_auto.help     = {['Detect sessions according to longest distances ', ...
-'between markers.']};
+split_auto.help     = {};
 
 %% split manual
 split_manual        = cfg_entry;
-split_manual.name   = 'Marker';
+split_manual.name   = 'Explicit define of splitpoints';
 split_manual.tag    = 'marker';
 split_manual.strtype = 'i';
 split_manual.num    = [1 inf];
-split_manual.help   = {'Split sessions according to given marker id''s.'};
+split_manual.help   = pspm_cfg_help_format('pspm_split_sessions', 'options.splitpoints');
 
 %% Split behaviour
 split_behavior         = cfg_choice;
@@ -30,47 +47,34 @@ split_behavior.name    = 'Split behavior';
 split_behavior.tag     = 'split_behavior';
 split_behavior.values  = {split_auto, split_manual};
 split_behavior.val     = {split_auto};
-split_behavior.help    = {['Choose whether sessions should be detected ', ...
-'automatically or if sessions should be split according to ', ...
-'given marker id''s.']};
+split_behavior.help    = {};
 
 %% Missing epochs
 miss_epoch_false          = cfg_const;
 miss_epoch_false.name     = 'No missing epochs file';
 miss_epoch_false.tag      = 'no';
 miss_epoch_false.val      = {0};
-miss_epoch_false.help     = {'No missing epochs file to be processed.'};
+miss_epoch_false.help     = {};
 
 miss_epoch_true          = cfg_files;
 miss_epoch_true.name     = 'Add missing epochs file';
 miss_epoch_true.tag      = 'name';
 miss_epoch_true.num      = [1 1];
-miss_epoch_true.help     = {['The selected missing epochs file will be ',...
-'split as well.'], ['The input must be the name of a file containing missing ',...
-'epochs in seconds.']};
+miss_epoch_true.help     = {};
 
 missing_epoch         = cfg_choice;
 missing_epoch.name    = 'Missing epoch';
 missing_epoch.tag     = 'missing_epochs_file';
 missing_epoch.values  = {miss_epoch_false, miss_epoch_true};
 missing_epoch.val     = {miss_epoch_false};
-missing_epoch.help = {['A missing epochs file can be added here '...
-'and will be split in the same way as the PsPM data file. '...
-'Split sessions can handle up to one missing epoch file.']};
+missing_epoch.help    = pspm_cfg_help_format('pspm_split_sessions', 'options.missing');
 
 %% Executable branch
 split_sessions      = cfg_exbranch;
 split_sessions.name = 'Split Sessions';
 split_sessions.tag  = 'split_sessions';
-split_sessions.val  = {datafile,channel,split_behavior,missing_epoch,overwrite};
+split_sessions.val  = {datafile,channel,split_behavior,split_prefix, split_suffix, missing_epoch,overwrite};
 split_sessions.prog = @pspm_cfg_run_split_sessions;
 split_sessions.vout = @pspm_cfg_vout_outfile;
-split_sessions.help = {['Split sessions, defined by trains of of markers. This function ' ...
-'is most commonly used to split fMRI sessions when a (slice or volume) pulse from the ' ...
-'MRI scanner has been recorded. In automatic mode, the function will identify trains of markers and detect ' ...
-'breaks in these marker sequences. In manual model, you can provide a vector of markers that are used ', ...
-'to split the file. The individual sessions will be written to new files ' ...
-'with a suffix ''_sn'', and the session number. You can choose one datafile and, optionally, ' ...
-'one missing epochs file, which will be split at the same points. By default, the function will use ', ...
-'the first marker channel. Alternatively, you can choose a marker channel number.']};
+split_sessions.help = pspm_cfg_help_format('pspm_split_sessions');
 

@@ -13,5 +13,7 @@ if isfield(job.split_behavior, 'auto')
 elseif isfield(job.split_behavior, 'marker')
     options.splitpoints = job.split_behavior.marker;
 end
+options.prefix = job.prefix;
+options.suffix = job.suffix;
 [sts, out] = pspm_split_sessions(fn, options);
 

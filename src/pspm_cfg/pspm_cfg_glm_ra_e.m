@@ -13,9 +13,7 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'RAR';
 vars.modspec = 'ra_e';
-vars.glmref = {['Bach, Gerster, Tzovara, & Castegnetti (2016) ', ...
-    'Psychophysiology (Development of the GLM evoked RAR)']};
-vars.glmhelp = '';
+
 
 % load default settings
 glm_ra_e = pspm_cfg_glm(vars);

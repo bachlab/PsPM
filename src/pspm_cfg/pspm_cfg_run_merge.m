@@ -5,8 +5,8 @@ infile1 = job.datafiles.first_file{1};
 infile2 = job.datafiles.second_file{1};
 options = struct();
 % set reference
-if isfield(job.reference, 'markers')
-    options.marker_chan_num = job.reference.markers.chan_nr;
+if isfield(job.reference, 'marker')
+    options.marker_chan_num = job.reference.marker.chan_nr;
     ref = 'marker';
 else
     ref = 'file';
