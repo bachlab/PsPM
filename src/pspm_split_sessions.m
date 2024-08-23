@@ -38,7 +38,7 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   │                    First marker will be at t = - prefix for all
 %   │                    sessions. Markers within the prefix period will be dropped. 
 %   ├─────────.suffix :  [positive numeric, unit:second, default: mean marker distance
-%   │                    in the file] Defines how how many seconds of data after the end trim point
+%   │                    in the file] Defines how many seconds of data after the end trim point
 %   │                    should be included. Last marker will be at t = duration (of
 %   │                    session) - suffix for all sessions. If set to 0, suffix will be
 %   │                    set to the mean marker distance across the entire
