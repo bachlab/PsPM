@@ -292,13 +292,11 @@ for iSn = 1:numel(model.datafile)
 
       % put missing epochs together
       miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
-  end
 
-  % epoch should be ignored if duration > threshold
-  if exist('miss_epochs', 'var')
-    ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+      % epoch should be ignored if duration > threshold
+      ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
   else
-    ignore_epochs = [];
+      ignore_epochs = [];
   end
 
   if any(ignore_epochs)
