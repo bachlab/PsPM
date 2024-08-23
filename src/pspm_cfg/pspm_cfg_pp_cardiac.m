@@ -1,4 +1,4 @@
-function [cfg] = pspm_cfg_pp_heart_period
+function [cfg] = pspm_cfg_pp_cardiac
 % function [cfg] = pspm_cfg_pp_heart_period
 %
 % Matlabbatch menu for data preprocessing
@@ -13,6 +13,6 @@ function [cfg] = pspm_cfg_pp_heart_period
 cfg        = cfg_repeat;
 cfg.name   = 'Heart period';
 cfg.tag    = 'pp_heart_period';
-cfg.values = {pspm_cfg_pp_heart_data, pspm_cfg_ecg_editor};
+cfg.values = {pspm_cfg_convert_cardiac, pspm_cfg_ecg_editor};
 cfg.forcestruct = true;
 cfg.help   = {'Help: Heart period preprocessing'};

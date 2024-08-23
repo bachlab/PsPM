@@ -1,4 +1,4 @@
-function [pp_emg] = pspm_cfg_pp_emg_data
+function [pp_emg] = pspm_cfg_emg_pp
 % * Description
 %   function to process emg data which leads to emg_pp data
 % * History
@@ -30,10 +30,10 @@ options.help        = {};
 
 % Executable Branch
 pp_emg = cfg_exbranch;
-pp_emg.name = 'Preprocess startle eyeblink EMG';
+pp_emg.name = 'Startle eyeblink EMG preprocessing';
 pp_emg.tag  = 'pp_emg_data';
 pp_emg.val  = {datafile, options};
-pp_emg.prog = @pspm_cfg_run_pp_emg_data;
+pp_emg.prog = @pspm_cfg_run_emg_pp;
 pp_emg.vout = @pspm_cfg_vout_outchannel;
 pp_emg.help = pspm_cfg_help_format('pspm_emg_pp');
 

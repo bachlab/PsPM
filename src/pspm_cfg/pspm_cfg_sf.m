@@ -118,5 +118,5 @@ sf.name = 'SF';
 sf.tag  = 'sf';
 sf.val  = {datafile, output, method, timeunits, filter, channel, threshold, missing, theta, fresp, dispwin, dispsmallwin};
 sf.prog = @pspm_cfg_run_sf;
-sf.vout = @pspm_cfg_vout_modelfile;
+sf.vout = @pspm_cfg_vout_outfile;
 sf.help = pspm_cfg_help_format('pspm_sf');

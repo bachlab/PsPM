@@ -39,7 +39,7 @@ else
     evalc(sprintf('helptext = settings.help.%s.Arguments.%s;', funcname, argname));
     % remove entries in square brackets
     [startindx, endindx] = regexp(helptext, '\[\s*([^\[\]]*)\s*\]'); % thanks ChatGPT for finding the regexp
-    for k = 1:numel(startindx)
+    for k = numel(startindx):-1:1
         helptext(startindx(k):endindx(k)) = [];
     end
     % remove trailing space
