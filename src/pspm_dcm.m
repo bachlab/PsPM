@@ -137,7 +137,7 @@ function [sts, dcm] = pspm_dcm(model, options)
 %                 eSCR SN pulse with 1 unit amplitude causes an eSCR with
 %                 1 mcS amplitude.
 % ● Developer's Notes
-%   pspm_dcm can handle NaN values in data channels. Either by specifying
+%   1. pspm_dcm can handle NaN values in data channels. Either by specifying
 %   missing epochs manually using model.missing, or by detecting NaN epochs
 %   in the data. Missing epochs shorter than model.substhresh will be ignored
 %   in the inversion; otherwise the data will be split into subsessions that
@@ -145,7 +145,7 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   within missing epochs will simply be set to NaN.  NaN periods shorter than
 %   model.substhresh are interpolated for averages and principal response
 %   components.
-%   pspm_dcm calculates the inter-trial intervals as the duration between the
+%   2. pspm_dcm calculates the inter-trial intervals as the duration between the
 %   end of a trial and the start of the next one.
 %   ITI value for the last trial in a session is calculated as the duration
 %   between the end of the last trial and the end of the whole session.
@@ -171,6 +171,7 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   the trials use much less than available amount of samples in both case
 %   (1) and (2). Instead, we aim to use as much data as possible in (1), and
 %   perform (2) only if this edge case is not present.
+%
 % ● References
 %   [1] Model development:
 %       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal
@@ -326,13 +327,11 @@ for iSn = 1:numel(model.datafile)
 
       % put missing epochs together
       miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
-  end
 
-  % epoch should be ignored if duration > threshold
-  if exist('miss_epochs', 'var')
-    ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+      % epoch should be ignored if duration > threshold
+      ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
   else
-    ignore_epochs = [];
+      ignore_epochs = [];
   end
 
   if any(ignore_epochs)

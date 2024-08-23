@@ -266,9 +266,9 @@ for c=1:numel(onsets)
     set(p(2), 'Color', color);
     set(p(3), 'Color', color);
 
-    legend_lb{(c-1)*3 + 1} = [comb_names{c} ' AVG'];
-    legend_lb{(c-1)*3 + 2} = [comb_names{c} ' SEM+'];
-    legend_lb{(c-1)*3 + 3} = [comb_names{c} ' SEM-'];
+    legend_lb{(c-1)*3 + 1} = [names{c} ' AVG'];
+    legend_lb{(c-1)*3 + 2} = [names{c} ' SEM+'];
+    legend_lb{(c-1)*3 + 3} = [names{c} ' SEM-'];
   end
 end
 

@@ -8,16 +8,34 @@ overwrite        = pspm_cfg_selector_overwrite;
 
 %% Specific items
 
+%% prefix
+split_prefix        = cfg_entry;
+split_prefix.name   = 'Prefix (data before split point)';
+split_prefix.tag    = 'prefix';
+split_prefix.strtype = 'i';
+split_prefix.num    = [1 1];
+split_prefix.val    = {0};
+split_prefix.help   = pspm_cfg_help_format('pspm_split_sessions', 'options.prefix');
+
+%% suffix
+split_suffix        = cfg_entry;
+split_suffix.name   = 'Suffix (data after split point)';
+split_suffix.tag    = 'suffix';
+split_suffix.strtype = 'i';
+split_suffix.num    = [1 1];
+split_suffix.val    = {0};
+split_suffix.help   = pspm_cfg_help_format('pspm_split_sessions', 'options.suffix');
+
 %% split auto
 split_auto          = cfg_const;
-split_auto.name     = 'Automatic';
+split_auto.name     = 'Automatically determine split points';
 split_auto.tag      = 'auto';
 split_auto.val      = {0};
 split_auto.help     = {};
 
 %% split manual
 split_manual        = cfg_entry;
-split_manual.name   = 'Marker';
+split_manual.name   = 'Explicit define of splitpoints';
 split_manual.tag    = 'marker';
 split_manual.strtype = 'i';
 split_manual.num    = [1 inf];
@@ -55,7 +73,7 @@ missing_epoch.help    = pspm_cfg_help_format('pspm_split_sessions', 'options.mis
 split_sessions      = cfg_exbranch;
 split_sessions.name = 'Split Sessions';
 split_sessions.tag  = 'split_sessions';
-split_sessions.val  = {datafile,channel,split_behavior,missing_epoch,overwrite};
+split_sessions.val  = {datafile,channel,split_behavior,split_prefix, split_suffix, missing_epoch,overwrite};
 split_sessions.prog = @pspm_cfg_run_split_sessions;
 split_sessions.vout = @pspm_cfg_vout_outfile;
 split_sessions.help = pspm_cfg_help_format('pspm_split_sessions');

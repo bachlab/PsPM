@@ -1,4 +1,4 @@
-function [pp_scr] = pspm_cfg_pp_scr
+function [pp_scr] = pspm_cfg_scr_pp
 % function for pre processing (PP) skin conductance response (SCR)
 
 %% Standard items
@@ -104,7 +104,7 @@ options.help        = {['']};
 
 % Executable Branch
 pp_scr              = cfg_exbranch;
-pp_scr.name         = 'Preprocessing SCR';
+pp_scr.name         = 'SCR preprocessing';
 pp_scr.tag          = 'pp_scr';
 pp_scr.val          = {datafile, ...
                         chan, ...

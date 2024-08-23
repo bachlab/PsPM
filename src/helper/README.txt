@@ -1,0 +1,1 @@
+This folder 'helper' contains outdated functions that are not used in PsPM or maintained by the PsPM team. We include these in the hope that code snippets might be useful for specific purposes outside the main focus of PsPM. 

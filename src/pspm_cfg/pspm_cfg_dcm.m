@@ -320,7 +320,7 @@ dcm.name = 'Non-Linear Model';
 dcm.tag  = 'dcm';
 dcm.val  = {modelfile, chan, session_rep, data_options, resp_options, inv_options, disp_options};
 dcm.prog = @pspm_cfg_run_dcm;
-dcm.vout = @pspm_cfg_vout_modelfile;
+dcm.vout = @pspm_cfg_vout_outfile;
 dcm.help = pspm_cfg_help_format('pspm_dcm');
 
 

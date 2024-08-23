@@ -38,8 +38,8 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Outputs
 %   *            sts: status
 %   *            out: has same size as ldata and contains either the
-%                     processed data or contains the path to the .mat file
-%                     where the data has been stored to
+%                     processed data (if options.fn is not provided) or 
+%                     the output file name(s)
 % ● References
 %   Korn CW & Bach DR (2016). A solid frame for the window on cognition:
 %   Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.

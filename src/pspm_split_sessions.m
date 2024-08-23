@@ -5,7 +5,7 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   occur in breaks (e.g. caused by participant movement or disconnection
 %   from the recording system) which can have an impact on pre-processing 
 %   (e.g. filtering) and modelling. 
-%   Splitting can be based on regularly incoming markers (e.g. trial 
+%   Splitting can be automated, based on regularly incoming markers (e.g. trial 
 %   markers or volume/slice markers from an MRI scanner), or based on 
 %   a vector of split points that is defined in terms of markers. In all 
 %   cases, the first and the last markers will define the start of the 
@@ -29,17 +29,20 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   ├.min_break_ratio :  Minimum for ratio
 %   │                    [(session distance)/(maximum marker distance)]
 %   │                    Default is 3 (defined by settings.split.min_break_ratio)
-%   ├────.splitpoints :  Explicitly specify session start
-%   │                    (excluding the first session starting at the
-%   │                    first marker) in terms of markers (vector of integer)
-%   ├─────────.prefix :  [numeric, unit:second, default:0]
-%   │                    Defines how long data before start trim point should
-%   │                    also be included. First marker will be at t = options.prefix.
+%   ├────.splitpoints :  [Vector of integer] Explicitly specify start of  
+%   │                    each session in terms of markers, excluding the 
+%   │                    first session which is assumed to start with the first marker.
+%   ├─────────.prefix :  [numeric, unit:second, default: 0]
+%   │                    Defines how many seconds of data before start trim point should
+%   │                    also be included. Negative values required. 
+%   │                    First marker will be at t = - prefix for all
+%   │                    sessions. Markers within the prefix period will be dropped. 
 %   ├─────────.suffix :  [positive numeric, unit:second, default: mean marker distance
-%   │                    in the file] Defines how long data after the end trim point
+%   │                    in the file] Defines how many seconds of data after the end trim point
 %   │                    should be included. Last marker will be at t = duration (of
-%   │                    session) - options.suffix. If options.suffix == 0, it will be
-%   │                    set to the mean marker distance.
+%   │                    session) - suffix for all sessions. If set to 0, suffix will be
+%   │                    set to the mean marker distance across the entire
+%   │                    file. Markers within the suffix period will be dropped.
 %   ├───────.randomITI : [default:0]
 %   │                    Tell the function to use all the markers to evaluate the mean
 %   │                    distance between them. Usefull for random ITI since it reduces
@@ -147,7 +150,7 @@ if isempty(splitpoint)
   return;
 else
   % initialise
-  preffix = num2cell(zeros(1,(numel(splitpoint)+1)));
+  prefix = num2cell(zeros(1,(numel(splitpoint)+1)));
   suffix = num2cell(zeros(1,(numel(splitpoint)+1)));
   for sn = 1:(numel(splitpoint)+1)
     if sn == 1
@@ -168,12 +171,6 @@ else
       suffix{sn} = options.suffix;
     end
     prefix{sn} = options.prefix;
-
-    if sn == 1
-        prefix{sn} = 'none'; % don't trim start for first session
-    elseif sn > numel(splitpoint)
-        suffix{sn} = 'none'; % don't trim end for last session
-    end
   end
 
   % 2.4 Split files
