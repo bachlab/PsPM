@@ -242,7 +242,7 @@ switch FunName
   case 'get_markerinfo'
     % 2.26 pspm_get_markerinfo --
     options = autofill(options, 'filename',               '',         '*Char'           );
-    options = autofill(options, 'markerchan',             0,         '*Int'            );
+    options = autofill(options, 'marker_chan_num',        0,         '*Int'             );
     options = autofill(options, 'overwrite',              0,          1                 );
   case 'get_rf'
     % 2.27 pspm_get_rf --

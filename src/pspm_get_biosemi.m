@@ -1,7 +1,7 @@
 function [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import)
 % ● Description
-%   pspm_get_biosemi is the main function for import of BioSemi bdf files
-%   this function uses fieldtrip fileio functions
+%   pspm_get_biosemi imports BioSemi bdf files using fieldtrip fileio 
+%   functions
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_biosemi(datafile, import);
 % ● Arguments

@@ -20,7 +20,7 @@ width.tag = 'screen_width';
 width.strtype = 'r';
 width.num = [1 1];
 width.val = {NaN};
-width.help = {['Width of the display window. Unit is `mm`. Only required if source channel is pixels, or in distance units and target channel is not; otherwise leave as NaN.']};
+width.help = pspm_cfg_help_format('pspm_convert_gaze', 'conversion.screen_width');
 
 %% height
 height = cfg_entry;
@@ -29,7 +29,7 @@ height.tag = 'screen_height';
 height.strtype = 'r';
 height.num = [1 1];
 height.val = {NaN};
-height.help = {['Height of the display window. Unit is `mm`. Only required if source channel is pixels, or in distance units and target channel is not; otherwise leave as NaN.']};
+height.help = pspm_cfg_help_format('pspm_convert_gaze', 'conversion.screen_height');
 
 %% screen distance (Only needed if unit degree is chosen)
 screen_distance = cfg_entry;
@@ -38,8 +38,7 @@ screen_distance.tag = 'screen_distance';
 screen_distance.strtype = 'r';
 screen_distance.num = [1 1];
 screen_distance.val = {NaN};
-screen_distance.help = {['Distance between eye and screen. Unit is `mm`. Only required if source channel is in pixel or distance units, and target channel is in degrees or scan path speed units; otherwise leave as NaN.']};
-
+screen_distance.help = pspm_cfg_help_format('pspm_convert_gaze', 'conversion.screen_distance');
 
 %% From
 from         = cfg_menu;
@@ -48,7 +47,7 @@ from.tag     = 'from';
 from.values  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree'};
 from.labels  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree' };
 from.val     = {'mm'};
-from.help    = {'Channel unit of the source channel pair. If in doubt, use the "Display" function to check.'};
+from.help    = pspm_cfg_help_format('pspm_convert_gaze', 'conversion.from');
 
 %% Target
 target         = cfg_menu;
@@ -57,7 +56,7 @@ target.tag     = 'target';
 target.values  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree', 'sps'};
 target.labels  = { 'pixel', 'mm', 'cm', 'm', 'inches', 'degree' 'Scan path speed (degree/s)'};
 target.val     = {'mm'};
-target.help    = {'Channel unit of the target channel(s).'};
+target.help    = pspm_cfg_help_format('pspm_convert_gaze', 'conversion.target');
 
 %% Executable branch
 pp_gaze_convert        = cfg_exbranch;
@@ -66,5 +65,4 @@ pp_gaze_convert.tag    = 'gaze_convert';
 pp_gaze_convert.val    = {datafile, width, height, screen_distance, from, target, chan, chan_action};
 pp_gaze_convert.prog   = @pspm_cfg_run_gaze_convert;
 pp_gaze_convert.vout   = @pspm_cfg_vout_outchannel;
-pp_gaze_convert.help   = {['Provides conversion functions for the specified ', ...
-    'gaze data.']};
+pp_gaze_convert.help   = pspm_cfg_help_format('pspm_convert_gaze');

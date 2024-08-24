@@ -18,11 +18,13 @@ function out = pspm_cfg_selector_channel(channame, varargin)
 %              (5) 'gaze' - generates a choice of 'combined', 'left',
 %                  'right', 'gaze' (default), and a numerical selector for 
 %                   an x/y pair of channels 
-%              (5) 'any' - generates a string channel selector for at most
+%              (6) 'gaze_pair' - generates a choice of 'gaze' (default) and
+%                   two x/y pairs of channels
+%              (7) 'any' - generates a string channel selector for at most
 %                   one channel
-%              (6) 'many' - generates a numerical channel selector for an
+%              (8) 'many' - generates a numerical channel selector for an
 %                   arbitrary number of channels
-%              (7)  a number - generates a numerical channel selector for 
+%              (9)  a number - generates a numerical channel selector for 
 %                   the specified number of channels
 
 
@@ -40,6 +42,8 @@ if ischar(channame) && strcmpi(channame, 'run')
         out = job.chan_nr;
     elseif isfield(job, 'chan_menu')
         out = job.chan_menu;
+    elseif isfield(job, 'gaze_pair')
+        out = [job.gaze_pair.L_chan_nr(:), job.gaze_pair.R_chan_nr(:)];
     else
         out = 0;
     end
@@ -95,6 +99,30 @@ elseif strcmpi(channame, 'gaze')
     out.values  = {gaze_chan(1:4, 4), gaze_chan_nr};
     out.help    = {sprintf('Specification of %s channels (default: follow precedence order).', 'gaze')};
 
+elseif strcmpi(channame, 'gaze_pair')
+    gaze_chan_nr_L = vec_chan('left gaze', 2);
+    gaze_chan_nr_L.tag = 'L_chan_nr';
+    gaze_chan_nr_L.name = 'Left gaze channels (x/y pair)';
+    gaze_chan_nr_L.help = {sprintf('Specify an x/y pair of %s channel numbers.', 'left gaze')};
+
+    gaze_chan_nr_R = vec_chan('left gaze', 2);
+    gaze_chan_nr_R.tag = 'R_chan_nr';
+    gaze_chan_nr_R.name = 'Right gaze channels (x/y pair)';
+    gaze_chan_nr_R.help = {sprintf('Specify an x/y pair of %s channel numbers.', 'right gaze')};
+    
+    gaze_pair = cfg_branch;
+    gaze_pair.name = 'Numerically define x/y channel pairs'; 
+    gaze_pair.tag  = 'gaze_pair';
+    gaze_pair.val  = {gaze_chan_nr_L, gaze_chan_nr_R};
+
+    gaze_def = def_chan('', '');
+    gaze_def.help = {'Last gaze channel of each type (L x/y and R x/y).'};
+
+    
+    out = chan_choice;
+    out.val     = {gaze_def};
+    out.values  = {gaze_def, gaze_pair};
+    out.help    = {sprintf('Specification of %s channels (default: last gaze channel of each type).', 'gaze')};
 
 % numerical definition or default 
 else

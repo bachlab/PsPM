@@ -16,4 +16,4 @@ rename.tag  = 'rename';
 rename.val  = {filename, newfilename};
 rename.prog = @pspm_cfg_run_rename;
 rename.vout = @pspm_cfg_vout_outfile;
-rename.help = {'Rename PsPM data file. This renames the file and updates the file information.'};
+rename.help = pspm_cfg_help_format('pspm_rename');

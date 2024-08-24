@@ -1,7 +1,15 @@
     function [sts, glm] = pspm_glm(model, options)
 % ● Description
-%   pspm_glm specifies a within subject general linear convolution model of
-%   predicted signals and calculates amplitude estimates for these responses.
+%   pspm_glm specifies a within-subject general linear convolution model 
+%   (GLM) of predicted signals and calculates amplitude estimates for these 
+%   responses.
+%   GLMs can be used for analysing evoked responses that follow an event 
+%   with (approximately) fixed latency. This is similar to standard 
+%   analysis of fMRI data. 
+%   The user specifies events for different conditions. These are used to 
+%   estimate the mean response amplitude per condition. These mean 
+%   amplitudes can later be expored for statistical analysis, using 
+%   pspm_export.
 % ● Format
 %   [sts, glm] = pspm_glm(model, options)
 % ● Arguments
@@ -13,16 +21,11 @@
 %   │             a cell array of multiple condition file names OR
 %   │             a struct (single session) with fields .names, .onsets,
 %   │             and (optional) .durations and .pmod  OR
-%   │             a cell array of struct OR
-%   │             a struct with fields 'markervalues' and 'names' (when model.timeunits
+%   │             a cell array of struct OR a struct with fields 
+%   │             'markervalues' and 'names' (when model.timeunits
 %   │             is set to be 'markervalues')
 %   │             OR a cell array of struct
 %   ├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
-%   ├───.window:  only required if model.latency equals 'free' and ignored
-%   │             otherwise. A scalar or 2-element vector in seconds that
-%   │             specifies over which time window (relative to the event
-%   │             onsets specified in model.timing) the model should be
-%   │             evaluated.
 %   ├.modelspec:  [optional] 'scr' (default); specify the model to be used.
 %   │             See pspm_init, defaults.glm() which modelspecs are possible
 %   │             with glm.
@@ -60,20 +63,27 @@
 %   │             specify a cell array for multiple input files. This
 %   │             must always be specified in SECONDS.
 %   │             Default: no missing values
-%   ├─.nuisance:  [optional] allows to specify nuisance regressors. Must be a file
+%   ├─.nuisance:  [optional] Allows to specify nuisance regressors. Must be a file
 %   │             name; the file is either a .txt file containing the
 %   │             regressors in columns, or a .mat file containing the
 %   │             regressors in a matrix variable called R. There must be
 %   │             as many values for each column of R as there are data
 %   │             values. SCRalyze will call these regressors R1, R2, ...
-%   ├──.latency:  [optional] allows to specify whether latency should be 'fixed'
-%   │             (default) or should be 'free'. In 'free' models an
+%   ├──.latency:  [optional] Specify whether latency should be 'fixed'
+%   │             (default) or 'free'. In 'free' models an
 %   │             additional dictionary matching algorithm will try to
 %   │             estimate the best latency. Latencies will then be added
-%   │             at the end of the output. In 'free' models the fiel
+%   │             at the end of the output. In 'free' models the field
 %   │             model.window is MANDATORY and single basis functions
 %   │             are allowed only.
-%   └.centering:  [optional] if set to 0 the function would not perform the
+%   ├───.window:  Only required if model.latency equals 'free' and ignored
+%   │             otherwise. A scalar or 2-element vector in seconds that
+%   │             specifies over which time window (relative to the event
+%   │             onsets specified in model.timing) the model should be
+%   │             evaluated. Positive values mean that the response 
+%   │             function is shifted to later time points, negative values│             
+%   │             that it is shifted to earlier time points.
+%   └.centering:  [optional] If set to 0 the function would not perform the
 %                 mean centering of the convolved X data. For example, to
 %                 invert SPS model, set centering to 0. Default: 1
 %   ┌───options

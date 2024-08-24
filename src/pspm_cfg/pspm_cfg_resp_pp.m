@@ -14,8 +14,7 @@ sr.tag     = 'sr';
 sr.strtype = 'r';
 sr.num     = [1 1];
 sr.val     = {10};
-sr.help    = {['Sample rate for the new channel. Default: 10 Hz. '], ...
-['Will be ignored for datatype "respiration time stamps".']};
+sr.help    = pspm_cfg_help_format('pspm_resp_pp', 'sr');
 
 stype_bellows      = cfg_const;
 stype_bellows.name = 'Bellows';
@@ -34,7 +33,7 @@ systemtype.name   = 'System type';
 systemtype.tag    = 'systemtype';
 systemtype.val    = {stype_bellows};
 systemtype.values = {stype_bellows, stype_cushion};
-systemtype.help   = {'Type of the measuring system: bellows or cushion'};
+systemtype.help   = pspm_cfg_help_format('pspm_resp_pp', 'options.systemtype');
 
 dtype_rp        = cfg_menu;
 dtype_rp.name   = 'Respiration period';
@@ -80,8 +79,7 @@ plot.tag     = 'plot';
 plot.val     = {0};
 plot.labels  = {'No', 'Yes'};
 plot.values  = {0, 1};
-plot.help    = {'Specify whether a respiratory cycle detection plot ', ...
-'should be created (Yes) or not (No) (default: No).'};
+plot.help    = pspm_cfg_help_format('pspm_resp_pp', 'options.plot');
 
 options        = cfg_branch;
 options.name   = 'Options';
@@ -92,21 +90,12 @@ options.help   = {['Choose for each possible process datatype either ', ...
 
 % Executable Branch
 resp_pp      = cfg_exbranch;
-resp_pp.name = 'Preprocess respiration data';
+resp_pp.name = 'Respiration data conversion';
 resp_pp.tag  = 'resp_pp';
 resp_pp.val  = {datafile,sr,channel, channel_action ,options};
 resp_pp.prog = @pspm_cfg_run_resp_pp;
 resp_pp.vout = @pspm_cfg_vout_outchannel;
-resp_pp.help = {['Convert continuous respiration traces into interpolated ', ...
-'respiration period, amplitude, or RFR, or into time stamps indicating ', ...
-'the start of inspiration. This function detects the beginning of ', ...
-'inspiration, assigns period/amplitude/RFR of the last cycle to this ', ...
-'data point, and interpolates data. This function outputs respiration ', ...
-'period rather than respiration rate in analogy to heart period models ', ...
-'- heart period linearly varies with ANS input to the heart. ', ...
-'RFR (respiratory flow rate) is the integral of the absolute thorax ', ...
-'excursion per respiration cycle, divided by the cycle period. ', ...
-'Converted data are written into new channel(s).']};
+resp_pp.help = pspm_cfg_help_format('pspm_resp_pp');
 
 
 

@@ -24314,7 +24314,7 @@ Function
 \begin_layout Standard
 
 \family typewriter
-wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+[sts, wavedata] = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 \end_layout
 
 \begin_layout Subsubsection

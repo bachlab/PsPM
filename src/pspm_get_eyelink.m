@@ -1,7 +1,22 @@
 function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % ● Description
-%   pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
-%   files.
+%   pspm_get_eyelink imports asc-exported SR Research Eyelink 1000 files.
+%   Original eyelink output files (with extension *.edf) must first be 
+%   converted to ASCII format (extension *.asc). This is done with the 
+%   utility edf2asc.exe (normally included in the Eyelink software in 
+%   <Path to Program Files>\SR Research\EyeLink\EDF_Access_API\). Otherwise 
+%   there is a Data viewer, available at http://www.sr-research.com/dv.html 
+%   (registration needed), which installs a utility called 
+%   'Visual EDF2ASC'. This also supports the conversion and does not 
+%   require a license.  
+%   The sequence of channels depends on the acquisition settings, please check
+%   in the ASCII file using text editor. Available channels are Pupil L, 
+%   Pupil R, x L, y L, x R, y R, Blink L, Blink R, Saccade L, Saccade R. The 
+%   channels will be imported according to a known data structure, therefore 
+%   channel ids passed to the import function will be ignored. In the PsPM 
+%   file, channels that were not available in the data file, will be filled 
+%   with NaN values. Additionally, periods of blinks and saccades will be 
+%   set to NaN during the import.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
 % ● Arguments

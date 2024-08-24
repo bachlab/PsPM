@@ -1,11 +1,9 @@
 function [ sts, outchannel ] = pspm_convert_ppg2hb( fn , options )
 % ● Description
-%   pspm_convert_ppg2hb Converts a pulse oxymeter channel to heartbeats and
-%   adds it as a new channel.
-%   First a template is generated from non ambiguous heartbeats. The ppu
-%   signal is then cross correlated with the template and maximas are
-%   identified as heartbeat maximas and a heartbeat channel is then
-%   generated from these.
+%   pspm_convert_ppg2hb converts a pulse oxymeter channel to heartbeats.
+%   First a template is generated from non-ambiguous heartbeats. The ppg
+%   signal is then cross-correlated with the template and maxima are
+%   identified as heartbeats.
 % ● Format
 %   [sts, channel_index] = pspm_convert_ppg2hb( fn, options )
 % ● Arguments

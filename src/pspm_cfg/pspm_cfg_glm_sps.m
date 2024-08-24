@@ -17,10 +17,7 @@ vars          = struct();
 vars.modality = 'sps';
 
 vars.modspec = 'sps';
-vars.glmref = {['Xia Y, Melinščak F,  Bach DR (2020). Saccadic scanpath ', ...
-    'length: an index for human threat conditioning. Behavior Research ', ...
-    'Methods, 53, 1426-1439.']};
-vars.glmhelp = '';
+
 
 % load default settings
 glm_sps = pspm_cfg_glm(vars);

@@ -13,9 +13,6 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'RFRR';
 vars.modspec = 'rfr_e';
-vars.glmref = {['Bach, Gerster, Tzovara, & Castegnetti (2016) ', ...
-    'Psychophysiology (Development of the GLM evoked RFRR)']};
-vars.glmhelp = '';
 
 % load default settings
 glm_rfr_e = pspm_cfg_glm(vars);

@@ -1,25 +1,24 @@
-function varargout = pspm_data_editor(varargin)
+function [sts, out] = pspm_data_editor(varargin)
 % ● Description
 %   pspm_data_editor MATLAB code for pspm_data_editor.fig
 % ● Format
-%   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
-%   *      indata:  Can be multiple kinds of data types. In order to use
-%                   pspm_data_editor() to edit acquisition data, the actual
-%                   data vector has to be passed via the varargin
-%                   argmument. The data should be 1xn or nx1 double vector.
+%   *      indata:  a file name. 
 %   ┌─────options 
-%   ├.output_file:  Use output_file to specify a file the changed data
-%   │               is saved to when clicking 'save' or 'apply'. Only
-%   │               works in 'file' mode.
-%   ├─.epoch_file:  Use epoch_file to specify a .mat file to import epoch data
-%   │               .mat file must be a struct with an 'epoch' field
-%   │               and a e x 2 matrix of epoch on- and offsets
-%   │               (n: number of epochs)
+%   ├.output_file:  When this is specified, marked epochs will be saved
+%   │               to a missing epochs file when clicking 'save' or 'apply'.
+%   │               It is also possible to specificy this file from within 
+%   │               the interactive data editor.
+%   ├─.epoch_file:  When this is specified, epochs will be imported from 
+%   │               this file and can be changed further. This file must 
+%   │               contain a variable 'epochs' which is an n x 2 matrix 
+%   │               of epoch on- and offsets (n: number of epochs). It is 
+%   │               also possible to specificy this file from within the
+%   │               interactive data editor.
 %   └──.overwrite:  [logical] (0 or 1)
-%                   Define whether to overwrite existing output files or not.
-%                   Default value: not to overwrite.
+%                   Define whether to overwrite existing output file or not.
+%                   Default: 0.
 % ● Outputs
 %   *         out:  The output depends on the actual output type chosen in
 %                   the graphical interface. At the moment either the
@@ -46,7 +45,7 @@ if nargin && ischar(varargin{1}) && ...
 end
 
 if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+  [sts, out] = gui_mainfcn(gui_State, varargin{:});
 else
   gui_mainfcn(gui_State, varargin{:});
 end
@@ -358,9 +357,6 @@ end
 guidata(hObject, handles);
 
 function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
-% Comments
-%   It used to be function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
-%   Where the varargout seems not modified?
 % Feature
 %   Outputs from this function are returned to the command line.
 % Varargout
@@ -371,7 +367,6 @@ function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % UIWAIT makes pspm_data_editor wait for user response (see UIRESUME)
 % handles.lbEpochsvarargout{1} = handles.output;
-varargout{1} = handles.output;
 delete(hObject);
 
 function lbEpochs_Callback(hObject, ~, ~)
