@@ -34,7 +34,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-overwrite_final = 0;
+overwrite_final = 0;    % change to 2?
 %% 2 Check inputs
 switch numel(varargin)
   case 0
@@ -45,7 +45,7 @@ switch numel(varargin)
     if iscell(fn)
       fn = fn{1};
     end
-    overwrite_final = 0;
+    overwrite_final = 2;     % change to 2?
     % the default value of overwrite is initialised here and will be checked later
   case 2
     fn = varargin{1};
@@ -60,7 +60,7 @@ switch numel(varargin)
         if isfield(options_struct, 'overwrite')
           overwrite_final = options_struct.overwrite;
         else
-          overwrite_final = 0;
+          overwrite_final = 2;  % change to 2? was ist hier mit??
         end
       otherwise
         warning('ID:invalid_input', ...
@@ -80,12 +80,14 @@ else
     % the following code can be re-enabled if the condition can be set
     % -EOF-
     % if feature('ShoverwriteFigureWindoverwrites') % if in gui
-    %   msg = ['Model file already exists. Overwrite?', ...
-    %     newline, 'Existing file: ', fn];
-    %   overwrite = questdlg(msg, ...
-    %     'File already exists', 'Yes', 'No', 'Yes');
-    %   % default as Yes (to overwrite)
-    %   overwrite_final = strcmp(overwrite, 'Yes');
+    if overwrite_final == 2
+       msg = ['Model file already exists. Overwrite?', ...
+         newline, 'Existing file: ', fn];
+       overwrite = questdlg(msg, ...
+         'File already exists', 'Yes', 'No', 'Yes');
+      % default as Yes (to overwrite)
+       overwrite_final = strcmp(overwrite, 'Yes');
+    end
     % end
     if overwrite_final == 0
       warning('ID:data_loss', ['Results are not saved, ',...
