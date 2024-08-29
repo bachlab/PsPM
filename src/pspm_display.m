@@ -158,7 +158,7 @@ end
 
 
 % --- Outputs from this function are returned to the command line.
-function handles.output = pspm_display_OutputFcn(~, ~, handles)
+function varargout = pspm_display_OutputFcn(~, ~, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
