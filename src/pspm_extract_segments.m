@@ -133,6 +133,7 @@ events = {};
 switch method
     case 'data'
         data_raw = data;
+        if isnumeric(data), data_raw = {data}; end
     case 'file'
         for i_sn = 1:numel(datafile)
             [lsts, alldata{i_sn}] = pspm_load_channel(datafile{i_sn}, channel);
@@ -152,6 +153,9 @@ switch method
 case 'model'
     if strcmpi(data.modeltype, 'glm')
         data_raw = data.input.data;
+        timing = data.input.timing;
+        options.timeunits = data.input.timeunits;
+        events = data.input.events;
     elseif strcmpi(data.modeltype, 'dcm')
         data_raw = data.input.scr;
     else
@@ -181,19 +185,15 @@ for i_sn = 1:numel(data_raw)
     session_duration(i_sn, 1) = numel(data_raw{i_sn});
 end
 
-if strcmpi(method, 'model') && strcmpi(data.modeltype, 'glm')
-    timing = data.input.timing;
-end
-
-
 if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
     % DCM has no condition information
-    onsets{1} = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
+    onsets = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
     data.input.trlstart(:), ...
     num2cell(session_duration), ...
     'UniformOutput', false);
     names{1} = 'all';
     n_cond = 1;
+    options.timeunits = 'seconds';
 else
     [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
      [msts, onsets] = pspm_multi2index(options.timeunits, multi, sr, session_duration, events);
@@ -203,6 +203,8 @@ else
          names{i_cond} = multi(1).names{i_cond};
      end
 end
+
+% onsets has the structure: onsets{i_cond}{i_sn}
 
 %% prepare missing
 if isfield(options, 'missing')
