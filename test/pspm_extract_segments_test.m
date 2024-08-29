@@ -224,7 +224,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         all_vecs = [];
         seg_len = this.options.length * sr;
         onsets_i = pspm_time2index(marker(glm.timing.multi.onsets{i}), sr);
-        for j = 1:numel(onset_i)
+        for j = 1:numel(onsets_i)
             onset = onsets_i(j);
             all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
