@@ -186,8 +186,9 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
       rehash
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
+      pspm_path = fileparts(which('pspm'));
+      load(fullfile('ImportTestData',  'fitted_models', 'glm_scr_cond_marker.mat'), 'glm');
+      load(fullfile('ImportTestData',  'fitted_models', 'glm_orig_data.mat'), 'data');
       if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
         glm.input.channel = glm.input.chan;
         glm.input = rmfield(glm.input,'chan'); % rename the field channel to chan
