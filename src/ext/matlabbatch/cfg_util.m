@@ -994,7 +994,9 @@ switch lower(cmd),
                         cfg_message('matlabbatch:fopen', 'Failed to open ''%s'' for writing:\n%s', jobfile, msg);
                     end
                     fprintf(fid, '%%-----------------------------------------------------------------------\n');
-                    fprintf(fid, '%% Job saved on %s by %s (rev %s)\n', datestr(now), mfilename, rev);
+                    if exist('rev','var')
+                        fprintf(fid, '%% Job saved on %s by %s (rev %s)\n', datestr(now), mfilename, rev);
+                    end
                     versions = cfg_get_defaults('versions');
                     vtags    = fieldnames(versions);
                     for k = 1:numel(vtags)
