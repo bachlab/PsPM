@@ -151,7 +151,18 @@ for i_level = 1:length(levels)
       fieldname = C(1:(split-1));
       fieldcontent = C((split+1):end);
     end
-    args.(sort_content(fieldname)) = sort_content(fieldcontent);
+    % currently only two levels of arguments are supported, could be
+    % expanded in the future.
+    if contains(sort_content(fieldname), '.')
+      temp = sort_content(fieldname);
+      level1fieldname = temp(1:find(temp=='.')-1);
+      level2fieldname = temp(find(temp=='.')+1:end);
+      args.(level1fieldname).(level2fieldname) = sort_content(fieldcontent);
+    else
+      level1fieldname = sort_content(fieldname);
+      level2fieldname = [];
+      args.(level1fieldname) = sort_content(fieldcontent);
+    end
   else
     [var_name_start,var_name_end] = regexp(C,'(?<=^)(.*?)(?=:)'); % get subfields
     [var_name_start2,var_name_end2] = regexp(C,'(?<=:)(.*?)(?=$)'); % get explainations
@@ -163,7 +174,11 @@ for i_level = 1:length(levels)
     while strcmp(content(1),' ')
       content = content(2:end);
     end
-    args.(sort_content(fieldname)).(sort_content(varname)) = sort_content(content);
+    if ~isempty(level2fieldname)
+      args.(level1fieldname).(level2fieldname).(sort_content(varname)) = sort_content(content);
+    else
+      args.(sort_content(fieldname)).(sort_content(varname)) = sort_content(content);
+    end
   end
 end
 
