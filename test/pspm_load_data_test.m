@@ -215,6 +215,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       save(this.fn2, 'infos', 'data');
       chan.infos = infos;
       chan.data = data;
+      chan.options = struct('overwrite', 1);
       clear('infos')
       clear('data')
       this.verifyWarning(@()pspm_load_data(this.fn2, chan), ...
