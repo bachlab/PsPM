@@ -59,7 +59,7 @@ for k = 1:numel(import)
     import{k}.data = [event.time];
     import{k}.marker = 'timestamp';
     import{k}.markerinfo.name = {event.name};
-    import{k}.markerinfo.value = {event.name};
+    import{k}.markerinfo.value = str2double(import{k}.markerinfo.name);
   end
 end
 
