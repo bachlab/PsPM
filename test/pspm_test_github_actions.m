@@ -101,8 +101,8 @@ full_suite = [suite, import_suite, chantype_suite];
 %% Run tests
 [pth, ~, ~] = fileparts(which('pspm_test_github_actions.m'));
 addpath(pth);
-settings = [];
 pspm_init;
+global settings
 settings.developmode = 1; % set to develop mode
 stats = run(full_suite);
 n_failed = sum([stats.Failed]);

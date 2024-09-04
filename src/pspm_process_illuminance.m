@@ -25,16 +25,16 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   │                 Define whether to overwrite existing output files or not.
 %   │                 Default value: determined by pspm_overwrite.
 %   ├──────.transfer: Params for the transfer function
-%   └┬───────────.bf: Settings for the basis functions.
-%    ├┬.constriction: Options to the constriction response function.
-%    │└─────.fhandle: Function handle to the constriction response function.
-%    │                The allowed values are @pspm_bf_lcrf_gm.
-%    ├┬────.dilation: Options for the dilation basis function.
-%    │└─────.fhandle: Function handle to the dilation response function.
-%    │                The allowed values are @pspm_bf_ldrf_gm and
-%    │                @pspm_bf_ldrf_gu.
-%    ├─────.duration: Duration of the basis functions in second.
-%    └───────.offset: Offset in second.
+%   └────────────.bf: Settings for the basis functions, described as following.
+%   ┌─────options.bf 
+%   ├──.constriction: Options to the constriction response function. It has a field
+%   │                 ".fhandle" that handles to the constriction response function, 
+%   │                 and its allowed values are @pspm_bf_lcrf_gm.
+%   ├──────.dilation: Options for the dilation basis function. It has a field ".fhandle" 
+%   │                 that handle to the dilation response function, and its allowed 
+%   │                 values are @pspm_bf_ldrf_gm and @pspm_bf_ldrf_gu.
+%   ├──────.duration: Duration of the basis functions in second.
+%   └────────.offset: Offset in second.
 % ● Outputs
 %   *            sts: status
 %   *            out: has same size as ldata and contains either the
