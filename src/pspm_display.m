@@ -5,8 +5,10 @@ function varargout = pspm_display(varargin)
 %   itself.
 % ● Format
 %   pspm_display
-%   pspm_display(filename), such as pspm_display('test.mat')
-%   pspm_display(filepath), such as pspm_display('~/Documents/test.mat')
+%   pspm_display(filename)
+%   pspm_display('test.mat')
+%   pspm_display(filepath)
+%   pspm_display('~/Documents/test.mat')
 % ● Arguments
 %   * filename: the name of a file to be displayed, which must ends with '.mat'.
 %   * filepath: the path of a file to be displayed, which must ends with '.mat'.
