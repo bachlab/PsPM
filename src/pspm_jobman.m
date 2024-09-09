@@ -3,11 +3,11 @@ function job_id = pspm_jobman(varargin)
 %   Main interface for PsPM Batch System
 %   Initialise jobs configuration and set MATLAB path accordingly.
 % ● Format
-%   * Standard
+%   → Standard
 %     pspm_jobman('initcfg')
 %     pspm_jobman('run',job)
 %     output_list = pspm_jobman('run',job)
-%   * Run specified job
+%   → Run specified job
 %     job_id = pspm_jobman
 %     job_id = pspm_jobman('interactive')
 %     job_id = pspm_jobman('interactive',job)

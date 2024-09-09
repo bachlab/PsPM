@@ -1,7 +1,7 @@
 function out = pspm_cfg_run_emg_pp(job)
-% * Description
+% ● Description
 %   Executes pspm_emg_pp
-% * History
+% ● History
 %   Updated with PsPM 6.1.2 in 2024 by Teddy
 options = struct();
 options.mains_freq = job.options(1).mains_freq;
