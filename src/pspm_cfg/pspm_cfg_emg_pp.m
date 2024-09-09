@@ -1,7 +1,7 @@
 function [pp_emg] = pspm_cfg_emg_pp
-% * Description
+% ● Description
 %   function to process emg data which leads to emg_pp data
-% * History
+% ● History
 %   Updated in 2024 by Teddy
 
 

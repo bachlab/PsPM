@@ -3,8 +3,9 @@ function index = pspm_time2index(time, sr, varargin)
 %   pspm_time2index converts time stamps and durations in seconds or markers
 %   to a sample index.
 % ● Format
-%   (optional arguments in []; all arguments up the last specified one need to be specified)
 %   index = pspm_time2index(time, sr [, data_length, is_duration, events])
+% ● Developer's notes
+%   Optional arguments in []; all arguments up the last specified one need to be specified.
 % ● Arguments
 %   *        time : [vector or matrix] time stamps in second.
 %              sr : [numeric] sampling rate or frequency

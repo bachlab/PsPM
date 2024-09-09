@@ -1,7 +1,7 @@
 function [prod_illu] = pspm_cfg_process_illuminance(~)
-% * Description
+% ● Description
 %   GUI script for "prepare illuminance GLM".
-% * History
+% ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Tobias Moser (University of Zurich)
 %   Updated in 2024 by Teddy
