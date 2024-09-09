@@ -1,4 +1,4 @@
-function sts = pspm_doc(func_name, options)
+function sts = pspm_doc(func_name, varargin)
 % ● Description
 %    pspm_doc sorts the help text and save into a file or variable for future usage.
 % ● Format
@@ -14,6 +14,11 @@ end
 sts = -1;
 %% 2 Read help text into a struct
 S = pspm_help(func_name);
+if nargin > 1
+  options = varargin{1};
+else
+  options = struct();
+end
 %% 3 Convert to markdown
 M = [];
 % 3.1 Add title
@@ -56,7 +61,7 @@ else
 end
 end
 function Y = pspm_doc_get_format(X)
-Y = ['`',X,'`'];
+Y = ['`',insertAfter(insertBefore(X, char(10), ['` or'] ), char(10),'`'), '`']
 Y = [Y, newline];
 end
 function Y = pspm_doc_get_description(X)
