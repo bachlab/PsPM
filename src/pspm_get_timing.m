@@ -4,12 +4,13 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %   different formats and align with a number of files. Time units (seconds,
 %   samples, markers) are not changed.
 % ● Format
-%   [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
-%   [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
-%   [sts, events] = pspm_get_timing('events', events)
-%   [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
-%   for recursive calls also:
-%   [sts, epochs] = pspm_get_timing('file', filename)
+%   * Standard
+%     [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
+%     [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
+%     [sts, events] = pspm_get_timing('events', events)
+%     [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
+%   * For recursive calls also:
+%     [sts, epochs] = pspm_get_timing('file', filename)
 % ● Arguments
 %   onsets and timeunits are 'seconds', 'samples' or 'markers':
 %      for defining event onsets for multiple conditions (e. g. GLM)
