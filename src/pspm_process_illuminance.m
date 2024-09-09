@@ -17,7 +17,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Arguments
 %   *          ldata: Illuminance data as (cell of) 1x1 double or filename.
-%   *             sr: Sample rate in Hz of the input data.
+%   *             sr: Sample rate in Hz of the input illuminance data.
 %   ┌────────options
 %   ├────────────.fn: [filename] Ff specified ldata{i,j} will be saved to a file
 %   │                 with filename options.fn{i,j} into the variable 'R'.
@@ -27,14 +27,14 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   ├──────.transfer: Params for the transfer function
 %   └────────────.bf: Settings for the basis functions, described as following.
 %   ┌─────options.bf 
-%   ├──.constriction: Options to the constriction response function. It has a field
-%   │                 ".fhandle" that handles to the constriction response function, 
-%   │                 and its allowed values are @pspm_bf_lcrf_gm.
-%   ├──────.dilation: Options for the dilation basis function. It has a field ".fhandle" 
-%   │                 that handle to the dilation response function, and its allowed 
+%   ├──.constriction: [struct with field .fhandle] Options for the 
+%   │                 constriction response function. Currently
+%   │                 allowed values are @pspm_bf_lcrf_gm.
+%   ├──────.dilation: [struct with field .fhandle] Options for the 
+%   │                 dilation response function. Currently allowed 
 %   │                 values are @pspm_bf_ldrf_gm and @pspm_bf_ldrf_gu.
-%   ├──────.duration: Duration of the basis functions in second.
-%   └────────.offset: Offset in second.
+%   ├──────.duration: Duration of the basis functions in seconds.
+%   └────────.offset: Offset in seconds.
 % ● Outputs
 %   *            sts: status
 %   *            out: has same size as ldata and contains either the
