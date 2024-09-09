@@ -27,8 +27,7 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %   is approximately correct for large enough screen distance). 
 % ● Format
 %   [sts, channel_index] = pspm_find_valid_fixations(fn, bitmap, options)
-%   [sts, channel_index] = pspm_find_valid_fixations(fn, circle_degree, distance, unit,
-%                                               options)
+%   [sts, channel_index] = pspm_find_valid_fixations(fn, circle_degree, distance, unit, options)
 % ● Arguments
 %   *             fn : The actual data file containing the eyelink recording with gaze
 %                      data converted to cm.
