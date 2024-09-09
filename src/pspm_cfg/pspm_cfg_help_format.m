@@ -4,9 +4,13 @@ function helptext = pspm_cfg_help_format(funcname, argname)
 % GUI
 % Format: helptext = pspm_cfg_help_format(funcname, [argname])
 %         helptext = pspm_cfg_help_format('import', helptext)
+%         helptext = pspm_cfg_help_format('pspm_pupil_pp_options', outputname)
 %                funcname: PsPM function name (char)
 %                argname: function argument (potentially a chain of nested
 %                struct fields, e.g. 'options.overwrite')
+%                outputname: output argument (potentially a chain of nested
+%                struct fields)
+
 global settings
 
 if nargin < 2
@@ -35,8 +39,13 @@ elseif strcmpi(funcname, 'import')
     A = strrep(argname, newline, [newline, newline]);
     helptext = splitlines(A);
 else
+    if strcmpi(funcname, 'pspm_pupil_pp_options')
+        fieldtype = 'Outputs';
+    else
+        fieldtype = 'Arguments';
+    end
     % this syntax allows chaining several nested structs into one argname
-    evalc(sprintf('helptext = settings.help.%s.Arguments.%s;', funcname, argname));
+    evalc(sprintf('helptext = settings.help.%s.%s.%s;', funcname, fieldtype, argname));
     % remove entries in square brackets
     [startindx, endindx] = regexp(helptext, '\[\s*([^\[\]]*)\s*\]'); % thanks ChatGPT for finding the regexp
     for k = numel(startindx):-1:1
