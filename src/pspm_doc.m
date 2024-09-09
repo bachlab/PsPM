@@ -36,10 +36,15 @@ if isfield(S, 'Format')
 end
 % 3.4 Add arguments
 if isfield(S, 'Arguments')
-  Arguments   = pspm_doc_get_arguments(S.Arguments);
+  Arguments   = pspm_doc_get_struct_fields(S.Arguments);
   M = [M, '## ', 'Arguments',    newline, Arguments,   newline];
 end
-% 3.5 Add references
+% 3.5 Add outputs
+if isfield(S, 'Outputs')
+  Outputs   = pspm_doc_get_struct_fields(S.Outputs);
+  M = [M, '## ', 'Outputs',    newline, Outputs,   newline];
+end
+% 3.6 Add references
 if isfield(S, 'References')
   References  = pspm_doc_get_references(S.References);
   M = [M, '## ', 'References',   newline, References,  newline];
@@ -68,7 +73,7 @@ function Y = pspm_doc_get_description(X)
 X = insertAfter(X, newline, newline);
 Y = [X, newline];
 end
-function Y = pspm_doc_get_arguments(X)
+function Y = pspm_doc_get_struct_fields(X)
 Y = ['| Variable | Definition |',newline,'|:--|:--|', newline];
 list_arg = fieldnames(X);
 for i_arg = 1:length(list_arg)
