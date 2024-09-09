@@ -4,8 +4,7 @@ function [sts, data_struct, infos, pos_of_channel, chantype_sts] = ...
 %   pspm_load_channel loads a single data channel and provides integrated
 %   channel checking logic
 % ● Format
-%   [sts, data_struct, infos, pos_of_channel, chantype_correct] = 
-%                               pspm_load_channel(fn, channel, channeltype)
+%   [sts, data_struct, infos, pos_of_channel, chantype_correct] = pspm_load_channel(fn, channel, channeltype)
 % ● Arguments
 %   *      fn : the filename, can be either a string or a struct (as below).
 %   ┌──────fn
@@ -33,11 +32,11 @@ function [sts, data_struct, infos, pos_of_channel, chantype_sts] = ...
 %                 (1) .channel: as defined for the 'char' option above;
 %                 (2) .units: units of the channel.
 %   * channeltype: [char] optional; any channel type as permitted per pspm_init,
-%                 'wave', or 'events': checks whether retrieved data channel 
+%                 'wave', or 'events': checks whether retrieved data channel
 %                is of the specified type and gives a warning if not
 % ● Outputs
 %   *            sts : [logical] 1 as default, -1 if unsuccessful.
-%   *    data_struct : a struct with fields .data and .header, corresponding to a single 
+%   *    data_struct : a struct with fields .data and .header, corresponding to a single
 %                      cell of a data cell array returned by pspm_load_data.
 %   *          infos : file infos as returned from pspm_load_data.
 %   * pos_of_channel : index of the returned channel.
@@ -143,7 +142,7 @@ else
 end
 
 % if channeltype is given, check if channel is of correct type
-if nargin > 2 
+if nargin > 2
     warning('off', 'all');
     chantype_sts = pspm_select_channels({data_struct}, channeltype);
     warning('on', 'all');

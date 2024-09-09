@@ -66,8 +66,26 @@ else
 end
 end
 function Y = pspm_doc_get_format(X)
-Y = ['`',insertAfter(insertBefore(X, char(10), ['` or'] ), char(10),'`'), '`']
+Y = ['`',insertAfter(insertBefore(X, char(10), '` or'), char(10),'`'), '`'];
+LocStar = strfind(Y, '`→');
+LocOr   = strfind(Y, '` or');
+LocRm   = [];
+for iLocStar = 1:length(LocStar)
+  LocBefore = LocOr(LocOr < LocStar(iLocStar));
+  if ~isempty(LocBefore)
+    LocBefore = max(LocBefore);
+    LocRm = [LocRm, (LocBefore+1):(LocBefore+3)];
+  end
+  LocAfter  = LocOr(LocOr > LocStar(iLocStar));
+  if ~isempty(LocAfter)
+    LocAfter = min(LocAfter);
+    LocRm = [LocRm, LocAfter:(LocAfter+3)];
+  end
+  LocRm = [LocRm,LocStar];
+end
+Y(LocRm) = [];
 Y = [Y, newline];
+
 end
 function Y = pspm_doc_get_description(X)
 X = insertAfter(X, newline, newline);

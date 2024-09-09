@@ -1,30 +1,30 @@
 function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 % ● Description
 %   pspm_find_valid_fixations finds deviations from a specified gaze
-%   fixation area. The primary usage of this function is to improve 
-%   analyis of pupil size. Pupil size data will be incorrect when gaze is 
-%   not in forward direction, due to foreshortening error. This function 
+%   fixation area. The primary usage of this function is to improve
+%   analyis of pupil size. Pupil size data will be incorrect when gaze is
+%   not in forward direction, due to foreshortening error. This function
 %   allows excluding pupil data points with too large foreshortening. To do
 %   so, it acts on one (or two) pupil channel(s), together with the
-%   associated x/y gaze channels which must have been converted to the 
-%   correct units (distance units, or pixel units for bitmap fixation). 
-%   After finding the invalid fixations from the gaze channels, the 
-%   corresponding data values in the pupil channel are set to NaN. In this 
-%   usage of the function, a circle around fixation point defines the valid 
-%   fixations. Note: an alternative or complement to this strategy is to 
-%   explicitly correct the pupil foreshortening error, see 
+%   associated x/y gaze channels which must have been converted to the
+%   correct units (distance units, or pixel units for bitmap fixation).
+%   After finding the invalid fixations from the gaze channels, the
+%   corresponding data values in the pupil channel are set to NaN. In this
+%   usage of the function, a circle around fixation point defines the valid
+%   fixations. Note: an alternative or complement to this strategy is to
+%   explicitly correct the pupil foreshortening error, see
 %   pspm_pupil_correct and pspm_pupil_correct_eyelink.
 %   An alternative usage of this function is to find fixations on a
 %   particular screen area, e.g. to define overt attention. In this usage,
 %   a bitmap of valid fixation points can be provided, as an alternative to
-%   the circle around fixation point. Since this usage is currently 
-%   considered secondary, it still requires a valid pupil channel as 
+%   the circle around fixation point. Since this usage is currently
+%   considered secondary, it still requires a valid pupil channel as
 %   primary channel, even though unrelated to pupil analysis.
-%   In both usages, valid fixations can be outputted as additional channel. 
-%   By default, screen centre is assumed as fixation point. If an explicit 
-%   fixation point is given, the function assumes that the screen is 
-%   perpendicular to the vector from the eye to the fixation point (which 
-%   is approximately correct for large enough screen distance). 
+%   In both usages, valid fixations can be outputted as additional channel.
+%   By default, screen centre is assumed as fixation point. If an explicit
+%   fixation point is given, the function assumes that the screen is
+%   perpendicular to the vector from the eye to the fixation point (which
+%   is approximately correct for large enough screen distance).
 % ● Format
 %   [sts, channel_index] = pspm_find_valid_fixations(fn, bitmap, options)
 %   [sts, channel_index] = pspm_find_valid_fixations(fn, circle_degree, distance, unit, options)
@@ -61,23 +61,23 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %   │                 'add'. Possible values are 'add' or 'replace'
 %   ├───.add_invalid: [0/1] If this option is enabled, an extra channel will be
 %   │                 written containing information about the valid samples.
-%   │                 Data points equal to 1 correspond to invalid fixation. 
+%   │                 Data points equal to 1 correspond to invalid fixation.
 %   │                 Default is not to add this channel.
 %   └───────.channel: Choose channels in which the data should be set to NaN
 %                     during invalid fixations. This can be a channel
 %                     number, any channel type including 'pupil' (which
 %                     will select a channel according to the precedence
 %                     order specified in pspm_load_channel), or 'both',
-%                     which will work on 'pupil_r' and 'pupil_l' and 
-%                     then update channel statistics and best eye. 
-%                     The selected channel must be an eyetracker 
-%                     channel, and the file must contain the corresponding 
+%                     which will work on 'pupil_r' and 'pupil_l' and
+%                     then update channel statistics and best eye.
+%                     The selected channel must be an eyetracker
+%                     channel, and the file must contain the corresponding
 %                     gaze channel(s) in the correct units: distance units for
-%                     mode "fixation" and distance or pixel units for mode 
+%                     mode "fixation" and distance or pixel units for mode
 %                     "bitmap".
-%                     Default is 'pupil'. 
+%                     Default is 'pupil'.
 % ● References
-%   [1]  Korn CW & Bach DR (2016). A solid frame for the window on cognition: 
+%   [1]  Korn CW & Bach DR (2016). A solid frame for the window on cognition:
 %        Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.
 % ● Developer note
 %   Additional i/o options for recursive calls are not included in the help.

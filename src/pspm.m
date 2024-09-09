@@ -1,14 +1,14 @@
 function pspm(varargin)
 % ● Description
 %   pspm.m handles the main GUI for PsPM
-% ● Last Updated in
-%   PsPM 7.0
-% ● History
-%   Written in 12-2023 by Teddy
-%   Updared in 06-2024 by Teddy
 % ● Developer's notes
 %   PsPM will no longer support GUIDE and only use App Designer for UI.
 %   App Designer is available for MATLAB that is later than version R2016a (9.0).
+% ● History
+%   Last Updated in PsPM 7.0
+%   Written in 12-2023 by Teddy
+%   Updared in 06-2024 by Teddy
+
 
 release_date_current = datetime(version('-date'));
 release_date_win = datetime('01-Jan-2018');
