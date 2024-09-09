@@ -241,7 +241,10 @@ for iFile = 1:nFile
             warning('ID:invalid_input', 'Could not load the specified markerchannel');
             return
         end
-        events{iFile} = data.data(:) * data.header.sr;
+        % here, data.header.sr correponds to the time resolution of the
+        % time stamps which should always be 1, but this will convert any
+        % potentially deviating time stamp resolution to seconds
+        events{iFile} = data.data(:) / data.header.sr;
         if strcmp(model.timeunits,'markervalues')
             model.timing{iFile}.markerinfo = data.markerinfo;
         end
@@ -491,6 +494,7 @@ end
 %% 12 collect data & regressors for output model
 glm.input.data    = y;
 glm.input.sr      = sr;
+glm.input.events  = events;
 glm.Y             = Y;
 glm.M             = M; % set to 1 if data is missing, otherwise set to 0
 glm.infos.sr      = newsr;
@@ -758,6 +762,7 @@ end
 
 %% 17 save data
 % 17.1 overwrite is determined in load1 --
+glm.datetime = datetime;
 savedata = struct('glm', glm);
 [sts, data_load1, mdltype_load1] = pspm_load1(model.modelfile, 'save', savedata, options);
 

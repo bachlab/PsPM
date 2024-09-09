@@ -185,9 +185,8 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
  function test_auto_mode_glm_with_markers(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-      rehash
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
+      load(fullfile('ImportTestData',  'fitted_models', 'glm_scr_cond_marker.mat'), 'glm');
+      load(fullfile('ImportTestData',  'fitted_models', 'glm_orig_data.mat'), 'data');
       if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
         glm.input.channel = glm.input.chan;
         glm.input = rmfield(glm.input,'chan'); % rename the field channel to chan
@@ -221,13 +220,13 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       this.verifyThat(nanmean(seg{3}.data, 1), IsEqualTo(seg{3}.mean, 'Within', RelativeTolerance(1e-10)));
       this.verifyThat(nanstd(seg{3}.data, 0, 1), IsEqualTo(seg{3}.std, 'Within', RelativeTolerance(1e-10)));
       % compute statistics from scratch
-      for i = 1:numel(glm.timing.multi.durations)
+      for i = 1:numel(glm.timing.multi.onsets)
         all_vecs = [];
         seg_len = this.options.length * sr;
-        onset_i = glm.timing.multi.onsets{i};
-        for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr) + 1;
-          all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
+        onsets_i = pspm_time2index(marker(glm.timing.multi.onsets{i}), sr);
+        for j = 1:numel(onsets_i)
+            onset = onsets_i(j);
+            all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
         all_vecs = all_vecs';
         expected_mean = nanmean(all_vecs, 1);
