@@ -4,7 +4,6 @@ function [sts, scr] = pspm_transfer_function(data, c, Rs, offset, recsys)
 %   assuming a linear transfer from total conductance to measured data
 % ● Format
 %   scr = pspm_transfer_function(data, c, Rs, offset, recsys)
-%   or
 %   scr = pspm_transfer_function(data, c, [Rs, offset, recsys])
 % ● Arguments
 %   * data : the input data into SCR in microsiemens
@@ -25,7 +24,7 @@ function [sts, scr] = pspm_transfer_function(data, c, Rs, offset, recsys)
 %            transfer function. Recsys defines in which setting the data (given in
 %            voltage) has been generated. Either the system is a 'conductance' based
 %            system (which is the default) or it is a 'resistance' based system.
-% ● Copyright
+% ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 

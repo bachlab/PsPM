@@ -62,6 +62,7 @@ for k = 1:numel(import)
     import{k}.sr = 1/sr;
     import{k}.marker = 'timestamp';
     import{k}.markerinfo.name = bio.data{end}{import{k}.data};
+    import{k}.markerinfo.name = NaN(numel(import{k}.markerinfo.name), 1);
   else
     import{k}.data = bio.data{1};
     import{k}.sr = sr;

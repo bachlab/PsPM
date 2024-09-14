@@ -20,3 +20,6 @@ Further features are simple programming of add-ons for import and modelling of n
 
 ## License
 **PsPM** is provided under the GNU General Public License by the PsPM team, at University College London, University of Bonn, and University of Zurich.
+
+## More information
+See https://bachlab.github.io/PsPM/

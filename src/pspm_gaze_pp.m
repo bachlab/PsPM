@@ -1,10 +1,10 @@
 function [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Description
 %   pspm_gaze_pp combines left/right gaze x and gaze y channels at
-%   the same time and will add two combined gaze channels, for the x and y 
+%   the same time and will add two combined gaze channels, for the x and y
 %   coordinate.
 % ● Format
-%   [sts, channel_index] = pspm_gaze_pp(fn) or
+%   [sts, channel_index] = pspm_gaze_pp(fn)
 %   [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Arguments
 %   *             fn: [string] Path to the PsPM file which contains the gaze data.

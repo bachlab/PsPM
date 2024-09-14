@@ -17,7 +17,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   [sts, out] = pspm_process_illuminance(ldata, sr, options)
 % ● Arguments
 %   *          ldata: Illuminance data as (cell of) 1x1 double or filename.
-%   *             sr: Sample rate in Hz of the input data.
+%   *             sr: Sample rate in Hz of the input illuminance data.
 %   ┌────────options
 %   ├────────────.fn: [filename] Ff specified ldata{i,j} will be saved to a file
 %   │                 with filename options.fn{i,j} into the variable 'R'.
@@ -25,16 +25,16 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %   │                 Define whether to overwrite existing output files or not.
 %   │                 Default value: determined by pspm_overwrite.
 %   ├──────.transfer: Params for the transfer function
-%   └┬───────────.bf: Settings for the basis functions.
-%    ├┬.constriction: Options to the constriction response function.
-%    │└─────.fhandle: Function handle to the constriction response function.
-%    │                The allowed values are @pspm_bf_lcrf_gm.
-%    ├┬────.dilation: Options for the dilation basis function.
-%    │└─────.fhandle: Function handle to the dilation response function.
-%    │                The allowed values are @pspm_bf_ldrf_gm and
-%    │                @pspm_bf_ldrf_gu.
-%    ├─────.duration: Duration of the basis functions in second.
-%    └───────.offset: Offset in second.
+%   └────────────.bf: Settings for the basis functions, described as following.
+%   ┌─────options.bf 
+%   ├──.constriction: [struct with field .fhandle] Options for the 
+%   │                 constriction response function. Currently
+%   │                 allowed values are @pspm_bf_lcrf_gm.
+%   ├──────.dilation: [struct with field .fhandle] Options for the 
+%   │                 dilation response function. Currently allowed 
+%   │                 values are @pspm_bf_ldrf_gm and @pspm_bf_ldrf_gu.
+%   ├──────.duration: Duration of the basis functions in seconds.
+%   └────────.offset: Offset in seconds.
 % ● Outputs
 %   *            sts: status
 %   *            out: has same size as ldata and contains either the

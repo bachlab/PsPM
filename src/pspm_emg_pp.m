@@ -3,18 +3,18 @@ function [sts, outchannel] = pspm_emg_pp(fn, options)
 %   pspm_emg_pp pre-processes startle eyeblink EMG data in 3 steps, which
 %   were optimised in reference [1].
 %   (1)  Initial filtering:
-%       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies. 
+%       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies.
 %   (2)  Removing mains noise:
-%       adjustable notch filter (default 50 Hz). 
+%       adjustable notch filter (default 50 Hz).
 %   (3)  Smoothing and rectifying:
 %       4th order Butterworth low-pass filter with a time constant of 3 ms
-%       (corresponding to a cutoff of 53.05 Hz). 
-%   While the input data must be an EMG channel, the output channel will be 
+%       (corresponding to a cutoff of 53.05 Hz).
+%   While the input data must be an EMG channel, the output channel will be
 %   of type emg_pp, as required by the startle eyeblink GLM.
 % ● Format
 %   [sts, channel_index]  = pspm_emg_pp(fn, options)
 % ● Arguments
-% *              fn:  [string]
+%   *             fn: [string]
 %                     Path to the PsPM file which contains the EMG data.
 %   ┌─────── options:
 %   ├────.mains_freq: [integer] Frequency of mains noise to remove
@@ -28,8 +28,8 @@ function [sts, outchannel] = pspm_emg_pp(fn, options)
 % ● Output
 %      channel_index: index of channel containing the processed data
 % ● References
-%   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2017). 
-%       Modelling startle eye blink electromyogram to assess fear learning. 
+%   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2017).
+%       Modelling startle eye blink electromyogram to assess fear learning.
 %       Psychophysiology, 54, 202-214.
 % ● History
 %   Introduced in PsPM 3.1

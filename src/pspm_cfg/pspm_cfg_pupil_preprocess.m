@@ -1,7 +1,7 @@
 function [PupilPP] = pspm_cfg_pupil_preprocess(~)
-% * Description
+% ● Description
 %   Matlabbatch function for pspm_pupil_pp
-% * History
+% ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 17-03-2024 by Teddy
 
@@ -32,122 +32,112 @@ PupilDiameterMin.name = 'Minimum allowed pupil diameter';
 PupilDiameterMin.tag  = 'PupilDiameter_Min';
 PupilDiameterMin.num  = [1 1];
 PupilDiameterMin.val  = {1.5};
-PupilDiameterMin.help = {'Minimum allowed pupil diameter in ',...
-                         'the same unit as the pupil channel.'};
+PupilDiameterMin.help = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.PupilDiameter_Min');
+
 % Pupil diameter maximum
 PupilDiameterMax      = cfg_entry;
 PupilDiameterMax.name = 'Maximum allowed pupil diameter';
 PupilDiameterMax.tag  = 'PupilDiameter_Max';
 PupilDiameterMax.num  = [1 1];
 PupilDiameterMax.val  = {9.0};
-PupilDiameterMax.help = {'Maximum allowed pupil diameter in ',...
-                         'the same unit as the pupil channel.'};
+PupilDiameterMax.help = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.PupilDiameter_Max');
+
 % Island filter separation
 IslandFiltSeparation      = cfg_entry;
 IslandFiltSeparation.name = 'Island separation min distance (ms)';
 IslandFiltSeparation.tag  = 'islandFilter_islandSeparation_ms';
 IslandFiltSeparation.num  = [1 1];
 IslandFiltSeparation.val  = {40};
-IslandFiltSeparation.help = {'Minimum distance used to consider ',...
-                             'samples ''separated'''};
+IslandFiltSeparation.help = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.islandFilter_islandSeperation_ms');
+
 % Minimum valid island width in millisecond
 IslandFiltMinWidth        = cfg_entry;
 IslandFiltMinWidth.name   = 'Min valid island width (ms)';
 IslandFiltMinWidth.tag    = 'islandFilter_minIslandwidth_ms';
 IslandFiltMinWidth.num    = [1 1];
 IslandFiltMinWidth.val    = {50};
-IslandFiltMinWidth.help   = {['Minimum temporal width required to ',...
-                            'still consider a sample island ',...
-                            'valid. If the temporal width of the ',...
-                            'island is less than this value, all the ',...
-                            'samples in the island will be marked ',...
-                            'as invalid.']};
+IslandFiltMinWidth.help   = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.islandFilter_minIslandWidth_ms');
+
 % Dilation speed filter median multiplier
 DilationSpdFiltMedMp      = cfg_entry;
 DilationSpdFiltMedMp.name = 'Number of medians in speed filter';
 DilationSpdFiltMedMp.tag  = 'dilationSpeedFilter_MadMultiplier';
 DilationSpdFiltMedMp.num  = [1 1];
 DilationSpdFiltMedMp.val  = {16};
-DilationSpdFiltMedMp.help = {'Number of median to use as the cutoff ',...
-                            'threshold when applying the speed filter'};
+DilationSpdFiltMedMp.help = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.dilationSpeedFilter_MadMultiplier');
+
 % Dilation speed filter maximum gap in millisecond
 DilationSpdFiltMaxGap       = cfg_entry;
 DilationSpdFiltMaxGap.name  = 'Max gap to compute speed (ms)';
 DilationSpdFiltMaxGap.tag   = 'dilationSpeedFilter_maxGap_ms';
 DilationSpdFiltMaxGap.num   = [1 1];
 DilationSpdFiltMaxGap.val   = {200};
-DilationSpdFiltMaxGap.help  = {'Only calculate the speed when the gap ',...
-                              'between samples is smaller than this value.'};
+DilationSpdFiltMaxGap.help  = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.dilationSpeedFilter_maxGap_ms');
+
 % Gap detect minimum width in millisecond
 GapDetectMinWidth       = cfg_entry;
 GapDetectMinWidth.name  = 'Min missing data width (ms)';
 GapDetectMinWidth.tag   = 'gapDetect_minWidth';
 GapDetectMinWidth.num   = [1 1];
 GapDetectMinWidth.val   = {75};
-GapDetectMinWidth.help  = {'Minimum width of a missing data section ',...
-                          'that causes it to be classified as a gap.'};
+GapDetectMinWidth.help  = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.gapDetect_minWidth');
+
 % Gap detect maximum width in millisecond
 GapDetectMaxWidth       = cfg_entry;
 GapDetectMaxWidth.name  = 'Max missing data width (ms)';
 GapDetectMaxWidth.tag   = 'gapDetect_maxWidth';
 GapDetectMaxWidth.num   = [1 1];
 GapDetectMaxWidth.val   = {2000};
-GapDetectMaxWidth.help  = {'Maximum width of a missing data section ',...
-                          'that causes it to be classified as a gap.'};
+GapDetectMaxWidth.help  = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.gapDetect_maxWidth');
+
 % Gap padding backword
 GapPaddingBwd           = cfg_entry;
 GapPaddingBwd.name      = 'Reject before missing data (ms)';
 GapPaddingBwd.tag       = 'gapPadding_backward';
 GapPaddingBwd.num       = [1 1];
 GapPaddingBwd.val       = {50};
-GapPaddingBwd.help      = {'The section right before the start of a ',...
-                           'gap within which samples are to be rejected.'};
+GapPaddingBwd.help      = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.gapPadding_backward');
+
 % Gap padding forward
 GapPaddingFwd           = cfg_entry;
 GapPaddingFwd.name      = 'Reject after missing data (ms)';
 GapPaddingFwd.tag       = 'gapPadding_forward';
 GapPaddingFwd.num       = [1 1];
 GapPaddingFwd.val       = {50};
-GapPaddingFwd.help      = {'The section right after the end of a gap ',...
-                            'within which samples are to be rejected.'};
+GapPaddingFwd.help      = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.gapPadding_forward');
+
 % Residual filter passes
 ResdFiltPass            = cfg_entry;
 ResdFiltPass.name       = 'Deviation filter passes';
 ResdFiltPass.tag        = 'residualsFilter_passes';
 ResdFiltPass.num        = [1 1];
 ResdFiltPass.val        = {4};
-ResdFiltPass.help       = {'Number of passes deviation filter makes'};
+ResdFiltPass.help       = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.residualsFilter_passes');
+
 % Residual filter median multiplier
 ResdFiltMedMp           = cfg_entry;
 ResdFiltMedMp.name      = 'Number of medians in deviation filter';
 ResdFiltMedMp.tag       = 'residualsFilter_MadMultiplier';
 ResdFiltMedMp.num       = [1 1];
 ResdFiltMedMp.val       = {16};
-ResdFiltMedMp.help      = {['The multiplier used when defining the ',...
-                            'threshold. Threshold equals this ',...
-                            'multiplier times the median. After ',...
-                            'each pass, all the input samples that ',...
-                            'are outside the threshold are removed. ',...
-                            'Please note that all samples (even the ',...
-                            'ones which may have been rejected by ',...
-                            'the previous devation filter pass) are ',...
-                            'considered.']};
+ResdFiltMedMp.help      = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.residualsFilter_MadMultiplier');
+
 % Residual filter interpolation sampling frequency
 ResdFiltInterpFs        = cfg_entry;
 ResdFiltInterpFs.name   = 'Butterworth sampling frequency (Hz)';
 ResdFiltInterpFs.tag    = 'residualsFilter_interpFs';
 ResdFiltInterpFs.num    = [1 1];
 ResdFiltInterpFs.val    = {100};
-ResdFiltInterpFs.help   = {'Sampling frequency for first order ',...
-                           'Butterworth filter.'};
+ResdFiltInterpFs.help   = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.residualsFilter_interpFs');
+
 % Residual filter for lowpass cut-off
 ResdFiltLPCF            = cfg_entry;
 ResdFiltLPCF.name       = 'Butterworth cutoff frequency (Hz)';
 ResdFiltLPCF.tag        = 'residualsFilter_interpFs';
 ResdFiltLPCF.num        = [1 1];
 ResdFiltLPCF.val        = {100};
-ResdFiltLPCF.help       = {'Cutoff frequency for first order ',...
-                            'Butterworth filter.'};
+ResdFiltLPCF.help       = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.residualsFilter_lowpassCF');
+
 % Keep filter data
 KeepFiltData            = cfg_menu;
 KeepFiltData.name       = 'Store intermediate steps';
@@ -155,10 +145,8 @@ KeepFiltData.tag        = 'keepFilterData';
 KeepFiltData.values     = {true, false};
 KeepFiltData.labels     = {'True', 'False'};
 KeepFiltData.val        = {false};
-KeepFiltData.help       = {['If true, intermediate filter data will ',...
-                            'be stored for plotting. ',...
-                            'Set to false to save memory and improve ',...
-                            'plotting performance.']};
+KeepFiltData.help       = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.keepFilterData');
+
 % Raw custom setting
 RawCustomSet            = cfg_branch;
 RawCustomSet.name       = 'Settings for raw data preprocessing';
@@ -185,35 +173,33 @@ InterpUpSampFreq.name   = 'Interpolation upsampling frequency (Hz)';
 InterpUpSampFreq.tag    = 'interp_upsamplingFreq';
 InterpUpSampFreq.num    = [1 1];
 InterpUpSampFreq.val    = {1000};
-InterpUpSampFreq.help   = {'The upsampling frequency used to generate ',...
-                           'the smooth signal. (Hz)'};
+InterpUpSampFreq.help   = pspm_cfg_help_format('pspm_pupil_pp_options', 'valid.interp_maxGap');
+
 % Low pass filter cutoff frequency in Hz
 LPFiltCutoffFreq        = cfg_entry;
 LPFiltCutoffFreq.name   = 'Lowpass filter cutoff frequency (Hz)';
 LPFiltCutoffFreq.tag    = 'LpFilt_cutoffFreq';
 LPFiltCutoffFreq.num    = [1 1];
 LPFiltCutoffFreq.val    = {4};
-LPFiltCutoffFreq.help   = {'Cutoff frequency of the lowpass filter ',...
-                           'used during final smoothing. (Hz)'};
+LPFiltCutoffFreq.help   = pspm_cfg_help_format('pspm_pupil_pp_options', 'valid.interp_maxGap');
+
 % Low pass filter order
 LPFiltOrder             = cfg_entry;
 LPFiltOrder.name        = 'Lowpass filter order';
 LPFiltOrder.tag         = 'LpFilt_order';
 LPFiltOrder.num         = [1 1];
 LPFiltOrder.val         = {4};
-LPFiltOrder.help        = {'Filter order of the lowpass filter used ',...
-                           'during final smoothing.'};
+LPFiltOrder.help        = pspm_cfg_help_format('pspm_pupil_pp_options', 'valid.interp_maxGap');
+
+
 % Interpolation maximum gap in millisecond
 InterpMaxGap            = cfg_entry;
 InterpMaxGap.name       = 'Interpolation max gap (ms)';
 InterpMaxGap.tag        = 'interp_maxGap';
 InterpMaxGap.num        = [1 1];
 InterpMaxGap.val        = {250};
-InterpMaxGap.help       = {['Maximum gap in the used (valid) raw ',...
-                            'samples to interpolate over. ',...
-                            'Sections that were interpolated over ',...
-                            'distances larger than this value will ',...
-                            'be set to NaN. (ms)']};
+InterpMaxGap.help       = pspm_cfg_help_format('pspm_pupil_pp_options', 'valid.interp_maxGap');
+
 %% Settings
 % Settings for valid data preprocessing
 ValidCustomSet          = cfg_branch;
@@ -233,7 +219,7 @@ CustomSet.val           = {RawCustomSet, ValidCustomSet};
 DefaultSet              = cfg_const;
 DefaultSet.name         = 'Default settings';
 DefaultSet.tag          = 'default_settings';
-DefaultSet.val          = {};
+DefaultSet.val          = {struct()};
 % Settings
 Set                     = cfg_choice;
 Set.name                = 'Settings';

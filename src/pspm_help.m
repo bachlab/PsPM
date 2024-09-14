@@ -12,6 +12,16 @@ function information = pspm_help(mfile)
 %   Introduced in PsPM 6.0
 %   Written in 2022 and updated in 2024 by Teddy
 
+% initial checking
+if isempty(mfile)
+  warning('The file does not exist');
+  return
+elseif length(mfile)<2 && ~strcmp(mfile(end-1:end),'.m')
+  warning('The file does not exist');
+  return
+elseif ~strcmp(mfile(end-1:end),'.m')
+  mfile = [mfile,'.m'];
+end
 fid = fopen(mfile,'r','n','UTF-8');
 % read the file into a cell array, one cell per line
 i = 1;
@@ -30,6 +40,7 @@ A = A(1:find(cellfun(@isempty,A),1)-1);
 A = A(cellfun(@ischar,A) & ~cellfun(@isempty,A));
 % find matching lines
 B = regexp(A,'^\s*%.*','match');
+B = remove_annotation(B);
 B = vertcat(B{:});
 information = sort_info (B);
 if isfield(information, 'Description')
@@ -140,7 +151,18 @@ for i_level = 1:length(levels)
       fieldname = C(1:(split-1));
       fieldcontent = C((split+1):end);
     end
-    args.(sort_content(fieldname)) = sort_content(fieldcontent);
+    % currently only two levels of arguments are supported, could be
+    % expanded in the future.
+    if contains(sort_content(fieldname), '.')
+      temp = sort_content(fieldname);
+      level1fieldname = temp(1:find(temp=='.')-1);
+      level2fieldname = temp(find(temp=='.')+1:end);
+      args.(level1fieldname).(level2fieldname) = sort_content(fieldcontent);
+    else
+      level1fieldname = sort_content(fieldname);
+      level2fieldname = [];
+      args.(level1fieldname) = sort_content(fieldcontent);
+    end
   else
     [var_name_start,var_name_end] = regexp(C,'(?<=^)(.*?)(?=:)'); % get subfields
     [var_name_start2,var_name_end2] = regexp(C,'(?<=:)(.*?)(?=$)'); % get explainations
@@ -152,7 +174,11 @@ for i_level = 1:length(levels)
     while strcmp(content(1),' ')
       content = content(2:end);
     end
-    args.(sort_content(fieldname)).(sort_content(varname)) = sort_content(content);
+    if ~isempty(level2fieldname)
+      args.(level1fieldname).(level2fieldname).(sort_content(varname)) = sort_content(content);
+    else
+      args.(sort_content(fieldname)).(sort_content(varname)) = sort_content(content);
+    end
   end
 end
 
@@ -203,3 +229,13 @@ if ~isempty(B)
     B(end+1) = '.';
   end
 end
+
+function B = remove_annotation(A)
+  marks = ones(1,length(A));
+  for iA = 1:length(A)
+    content = A{iA};
+    if ~isempty(content)
+      markers(iA) = ~contains(content,'//');
+    end
+  end
+  B = A(markers);
