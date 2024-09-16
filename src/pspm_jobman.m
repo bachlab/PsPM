@@ -3,8 +3,8 @@ function job_id = pspm_jobman(varargin)
 %   Main interface for PsPM Batch System
 %   Initialise jobs configuration and set MATLAB path accordingly.
 % ● Format
+%   → Standard
 %     pspm_jobman('initcfg')
-%   → Run specified job
 %     pspm_jobman('run',job)
 %     output_list = pspm_jobman('run',job)
 %   → Run specified job
@@ -14,7 +14,7 @@ function job_id = pspm_jobman(varargin)
 %     job_id = pspm_jobman('interactive',job,node)
 %     job_id = pspm_jobman('interactive','',node)
 % ● Arguments
-%   → Run specified job
+%   // Run specified job
 %   *         job:  filename of a job (.m or .mat), or cell
 %                   array of filenames, or 'jobs'/'matlabbatch'
 %                   variable, or cell array of 'jobs'/'matlabbatch'
@@ -23,7 +23,7 @@ function job_id = pspm_jobman(varargin)
 %                   each module in the job. The format and contents
 %                   of these outputs is defined in the configuration
 %                   of each module (.prog and .vout callbacks).
-%   → Run the user interface in interactive mode.
+%   // Run the user interface in interactive mode.
 %   *        node:  indicate which part of the configuration is to be used.
 %   *      job_id:  can be used to manipulate this job in cfg_util. Note that
 %                   changes to the job in cfg_util will not show up in cfg_ui
