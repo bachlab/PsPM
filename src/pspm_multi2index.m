@@ -8,7 +8,7 @@ function [sts, onsets, durations] = pspm_multi2index(timeunits, multi, sr, sessi
 %   [onsets, durations] = pspm_multi2index('markers', multi, sr, session_duration, events)
 % ● Arguments
 %   *    multi : multi structure from pspm_get_timing
-%           sr : sampling rate, or vector of sampling rates with the same  number of
+%           sr : sampling rate, or vector of sampling rates with the same number of
 %                elements as multi
 %   * sr_ratio : If data was downsampled wrt onset definition, ratio of new_sr/old_sr; or
 %                vector of sampling rate ratios. Otherwise, should be 1.
@@ -23,7 +23,7 @@ if numel(sr) == 1
     sr = repmat(sr, numel(multi), 1);
 end
 if numel(sr) ~= numel(multi) || numel(session_duration) ~= numel(multi)
-    warning('ID:invalid_input', 'No event definition provided.'); return;
+    warning('ID:invalid_input', 'Number of sessions do not match.'); return;
 end
 if ~isempty(multi)
     for iSn = 1:numel(multi)
@@ -40,8 +40,8 @@ if ~isempty(multi)
                         events = varargin{1};
                     end
                     % markers are timestamps in seconds
-                    onsets{n}{iSn}    = pspm_time2index(multi(iSn).onsets{n}, sr(iSn), session_duration, 0, events{iSn});
-                    durations{n}{iSn}  = pspm_time2index(multi(iSn).durations{n}, sr(iSn), session_duration, 1);
+                    onsets{n}{iSn}    = pspm_time2index(multi(iSn).onsets{n}, sr(iSn), session_duration(iSn), 0, events{iSn});
+                    durations{n}{iSn}  = pspm_time2index(multi(iSn).durations{n}, sr(iSn), session_duration(iSn), 1);
             end
         end
     end

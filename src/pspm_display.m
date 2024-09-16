@@ -1,11 +1,16 @@
 function varargout = pspm_display(varargin)
 % ● Description
-%   pspm_display is the code for the GUI that is used to display different data from scr
-%   datafiles.
+%   pspm_display opens a GUI for displaying data from PsPM files. A PsPM file
+%   to be displayed can be specified in the function call or in the GUI
+%   itself.
 % ● Format
-%   pspm_display
-%   pspm_display(filename), such as pspm_display('test.mat')
-%   pspm_display(filepath), such as pspm_display('~/Documents/test.mat')
+%   → Standard
+%     pspm_display
+%     pspm_display(filename)
+%     pspm_display(filepath)
+%   → Examples
+%     pspm_display('test.mat')
+%     pspm_display('~/Documents/test.mat')
 % ● Arguments
 %   * filename: the name of a file to be displayed, which must ends with '.mat'.
 %   * filepath: the path of a file to be displayed, which must ends with '.mat'.
@@ -164,7 +169,7 @@ function varargout = pspm_display_OutputFcn(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+
 end
 
 

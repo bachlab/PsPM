@@ -72,11 +72,15 @@ model.constrained = job.data_options.constr_model;
 if isfield(job.chan, 'chan_nr')
   model.channel = job.chan.chan_nr;
 end
+if isfield(job.resp_options.rf, 'disabled')
+    options.rf = 0;
+else
+    options.rf = job.resp_options.rf.datafile;
+end
 % options
 options = pspm_update_struct(options, job.resp_options, {'crfupdate',...
                                                          'indrf',...
-                                                         'getrf',...
-                                                         'rf'});
+                                                         'getrf'});
 options = pspm_update_struct(options, job.inv_options, {'depth',...
                                                         'sfpre',...
                                                         'sfpost',...
@@ -93,5 +97,7 @@ end
 if eventnameflag
   options.eventnames = eventnames;
 end
-[sts, out] = pspm_dcm(model, options);
+pspm_dcm(model, options);
+out = {model.modelfile};
+
 

@@ -1,8 +1,9 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 % ● Description
 %   pspm_get_markerinfo extracts markerinfo from PsPM files that contain
-%   such information (typically after import of EEG-style data files, e.g.
-%   BrainVision or NeuroScan)
+%   such information (e.g. BrainVision or NeuroScan), and returns this or 
+%   writes it into a matlab file with a struct variable 'markerinfo', with
+%   one element per unique marker name/value.
 % ● Format
 %   [sts, markerinfo] = pspm_get_markerinfo(filename, options)
 % ● Arguments
@@ -10,10 +11,8 @@ function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 %                  name of PsPM file
 %                  if empty, you will be prompted for one
 %   ┌────options
-%   ├.markerchan : [double]
-%   │              channel id of the marker channel;
-%   │              default value: 0, meaning to use the first found marker
-%   │              channel
+%   ├.marker_chan_num:  [int] marker channel number.
+%   │                   if undefined or 0, first marker channel is used.
 %   ├──.filename : [char]
 %   │              name of a file to write the markerinfo to;
 %   │              default value: empty, meaning no file will be written
@@ -49,7 +48,7 @@ if nargin < 1 || isempty(fn)
   fn = spm_select(1, 'mat', 'Extract markers from which file?');
 end
 % get file
-[bsts, data] = pspm_load_channel(fn, options.markerchan, 'marker');
+[bsts, data] = pspm_load_channel(fn, options.marker_chan_num, 'marker');
 if bsts == -1, return, end
 % check markers
 if ~isfield(data, 'markerinfo')

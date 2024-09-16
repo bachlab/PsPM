@@ -10,10 +10,6 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'HPR';
 vars.modspec = 'hp_fc';
-vars.glmref = { ...
-        ['Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (under review). Measuring', ...
-         'human Pavlovian appetitive conditioning and memory retention.']};
-vars.glmhelp = '';
 
 % load default settings
 glm_hp_rew = pspm_cfg_glm(vars);

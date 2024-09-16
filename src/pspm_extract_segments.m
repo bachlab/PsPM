@@ -1,15 +1,18 @@
 function [sts, out] = pspm_extract_segments(method, data, varargin)
 % ● Description
-%   pspm_extract_segments. Function in order to extract segments of a certain
-%   length after defined onsets and create summary statistics
-%   (mean, SD, SEM, % NaN) over these segments
-%   The function supports either manual setting of data file, channel,
-%   timing and timeunits or automatic extraction from a glm or dcm model file.
-%   The segments variable returned will be a cx1 cell where c corresponds to
-%   the number of conditions (1 if extracted from non-linear model).
-%   Each element contains a struct with fields data, mean, std and sem.
-%   The field data is a nxo*s vector where n is number of data points and o*s
-%   corresponds to the onsets multiplied by the sessions.
+%   pspm_extract_segments extracts data segments of fixed length after 
+%   defined onsets, groups them by condition, and computes summary 
+%   statistics (mean, SD, SEM, NaN) for each condition. This is a 
+%   first-level (subject-level) function. 
+%   The function supports automated extraction from a model file, or
+%   manually defining timing definitions and extracting from a PsPM data 
+%   file. For non-linear models, each trial will be treated as a separate 
+%   condition unless trial names were specified in the model setup.
+%   The function returns a cell array of struct named 'segments'
+%   with c elements, where c is the number of conditions 
+%   specified. Each element contains the following fields: data, mean, std, 
+%   sem, trial_nan_percent, and total_nan_percent. 
+%   The output can also be written to a matlab file. 
 % ● Format
 %   [sts, segments] = pspm_extract_segments('file', data_fn, channel, timing, options)
 %   [sts, segments] = pspm_extract_segments('data', data, sr, timing, options)
@@ -29,12 +32,12 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   ┌────────────options:
 %   ├─────────.timeunits: 'seconds' (default), 'samples' or 'markers'. In 'model'
 %   │                     mode the value will be ignored and taken from
-%   │                     the model file. In the case
-%   │                     of 'data', the timeunits must be samples or seconds.
-%   ├────────────.length: Length of the segments in the 'timeunits'.
+%   │                     the model file. In case a data vector is passed
+%   │                     as input, timeunits must be 'samples' or 'seconds'.
+%   ├────────────.length: Length of the segments in the specified 'timeunits'.
 %   │                     The default value is 10.
-%   ├──────────────.plot: If 1 mean values (solid) and standard error of
-%   │                     the mean (dashed) will be ploted. Default is 0.
+%   ├──────────────.plot: [0/1] Plot mean values (solid) and standard error of
+%   │                     the mean (dashed) will be ploted. Default is no plot.
 %   ├────────.outputfile: Define filename to store segments. If is equal
 %   │                     to '', no file will be written. Default is 0.
 %   ├─────────.overwrite: Define if already existing files should be
@@ -49,12 +52,10 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   │                     'model', then this option overides the missing
 %   │                     values given in the model
 %   │                     Default: no missing values
-%   ├────────.nan_output: This option defines whether the user wants to output
-%   │                     the NaN ratios of the trials for each condition.
-%   │                     If so,  we values can be printed on the screen (on
-%   │                     MATLAB command window) or written to a created file.
-%   │                     The field can be set to 'screen', 'File Output'or
-%   │                     'none'. 'none' is the default value.
+%   ├────────.nan_output: ['screen', filename, or 'none'] Output
+%   │                     NaN ratios of the trials for each condition.
+%   │                     Values can be printed on the screen or written to 
+%   │                     a matlab file. Default is no NaN output.
 %   └──────────────.norm: If 1, z-scores the entire data time series
 %                         (default: 0).
 % ● History
@@ -75,7 +76,7 @@ if nargin < 2 || ~ischar(method) || ~ismember(method, {'file', 'data', 'model'})
         (~strcmpi(method, 'model') && nargin < 4)
     warning('ID:invalid_input', 'Don''t know what to do'); return
 elseif strcmpi(method, 'model')
-     data = pspm_load1(data, 'all');
+     [~, data, ~] = pspm_load1(data, 'all');
     if nargin > 2
         options = varargin{1};
     end
@@ -132,6 +133,7 @@ events = {};
 switch method
     case 'data'
         data_raw = data;
+        if isnumeric(data), data_raw = {data}; end
     case 'file'
         for i_sn = 1:numel(datafile)
             [lsts, alldata{i_sn}] = pspm_load_channel(datafile{i_sn}, channel);
@@ -151,6 +153,9 @@ switch method
 case 'model'
     if strcmpi(data.modeltype, 'glm')
         data_raw = data.input.data;
+        timing = data.input.timing;
+        options.timeunits = data.input.timeunits;
+        events = data.input.events;
     elseif strcmpi(data.modeltype, 'dcm')
         data_raw = data.input.scr;
     else
@@ -180,11 +185,6 @@ for i_sn = 1:numel(data_raw)
     session_duration(i_sn, 1) = numel(data_raw{i_sn});
 end
 
-if strcmpi(method, 'model') && strcmpi(data.modeltype, 'glm')
-    timing = data.input.timing;
-end
-
-
 if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
     % DCM has no condition information
     onsets{1} = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
@@ -193,6 +193,7 @@ if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
     'UniformOutput', false);
     names{1} = 'all';
     n_cond = 1;
+    options.timeunits = 'seconds';
 else
     [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
      [msts, onsets] = pspm_multi2index(options.timeunits, multi, sr, session_duration, events);
@@ -202,6 +203,8 @@ else
          names{i_cond} = multi(1).names{i_cond};
      end
 end
+
+% onsets has the structure: onsets{i_cond}{i_sn}
 
 %% prepare missing
 if isfield(options, 'missing')
@@ -265,9 +268,9 @@ for c=1:numel(onsets)
     set(p(2), 'Color', color);
     set(p(3), 'Color', color);
 
-    legend_lb{(c-1)*3 + 1} = [comb_names{c} ' AVG'];
-    legend_lb{(c-1)*3 + 2} = [comb_names{c} ' SEM+'];
-    legend_lb{(c-1)*3 + 3} = [comb_names{c} ' SEM-'];
+    legend_lb{(c-1)*3 + 1} = [names{c} ' AVG'];
+    legend_lb{(c-1)*3 + 2} = [names{c} ' SEM+'];
+    legend_lb{(c-1)*3 + 3} = [names{c} ' SEM-'];
   end
 end
 

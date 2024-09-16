@@ -1,9 +1,10 @@
 function [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Description
-%   pspm_gaze_pp combines left/right gaze x and gaze y channels at the same time and will
-%   add a combined gaze channel.
+%   pspm_gaze_pp combines left/right gaze x and gaze y channels at
+%   the same time and will add two combined gaze channels, for the x and y
+%   coordinate.
 % ● Format
-%   [sts, channel_index] = pspm_gaze_pp(fn) or
+%   [sts, channel_index] = pspm_gaze_pp(fn)
 %   [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Arguments
 %   *             fn: [string] Path to the PsPM file which contains the gaze data.
@@ -56,7 +57,8 @@ if isnumeric(options.channel) && numel(options.channel) == 4
     [stsc(3), gaze_y_r] = pspm_load_channel(alldata, options.channel(3), 'gaze_y_r');
     [stsc(4), gaze_y_l] = pspm_load_channel(alldata, options.channel(4), 'gaze_y_l');
     if sum(stsc) < 4, return, end
-elseif strcmp(options.channel, 'gaze')
+elseif (isnumeric(options.channel) && numel(options.channel) == 1 && options.channel == 0) || ...
+        (ischar(options.channel) && strcmp(options.channel, 'gaze'))
     [stsc(1), gaze_x_r, gaze_y_r] = pspm_load_gaze (fn, 'r');
     [stsc(2), gaze_x_l, gaze_y_l] = pspm_load_gaze (fn, 'l');
     if sum(stsc) < 2, return, end

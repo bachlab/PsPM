@@ -1,10 +1,14 @@
 function [sts, outchannel] = pspm_convert_area2diameter(varargin)
 % ● Description
-%   pspm_convert_area2diameter converts area values into diameter values
-%   It can work on PsPM files or on numeric vectors.
+%   pspm_convert_area2diameter converts area values into diameter values.
+%   All pupil size models in PsPM are defined for diameter values and
+%   require this conversion if the original data were recorded as area. In
+%   user mode, the function works on one or two channels in a PsPM file. In 
+%   internal mode, it can also act on numerical vectors and returns a 
+%   vector of converted values. 
 % ● Format
-%   [sts, converted_data] = pspm_convert_area2diameter(area)
 %   [sts, channel_index]  = pspm_convert_area2diameter(fn, options)
+%   [sts, converted_data] = pspm_convert_area2diameter(area)
 % ● Arguments
 %   *            fn : a numeric vector of milimeter values
 %   *          area : a numeric vector of area values (the unit is not important)

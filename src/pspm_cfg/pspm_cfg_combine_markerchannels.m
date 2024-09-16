@@ -4,7 +4,7 @@ function combine_markerchannels = pspm_cfg_combine_markerchannels
 %   Matlab UI function for pspm_combine_markerchannels
 % ● History
 %   PsPM 6.2
-%   Written in 2023 by Teddy Chao
+%   Written in 2023 by Teddy
 
 %% Standard items
 datafile         = pspm_cfg_selector_datafile;
@@ -23,9 +23,7 @@ combine_markerchannels.tag    = 'combine_markerchannels';
 combine_markerchannels.val    = {datafile, channel_action, marker_chan};
 combine_markerchannels.prog   = @pspm_cfg_run_combine_markerchannels;
 combine_markerchannels.vout   = @pspm_cfg_vout_outchannel;
-combine_markerchannels.help   = {['The feature combine marker channels ',...
-  'can combine all the marker channels of a data file and add the ',...
-  'result to the original data file, specified by channel action.']};
+combine_markerchannels.help   = pspm_cfg_help_format('pspm_combine_markerchannels');
 
 
 

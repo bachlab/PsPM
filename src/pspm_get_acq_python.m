@@ -1,7 +1,11 @@
 function [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import)
 % ● Description
-%   pspm_get_acq_python imports of biopac/acknowledge files with python
-%   package bioread (version 3.0.1).
+%   pspm_get_acq_python imports Biopac Acknowledge files from any version,
+%   using the Python package bioread. Please ensure you have installed 
+%   Python and bioread (https://github.com/njvack/bioread). This function 
+%   has been tested for bioread version 3.0.1 only.
+%   This function is based on sample files, not on proper documentation of the
+%   file format. Always check your imported data before using it. 
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_acq_python(datafile, import);
 % ● Arguments

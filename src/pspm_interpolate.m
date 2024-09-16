@@ -1,14 +1,15 @@
 function [sts, outdata] = pspm_interpolate(indata, varargin)
 % ● Description
-%   pspm_interpolate interpolates NaN values passed with the indata parameter.
-%   Indata can be a numeric array or a filename. If indata is a filename,
-%   then the function either acts on one selected channel and
-%   writes the result to the same file, or on all channels in the file and
-%   writes a new file if the input is a file name.
+%   pspm_interpolate interpolates NaN values. It either acts on one 
+%   selected channel of a PsPM file and writes the result to the same file, 
+%   or on all channels in the file and writes a new file with the same name
+%   as the old file, prepended with 'i'. For internal purposes, the function
+%   can also act on data vectors and then gives an interpolated data vector
+%   as output.
 % ● Format
-%   [sts, outdata] = pspm_interpolate(numeric_array, options)
 %   [sts, channel_index] = pspm_interpolate(filename, channel, options)
 %   [sts, newfile] = pspm_interpolate(filename, channel, options)
+%   [sts, outdata] = pspm_interpolate(numeric_array, options)
 % ● Arguments
 %   *      indata : [char/numeric] contains the data to be interpolated
 %   *     channel : a single channel identifier accepted by pspm_load_channel
@@ -17,9 +18,9 @@ function [sts, outdata] = pspm_interpolate(indata, varargin)
 %                   then the result is written to a new file called 'i'+<old filename>.
 %   ┌─────options
 %   ├─────.method : Defines the interpolation method, see interp1() for
-%   │               possible interpolation methods. [optional; default: linear]
-%   ├.extrapolate : Determine should extrapolate for data out of the data range.
-%   │               [optional; not recommended; accept: 1, 0; default: 0]
+%   │               possible interpolation methods. Default is 'linear'.
+%   ├.extrapolate : [not recommended; 0 or 1] Determine extrapolation for 
+%   │               query points out of the data range. Default is no extrapolation.
 %   ├──.overwrite : Defines if existing datafiles should be overwritten. [logical] (0 or 1)
 %   │               Define whether to overwrite existing output files or not.
 %   │               Default value: do not overwrite. Only used if 'channel' is 'all'

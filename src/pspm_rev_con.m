@@ -1,8 +1,8 @@
-function varargout = pspm_rev_con(model)
+function [sts, fighandle] = pspm_rev_con(model)
 % ● Description
 %   pspm_rev_con is a tool for reviewing contrasts of first level models
 % ● Format
-%   fighandle = pspm_rev_con(modelfile)
+%   [sts, fighandle] = pspm_rev_con(modelfile)
 % ● Arguments
 %   * modelfile: filename and path of modelfile
 % ● History
@@ -16,13 +16,6 @@ if isempty(settings)
 end
 sts = -1;
 fighandle = [];
-switch nargout
-  case 1
-    varargout{1} = fighandle;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = fighandle;
-end
 
 % check input
 % ------------------------------------------------------------------------
@@ -41,11 +34,4 @@ end;
 fprintf('---------------------------------------\n');
 
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = fighandle;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = fighandle;
-end
 return

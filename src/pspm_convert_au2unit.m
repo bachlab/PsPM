@@ -3,7 +3,7 @@ function [sts, outchannel] = pspm_convert_au2unit(varargin)
 %   pspm_convert_au2unit converts arbitrary unit values to unit values. It works on a
 %   PsPM file and is able to replace a channel or add the data as
 %   a new channel.
-% ● Features
+%   Important features:
 %   Given arbitrary unit values are converted using a recording distance D
 %   given in 'unit', a reference distance Dref given in 'reference_unit', a
 %   multiplicator A given in 'reference_unit'.

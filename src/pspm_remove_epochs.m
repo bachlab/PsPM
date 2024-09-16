@@ -1,6 +1,7 @@
 function [sts, outchannel] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % ● Description
-%   pspm_remove_epochs sets epochs of data to NaN
+%   pspm_remove_epochs sets epochs of data, as defined by an epoch file, 
+%   to NaN. 
 % ● Format
 %   [sts, channel_index] = pspm_remove_epochs(datafile, channel, epochfile, options)
 % ● Arguments

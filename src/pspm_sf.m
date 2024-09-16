@@ -1,6 +1,25 @@
 function [sts, sf] = pspm_sf(model, options)
 % ● Description
-%   pspm_sf is a wrapper function for analysis of tonic SC measures.
+%   pspm_sf is a wrapper function for analysis of skin conductance as a
+%   measure of tonic arousal. SF are analysed over time windows that 
+%   typically last 60 s and should at least be 15 s long. PsPM implements 3 
+%   different models. 
+%   (1) Skin conductance level (SCL): this is the mean signal over the
+%   epoch.
+%   (2) Area under the curve (AUC): this is the time-integral of the signal
+%   with the minimum value subtracted (to account for pre-epoch arousal),
+%   divided by epoch duration. This is designed to be independent from SCL 
+%   and ideally represents the number x amplitude of spontaneous 
+%   fluctuations (also termed non-specific SCR) in this epoch. 
+%   (3) Number of SF estimated by DCM: this is a non-linear estimation of 
+%   the number and onset of SF, and is the most sensitive indicator of 
+%   tonic arousal. For counting peaks, a threshold in mcS is applied; hence
+%   it is important that the data are provided in the correct units. Estimated 
+%   SF onset is stored in the model and is expressed in CNS time, i.e. the 
+%   time point at which an SF was generated in the CNS. Thus, it already 
+%   takes into account the conduction delay from CNS into the periphery.
+%   (4) Number of SF estimated by MP: This is the same model as in (3) but
+%   estimated with an approximative matching pursuit (MP) algorithm. 
 % ● Format
 %   [sts, sf] = pspm_sf(model, options)
 % ● Arguments
@@ -25,24 +44,27 @@ function [sts, sf] = pspm_sf(model, options)
 %   │                   Allows to specify missing (e.g. artefact) epochs in the data file.
 %   │                   See pspm_get_timing for epoch definition; specify a cell array
 %   │                   for multiple input files. This must always be specified in SECONDS.
-%   └───────.channel :  [optional, integer] [default: last SCR channel] channel number.
+%   └───────.channel :  [optional, integer, default: last SCR channel] Channel number.
 %   ┌────────options
-%   ├─────.overwrite :  [logical] [default: determined by pspm_overwrite]
+%   ├─────.overwrite :  [logical, default: determined by pspm_overwrite]
 %   │                   Define whether to overwrite existing output files or not.
 %   ├.marker_chan_num:  [integer] marker channel number
 %   │                   if undefined or 0, first marker channel is used.
-%   ├─────.threshold :  [DCM only] [numeric] [default: 0.1] [unit: mcS]
-%   │                   threshold for SN detection (default 0.1 mcS)
-%   ├─────────.theta :  [DCM only] [vector] [default: read from pspm_sf_theta]
-%   │                   A (1 x 5) vector of theta values for f_SF.
-%   ├─────────.fresp :  [DCM only] [numeric] [unit: Hz] [default: 0.5]
-%   │                   frequency of responses to model.
-%   ├───────.dispwin :  [DCM only] [logical] [default: 1]
-%   │                   display progress window.
-%   ├──.dispsmallwin :  [DCM only] [logical] [default: 0]
-%   │                   display intermediate windows.
-%   └─.missingthresh :  [DCM only] [numeric] [default: 2] [unit: second]
-%                       threshold value for controlling missing epochs.
+%   ├─────.threshold :  [numeric, default: 0.1] [unit: mcS]
+%   │                   Threshold for counting estimated SN peaks (default
+%   │                   0.1 mcS). (Used for DCM and MP only.)
+%   ├─────────.theta :  [vector default: read from pspm_sf_theta]
+%   │                   A (1 x 5) vector of theta values for f_SF. (Used for DCM and MP only.)
+%   ├─────────.fresp :  [numeric, default: 0.5]
+%   │                   (Maximum) frequency (in Hz) of responses in the model.
+%   │                   (Used for DCM and MP only.)
+%   ├───────.dispwin :  [logical, default: 1]
+%   │                   Display progress plot (DCM) or result plot (MP). 
+%   ├──.dispsmallwin :  [logical, default: 0]
+%   │                   Display intermediate progress windows. (Used for DCM only.)
+%   └─.missingthresh :  [numeric, default: 2] [unit: second]
+%                       Threshold value for controlling missing epochs.
+%                       (Used for DCM only).
 %
 % ● References
 %   [1] DCM for SF:

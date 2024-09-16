@@ -215,6 +215,7 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       save(this.fn2, 'infos', 'data');
       chan.infos = infos;
       chan.data = data;
+      chan.options = struct('overwrite', 1);
       clear('infos')
       clear('data')
       this.verifyWarning(@()pspm_load_data(this.fn2, chan), ...
@@ -287,7 +288,8 @@ classdef pspm_load_data_test < matlab.unittest.TestCase
       [~, infos, data] = pspm_load_data(this.fn, chan); % load
       save.data = data;
       save.infos = infos;
-      pspm_load_data(this.fn, save); % save in different file
+      save.options = struct('overwrite', 1);
+      pspm_load_data(this.fn, save); % save in the same file
       [~, infos, data] = pspm_load_data(this.fn, chan);% load again
       act_val.infos = infos;
       act_val.data = data;

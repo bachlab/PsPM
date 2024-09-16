@@ -1,11 +1,12 @@
 function [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import)
 % ● Description
-%   pspm_get_labchartmat_ext is the main function for import of LabChart
-%   (ADInstruments) files, exported into matlab using the online LabChart
-%   extension. See pspm_labchartmat_in for import of matlab files that were
-%   exported using the built-in export feature available in more recent
-%   LabChart versions (from version 7.2 onwards)
-%   this function only supports data files containing one data block
+%   pspm_get_labchartmat_ext imports exported ADInstruments LabChart files
+%   from version 7.2 or higher. These must be exported to matlab using 
+%   the Labchart plugin available on https://www.adinstruments.com. 
+%   This function supports data files containing one data block only.
+%   This function is partly based on sample files rather than 
+%   manufacturer's documentation. Always check your imported data before 
+%   using it. 
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_labchartmat_ext(datafile, import);
 % ● Arguments

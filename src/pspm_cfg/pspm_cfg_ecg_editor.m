@@ -3,6 +3,7 @@ function ecg_editor = pspm_cfg_ecg_editor
 datafile         = pspm_cfg_selector_datafile;
 ecg_chan         = pspm_cfg_selector_channel('ECG');
 hb_chan         =  pspm_cfg_selector_channel('Heart beat');
+artefact_file   = pspm_cfg_selector_datafile('artefact epochs');
 
 %% Specific items
 ecg_chan.name         = 'ECG channel';
@@ -17,20 +18,13 @@ artefact_none.tag     = 'artefact_none';
 artefact_none.val     = {0};
 artefact_none.help    = {''};
 
-%% artefact file
-artefact_file         = cfg_files;
-artefact_file.name    = 'File';
-artefact_file.tag     = 'artefact_file';
-artefact_file.num     = [1 1];
-artefact_file.help    = {['']};
-
 %% Artefact epochs
 artefact_epochs       = cfg_choice;
 artefact_epochs.name  = 'Artefact epochs';
 artefact_epochs.tag   = 'artefact_epochs';
 artefact_epochs.val   = {artefact_none};
 artefact_epochs.values = {artefact_none, artefact_file};
-artefact_epochs.help  = {['Specify a PsPM timing file defining artefact epochs.']};
+artefact_epochs.help   = pspm_cfg_help_format('pspm_ecg_editor', 'options.missing');
 
 %% Upper limit
 ulim                = cfg_entry;
@@ -39,7 +33,7 @@ ulim.tag            = 'upper';
 ulim.strtype        = 'i';
 ulim.num            = [1 1];
 ulim.val            = {120};
-ulim.help           = {['Values bigger than this value (in bpm) will be marked as faulty.']};
+ulim.help           = {};
 
 
 %% Lower limit
@@ -49,14 +43,14 @@ llim.tag            = 'lower';
 llim.strtype        = 'i';
 llim.num            = [1 1];
 llim.val            = {40};
-llim.help           = {['Values smaller than this value (in bpm) will be marked as faulty.']};
+llim.help           = {};
 
 %% Limits
 lim                 = cfg_branch;
 lim.name            = 'Limit';
 lim.tag             = 'limit';
 lim.val             = {ulim, llim};
-lim.help            = {['Define hard limits for the faulty detection.']};
+lim.help            = pspm_cfg_help_format('pspm_ecg_editor', 'options.limits');
 
 %% Factor
 factor              = cfg_entry;
@@ -65,15 +59,14 @@ factor.tag          = 'factor';
 factor.strtype      = 'r';
 factor.num          = [1 1];
 factor.val          = {2};
-factor.help         = {['The minimum factor potentially wrong QRS ', ...
-    'complexes should deviate from the standard deviation.']};
+factor.help         = pspm_cfg_help_format('pspm_ecg_editor', 'options.factor');
 
 %% Faulty detection
 faulty_settings     = cfg_branch;
 faulty_settings.name = 'Faulty detection settings';
 faulty_settings.tag  = 'faulty_settings';
 faulty_settings.val  = {factor, lim};
-faulty_settings.help = {['Settings for the faulty detection.']};
+faulty_settings.help = {};
 
 
 %% Executable branch
@@ -82,4 +75,4 @@ ecg_editor.name = 'ECG editor';
 ecg_editor.tag  = 'ecg_editor';
 ecg_editor.val  = {datafile, ecg_chan, hb_chan, artefact_epochs, faulty_settings};
 ecg_editor.prog = @pspm_cfg_run_ecg_editor;
-ecg_editor.help = {['']};
+ecg_editor.help = pspm_cfg_help_format('pspm_ecg_editor');

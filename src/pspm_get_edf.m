@@ -1,7 +1,7 @@
 function [sts, import, sourceinfo] = pspm_get_edf(datafile, import)
 % ● Description
-%   pspm_get_edf is the main function for import of EDF files.
-%   This function uses fieldtrip fileio functions.
+%   pspm_get_edf imports European Data Format (EDF) files using FieldTrip 
+%   fileio functions.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_edf(datafile, import);
 % ● Arguments
@@ -66,7 +66,7 @@ for k = 1:numel(import)
     if ~isempty(mrk)
       import{k}.data = [mrk(:).sample];
       import{k}.marker = 'timestamps';
-      import{k}.markerinfo.value = {mrk(:).value};
+      import{k}.markerinfo.value = pspm_struct2vec(mrk, 'value', 'marker');
       import{k}.markerinfo.name = {mrk(:).type};
     else
       warning('ID:channel_not_contained_in_file', ...
