@@ -1,9 +1,8 @@
 function [glm_sps] = pspm_cfg_glm_sps
-% * Description
-
+% ● Description
 %   This function applies to the glm model for the modality ScanPath
 %   Speed (sps)
-% * History
+% ● History
 %   Updated in 2024 by Teddy
 
 % Initialise

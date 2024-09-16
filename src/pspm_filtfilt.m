@@ -2,7 +2,8 @@ function [sts, y] = pspm_filtfilt(b,a,x)
 % ● Description
 %   pspm_filtfilt. Zero-phase forward and reverse digital filtering
 % ● Format
-%   [sts, y] = pspm_filtfilt(b,a,x) or y = pspm_filtfilt(b,a,x)
+%   [sts, y] = pspm_filtfilt(b,a,x)
+%   y = pspm_filtfilt(b,a,x)
 % ● Arguments
 %   * b:  filter parameters (numerator)
 %   * a:  filter parameters (denominator)

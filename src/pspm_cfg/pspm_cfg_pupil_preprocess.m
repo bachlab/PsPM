@@ -1,7 +1,7 @@
 function [PupilPP] = pspm_cfg_pupil_preprocess(~)
-% * Description
+% ● Description
 %   Matlabbatch function for pspm_pupil_pp
-% * History
+% ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 17-03-2024 by Teddy
 

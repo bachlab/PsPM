@@ -3,7 +3,8 @@ function [bf, x, b] = pspm_bf_hprf_e(varargin)
 %   pspm_bf_hprf_e constructs the heart period response function consisting of
 %   modified Gaussian functions.
 % ● Format
-%   [bf, x, b] = pspm_bf_hprf_e(td, b) or pspm_bf_hprf_e([td, b])
+%   [bf, x, b] = pspm_bf_hprf_e(td, b)
+%   [bf, x, b] = pspm_bf_hprf_e([td, b])
 % ● Arguments
 %   *       td : time resolution in second.
 %   *        b : number of basis functions. Default as 1:6.
