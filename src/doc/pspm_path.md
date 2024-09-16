@@ -1,0 +1,17 @@
+# pspm_path
+## Description
+pspm_path is an operating system agnostic function that returns the path of folders under root PsPM directory. This function is mainly used during directory imports to call functions from libraries or folders that are not added to path by default (such as backroom folder for utility functions).
+
+## Format
+`path_to_folder = pspm_path(varargin)`
+
+## Arguments
+| Variable | Definition |
+|:--|:--|
+| varargin | Pass any number of string arguments to pspm_path. Each argument is assumed to be the name of a folder. For example, if you want to get the path to <PSPM_ROOT>/a/b/c folder, call pspm_path('a', 'b', 'c'). |
+
+## Outputs
+| Variable | Definition |
+|:--|:--|
+| path_to_folder | Constructed absolute path. |
+

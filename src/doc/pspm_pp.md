@@ -1,0 +1,25 @@
+# pspm_pp
+## Description
+pspm_pp contains various preprocessing/filtering utilities for reducing noise in the data. The 'butter' option also allows downsampling after application of an anti-alias Butterworth filter. Note that all models apply Butterworth filters automatically; additional filters should be added with caution.
+
+## Format
+`[sts, channel_index] = pspm_pp('median', fn, channel, n, options)` or
+`[sts, channel_index] = pspm_pp('butter', fn, channel, filt, options)` or
+`[sts, channel_index] = pspm_pp('leaky_integrator', fn, channel, tau, options)`
+
+## Arguments
+| Variable | Definition |
+|:--|:--|
+| method | [string] Method of filtering. Currently implemented methods are 'median' and 'butter'. (1) 'median', a median filter will be applied. (2) 'butter', Butterworth band pass filter potentially including downsampling; any NaN data are interpolated before filtering and then removed. (3) 'leaky_integrator', Applies a leaky integrator filter where tau is specified in seconds. |
+| fn | [string] The datafile that saves data to process. |
+| channel | A channel definition accepted by pspm_load_channel. |
+| n | [numeric, only if method=='median'] Number of timepoints for median filter in number of samples. |
+| tau | [numeric, only if method=='leaky_integrator'] Time constant for the leaky integrator in seconds. |
+| filt | See following fields. |
+| filt.lpfreq | low pass filt frequency or 'none' (default). |
+| filt.lporder | low pass filt order (default: 1). |
+| filt.hpfreq | high pass filt frequency or 'none' (default). |
+| filt.hporder | high pass filt order (default: 1). |
+| filt.direction | filt direction ('uni' or 'bi', default 'uni'). |
+| filt.down | sample rate in Hz after downsampling or 'none' (default). || options | See following fields. |
+| options.channel_action | [optional][string][Accepts: 'add'/'replace'][Default: 'add'] Defines whether corrected data should be added or the corresponding preprocessed channel should be replaced. |
