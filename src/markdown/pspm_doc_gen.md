@@ -1,6 +1,6 @@
 # pspm_doc_gen
 ## Description
-pspm_doc_gen generates the documents of help text in pspm functions.
+pspm_doc_gen generates the documents of help text in pspm functions into markdown files.
 
 ## Format
 `sts = pspm_doc_gen()` or

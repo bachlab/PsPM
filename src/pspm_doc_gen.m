@@ -1,7 +1,7 @@
 function sts = pspm_doc_gen(varargin)
 % ● Description
 %   pspm_doc_gen generates the documents of help text 
-%   in pspm functions.
+%   in pspm functions into markdown files.
 % ● Format
 %   sts = pspm_doc_gen()
 %   sts = pspm_doc_gen({'pspm_dcm'})
@@ -16,17 +16,16 @@ if isempty(settings)
   pspm_init;
 end
 sts = 1;
-
 switch nargin
   case 0
-    savepath = [settings.path, '/doc'];
+    savepath = [settings.path, '/markdown'];
     mkdir(savepath);
   case 1
     switch class(varargin{1})
       case 'char'
         savepath = varargin{1};
       case 'cell'
-        savepath = [settings.path, '/doc'];
+        savepath = [settings.path, '/markdown'];
         mkdir(savepath);
         list_func = varargin{1};
     end
@@ -34,7 +33,6 @@ switch nargin
     list_func = varargin{1};
     savepath = varargin{2};
 end
-
 if ~exist('list_func', 'var')
   listing = dir(settings.path);
   list_func = transpose({listing.name});
