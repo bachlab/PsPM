@@ -1733,8 +1733,294 @@ rate_below_minimum
 Help text
 \end_layout
 
+\begin_layout Quote
+Contributed by Teddy Zhao in September 2024
+\end_layout
+
 \begin_layout Subsection
-GUI and warning messages
+Introduction
+\end_layout
+
+\begin_layout Standard
+Help text refers to the descriptive text that is included in the initial couple of lines of source code.
+ Such text is designed to be written by developers and used as references for developers and users.
+ Although written in the source code,
+ the text can be read by PsPM functions,
+ such as 
+\family typewriter
+pspm_help
+\family default
+,
+ for exporting to documents that will be part of PsPM reference website.
+ The help text needs to be carefully written to make sure they are accurate and up to date.
+\end_layout
+
+\begin_layout Standard
+Typically,
+ the help text shall be written into sections as 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Description The general introduction of a function.
+ This is normally describing the use of the function and how it works,
+ such as importing a specific type of data and how information is read and managed.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Format The format of a function as how it can be called.
+ If the function has some variable arguments,
+ then the details can be listed as multiple lines.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Arguments The list of input variables of a function with their descriptions.
+ Every individual input variable shall be lead by a star mark.
+ Structs and their subfields shall be managed with table symbols.
+ An example of how this is managed is given below.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Outputs The list of output variables of a function with their descriptions,
+ similar to Arguments.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Developer's_notes This section can be used as a paragraph of technical notes for the function.
+ Such information is typically useful for developing the function,
+ and it is relatively more useful for developers than for users.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+History The section includes some notes about who has contributed to a function,
+ which may be useful for future checking.
+\end_layout
+
+\begin_layout Standard
+The aforementioned sections are normally required for all the functions,
+ but may be depending on the actual situation.
+ For example,
+ a function that does not have outputs may not need the section 
+\shape italic
+Outputs
+\shape default
+.
+\end_layout
+
+\begin_layout Subsection
+Management
+\end_layout
+
+\begin_layout Standard
+Three PsPM functions manage the help text,
+ namely 
+\family typewriter
+pspm_help
+\family default
+,
+ 
+\family typewriter
+pspm_doc
+\family default
+,
+ and 
+\family typewriter
+pspm_doc_gen
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection
+pspm_help
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_help
+\family default
+ is used to obtain the help text from source code and generate a struct of such content.
+ Whilst there is a suggested structure of the help text,
+ it is not required by 
+\family typewriter
+pspm_help
+\family default
+ that every section needs to present.
+ The input of 
+\family typewriter
+pspm_help
+\family default
+ needs to refer to only one function,
+ and multiple functions cannot be processed with 
+\family typewriter
+pspm_help
+\family default
+ in one time.
+ The function may be written as the path,
+ full name,
+ or simply the name without extra name.
+ For example,
+ the input can be written as 
+\family typewriter
+~/Documents/pspm/src/pspm_dcm.m
+\family default
+,
+ 
+\family typewriter
+pspm_dcm.m
+\family default
+,
+ or 
+\family typewriter
+pspm_dcm
+\family default
+,
+ and all of them will let 
+\family typewriter
+pspm_help
+\family default
+ to understand it will process 
+\family typewriter
+pspm_dcm
+\family default
+.
+ The output of 
+\family typewriter
+pspm_help
+\family default
+ is a struct.
+ It has the following rules which may need to pay attention to.
+\end_layout
+
+\begin_layout Paragraph
+General
+\end_layout
+
+\begin_layout Enumerate
+It is expected that the source code is written with UTF-8 encoding.
+ This is determined by considering the compatibility between Windows and Unix computers and the requirement of special characters that are used for structuring the parameters.
+\end_layout
+
+\begin_layout Enumerate
+The help text must start from the line following the function definition line,
+ and no empty line is permitted between the definition and help text or inside help text.
+ Following the help text,
+ there must be an empty line that divide the help text and the main code.
+\end_layout
+
+\begin_layout Enumerate
+Every line of help text must start with the comment symbol (%) that is used in Matlab language system.
+ A space following this comment symbol is required to increase readability of help text.
+\end_layout
+
+\begin_layout Enumerate
+It is common practice that one line of code shall not be too long and start a new line if necessary.
+ It is useful to make sure sentences have a full stop if they are expected to be shown to PsPM users.
+\end_layout
+
+\begin_layout Enumerate
+Although not mandatory,
+ it is recommended that the help text shall be written in an understandable way instead of highly technical way so that users can understand what the text mean without too much references.
+\end_layout
+
+\begin_layout Enumerate
+Wherever applicable,
+ please add the full name of some terms and the abbreviation following that.
+ Most academic paper writing rules are useful when considering writing styles here,
+ although PsPM's help text may not be as strict as publications.
+\end_layout
+
+\begin_layout Enumerate
+The output struct of pspm_help consists of the full fields,
+ from 
+\shape italic
+Description
+\shape default
+ to 
+\shape italic
+History
+\shape default
+.
+\end_layout
+
+\begin_layout Paragraph
+Description
+\end_layout
+
+\begin_layout Enumerate
+\align block
+
+\shape italic
+Description
+\shape default
+ is normally written as one or multiple full sentences.
+ The first sentence normally explain the purpose of the function.
+ For example,
+ 
+\family typewriter
+pspm_glm
+\family default
+ retains its explaination as 
+\shape italic
+pspm_glm specifies a within-subject general linear convolution model (GLM) of predicted signals and calculates amplitude estimates for these responses
+\shape default
+.
+ Further refinement of the functionality can be written following the main sentence.
+ 
+\end_layout
+
+\begin_layout Enumerate
+\align block
+It is not recommended to add specific details of the function that are used by developers only in 
+\shape italic
+Description
+\shape default
+,
+ and such content may be put in 
+\shape italic
+Developer's notes
+\shape default
+.
+ This may be used as the cutoff to determine if specific content can be put in 
+\shape italic
+Description
+\shape default
+ or 
+\shape italic
+Developer's notes
+\shape default
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+Description
+\shape default
+ can be written into multiple paragraphs if they are not really relevant enough.
+ These paragraph settings will be reflected in the exported markdown documents.
+\end_layout
+
+\begin_layout Subsubsection
+pspm_doc
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_help
+\family default
+ is used to generate the help text of a specific function into a markdown document.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+pspm_doc_gen
 \end_layout
 
 \begin_layout Standard
@@ -1774,36 +2060,142 @@ pspm_text.mat
 \end_layout
 
 \begin_layout Subsection
-Functions
-\end_layout
-
-\begin_layout Standard
-The function 
-\family typewriter
-pspm_help
-\family default
- handles reading and managing help text in PsPM source code.
- The recommended structure of help text in a function is
-\end_layout
-
-\begin_layout Enumerate
-Description
-\end_layout
-
-\begin_layout Enumerate
 Format
 \end_layout
 
-\begin_layout Enumerate
-Arguments
+\begin_layout Subsubsection
+Typical example
 \end_layout
 
-\begin_layout Enumerate
-Developer's notes (optional)
+\begin_layout LyX-Code
+\noindent
+● Description 
 \end_layout
 
-\begin_layout Enumerate
-Version history
+\begin_layout LyX-Code
+\noindent
+General introduction of the function.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+● Format
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  [output1,
+ output2,
+ output3] = pspm_xxx(varargin);
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  [output1,
+ output2,
+ output3] = pspm_xxx(input1,
+ input2);
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+● Arguments
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  * input1     :
+ description of input1.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  * input2     :
+ description of input2.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  ┌─input3
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  ├─.subfield1 :
+ description of subfield1.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  └─.subfield2 :
+ description of subfield2.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+● Outputs
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  * output1    :
+ description of output1.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  * output2    :
+ description of output2.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  ┌─output3
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  ├─.subfield1 :
+ description of subfield1.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  └─.subfield2 :
+ description of subfield2.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+● Developer's notes
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  A few sentences of technical information for this function.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+● History
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  Introduced in PsPM version 7.0.
+\end_layout
+
+\begin_layout LyX-Code
+\noindent
+  Written in 2024 by Developer A (University).
+\end_layout
+
+\begin_layout Subsubsection
+Typical example
+\end_layout
+
+\begin_layout Standard
+Index of commonly used symbols.
 \end_layout
 
 \begin_layout Standard
@@ -7564,201 +7956,6 @@ The new GUI is currently using the colour
  macOS,
  and Linux,
  respectively.
-\end_layout
-
-\begin_layout Subsection
-Help Text
-\end_layout
-
-\begin_layout Subsubsection
-Introduction
-\end_layout
-
-\begin_layout Standard
-Help text refers to the descriptive text that is included in the initial couple of lines of source code.
- Such help text can be sorted by calling the function 
-\family typewriter
-pspm_help
-\family default
- into a struct.
- Typically,
- the help text shall be written into sections as 
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Description The general introduction of a function.
- This is normally describing the use of the function and how it works,
- such as importing a specific type of data and how information is read and managed.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Format The format of a function as how it can be called.
- If the function has some varabile arguments,
- then the details can be listed as multiple lines.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Arguments The list of input variables of a function with their descriptions.
- Every individual input variable shall be lead by a star mark.
- Structs and their subfields shall be managed with table symbols.
- An example of how this is managed is given below.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Outputs The list of output variables of a function with their descriptions,
- similar to Arguments.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Developer's_notes This section can be used as a paragraph of technical notes for the function.
- Such information is typically useful for developing the function,
- and it is relatively more useful for developers than for users.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-History The section includes some notes about who has contributed to a function,
- which may be useful for future checking.
-\end_layout
-
-\begin_layout Subsubsection
-Typical example
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Description 
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-General introduction of the function.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Format
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  [output1,
- output2,
- output3] = pspm_xxx(varargin);
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  [output1,
- output2,
- output3] = pspm_xxx(input1,
- input2);
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Arguments
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * input1     :
- description of input1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * input2     :
- description of input2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ┌─input3
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ├─.subfield1 :
- description of subfield1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  └─.subfield2 :
- description of subfield2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Outputs
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * output1    :
- description of output1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * output2    :
- description of output2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ┌─output3
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ├─.subfield1 :
- description of subfield1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  └─.subfield2 :
- description of subfield2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Developer's notes
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  A few sentences of technical information for this function.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● History
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  Introduced in PsPM version 7.0.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  Written in 2024 by Developer A (University).
-\end_layout
-
-\begin_layout Subsubsection
-Typical example
-\end_layout
-
-\begin_layout Standard
-Index of commonly used symbols.
 \end_layout
 
 \begin_layout Standard
