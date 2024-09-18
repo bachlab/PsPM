@@ -24,6 +24,7 @@ M = [];
 % 3.1 Add title
 Title       = pspm_doc_get_title(func_name);
 M = [M, '# ', Title, newline];
+M = [M, '(Back to index)[/reference]', newline];
 % 3.2 Add description
 if isfield(S, 'Description')
   Description = pspm_doc_get_description(S.Description);
@@ -49,6 +50,7 @@ if isfield(S, 'References')
   References  = pspm_doc_get_references(S.References);
   M = [M, '## ', 'References',   newline, References,  newline];
 end
+M = [M, '(Back to index)[/reference]', newline];
 %% 4 Write to file
 if isfield(options, 'path')
   writelines(M, [options.path, '/', Title,'.md']);
