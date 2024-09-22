@@ -47,6 +47,7 @@ set(handles.textPlot3,'HorizontalAlignment','left')
 set(handles.textPlot4,'HorizontalAlignment','left')
 set(handles.textPlot5,'HorizontalAlignment','left')
 set(handles.textPlot6,'HorizontalAlignment','left')
+set(handles.textPlot7,'HorizontalAlignment','left')
 set(handles.textStatus,'HorizontalAlignment','left')
 set(handles.textStatus,'String','Select a model...');
 
@@ -303,9 +304,25 @@ end
 set(handles.textStatus,'String',tmpStatusString);
 guidata(hObject, handles);
 
+
 % --- Executes on button press in buttonPlot6.
-function buttonPlot6_Callback(hObject, ~, handles)
+function buttonPlot6_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonPlot6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
+  case 'glm'
+    disp('new button #6')
+
+end
+
+
+
+% --- Executes on button press in buttonPlot7.
+function buttonPlot7_Callback(hObject, ~, handles)
+% hObject    handle to buttonPlot7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 tmpStatusString = get(handles.textStatus,'String');
@@ -463,16 +480,18 @@ switch handles.modelData{handles.currentModel}.modeltype
       'Plot', ...
       'Plot', ...
       'Show', ...
+      'Plot', ...
       'Plot'};
     textPlotString = {'Design matrix in SPM style', ...
       'Orthogonality in SPM style', ...
       'Predicted & observed', ...
       'Regressors in command window', ...
-      'Reconstructed responses'};
+      'Reconstructed responses', ...
+      'Plot data per condition'};
     % detect contrasts
     if isfield(handles.modelData{handles.currentModel}.model, 'con')
-      buttonPlotString{6} = 'Show';
-      textPlotString{6} = 'Contrast names in command window';
+      buttonPlotString{7} = 'Show';
+      textPlotString{7} = 'Contrast names in command window';
     end
     setInvisble(handles);
     setButtonPlotString(handles, buttonPlotString);
@@ -544,3 +563,6 @@ function pushbutton_quit_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 closeFigures(handles);
 delete(gcbf)
+
+
+
