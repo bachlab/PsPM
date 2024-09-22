@@ -58,11 +58,13 @@ classdef pspm_trim_test < matlab.unittest.TestCase
   end
   methods (Test)
     %% Missing epochs test
-    function missing_epoch_test(testCase)
+    function missing_epoch_trim_inside_both_test(testCase)
         from = 3;  
         to = 7;     
-        reference = 'file';                           
+        reference = 'file';  
+        % epochs = [2, 4; 6, 8];
         options.missing = testCase.missing_epochs_fn; % Specify the missing epochs file
+        
         
         [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
        
@@ -74,12 +76,121 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         
         testCase.verifyEqual(epochs, expected_epochs, 'Missing epochs trimming failed.');
 
-        
+
         delete(newdatafile);
         delete(newepochfile);
     end
 
+    function missing_epoch_one_outside_trim_touching_first_one_test(testCase)
+        from = 4;
+        to = 9;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [0, 0 ; 2, 4];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end
+
+    function missing_epoch_one_outside_trim_test(testCase)
+        from = 5;
+        to = 9;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [1, 3];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end
+   
+    function missing_epoch_both_inside_trim_test(testCase)
+        from = 1;
+        to = 9;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [1, 3; 5, 7];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end    
+
+    function missing_epoch_one_to_the_end_test(testCase)
+        from = 1;
+        to = 3;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [1, 2];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end   
     
+    function between_missing_epoch_test2(testCase)
+        from = 4;
+        to = 6;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [0, 0; 2, 2];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end   
+
 
     %% Invalid input arguments
     function invalid_inputargs(testCase)
