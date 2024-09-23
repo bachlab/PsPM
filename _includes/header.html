@@ -18,11 +18,14 @@
           <a class="page-link" href="{{ site.baseurl }}/">Introduction</a>
         </div>
         {% for page in site.pages %}
-        {% if page.title %}
-        <div class="blk">
-          <a class="page-link" href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a>
-        </div>
-        {% endif %}
+					{% if page.title %}
+						{% if page.title contains 'pspm' %}
+						{% else %}
+						<div class="blk">
+							<a class="page-link" href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a>
+						</div>
+						{% endif %}
+					{% endif %}
         {% endfor %}
         <div class="blk">
           <a class="page-link" href="http://bachlab.org">Bachlab</a>
