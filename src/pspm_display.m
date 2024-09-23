@@ -158,7 +158,7 @@ guidata(hObject, handles);
 handles.UIDisplay.HandleVisibility = settings.handle;
 
 % UIWAIT makes pspm_display wait for user response (see UIRESUME)
-uiwait(handles.UIDisplay);
+%uiwait(handles.UIDisplay);
 
 end
 
