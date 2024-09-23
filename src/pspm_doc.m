@@ -87,7 +87,6 @@ for iLocStar = 1:length(LocStar)
 end
 Y(LocRm) = [];
 Y = [Y, newline];
-
 end
 function Y = pspm_doc_get_description(X)
 X = insertAfter(X, newline, newline);
@@ -101,7 +100,7 @@ for i_arg = 1:length(list_arg)
     case 'char'
       Y = [Y, '| ', list_arg{i_arg}, ' | ', X.(list_arg{i_arg}), ' |', newline];
     case 'struct'
-      Y = [Y, '| ', list_arg{i_arg}, ' | ', 'See following fields.'                , ' |', newline];
+      Y = [Y, '| ', list_arg{i_arg}, ' | ', 'See following fields.', ' |', newline];
       list_arg2 = fieldnames(X.(list_arg{i_arg}));
       for i_arg2 = 1:length(list_arg2)
         switch class(X.(list_arg{i_arg}).(list_arg2{i_arg2}))
@@ -114,10 +113,15 @@ for i_arg = 1:length(list_arg)
             for i_arg3 = 1:length(list_arg3)
               Y = [Y, '| ', list_arg{i_arg}, '.', list_arg2{i_arg2}, '.', list_arg3{i_arg3}, ' | ', ...
                 X.(list_arg{i_arg}).(list_arg2{i_arg2}).(list_arg3{i_arg3}), ' |'];
-              Y = [Y, newline];
+              if i_arg3 < length(list_arg3)
+                Y = [Y, newline];
+              end
             end
         end
         if i_arg2 < length(list_arg2)
+          Y = [Y, newline];
+        end
+        if i_arg2 == length(list_arg2) && i_arg3 == length(list_arg3)
           Y = [Y, newline];
         end
       end
