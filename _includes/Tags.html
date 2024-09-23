@@ -14,7 +14,7 @@
     
     <!-- Display tag only if it contains posts outside the "ref" directory -->
    <!--  {% if include_tag %} -->
-    {% if !(tag[0] contains 'pspm_') %}
+    {% if !(tag[1].url contains '/ref/') %}
       <a href="{{ site.baseurl }}/tags/#{{ tag[0] }}" title="{{ tag[0] }}" rel="{{ tag[1].size }}">{{ tag[0] }}</a> &nbsp;
     {% endif %}
   {% endfor %}
