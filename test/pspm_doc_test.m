@@ -48,9 +48,9 @@ classdef pspm_doc_test < matlab.unittest.TestCase
       end
       this.verifyEqual(pspm_doc_gen(this.list_func), 1);
       for i = 1:length(this.list_func)
-        this.verifyEqual(isfile(['src/markdown/',this.list_func{i},'.md']), true);
+        this.verifyEqual(isfile(['src/ref/',this.list_func{i},'.md']), true);
       end
-      rmdir('src/markdown', 's');
+      rmdir('src/ref', 's');
     end
   end
 end
