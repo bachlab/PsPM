@@ -121,7 +121,7 @@ for i_arg = 1:length(list_arg)
         if i_arg2 < length(list_arg2)
           Y = [Y, newline];
         end
-        if i_arg2 == length(list_arg2) && i_arg3 == length(list_arg3)
+        if i_arg2 == length(list_arg2) && isstruct(X.(list_arg{i_arg}).(list_arg2{i_arg2}))
           Y = [Y, newline];
         end
       end
