@@ -40,7 +40,7 @@ if isempty(settings)
 end
 sts = -1;
 
-% Last Modified by GUIDE v2.5 12-Aug-2024 13:35:41
+% Last Modified by GUIDE v2.5 23-Sep-2024 11:21:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -165,10 +165,8 @@ set(handles.edtFactor, 'String', num2str(handles.plot.factr));
 set(handles.edtUpperLimit, 'String', num2str(handles.plot.limits.upper));
 set(handles.edtLowerLimit, 'String', num2str(handles.plot.limits.lower));
 % -------------------------------------------------------------------------
-handles.UIEcgEditor.HandleVisibility = settings.handle;
-% -------------------------------------------------------------------------
 % UIWAIT makes pspm_ecg2hb_qc wait for user response (see UIRESUME)
-uiwait(handles.UIEcgEditor);
+uiwait(handles.pspm_ecg_editor);
 % -------------------------------------------------------------------------
 
 % --- Outputs from this function are returned to the command line.
@@ -211,7 +209,7 @@ if strcmpi(handles.edit_mode, 'add_qrs')
   exitModus;
 else
   handles.edit_mode = 'add_qrs';
-  set(handles.UIEcgEditor,'Pointer','crosshair');
+  set(handles.pspm_ecg_editor,'Pointer','crosshair');
   guidata(hObject, handles);
 end
 
@@ -229,7 +227,7 @@ if strcmpi(handles.edit_mode, 'remove_qrs')
   exitModus;
 else
   handles.edit_mode = 'remove_qrs';
-  set(handles.UIEcgEditor,'Pointer','crosshair');
+  set(handles.pspm_ecg_editor,'Pointer','crosshair');
   guidata(hObject, handles);
 end
 % -------------------------------------------------------------------------
@@ -698,9 +696,9 @@ if handles.update_selection
   end
 end
 
-% --- Executes when user attempts to close UIEcgEditor.
-function UIEcgEditor_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to UIEcgEditor (see GCBO)
+% --- Executes when user attempts to close pspm_ecg_editor.
+function pspm_ecg_editor_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -714,9 +712,9 @@ uiresume
 % delete(hObject);
 
 
-% --- Executes on key press with focus on UIEcgEditor and none of its controls.
-function UIEcgEditor_KeyPressFcn(hObject, eventdata, handles)
-% hObject    handle to UIEcgEditor (see GCBO)
+% --- Executes on key press with focus on pspm_ecg_editor and none of its controls.
+function pspm_ecg_editor_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  structure with the following fields (see MATLAB.UI.FIGURE)
 % Key: name of the key that was pressed, in lower case
 % Character: character interpretation of the key(s) that was pressed
@@ -729,14 +727,14 @@ end
 % -------------------------------------------------------------------------
 function exitModus()
 handles = guidata(gca);
-set(handles.UIEcgEditor, 'Pointer', 'Arrow');
+set(handles.pspm_ecg_editor, 'Pointer', 'Arrow');
 handles.edit_mode = '';
 guidata(gca, handles);
 
 % --- Executes on mouse press over figure background, over a disabled or
 % --- inactive control, or over an axes background.
-function UIEcgEditor_WindowButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to UIEcgEditor (see GCBO)
+function pspm_ecg_editor_WindowButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if strcmpi(handles.edit_mode,'remove_qrs')
@@ -1367,8 +1365,8 @@ reload_plot(hObject, handles);
 
 % --- Executes on mouse press over figure background, over a disabled or
 % --- inactive control, or over an axes background.
-function UIEcgEditor_WindowButtonUpFcn(hObject, eventdata, handles)
-% hObject    handle to UIEcgEditor (see GCBO)
+function pspm_ecg_editor_WindowButtonUpFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pt = get(handles.axes, 'CurrentPoint');
@@ -1479,8 +1477,8 @@ end
 
 
 % --- Executes on mouse motion over figure - except title and menu.
-function UIEcgEditor_WindowButtonMotionFcn(hObject, eventdata, handles)
-% hObject    handle to UIEcgEditor (see GCBO)
+function pspm_ecg_editor_WindowButtonMotionFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if handles.draw_selection
@@ -1584,5 +1582,4 @@ for k=1:n_col*2
     end
     stem_handles(k) = -1;
   end
-
 end

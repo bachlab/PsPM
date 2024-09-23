@@ -70,7 +70,7 @@ if isempty(settings)
 end
 sts = -1;
 pspm_ui(hObject, handles, 'data_editor');
-handles.UIDataEditor.HandleVisibility = settings.handle;
+handles.pspm_data_editor.HandleVisibility = settings.handle;
 if get(handles.rbInterpolate, 'Value')
   set(handles.cbInterpolate, 'Enable', 'on');
   handles.output_type = 'interpolate';
@@ -90,9 +90,9 @@ handles.data = {};
 handles.input_mode = '';
 handles.input_file = '';
 handles.output_file = '';
-set(handles.UIDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
-set(handles.UIDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
-set(handles.UIDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
+set(handles.pspm_data_editor, 'WindowButtonDownFcn', @buttonDown_Callback);
+set(handles.pspm_data_editor, 'WindowButtonUpFcn', @buttonUp_Callback);
+set(handles.pspm_data_editor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   handles.options = varargin{2};
   handles.options = pspm_options(handles.options, 'data_editor');
@@ -140,7 +140,7 @@ if numel(varargin) > 0
     Add_Epochs(hObject, handles)
   end
 end
-uiwait(handles.UIDataEditor);
+uiwait(handles.pspm_data_editor);
 
 
 
@@ -233,7 +233,7 @@ end
 [~, infos, data] = pspm_load_data(file); % load file
 channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
 set(handles.edOpenFilePath, 'String', file);
-corder = get(handles.UIDataEditor, 'defaultAxesColorOrder'); % format channels
+corder = get(handles.pspm_data_editor, 'defaultAxesColorOrder'); % format channels
 cl = length(corder)-2;
 disp_names = cell(numel(channels), 1);
 for i = 1:numel(channels)
@@ -297,7 +297,7 @@ if isempty(action)
 end
 np = get(handles.axData, 'NextPlot');
 set(handles.axData, 'NextPlot', action);
-corder = get(handles.UIDataEditor, 'defaultAxesColorOrder');
+corder = get(handles.pspm_data_editor, 'defaultAxesColorOrder');
 cl = length(corder)-2;
 m = floor((chan_id-0.1)/cl);
 color = corder(chan_id - m*cl, :);
@@ -502,11 +502,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
   set(hObject,'BackgroundColor','white');
 end
 
-function UIDataEditor_CreateFcn(~, ~, ~)
+function pspm_data_editor_CreateFcn(~, ~, ~)
 % Feature
 %   Executes during object creation, after setting all properties.
 % Variables
-%   hObject    handle to UIDataEditor (see GCBO)
+%   hObject    handle to pspm_data_editor (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    empty - handles not created until after all CreateFcns called
 
@@ -923,7 +923,7 @@ function pbApply_Callback(hObject, ~, handles)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 if CreateOutput(hObject) == 1
-  uiresume(handles.UIDataEditor);
+  uiresume(handles.pspm_data_editor);
 end
 
 function pbCancel_Callback(hObject, ~, handles)
@@ -935,8 +935,8 @@ function pbCancel_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 handles.output = {};
 guidata(hObject, handles);
-if isfield(handles, 'UIDataEditor')
-  uiresume(handles.UIDataEditor);
+if isfield(handles, 'pspm_data_editor')
+  uiresume(handles.pspm_data_editor);
 end
 
 function cbInterpolate_Callback(hObject, ~, ~)
@@ -964,18 +964,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
   set(hObject,'BackgroundColor','white');
 end
 
-function UIDataEditor_CloseRequestFcn(hObject, ~, handles)
+function pspm_data_editor_CloseRequestFcn(hObject, ~, handles)
 % Feature
-%   Executes when user attempts to close UIDataEditor.
+%   Executes when user attempts to close pspm_data_editor.
 % Variables
-%   hObject    handle to UIDataEditor (see GCBO)
+%   hObject    handle to pspm_data_editor (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 % Hint
 %   delete(hObject) closes the figure
 handles.output = {};
-if isfield(handles, 'UIDataEditor')
-  uiresume(handles.UIDataEditor);
+if isfield(handles, 'pspm_data_editor')
+  uiresume(handles.pspm_data_editor);
 end
 delete(hObject);
 
