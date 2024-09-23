@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Function reference
-permalink: /reference/
+permalink: /ref/
 ---
 
 
@@ -9,7 +9,7 @@ permalink: /reference/
 
 Data preparation functions create new data files.
 
-[`pspm_trim`](/PsPM/ref/pspm_trim)
+[`pspm_trim`](ref/pspm_trim)
    
 Cut away unused intervals of data.
 
