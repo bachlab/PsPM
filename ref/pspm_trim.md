@@ -9,6 +9,7 @@ Trimming limits can be defined in terms of file start, first/last marker, or any
 `[sts, newdatafile, newepochfile] = pspm_trim (datafile, from, to, reference, options)`
 
 ## Arguments
+
 | Variable | Definition |
 |:--|:--|
 | datafile | [char] Name of the file to be trimmed, or a struct accepted by pspm_load_data. |
@@ -20,7 +21,9 @@ Trimming limits can be defined in terms of file start, first/last marker, or any
 | options.marker_chan_num | marker channel number. if undefined or 0, first marker channel is used. |
 | options.missing | Optional name of an epoch file, e.g. containing a missing epochs definition in s. This is then split accordingly. |
 | options.drop_offset_markers | if 'from' and 'to' are defined with respect to markers, you might be interested in the data that within extend beyond these markers but not in any additional markers which are within this interval. Set this option to 1 to drop markers which lie in the offset. this is for event channels only. Default is 0. |
+
 ## Outputs
+
 | Variable | Definition |
 |:--|:--|
 | sts | status variable indicating whether function run successfully. |
