@@ -9,7 +9,7 @@ permalink: /ref/
 
 Data preparation functions create new data files.
 
-[`pspm_trim`](ref/pspm_trim)
+[`pspm_trim`](pspm_trim)
    
 Cut away unused intervals of data.
 
