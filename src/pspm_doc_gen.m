@@ -18,14 +18,14 @@ end
 sts = 1;
 switch nargin
   case 0
-    savepath = [settings.path, '/markdown'];
+    savepath = [settings.path, '/ref'];
     mkdir(savepath);
   case 1
     switch class(varargin{1})
       case 'char'
         savepath = varargin{1};
       case 'cell'
-        savepath = [settings.path, '/markdown'];
+        savepath = [settings.path, '/ref'];
         mkdir(savepath);
         list_func = varargin{1};
     end
