@@ -185,11 +185,15 @@ classdef pspm_doc_test < matlab.unittest.TestCase
   methods (Test)
     function valid_input(this)
       for i = 1:length(this.list_func)
-        disp(this.list_func{i});
         this.verifyEqual(pspm_doc(this.list_func{i}), 1);
         this.verifyEqual(isfile([this.list_func{i},'.md']), true);
-        delete([this.list_func{i},'.md'])
+        delete([this.list_func{i},'.md']);
       end
+      this.verifyEqual(pspm_doc_gen(this.list_func), 1);
+      for i = 1:length(this.list_func)
+        this.verifyEqual(isfile(['src/markdown/',this.list_func{i},'.md']), true);
+      end
+      rmdir('src/markdown', 's');
     end
   end
 end
