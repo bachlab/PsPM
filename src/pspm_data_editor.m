@@ -70,7 +70,6 @@ if isempty(settings)
 end
 sts = -1;
 pspm_ui(hObject, handles, 'data_editor');
-handles.pspm_data_editor.HandleVisibility = settings.handle;
 if get(handles.rbInterpolate, 'Value')
   set(handles.cbInterpolate, 'Enable', 'on');
   handles.output_type = 'interpolate';
@@ -125,9 +124,9 @@ if numel(varargin) > 0
       handles.data = varargin{1};
       handles.input_mode = 'raw';
   end
-  %handles = guidata(hObject);
-  %guidata(hObject, handles);
-  %PlotData(hObject);
+  handles = guidata(hObject);
+  guidata(hObject, handles);
+  PlotData(hObject);
   % % enable the following code if output file module wants to be enabled
   % if isfield(handles, 'options') && isfield(handles.options, 'output_file')
   %   set(handles.pnlOutput, 'Visible', 'off');
@@ -141,8 +140,6 @@ if numel(varargin) > 0
   end
 end
 uiwait(handles.pspm_data_editor);
-
-
 
 function [sts] = CreateOutput(hObject)
 handles = guidata(hObject);
@@ -1053,9 +1050,6 @@ function pbOpenInputFile_Callback(hObject, ~, handles, varargin)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 [file, path] = uigetfile('*.mat', 'Select input file');
-if ~isempty(varargin)
-  file = varargin{1};
-end
 if file ~= 0
   fn = [path,file];
   handles.input_file = fn;
