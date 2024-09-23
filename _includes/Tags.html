@@ -1,17 +1,20 @@
 <div class="sidebar-module">
   <h4>{{ site.locales[site.default_locale].Tags }}</h4>
   {% for tag in site.tags %}
-    {% assign include_tag = false %}
+    <!-- {% assign include_tag = false %} -->
     
     <!-- Check if any post for this tag is NOT in the "ref" directory -->
+<!-- 
     {% for post in tag[1] %}
       {% unless post.url contains '_' %}
         {% assign include_tag = true %}
       {% endunless %}
     {% endfor %}
+ -->
     
     <!-- Display tag only if it contains posts outside the "ref" directory -->
-    {% if include_tag %}
+   <!--  {% if include_tag %} -->
+    {% if !(tag[0] contains 'pspm_') %}
       <a href="{{ site.baseurl }}/tags/#{{ tag[0] }}" title="{{ tag[0] }}" rel="{{ tag[1].size }}">{{ tag[0] }}</a> &nbsp;
     {% endif %}
   {% endfor %}
