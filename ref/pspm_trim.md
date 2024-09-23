@@ -1,12 +1,17 @@
 # pspm_trim
-[Back to index](/reference)
+[Back to index](/PsPM/ref/)
+
 ## Description
+
 pspm_trim cuts a PsPM dataset in time, to the limits set with the parameters 'from' and 'to'. The purpose is to remove data that is unrelated to an experiment, which can be rich in artefacts that have an impact on pre-processing (e.g. filtering) and modelling. 
 
 Trimming limits can be defined in terms of file start, first/last marker, or any marker. The resulting data are written to a new file with the original name prepended with a 't' (for 'trim'). In addition, pspm_trim can modify an associated (missing) epochs file to the same limits.
 
+
 ## Format
+
 `[sts, newdatafile, newepochfile] = pspm_trim (datafile, from, to, reference, options)`
+
 
 ## Arguments
 
@@ -30,4 +35,5 @@ Trimming limits can be defined in terms of file start, first/last marker, or any
 | newdatafile | a filename for the updated file (or a struct with fields .data and .infos if data file is a struct). |
 | newepochfile | missing epoch filename for the individual sessions (empty if options.missing not specified). |
 
-[Back to index](/reference)
+
+[Back to index](/PsPM/ref/)
