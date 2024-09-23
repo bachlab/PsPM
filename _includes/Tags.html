@@ -5,7 +5,7 @@
     
     <!-- Check if any post for this tag is NOT in the "ref" directory -->
     {% for post in tag[1] %}
-      {% unless post.url contains '/ref/' %}
+      {% unless post.url contains '_' %}
         {% assign include_tag = true %}
       {% endunless %}
     {% endfor %}
