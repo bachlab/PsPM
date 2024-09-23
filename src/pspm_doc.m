@@ -24,33 +24,33 @@ M = [];
 % 3.1 Add title
 Title       = pspm_doc_get_title(func_name);
 M = [M, '# ', Title, newline];
-M = [M, '[Back to index](/reference)', newline];
+M = [M, '[Back to index](/ref)', newline];
 % 3.2 Add description
 if isfield(S, 'Description')
   Description = pspm_doc_get_description(S.Description);
-  M = [M, '## ', 'Description',  newline, Description, newline];
+  M = [M, newline, '## ', 'Description',  newline, newline, Description, newline, newline];
 end
 % 3.3 Add format
 if isfield(S, 'Format')
   Format      = pspm_doc_get_format(S.Format);
-  M = [M, '## ', 'Format',       newline, Format,      newline];
+  M = [M, '## ', 'Format',       newline, newline, Format,      newline, newline];
 end
 % 3.4 Add arguments
 if isfield(S, 'Arguments')
   Arguments   = pspm_doc_get_struct_fields(S.Arguments);
-  M = [M, '## ', 'Arguments',    newline, Arguments,   newline];
+  M = [M, '## ', 'Arguments',    newline, newline, Arguments,   newline, newline];
 end
 % 3.5 Add outputs
 if isfield(S, 'Outputs')
   Outputs   = pspm_doc_get_struct_fields(S.Outputs);
-  M = [M, '## ', 'Outputs',    newline, Outputs,   newline];
+  M = [M, '## ', 'Outputs',      newline, newline, Outputs,     newline, newline];
 end
 % 3.6 Add references
 if isfield(S, 'References')
   References  = pspm_doc_get_references(S.References);
-  M = [M, '## ', 'References',   newline, References,  newline];
+  M = [M, '## ', 'References',   newline, newline, References,  newline, newline];
 end
-M = [M, '[Back to index](/reference)', newline];
+M = [M, '[Back to index](/ref)', newline];
 %% 4 Write to file
 if isfield(options, 'path')
   writelines(M, [options.path, '/', Title,'.md']);
