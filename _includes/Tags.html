@@ -14,7 +14,9 @@
     
     <!-- Display tag only if it contains posts outside the "ref" directory -->
    <!--  {% if include_tag %} -->
-    {% if !(tag[1].url contains '/ref/') %}
+    {% if tag[1].url contains '/ref/' %}
+      tag[1].url
+    {% else %}
       <a href="{{ site.baseurl }}/tags/#{{ tag[0] }}" title="{{ tag[0] }}" rel="{{ tag[1].size }}">{{ tag[0] }}</a> &nbsp;
     {% endif %}
   {% endfor %}
