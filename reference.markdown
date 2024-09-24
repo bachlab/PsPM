@@ -4,10 +4,11 @@ title: Function reference
 permalink: /ref/
 ---
 
+This function reference covers all user-facing functions in the develop branch.
 
 ## Data preparation
 
-Data preparation functions create new data files.
+*Data preparation functions create new data files.*
 
 [`pspm_trim`](pspm_trim)
    
@@ -27,7 +28,7 @@ Rename a PsPM data file and change its internal representation.
 
 ## Data preprocessing
 
-Data preprocessing functions create new data channels.
+*Data preprocessing functions create new data channels.*
 
 [`pspm_combine_markerchannels`](pspm_combine_markerchannels)
 
@@ -107,7 +108,7 @@ Preprocess skin conductance data.
 
 ## Modelling 
 
-Modelling functions create model files.
+*Modelling functions create model files.*
 
 [`pspm_dcm`](pspm_dcm)
 
