@@ -12,14 +12,17 @@ function [sts, outchannel] = pspm_remove_epochs(datafile, channel, epochfile, op
 %                 be in seconds. This parameter is passed to pspm_get_timing().
 %   * timeunits:  timeunits of the epochfile.
 %   ┌───options
-%   └─.channel_action:
+%   └─.channel_action: [pre, post]
 %                 ['add'/'replace'] Defines whether new channels should be added or
 %                 corresponding channels should be replaced. The default value is 'add'.
+%     .expand_epochs: 
+%                    Expand epochs by 0.5 seconds before and after        
 % ● Output
 %   * channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 4.0
 %   Written in 2016 by Tobias Moser (University of Zurich)
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
 
 global settings
 if isempty(settings)
@@ -36,7 +39,7 @@ if nargin < 3
 elseif nargin < 4
   options = struct();
 end
-options = pspm_options(options, 'remove_epochs');
+options = pspm_options(options, 'remove_epochs'); % change!!! [0,0]
 if options.invalid
   return
 end
@@ -50,6 +53,26 @@ end
 if lsts == -1
   return;
 end
+
+
+
+expansion = options.expand_epochs;
+
+if numel(expansion) ~= 2
+    error('Expansion must be a 2-element vector [pre, post].');
+end
+% Expand the epochs
+
+[sts, ep_exp] = pspm_expand_epochs(ep, expansion, 'missing_ep');
+if psts == -1
+    return;
+end
+
+
+
+
+
+
 
 n_ep = size(ep, 1);
 n_data = numel(data);
