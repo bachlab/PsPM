@@ -33,7 +33,9 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+
 overwrite_final = 0;   
+
 
 %% 2 Check inputs
 switch numel(varargin)
