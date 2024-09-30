@@ -71,7 +71,6 @@ global settings;
 if isempty(settings)
   pspm_init;
 end
-
 % load channeltypes from settings variable
 
 j = 1 ; l = 1;
@@ -156,8 +155,11 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+handles.pspm_display.HandleVisibility = settings.handle;
+
 % UIWAIT makes pspm_display wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+%uiwait(handles.pspm_display);
+
 end
 
 
@@ -523,7 +525,7 @@ saveas(q,savename);
 close(q)
 end
 % --------------------------------------------------------------------
-function exit_Callback(~, ~, ~)
+function exit_Callback(~, ~, handles)
 % hObject    handle to exit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -693,14 +695,8 @@ end
 %% pp_plot
 
 function pp_plot(handles)
-
-global settings;
-if isempty(settings)
-  pspm_init;
-end
-
 % ---header----------------------------------------------------------------
-
+global settings
 %      handles.name ... filename
 %      prop... struct with fields
 %              .wave (channel number)
