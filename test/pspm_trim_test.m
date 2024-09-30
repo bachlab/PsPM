@@ -95,7 +95,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         load(newepochfile, 'epochs');
 
         % Expected result after trimming
-        expected_epochs = [2,4] % not [0, 0 ; 2, 4];
+        expected_epochs = [2,4]; % not [0, 0 ; 2, 4];
 
         testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
 

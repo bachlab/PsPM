@@ -335,20 +335,14 @@ if ~isempty(options.missing)
     [lsts, epochs] = pspm_get_timing('epochs', options.missing, 'seconds');
     if lsts < 1, return; end
     if ~isempty(epochs)
-        index = epochs(:, 2) < sta_time | ...
-                epochs(:, 1) > sto_time;
+        index = epochs(:, 2) <= sta_time | ...
+                epochs(:, 1) >= sto_time;
         epochs(index, :) = [];
         epochs = epochs - sta_time;
         if ~isempty(epochs)
             epochs(1, 1) = max([0, epochs(1, 1)]);
-            epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
-           
-            % Remove epochs with the same values
-            % e.g. [0 0] or [2 2] also negative duration
-            durations = epochs(:, 2) - epochs(:, 1);
-            epochs = epochs(durations > 0, :);
-
-        end
+            epochs(end, 2) = min([infos.duration, epochs(end, 2)]);           
+       end
         [lsts, epochs] = pspm_get_timing('epochs', epochs, 'seconds');
         if lsts < 1, return; end
     else
