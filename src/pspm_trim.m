@@ -64,6 +64,8 @@ function [sts, newdatafile, newepochfile] = pspm_trim(datafile, from, to, refere
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard von Raußendorf
+
 
 %% 1 Pre-settings
 % 1.1 Initialise
@@ -328,6 +330,8 @@ clear savedata
 
 % handle optional missing data file
 if ~isempty(options.missing)
+
+
     [lsts, epochs] = pspm_get_timing('epochs', options.missing, 'seconds');
     if lsts < 1, return; end
     if ~isempty(epochs)
@@ -338,6 +342,12 @@ if ~isempty(options.missing)
         if ~isempty(epochs)
             epochs(1, 1) = max([0, epochs(1, 1)]);
             epochs(end, 2) = min([infos.duration, epochs(end, 2)]);
+           
+            % Remove epochs with the same values
+            % e.g. [0 0] or [2 2] also negative duration
+            durations = epochs(:, 2) - epochs(:, 1);
+            epochs = epochs(durations > 0, :);
+
         end
         [lsts, epochs] = pspm_get_timing('epochs', epochs, 'seconds');
         if lsts < 1, return; end
