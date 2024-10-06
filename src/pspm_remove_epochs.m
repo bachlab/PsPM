@@ -12,11 +12,10 @@ function [sts, outchannel] = pspm_remove_epochs(datafile, channel, epochfile, op
 %                 be in seconds. This parameter is passed to pspm_get_timing().
 %   * timeunits:  timeunits of the epochfile.
 %   ┌───options
-%   └─.channel_action: [pre, post]
-%                 ['add'/'replace'] Defines whether new channels should be added or
-%                 corresponding channels should be replaced. The default value is 'add'.
-%     .expand_epochs: 
-%                    Expand epochs by 0.5 seconds before and after        
+%   └─.channel_action: ['add'/'replace'] Defines whether new channels should be added or
+%                      corresponding channels should be replaced. The default value is 'add'.
+%   └─.expand_epochs:  [pre, post]
+%                              
 % ● Output
 %   * channel_index: index of channel containing the processed data
 % ● History
