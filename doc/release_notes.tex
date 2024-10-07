@@ -161,7 +161,8 @@ there was no consistent benefit of the old or new version of this
 code (Figure \ref{fig:VBA}).
 
 \begin{figure}
-\includegraphics[scale=0.85]{Figures/Comparison_VBA}\caption{Model comparison between old and new versions of the VBA toolbox,
+\includegraphics[scale=0.85]{Figures/Comparison_VBA}
+\caption{Model comparison between old and new versions of the VBA toolbox,
 based on two delay fear conditioning datasets. The log Bayes factor
 quantifies the difference between negative log likelihood (nLL) of
 parameter estimates obtained from model inversion using the old and
@@ -619,7 +620,9 @@ an error in the conversion factor of pixels wrt. to mm.
 \subsection*{New Features}
 \begin{itemize}
 \item Allow \texttt{pspm\_data\_editor} to load an epoch file.
-\item Allow \texttt{pspm\_simple\_qa} to suppress classification of discretisation oscillations as artefacts, to expand artefact windows, and to automatically remove small data islands embedded in artefacts.
+\item Allow \texttt{pspm\_simple\_qa} to suppress classification of discretisation 
+			oscillations as artefacts, to expand artefact windows, and to automatically 
+			remove small data islands embedded in artefacts.
 \item Allow \texttt{pspm\_simple\_qa} to store the epochs of data that are
 filtered out into an output \texttt{.mat} file. The accompanying GUI
 editor is available under 'Artefact removal' in the tools section.
@@ -932,19 +935,41 @@ This is a major release and may have incompatibility with previous versions.
 	\begin{itemize}
 		\item Minimum version of MATLAB
 		\begin{itemize}
-			\item The minimum version of MATLAB required for running PsPM is \href{https://uk.mathworks.com/content/dam/mathworks/mathworks-dot-com/support/sysreq/files/SystemRequirements-Release14-ServicePack3_SupportedCompilers.pdf}{MATLAB 7.1 or R14 Service Pack 3}.
+			\item The minimum version of MATLAB required for running PsPM is 
+						\href{https://uk.mathworks.com/content/dam/mathworks/mathworks-dot-com/support/
+						sysreq/files/SystemRequirements-Release14-ServicePack3_SupportedCompilers.pdf}
+						{MATLAB 7.1 or R14 Service Pack 3}.
 		\end{itemize}
 		\item Entering PsPM
 		\begin{itemize}
-			\item Entering PsPM is now hybrid based on the version of MATLAB, namely through AppDesigner or Guide. PsPM will be entered through AppDesigner when supported and through Guide for older versions of MATLAB. To call PsPM, users should still use the command \texttt{pspm} in the Command Window of MATLAB, where the appropriate way of entering PsPM will be recognised automatically.
-			\item Users can still use their preferred way to enter PsPM. To enter PsPM through AppDesigner, please type \texttt{pspm\_appdesigner}. To enter PsPM through Guide, which is the classic entrance, please type \texttt{pspm\_guide}.
-			\item The AppDesigner version of PsPM UI is newly introduced by MATLAB and the encouraged way for launching PsPM, and it has no functionality difference than the Guide version of PsPM UI.
-			\item Both AppDesigner and Guide are designed and tested for Windows, macOS (either Intel or Apple Silicon) and Linux. Issues of opening PsPM through either of the two UI systems are encouraged to be reported to PsPM developing group at GitHub.
+			\item Entering PsPM is now hybrid based on the version of MATLAB, namely through 
+						AppDesigner or Guide. PsPM will be entered through AppDesigner when supported 
+						and through Guide for older versions of MATLAB. To call PsPM, users should 
+						still use the command \texttt{pspm} in the Command Window of MATLAB, where 
+						the appropriate way of entering PsPM will be recognised automatically.
+			\item Users can still use their preferred way to enter PsPM. To enter PsPM through 
+						AppDesigner, please type \texttt{pspm\_appdesigner}. To enter PsPM through 
+						Guide, which is the classic entrance, please type \texttt{pspm\_guide}.
+			\item The AppDesigner version of PsPM UI is newly introduced by MATLAB and the 
+						encouraged way for launching PsPM, and it has no functionality difference 
+						than the Guide version of PsPM UI.
+			\item Both AppDesigner and Guide are designed and tested for Windows, macOS (either 
+			Intel or Apple Silicon) and Linux. Issues of opening PsPM through either of the two 
+			UI systems are encouraged to be reported to PsPM developing group at GitHub.
 		\end{itemize}
 		\item Introducing \texttt{pspm\_options}
 		\begin{itemize}
-			\item A new function \texttt{pspm\_options} is introduced to PsPM for controlling the default and acceptable values of the struct \texttt{options} used by most PsPM functions. The default values of the fields in the struct \texttt{options} for various functions can be directly checked by searching in \texttt{pspm\_options}.
-			\item The default values in \texttt{pspm\_options} have been checked and tested for PsPM. If preferred values are different from defaults, users can specify them when calling the corresponding PsPM functions, and the corresponding functions and \texttt{pspm\_options} will always respect the users' specification with the highest priority. However, the user's specification needs to satisfy the condition set in \texttt{pspm\_options}, and invalid values may be reported as errors.
+			\item A new function \texttt{pspm\_options} is introduced to PsPM for controlling 
+						the default and acceptable values of the struct \texttt{options} used by most 
+						PsPM functions. The default values of the fields in the struct \texttt{options} 
+						for various functions can be directly checked by searching in \texttt{pspm\_options}.
+			\item The default values in \texttt{pspm\_options} have been checked and tested for 
+						PsPM. If preferred values are different from defaults, users can specify them 
+						when calling the corresponding PsPM functions, and the corresponding functions 
+						and \texttt{pspm\_options} will always respect the users' specification with 
+						the highest priority. However, the user's specification needs to satisfy the 
+						condition set in \texttt{pspm\_options}, and invalid values may be reported 
+						as errors.
 		\end{itemize}
 		\item UI Improvements
 		\begin{itemize}
@@ -959,24 +984,28 @@ This is a major release and may have incompatibility with previous versions.
 		\end{itemize}
 		\item Help text
 		\begin{itemize}
-			\item The help text has been updated for all PsPM functions. Help text can be checked by right clicking the functions.
+			\item The help text has been updated for all PsPM functions. Help text can be 
+						checked by right clicking the functions.
 		\end{itemize}
 	\end{itemize}
 \subsection*{Bug Fixes}
 	\begin{itemize}
 		\item UI
 		\begin{itemize}
-			\item A bug that used to make PsPM crash when \textit{Pupil size convert} and \textit{Gaze convert} in \textit{Data Preprocessing} were selected has been fixed.
+			\item A bug that used to make PsPM crash when \textit{Pupil size convert} and 
+						\textit{Gaze convert} in \textit{Data Preprocessing} were selected has been fixed.
 			\item A bug that leads to error when PsPM is started offline has been fixed.
 			\item A bug that leads to incorrect x labels in \texttt{pspm\_rev\_dcm} has been fixed.
 		\end{itemize}
 		\item \texttt{pspm\_convert\_...}
 		\begin{itemize}
-			\item A bug that leads PsPM to crash, which is caused by outdated UI calling for \texttt{pspm\_convert\_...} functions, has been fixed.
+			\item A bug that leads PsPM to crash, which is caused by outdated UI calling for 
+						\texttt{pspm\_convert\_...} functions, has been fixed.
 		\end{itemize}
 		\item \texttt{pspm\_get\_eyelink}
 		\begin{itemize}
-			\item A bug that causes issues when importing eye link data that is scanned at both left and right sides has been fixed.
+			\item A bug that causes issues when importing eye link data that is scanned at both 
+						left and right sides has been fixed.
 		\end{itemize}
 		\item \texttt{pspm\_glm}
 		\begin{itemize}
@@ -985,12 +1014,15 @@ This is a major release and may have incompatibility with previous versions.
 		\item \texttt{pspm\_sf}
 		\begin{itemize}
 			\item A bug that has lead to incorrect input datafile assigning has been fixed.
-			\item A bug that leads PsPM crash when \texttt{pspm\_sf} is analysing data with missing epochs has been fixed.
-			\item A bug that leads to error when \texttt{pspm\_sf} analyses data where \texttt{time unit} is defined as \texttt{marker} has been fixed.
+			\item A bug that leads PsPM crash when \texttt{pspm\_sf} is analysing data with 
+						missing epochs has been fixed.
+			\item A bug that leads to error when \texttt{pspm\_sf} analyses data where 
+						\texttt{time unit} is defined as \texttt{marker} has been fixed.
 		\end{itemize}
 		\item \texttt{pspm\_split\_sessions}
 		\begin{itemize}
-			\item \texttt{pspm\_split\_sessions} now considers \texttt{marker\_chan\_num} when calling \texttt{pspm\_trim}.
+			\item \texttt{pspm\_split\_sessions} now considers \texttt{marker\_chan\_num} when 
+						calling \texttt{pspm\_trim}.
 		\end{itemize}
 	\end{itemize}
 	
@@ -1011,7 +1043,8 @@ This is a major release and may have incompatibility with previous versions.
 			\end{itemize}
     	\item \texttt{import\_eyelink}
     	\begin{itemize}
-    		\item Improved \texttt{import\_eyelink} for adding some support for importing eyelink data converted by higher version of .EDF files.
+    		\item Improved \texttt{import\_eyelink} for adding some support for importing eyelink 
+    					data converted by higher version of .EDF files.
     	\end{itemize}
     	\item \texttt{pspm\_con2}
     	\begin{itemize}
@@ -1024,7 +1057,8 @@ This is a major release and may have incompatibility with previous versions.
     		\item Improved missing epoch support
     		\begin{itemize}
     			\item The field \texttt{.missing} is now allocated from \texttt{options} to \texttt{model}.
-    			\item \texttt{.missing\_data} is used to load missing epoch data that was loaded from dcm, as an optional field.
+    			\item \texttt{.missing\_data} is used to load missing epoch data that was loaded 
+    						from dcm, as an optional field.
     		\end{itemize}
     		\item The index is changed so that the first event will not be excluded when at time 0 in session.
     	\end{itemize}
@@ -1034,7 +1068,8 @@ This is a major release and may have incompatibility with previous versions.
     	\end{itemize}
     	\item \texttt{pspm\_glm}
     	\begin{itemize}
-    		\item The fallback for \texttt{options.exclude\_missing} has been set for \texttt{pspm\_glm}, which is not to exclude any missing epochs.
+    		\item The fallback for \texttt{options.exclude\_missing} has been set for \texttt{pspm\_glm}, 
+    					which is not to exclude any missing epochs.
     		\item A bug that leads to incorrect missing epoch checking has been fixed.
     		\item Help text was updated.
     		\item \texttt{marker\_chan\_num} now refers to the first marker channel as default.
@@ -1042,7 +1077,8 @@ This is a major release and may have incompatibility with previous versions.
     	\end{itemize}
     	\item \texttt{pspm\_interp1}
     	\begin{itemize}
-    		\item \texttt{pspm\_interp1} now considers the data where no valid values are detected and interpolation is not possible, and warnings will be reported in this case.
+    		\item \texttt{pspm\_interp1} now considers the data where no valid values are 
+    					detected and interpolation is not possible, and warnings will be reported in this case.
     	\end{itemize}
     	\item \texttt{pspm\_merge}
     	\begin{itemize}
@@ -1074,7 +1110,9 @@ This is a major release and may have incompatibility with previous versions.
     	\end{itemize}
     	\item \texttt{pspm\_text}
     	\begin{itemize}
-    		\item The Matlab file that stores the information of help text \texttt{pspm\_text.mat} will be stored inside the source folder of PsPM and will be deleted when PsPM is quit.
+    		\item The Matlab file that stores the information of help text 
+    					\texttt{pspm\_text.mat} will be stored inside the source folder of PsPM 
+    					and will be deleted when PsPM is quit.
     	\end{itemize}
     	\item \texttt{pspm\_trim}
     	\begin{itemize}
@@ -1087,13 +1125,15 @@ This is a major release and may have incompatibility with previous versions.
     	\item \texttt{pspm\_sf}, \texttt{pspm\_glm} and \texttt{pspm\_dcm}.
     	\begin{itemize}
     		\item The option \texttt{marker\_chan\_num\_event} is removed.
-    		\item In default, the first marker channel / event channel is always selected and no users' customisation is allowed.
+    		\item In default, the first marker channel / event channel is always selected and 
+    					no users' customisation is allowed.
     		\item The last data channel / wave channel is always selected.
     	\end{itemize}
     \end{itemize}
 \subsection*{Reference document}
     \begin{itemize}
-    	\item New document \textit{PsPM Reference} for checking the default values and restrictions of \texttt{options} fields.
+    	\item New document \textit{PsPM Reference} for checking the default values and 
+    				restrictions of \texttt{options} fields.
     \end{itemize}
 
 \section{PsPM Version 6.1.1}
@@ -1229,7 +1269,8 @@ fixed.
 \end{itemize}
 \item \texttt{pspm\_dcm}
 \begin{itemize}
-\item A bug, which could lead to a wrong sample rate being used if more than one SCR channel existed in the file, has been fixed.
+\item A bug, which could lead to a wrong sample rate being used if more than one SCR 
+			channel existed in the file, has been fixed.
 \end{itemize}
 \item \texttt{pspm\_glm}
 \begin{itemize}
