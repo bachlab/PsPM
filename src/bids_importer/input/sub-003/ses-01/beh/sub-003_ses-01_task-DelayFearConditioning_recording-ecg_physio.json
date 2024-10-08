@@ -1,0 +1,17 @@
+{
+    "Columns": [
+        "ecg"
+    ],
+    "Manufacturer": "<Manufacturer-Name>",
+    "ManufacturersModelName": "<Manufacturer-Model-Name>",
+    "DeviceSerialNumber": "<Device-Serial-Number>",
+    "SamplingFrequency": 2000,
+    "SoftwareVersion": "<Software-version>",
+    "StartTime": -22.345,
+    "PhysioType": "generic",
+    "ecg": {
+        "Description": "ECG Recording",
+        "LeadConfiguration": "II",
+        "Units": "mV"
+    }
+}

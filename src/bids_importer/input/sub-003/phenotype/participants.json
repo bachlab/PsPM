@@ -1,0 +1,17 @@
+{
+  "participant_id": {
+    "Description": "The identification of the participant."
+  },
+  "age": {
+    "Description": "The age of the participant defined as an integer.",
+    "Units": "years"
+  },
+  "sex": {
+    "Description": "Self-reported biological sex of the participant.",
+    "Levels": {
+      "m": "Male",
+      "f": "Female",
+      "o": "Undetermined, ambiguous, or medically altered biological sex"
+    }
+  }
+}
