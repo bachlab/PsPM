@@ -324,7 +324,8 @@ switch handles.modelData{handles.currentModel}.modeltype
             uiwait(msgbox('Error extracting segments from the model.', 'Error')) 
         else
 
-            % Create a color map with distinct colors
+            glm = handles.modelData{handles.currentModel}.model;
+            sr = glm.input.sr;
             cmap = lines(numel(segments.segments));  
             figure;
             hold on;
@@ -334,14 +335,15 @@ switch handles.modelData{handles.currentModel}.modeltype
             for x = 1:numel(segments.segments)
 
                 plotdata = segments.segments{x}.mean;
-                plot(plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
+                t = (1:length(plotdata)) / sr; 
+                plot(t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
                 legendNames{x} = segments.segments{x}.name;
 
             end
 
             legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
 
-            xlabel('Time (samples or seconds)');
+            xlabel('Time seconds');
             ylabel('Mean Response');
             title('Mean Responses for All Segments');
 
