@@ -20,7 +20,7 @@ if nargin < 2
         ['This GUI item calls the function %s. You can also call this function ', ...
          'directly. Type ''help %s'' in the command window for more information.'], funcname, funcname), ...
         '------------------------------------------------------------------------------------------------'};
-    
+
     if isfield(settings.help, funcname)
         if isfield(settings.help.(funcname), 'Description')
             A = settings.help.(funcname).Description;
