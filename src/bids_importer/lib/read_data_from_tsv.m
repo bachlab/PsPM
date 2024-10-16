@@ -1,5 +1,4 @@
 function data = read_data_from_tsv(tsv_filepath, has_headings, headings, col_types)
-% data = headings;
 opts = detectImportOptions(tsv_filepath, 'FileType', 'text', 'Delimiter', '\t');
 
 if ~has_headings

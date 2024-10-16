@@ -1,10 +1,15 @@
-function [physio_data_cell, recording_duration] = get_physio_data(subject_id, session_id, task_name, ses_path)
+function [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_id, session_id, task_name, ses_path)
 % Returns a 4x1 cell array where each cell contains a struct with fields header and data (and markerinfo for events)
+% Also returns physio_info_data needed to create 'info' struct
 
 % Initialize the physio data cell array
 physio_signals = {'scr', 'ecg', 'resp', 'events'};
 num_signals = length(physio_signals);
 physio_data_cell = cell(num_signals, 1);  % Preallocate cell array
+
+% Initialize variables for info
+chan_names = cell(num_signals, 1);
+file_paths = cell(num_signals, 1);
 
 % Index to keep track of the cell array
 cell_index = 1;
@@ -19,6 +24,9 @@ for i = 1:num_signals - 1  % Exclude 'events' for now
 
     physio_json_filepath = fullfile(ses_path, physio_json_filename);
     physio_tsv_filepath = fullfile(ses_path, physio_tsv_filename);
+
+    % Collect file paths for info
+    file_paths{cell_index} = physio_tsv_filepath;
 
     % Check if files exist
     if ~isfile(physio_json_filepath)
@@ -55,6 +63,10 @@ for i = 1:num_signals - 1  % Exclude 'events' for now
 
     % Add to physio data cell array
     physio_data_cell{cell_index} = chan;
+
+    % Collect channel names for info
+    chan_names{cell_index} = signal;
+
     cell_index = cell_index + 1;
 end
 
@@ -64,6 +76,9 @@ events_tsv_filename = sprintf('sub-%s_ses-%s_task-%s_events.tsv', subject_id, se
 
 events_json_filepath = fullfile(ses_path, events_json_filename);
 events_tsv_filepath = fullfile(ses_path, events_tsv_filename);
+
+% Collect file path for events
+file_paths{cell_index} = events_tsv_filepath;
 
 % Check if event files exist
 if ~isfile(events_tsv_filepath)
@@ -92,6 +107,18 @@ marker_data.header.sr = 1;
 
 % Add to physio data cell array
 physio_data_cell{cell_index} = marker_data;
+
+% Collect channel name for events
+chan_names{cell_index} = 'events';
+
+% Get duration: last value of event time info
+duration = events_table.onset(end);
+
+% Prepare physio_info_data
+physio_info_data = struct();
+physio_info_data.chan_names = chan_names;
+physio_info_data.file_paths = file_paths;
+physio_info_data.duration = duration;
 
 % Assume recording duration is the length of the SCR data divided by its sampling rate
 recording_duration = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr;
