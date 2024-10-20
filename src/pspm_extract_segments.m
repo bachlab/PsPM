@@ -332,24 +332,13 @@ if ~isempty(options.outputfile)
   % ensure correct file suffix
   [pt, fn, ~] = fileparts(options.outputfile);
   outfile = [pt filesep fn '.mat'];
-  write_ok = 0;
-  if exist(outfile, 'file')
-    if options.overwrite
-      write_ok = 1;
-    else
-      button = questdlg(sprintf('File (%s) already exists. Replace file?', ...
-        outfile), 'Replace file?', 'Yes', 'No', 'No');
-
-      write_ok = strcmpi(button, 'Yes');
-    end
-  else
-    write_ok = 1;
-  end
-
-  if write_ok
+  
+  if pspm_overwrite(options.outputfile, options.overwrite)
     save(outfile, 'segments');
-    out.outputfile = outfile;
+    out.outputfile = outfile;   
   end
+
+
 end
 
 if options.plot
