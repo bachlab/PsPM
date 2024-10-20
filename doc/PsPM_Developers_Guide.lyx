@@ -2016,7 +2016,31 @@ pspm_doc
 pspm_help
 \family default
  is used to generate the help text of a specific function into a markdown document.
- 
+ To use 
+\family typewriter
+pspm_help
+\family default
+ for generating help text,
+ the easiest way is to run 
+\family typewriter
+pspm_help('pspm_glm')
+\family default
+directly in the command line window,
+ then the help text from 
+\family typewriter
+pspm_glm
+\family default
+ will be generated as a markdown file in the current folder.
+ The variable 
+\begin_inset Quotes eld
+\end_inset
+
+options
+\begin_inset Quotes erd
+\end_inset
+
+ can be customised for specifying the location,
+ for example.
 \end_layout
 
 \begin_layout Subsubsection
