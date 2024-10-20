@@ -5,7 +5,7 @@ function varargout = pspm_review(varargin)
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Gabriel Graeni (University of Zurich)
 %   Maintained in 2022 by Teddy
-%   Maintained in 2022 by Bernhard Agoué von Raußendorf
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
 
 %% Initialise
 global settings
