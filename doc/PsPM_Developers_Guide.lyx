@@ -2191,11 +2191,61 @@ General introduction of the function.
 \end_layout
 
 \begin_layout Subsubsection
-Typical example
+Index of commonly used symbols
 \end_layout
 
-\begin_layout Standard
-Index of commonly used symbols.
+\begin_layout Description
+● Used for leading new sessions,
+ such as 
+\begin_inset Quotes eld
+\end_inset
+
+Description
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+* Used for listing variables.
+\end_layout
+
+\begin_layout Description
+:
+ Used for dividing variables and their descriptions.
+\end_layout
+
+\begin_layout Description
+┌ Table symbols are used for structs.
+ Because structs often have multiple levels of subfields,
+ please make sure 
+\begin_inset Quotes eld
+\end_inset
+
+┌
+\begin_inset Quotes erd
+\end_inset
+
+ leads to the name of the struct,
+ 
+\begin_inset Quotes eld
+\end_inset
+
+├
+\begin_inset Quotes erd
+\end_inset
+
+ leads to the first to the last but one subfield,
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+└
+\begin_inset Quotes erd
+\end_inset
+
+ leads to the last subfield.
 \end_layout
 
 \begin_layout Standard
