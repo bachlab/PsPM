@@ -387,7 +387,11 @@ for sess_idx = 1:numel(messages)
       parts = split(msg);
       chan_info{sess_idx}.track_mode = parts{4};
       chan_info{sess_idx}.sr = str2num(parts{5});
-      chan_info{sess_idx}.eyesObserved = parts{8};
+      if length(parts)>8
+          chan_info{sess_idx}.eyesObserved = parts{10};
+      else
+          chan_info{sess_idx}.eyesObserved = parts{8};
+      end
     elseif contains(msg, pupil_str)
       parts = split(msg);
       chan_info{sess_idx}.diam_vals = lower(parts{2});
