@@ -74,7 +74,7 @@ if strcmpi(modeltype, 'run')
     end
     % marker channel
     if isfield(job.timeunits, 'markers')
-        options.marker_chan_num = pspm_cfg_channel_selector('run', job.timeunits.markers.chan);
+        options.marker_chan_num = pspm_cfg_selector_channel('run', job.timeunits.markers.chan);
     end
     out1 = model;
     out2 = options;

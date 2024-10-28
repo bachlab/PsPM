@@ -5,6 +5,7 @@ function varargout = pspm_review(varargin)
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Gabriel Graeni (University of Zurich)
 %   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
 
 %% Initialise
 global settings
@@ -51,7 +52,7 @@ set(handles.textPlot7,'HorizontalAlignment','left')
 set(handles.textStatus,'HorizontalAlignment','left')
 set(handles.textStatus,'String','Select a model...');
 
-handles.nrPlot = 6;
+handles.nrPlot = 7;
 %handles.figCnt = 0;
 handles.modelCnt = 0;
 handles.currentModel = 1;
@@ -306,18 +307,57 @@ guidata(hObject, handles);
 
 
 % --- Executes on button press in buttonPlot6.
-function buttonPlot6_Callback(hObject, eventdata, handles)
+function buttonPlot6_Callback(hObject, ~, handles)
 % hObject    handle to buttonPlot6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
-  case 'glm'
-    disp('new button #6')
+    case 'glm'
+
+        modelfile = handles.modelData{handles.currentModel}.modelfile;
+        options = struct();
+        [ssts, segments] = pspm_extract_segments('model', modelfile, options);
+
+        if ssts == -1
+            uiwait(msgbox('Error extracting segments from the model.', 'Error')) 
+        else
+
+            glm = handles.modelData{handles.currentModel}.model;
+            sr = glm.input.sr;
+            cmap = lines(numel(segments.segments));  
+            f.h = figure;
+            f.a.h = axes(f.h);
+            hold on;
+
+            legendNames = cell(1, numel(segments.segments));
+
+            for x = 1:numel(segments.segments)
+
+                plotdata = segments.segments{x}.mean;
+                t = (1:length(plotdata)) / sr; 
+                f.a.p = plot(f.a.h, t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
+                legendNames{x} = segments.segments{x}.name;
+
+            end
+
+            f.a.l = legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
+            legend boxoff
+
+            set(get(f.a.h, 'xlabel'), 'String', 'Time (seconds)');
+            set(get(f.a.h, 'ylabel'), 'String', 'Mean Response (data units)');
+            set(get(f.a.h, 'title'), 'String', 'Mean Responses for All Segments');
+
+            hold off;
+        end
+
+
 
 end
 
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
 
 
 % --- Executes on button press in buttonPlot7.
@@ -563,6 +603,3 @@ function pushbutton_quit_Callback(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 closeFigures(handles);
 delete(gcbf)
-
-
-

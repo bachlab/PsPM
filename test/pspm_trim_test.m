@@ -6,6 +6,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
   % (C) 2013 Linus Rüttimann (University of Zurich)
   %     2022 Teddy Chao
   %     2024 Bernhard von Raußendorf
+  
   properties(Constant)
     fn = 'trim_test.mat';
     missing_epochs_fn = 'missing_epochs.mat';  % 
@@ -94,7 +95,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         load(newepochfile, 'epochs');
 
         % Expected result after trimming
-        expected_epochs = [0, 0 ; 2, 4];
+        expected_epochs = [2,4]; % not [0, 0 ; 2, 4];
 
         testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
 
@@ -182,7 +183,7 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         load(newepochfile, 'epochs');
 
         % Expected result after trimming
-        expected_epochs = [0, 0; 2, 2];
+        expected_epochs =  zeros(0,2); % not [0, 0; 2, 2] but  0×2 empty double matrix
 
         testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
 
