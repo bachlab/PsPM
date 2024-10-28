@@ -1,0 +1,224 @@
+classdef pspm_check_data_test < matlab.unittest.TestCase
+    % Testclass for pspm_check_data
+    % This class contains unit tests for the function pspm_check_data.
+
+
+
+
+
+
+
+
+    methods (Test)
+        function testValidData(testCase)
+            % Test pspm_check_data with valid data and infos structures.
+
+            % Generate valid test data
+            duration = 10; % seconds
+            channels{1}.chantype = 'scr';
+            channels{1}.sr = 100; % sampling rate
+            channels{1}.units = 'microsiemens';
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+            infos = dataStruct.infos;
+
+            % Call pspm_check_data
+            [sts, dataOut] = pspm_check_data(data, infos);
+
+            % Verify that sts == 1 (success)
+            testCase.verifyEqual(sts, 1);
+            % Verify that dataOut is not empty
+            testCase.verifyNotEmpty(dataOut);
+        end
+
+        function testMissingHeader(testCase)
+            % Test pspm_check_data with missing header field in data.
+
+            % Generate valid test data
+            duration = 10;
+            channels{1}.chantype = 'scr';
+            channels{1}.sr = 100;
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+            infos = dataStruct.infos;
+
+            % Remove header field
+            data{1} = rmfield(data{1}, 'header');
+
+            % Suppress expected warning
+            warning('off', 'ID:invalid_data_structure');
+
+            % Call pspm_check_data
+            [sts, ~] = pspm_check_data(data, infos);
+
+            % Re-enable warnings
+            warning('on', 'ID:invalid_data_structure');
+
+            % Verify that sts == -1 (failure)
+            testCase.verifyEqual(sts, -1);
+        end
+
+        function testInvalidChantype(testCase)
+            % Test pspm_check_data with an invalid chantype.
+
+            % Generate test data with invalid chantype
+            duration = 10;
+            channels{1}.chantype = 'invalid_type';
+            channels{1}.sr = 100;
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+            infos = dataStruct.infos;
+
+            % Suppress expected warning
+            warning('off', 'ID:invalid_data_structure');
+
+            % Call pspm_check_data
+            [sts, ~] = pspm_check_data(data, infos);
+
+            % Re-enable warnings
+            warning('on', 'ID:invalid_data_structure');
+
+            % Verify that sts == -1 (failure)
+            testCase.verifyEqual(sts, -1);
+        end
+
+        function testEmptyData(testCase)
+            % Test pspm_check_data with empty data field.
+
+            % Generate valid test data
+            duration = 10;
+            channels{1}.chantype = 'scr';
+            channels{1}.sr = 100;
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+            infos = dataStruct.infos;
+
+            % Make data field empty
+            data{1}.data = [];
+
+            % Suppress expected warning
+            warning('off', 'ID:missing_data');
+
+            % Call pspm_check_data
+            [sts, dataOut] = pspm_check_data(data, infos);
+
+            % Re-enable warnings
+            warning('on', 'ID:missing_data');
+
+            % Verify that sts == 1 (success despite empty data)
+            testCase.verifyEqual(sts, 1);
+            % Verify that dataOut{1}.data is zeros(1,0)
+            testCase.verifyEqual(dataOut{1}.data, zeros(1,0));
+        end
+
+        function testDataOrientation(testCase)
+            % Test pspm_check_data with data in wrong orientation (row vector).
+
+            % Generate valid test data
+            duration = 10;
+            channels{1}.chantype = 'scr';
+            channels{1}.sr = 100;
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+            infos = dataStruct.infos;
+
+            % Transpose data to incorrect orientation
+            data{1}.data = data{1}.data';
+
+            % Suppress expected warning
+            warning('off', 'ID:invalid_data_structure');
+
+            % Call pspm_check_data
+            [sts, dataOut] = pspm_check_data(data, infos);
+
+            % Re-enable warnings
+            warning('on', 'ID:invalid_data_structure');
+
+            % Verify that sts == 1 (function corrects orientation)
+            testCase.verifyEqual(sts, 1);
+            % Verify that dataOut{1}.data is a column vector
+            testCase.verifySize(dataOut{1}.data, [length(dataOut{1}.data), 1]);
+        end
+
+        function testEventDataOutOfRange(testCase)
+            % Test pspm_check_data with event data outside [0, infos.duration].
+
+            % Generate event-based test data
+            duration = 10;
+            channels{1}.chantype = 'marker';
+            channels{1}.eventrt = 1; % events per second
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+            infos = dataStruct.infos;
+
+            % Modify event data to be out of range
+            data{1}.data = data{1}.data + duration + 1;
+
+            % Suppress expected warning
+            warning('off', 'ID:invalid_data_structure');
+
+            % Call pspm_check_data
+            [sts, ~] = pspm_check_data(data, infos);
+
+            % Re-enable warnings
+            warning('on', 'ID:invalid_data_structure');
+
+            % Verify that sts == -1 (failure due to out-of-range data)
+            testCase.verifyEqual(sts, -1);
+        end
+
+        function testMissingInfos(testCase)
+            % Test pspm_check_data without providing infos structure.
+
+            % Generate valid test data
+            duration = 10;
+            channels{1}.chantype = 'scr';
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+
+            % Suppress expected warning
+            warning('off', 'ID:invalid_data_structure');
+
+            % Call pspm_check_data without infos
+            [sts, ~] = pspm_check_data(data);
+
+            % Re-enable warnings
+            warning('on', 'ID:invalid_data_structure');
+
+            % Verify that sts == 1 (infos is optional)
+            testCase.verifyEqual(sts, 1);
+        end
+
+        function testInvalidInfos(testCase)
+            % Test pspm_check_data with invalid infos structure.
+
+            % Generate valid test data
+            duration = 10;
+            channels{1}.chantype = 'scr';
+            dataStruct = pspm_testdata_gen(channels, duration);
+
+            data = dataStruct.data;
+            infos = struct(); % Empty infos structure
+
+            % Suppress expected warning
+            warning('off', 'ID:invalid_data_structure');
+
+            % Call pspm_check_data
+            [sts, ~] = pspm_check_data(data, infos);
+
+            % Re-enable warnings
+            warning('on', 'ID:invalid_data_structure');
+
+            % Verify that sts == -1 (failure due to invalid infos)
+            testCase.verifyEqual(sts, -1);
+        end
+
+    end
+end

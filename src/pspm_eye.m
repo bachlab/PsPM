@@ -37,10 +37,15 @@ switch feature
               Y = settings.lateral.char.r;
         end
       case 'cell'
-        Y{Y=='l'} = settings.lateral.char.l;
-        Y{Y=='r'} = settings.lateral.char.r;
-        Y{Y=='lr'} = settings.lateral.char.c;
-        Y{Y=='rl'} = settings.lateral.char.c;
+        %Y{Y=='l'} = settings.lateral.char.l; 
+        %Y{Y=='r'} = settings.lateral.char.r;
+        %Y{Y=='lr'} = settings.lateral.char.c;
+        %Y{Y=='rl'} = settings.lateral.char.c;
+        Y(strcmp(Y, 'l')) = {settings.lateral.char.l};
+        Y(strcmp(Y, 'r')) = {settings.lateral.char.r};
+        Y(strcmp(Y, 'lr')) = {settings.lateral.char.c};
+        Y(strcmp(Y, 'rl')) = {settings.lateral.char.c};
+
     end
   case 'char2cell'
     % Examples
