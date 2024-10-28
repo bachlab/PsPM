@@ -327,7 +327,8 @@ switch handles.modelData{handles.currentModel}.modeltype
             glm = handles.modelData{handles.currentModel}.model;
             sr = glm.input.sr;
             cmap = lines(numel(segments.segments));  
-            figure;
+            f.h = figure;
+            f.a.h = axes(f.h);
             hold on;
 
             legendNames = cell(1, numel(segments.segments));
@@ -336,16 +337,17 @@ switch handles.modelData{handles.currentModel}.modeltype
 
                 plotdata = segments.segments{x}.mean;
                 t = (1:length(plotdata)) / sr; 
-                plot(t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
+                f.a.p = plot(f.a.h, t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
                 legendNames{x} = segments.segments{x}.name;
 
             end
 
-            legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
+            f.a.l = legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
+            legend boxoff
 
-            xlabel('Time seconds');
-            ylabel('Mean Response');
-            title('Mean Responses for All Segments');
+            set(get(f.a.h, 'xlabel'), 'String', 'Time (seconds)');
+            set(get(f.a.h, 'ylabel'), 'String', 'Mean Response (data units)');
+            set(get(f.a.h, 'title'), 'String', 'Mean Responses for All Segments');
 
             hold off;
         end
