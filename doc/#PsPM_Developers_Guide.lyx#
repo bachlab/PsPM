@@ -38746,7 +38746,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -38804,7 +38804,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -38862,7 +38862,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -38920,7 +38920,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -38978,7 +38978,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -39036,7 +39036,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -39094,7 +39094,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -39103,7 +39103,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+?
 \end_layout
 
 \end_inset
@@ -39143,7 +39143,7 @@ pspm_show_forum
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
+
 \end_layout
 
 \end_inset
@@ -39152,7 +39152,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1
+
 \end_layout
 
 \end_inset
@@ -39161,7 +39161,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1
+?
 \end_layout
 
 \end_inset
@@ -39201,7 +39201,7 @@ pspm_show_help_doc
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
+
 \end_layout
 
 \end_inset
@@ -39210,7 +39210,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1
+
 \end_layout
 
 \end_inset
@@ -39219,7 +39219,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1
+?
 \end_layout
 
 \end_inset
@@ -39259,7 +39259,7 @@ pspm_split_sessions
 \begin_inset Text
 
 \begin_layout Plain Layout
-LR & TZ
+LR
 \end_layout
 
 \end_inset
@@ -39268,7 +39268,7 @@ LR & TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1.1
+
 \end_layout
 
 \end_inset
@@ -39317,7 +39317,7 @@ pspm_struct2vec
 \begin_inset Text
 
 \begin_layout Plain Layout
-DB
+
 \end_layout
 
 \end_inset
@@ -39326,7 +39326,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+
 \end_layout
 
 \end_inset
@@ -39335,7 +39335,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+?
 \end_layout
 
 \end_inset
@@ -39375,7 +39375,7 @@ pspm_tam
 \begin_inset Text
 
 \begin_layout Plain Layout
-DB
+
 \end_layout
 
 \end_inset
@@ -39384,7 +39384,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+
 \end_layout
 
 \end_inset
@@ -39393,7 +39393,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+?
 \end_layout
 
 \end_inset
@@ -39433,7 +39433,7 @@ pspm_time2index
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ & DB
+TZ
 \end_layout
 
 \end_inset
@@ -39442,7 +39442,7 @@ TZ & DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1.2
+
 \end_layout
 
 \end_inset
@@ -39451,7 +39451,7 @@ TZ & DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+?
 \end_layout
 
 \end_inset
@@ -39491,7 +39491,7 @@ pspm_transfer_function
 \begin_inset Text
 
 \begin_layout Plain Layout
-DB
+
 \end_layout
 
 \end_inset
@@ -39500,7 +39500,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -39558,7 +39558,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -39616,7 +39616,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-6.0
+
 \end_layout
 
 \end_inset
@@ -39625,7 +39625,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+?
 \end_layout
 
 \end_inset
@@ -39674,7 +39674,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1
+
 \end_layout
 
 \end_inset
@@ -39683,7 +39683,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+?
 \end_layout
 
 \end_inset
@@ -39732,7 +39732,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-6.0
+
 \end_layout
 
 \end_inset
@@ -39741,7 +39741,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+?
 \end_layout
 
 \end_inset
@@ -39790,7 +39790,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.1
+
 \end_layout
 
 \end_inset
@@ -39799,7 +39799,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.1
+?
 \end_layout
 
 \end_inset
@@ -39848,7 +39848,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+
 \end_layout
 
 \end_inset
@@ -39857,7 +39857,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+?
 \end_layout
 
 \end_inset
