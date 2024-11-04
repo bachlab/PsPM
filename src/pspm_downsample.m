@@ -1,9 +1,9 @@
-function [sts, data] = pspm_downsample(data, freqratio)
+function [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
 % ● Description
 %   pspm_downsample implements a simple downsample routine for users who
 %   don't have the Matlab Signal Processing Toolbox installed.
 % ● Format
-%   [sts, data] = pspm_downsample(data, freqratio)
+%   [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
 % ● Arguments
 %   *      data: the input data for performing downsampling on.
 %   * freqratio: the frequency ratio of downsampling operation.
@@ -13,6 +13,7 @@ function [sts, data] = pspm_downsample(data, freqratio)
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy Chao
+%   Maintained in 2024 by Bernhard von Raußendorf
 
 %% 1 Initialise
 global settings
@@ -23,10 +24,42 @@ sts = -1;
 %% 2 Check input arguments
 if nargin < 2
   warning('Not enough input arguments.'); return
-elseif floor(freqratio) ~= freqratio
-  warning('Frequency ratio must be integer.'); return
+% elseif floor(freqratio) ~= freqratio
+%   warning('Frequency ratio must be integer.'); return
 end
 %% 3 Performing downsampling
-data = data(freqratio:freqratio:end);
-sts = 1;
+
+freqratio = sr/sr_down;
+
+
+if freqratio == ceil(freqratio) % NB isinteger might not work for some values
+    % to avoid toolbox use, but only works for integer sr ratios
+    data = data(freqratio:freqratio:end); % from old pspm_downsample
+    newsr = sr_down;
+    sts = 1;
+
+elseif settings.signal
+    % this filts the data on the way, which does not really matter
+    % for us anyway, but allows real sr ratios
+    if sr == floor(sr) && sr_down == floor(sr_down)
+        data = resample(data, sr_down, sr);
+        newsr = sr_down;
+        sts = 1;
+    else
+        % use a crude but very general way of getting to integer
+        % numbers
+        altsr = floor(sr);
+        altdownsr = floor(sr_down);
+        data = resample(data, altdownsr, altsr);
+        newsr = sr * altdownsr/altsr;
+        warning('ID:nonint_sr', 'Note that the new sampling rate is a non-integer number.');
+        sts = 1;
+    end
+else
+    sts = -1;
+    errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
+    % the function gives back the not downsampled data!
+end
+
+
 return
