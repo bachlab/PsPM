@@ -30,6 +30,12 @@ end
 %% 3 Performing downsampling
 
 freqratio = sr/sr_down;
+isL = false;
+% how to downsample a logical array (pspm_dcm_test>validinput uses one)
+if islogical(data)
+    data = double(data);
+    isL = true;
+end
 
 
 if freqratio == ceil(freqratio) % NB isinteger might not work for some values
@@ -37,7 +43,10 @@ if freqratio == ceil(freqratio) % NB isinteger might not work for some values
     data = data(freqratio:freqratio:end); % from old pspm_downsample
     newsr = sr_down;
     sts = 1;
-
+    if isL
+        data = logical(data);
+    end
+    
 elseif settings.signal
     % this filts the data on the way, which does not really matter
     % for us anyway, but allows real sr ratios
@@ -45,6 +54,9 @@ elseif settings.signal
         data = resample(data, sr_down, sr);
         newsr = sr_down;
         sts = 1;
+        if isL
+           data = logical(data);
+        end
     else
         % use a crude but very general way of getting to integer
         % numbers
@@ -54,6 +66,9 @@ elseif settings.signal
         newsr = sr * altdownsr/altsr;
         warning('ID:nonint_sr', 'Note that the new sampling rate is a non-integer number.');
         sts = 1;
+        if isL
+        data = logical(data);
+        end
     end
 else
     sts = -1;
