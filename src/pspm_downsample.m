@@ -1,12 +1,20 @@
 function [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
 % ● Description
-%   pspm_downsample implements a simple downsample routine for users who
-%   don't have the Matlab Signal Processing Toolbox installed.
+%   pspm_downsample performs a downsampling (resampling) operation on 
+%   the provided data. 
+%   If the downsampling ratio is non-integer and signal processing toolbox
+%   is unavailable, it uses an alternative integer approximation method
+%   
+%   used by pspm_prepdata & pspm_dcm
+%   
 % ● Format
-%   [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
+%           [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
+%
 % ● Arguments
-%   *      data: the input data for performing downsampling on.
-%   * freqratio: the frequency ratio of downsampling operation.
+%   *        data:    the input data for performing downsampling on.
+%   *        sr:      original sampling rate of the input data.
+%   *        sr_down: targeted downsampling rate.
+%
 % ● Output
 %   *       sts: -1 if the frequency ratio is not an integer
 % ● History
@@ -24,13 +32,12 @@ sts = -1;
 %% 2 Check input arguments
 if nargin < 2
   warning('Not enough input arguments.'); return
-% elseif floor(freqratio) ~= freqratio
-%   warning('Frequency ratio must be integer.'); return
 end
 %% 3 Performing downsampling
 
 freqratio = sr/sr_down;
 isL = false;
+
 % how to downsample a logical array (pspm_dcm_test>validinput uses one)
 if islogical(data)
     data = double(data);
@@ -38,16 +45,7 @@ if islogical(data)
 end
 
 
-if freqratio == ceil(freqratio) % NB isinteger might not work for some values
-    % to avoid toolbox use, but only works for integer sr ratios
-    data = data(freqratio:freqratio:end); % from old pspm_downsample
-    newsr = sr_down;
-    sts = 1;
-    if isL
-        data = logical(data);
-    end
-    
-elseif settings.signal
+if settings.signal
     % this filts the data on the way, which does not really matter
     % for us anyway, but allows real sr ratios
     if sr == floor(sr) && sr_down == floor(sr_down)
@@ -67,9 +65,17 @@ elseif settings.signal
         warning('ID:nonint_sr', 'Note that the new sampling rate is a non-integer number.');
         sts = 1;
         if isL
-        data = logical(data);
+            data = logical(data);
         end
     end
+elseif freqratio == ceil(freqratio) % NB isinteger might not work for some values
+    % to avoid toolbox use, but only works for integer sr ratios
+    data = data(freqratio:freqratio:end); % from old pspm_downsample
+    newsr = sr_down;
+    sts = 1;
+    if isL
+        data = logical(data);
+    end    
 else
     sts = -1;
     errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
@@ -77,4 +83,7 @@ else
 end
 
 
+
 return
+
+end

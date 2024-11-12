@@ -2,7 +2,9 @@ classdef pspm_downsample_test < matlab.unittest.TestCase
 % Unit test class for the pspm_downsample function
 % ● Authorship
 % (C) 2024 Bernhard Agoué von Raußendorf
-% !! add ~  [sts, data, ~ ] !!
+%
+% 
+
 properties
     OriginalSignalSetting % Property to store the original settings.signal value
 end
@@ -18,7 +20,7 @@ methods (TestMethodSetup)
         if isfield(settings, 'signal')
             testCase.OriginalSignalSetting = settings.signal;
         else
-            % Save as empty if it doesn't exist (can thi
+            % Save as empty if it doesn't exist 
             testCase.OriginalSignalSetting = []; 
             warrning("Problem with settings.signal")
         end
@@ -42,7 +44,6 @@ end
 
 
 
-
 methods (Test)
     function testIntegerFrequencyRatio(testCase)
         % Test case for integer frequency ratio downsampling
@@ -53,9 +54,9 @@ methods (Test)
         t = 0:1/sr:duration-1/sr; % Time vector
         data = sin(2 * pi * 5 * t); % Sample sine wave signal
 
-        % Expected frequency ratio and downsampled data
-        freqratio = sr / sr_down;
-        expectedData = data(freqratio:freqratio:end);
+        
+        expectedData = resample(data, sr_down, sr);
+
 
         % Perform downsampling
         [sts, actualData] = pspm_downsample(data, sr, sr_down);
