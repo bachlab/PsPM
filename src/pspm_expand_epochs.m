@@ -1,12 +1,20 @@
 function [sts, ep_exp] = pspm_expand_epochs(varargin)
-
-% fn passt nicht zu missing epochs
-%   [sts, output_file]     = pspm_expand_epochs( missing_epochs_fn,      expansion , options)
-%   [sts, expanded_epochs] = pspm_expand_epochs( missing_epochs,         expansion , options) 
-%   [sts, channel_index]   = pspm_expand_epochs( filename,  channel,    expansion , options)
+% ● Description
+%
+% ● Format
+%   fn passt nicht zu missing epochs
+%   [sts, output_file]     = pspm_expand_epochs( missing_epochs_fn,  expansion , options)
+%   [sts, expanded_epochs] = pspm_expand_epochs( missing_epochs,     expansion , options) 
+%   [sts, channel_index]   = pspm_expand_epochs( filename,  channel, expansion , options)
+% ● Arguments 
 %   options.mode =  'datafile'
 %                   'missing_ep_file'
-%                   'missing_ep'
+%                   'missing_epochs'
+%   expansion = [pre , post] or [pre ; post]
+%
+% ● History
+%   Written in 2024 by Bernhard Agoué von Raußendorf
+
 
 global settings
 if isempty(settings)
@@ -14,12 +22,27 @@ if isempty(settings)
 end
 
 sts = -1;
+ep_exp = [];
 
-if nargin < 3
-  warning('ID:invalid_input', 'Not enough input arguments');
+if nargin < 3 || nargin > 4
+  warning('ID:invalid_input', 'Not enough or to many input arguments');
   return;
 end
 
+
+% Checks if expantion vector is the valid
+if nargin == 3 
+    if numel(varargin{2})  ~= 2 || ~isnumeric(varargin{2})
+        warning('Invalid input to expand vector musst be 1x2 or 2x1.');
+        return;
+    end
+end
+if nargin == 4 
+    if numel(varargin{3}) ~= 2 || ~isnumeric(varargin{3})
+      warning('Invalid input to expand vector musst be 1x2 or 2x1.');
+      return;
+    end
+end
 
 
 
@@ -30,43 +53,63 @@ if nargin == 3
 
     switch options.mode
         % missing epochs
-        case 'missing_ep'
+        case 'missing_epochs'
             % Directly expand the given epochs
+            
             epochs = varargin{1};
+            
+            [gsts, epochs] = pspm_get_timing('epochs',epochs,'seconds');
+            if gsts < 1
+                warning('Invaled epochs.')
+                return
+            end     
+            
+            % Checks if epoch is empty bc pspm_get_timing returns sts = 1
+            if isempty(epochs)
+                warning('Invaled epochs.')
+                return
+            end
+
+
+
             [ests, ep_exp] = expand(epochs, expansion);
 
-            if ests == -1
-                error("Failed to expand epochs.");
+            if ests < 1
+                warning('Failed to expand epochs.');
                 return;
             end 
             
             sts = 1;
             return;
 
-            % missing epoches file
+            
         case 'missing_ep_file'
             % Load missing epochs from file
             filename = varargin{1};
 
             [lsts, epochs] = pspm_get_timing('file', filename);
-           
+            if isempty(epochs)
+                warning('Invaled epochs.')
+                return
+            end
             
-            if lsts == -1
-                error("Epoch could not be loaded");
+            if lsts < 1
+                warning('Epoch could not be loaded');
                 return;
-            end 
+            end
 
+           
             % Expand the loaded epochs
-            [ests, ep_exp] = expand(epochs.epochs, expansion);
-            if ests == -1
-                error('Failed to expand epochs.');
+            [ests, epochs] = expand(epochs.epochs, expansion);
+            if ests < 1
+                warning('Failed to expand epochs.');
                 return;
             end
 
             % Save expanded missing epoch to a new file with 'e' prefix
             [pathstr, name, ext] = fileparts(filename);
             output_file = fullfile(pathstr, ['e' name ext]);
-            save(output_file, 'ep_exp'); % should i save it as epoch???
+            save(output_file, 'epochs'); 
             disp(['Expanded epochs saved to: ', output_file]);
 
             sts = 1;
@@ -81,8 +124,8 @@ if nargin == 4 %&& options.mode == 'datafile' % rename!!
     channel  = varargin{2};
     expansion = varargin{3};
     [lsts, ~, data] = pspm_load_data(filename, channel);
-    if lsts == -1
-        error('Failed to load data from file.');
+    if lsts < 1
+        warning('Failed to load data from file.');
         return;
     end
 
@@ -97,7 +140,7 @@ if nargin == 4 %&& options.mode == 'datafile' % rename!!
 
     % Expand the epochs
     [ests, ep_exp] = expand(nan_epochs, expansion);
-    if ests == -1
+    if ests < 1
         error('Failed to expand epochs.');
     end
 
@@ -112,8 +155,8 @@ if nargin == 4 %&& options.mode == 'datafile' % rename!!
     [wsts, ~] = pspm_write_channel(filename, {channel_data}, 'replace',opt); % add to options 'newfile'?
      % channel_data.data;
 
-    if wsts == -1
-        error('Failed to write the new channel.');
+    if wsts < 1
+        warning('Failed to write the new channel.');
         return
     end
 
@@ -122,7 +165,7 @@ if nargin == 4 %&& options.mode == 'datafile' % rename!!
 
 
 else
-    error('Unknown mode in options.'); 
+    warning('Unknown mode in options.'); 
     return;
 end
 
@@ -140,23 +183,19 @@ function [ests, ep_exp] = expand(ep, expansion)
 ests = -1;
 ep_exp = [];
 
-% Check if epochs matrix and expansion vector are valid
-if isempty(ep) || numel(expansion) ~= 2
-    error('Invalid input to expand function.');
-    return;
-end
+
 
 % Expand epochs
 pre = expansion(1);
 post = expansion(2);
 expanded_epochs_temp = [ep(:,1) - pre, ep(:,2) + post];
 
-%
-% Ensure that the start of any epoch is not negative
 
+% Ensure that the start of epoch is not neg. but 0
 [ksts, expanded_epochs_temp] = pspm_get_timing('epochs',expanded_epochs_temp , 'seconds') ;
-if ksts == -1 
-    error('Offsets must be larger than onsets')
+
+if ksts < 1 
+    warning('Offsets must be larger than onsets')
     return
 end
 

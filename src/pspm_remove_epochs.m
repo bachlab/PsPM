@@ -44,12 +44,12 @@ if options.invalid
 end
 [lsts, ~, data, filestruct] = pspm_load_data(datafile, channel);
 pos_of_channels = filestruct.posofchannels;
-if lsts == -1
+if lsts < 1
   return;
 end
 
 [lsts, ep] = pspm_get_timing('epochs', epochfile, 'seconds');
-if lsts == -1
+if lsts < 1
   return;
 end
 
@@ -63,7 +63,7 @@ end
 % Expand the epochs
 
 [sts, ep_exp] = pspm_expand_epochs(ep, expansion, 'missing_ep');
-if psts == -1
+if psts < 1
     return;
 end
 
