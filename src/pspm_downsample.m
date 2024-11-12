@@ -2,8 +2,7 @@ function [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
 % ● Description
 %   pspm_downsample performs a downsampling (resampling) operation on 
 %   the provided data. 
-%   If the downsampling ratio is non-integer and signal processing toolbox
-%   is unavailable, it uses an alternative integer approximation method
+%   
 %   
 %   used by pspm_prepdata & pspm_dcm
 %   
