@@ -1,131 +1,104 @@
-function [sts, ep_exp] = pspm_expand_epochs(varargin)
+function [sts, out] = pspm_expand_epochs(varargin)
 % ● Description
-%
+% pspm_expand_epochs expands epochs in time, and merges overlapping epochs. 
+% This is useful in processing missing data epochs. The function can take 
+% a missing epochs file and creates a new file with the original name 
+% prepended with 'e', a matrix of missing epochs, or a PsPM data file with 
+% missing data in a given channel.
 % ● Format
-%   fn passt nicht zu missing epochs
-%   [sts, output_file]     = pspm_expand_epochs( missing_epochs_fn,  expansion , options)
-%   [sts, expanded_epochs] = pspm_expand_epochs( missing_epochs,     expansion , options) 
-%   [sts, channel_index]   = pspm_expand_epochs( filename,  channel, expansion , options)
+%   [sts, output_file]     = pspm_expand_epochs(epochs_fn, expansion, options)
+%   [sts, expanded_epochs] = pspm_expand_epochs(epochs, expansion, options) 
+%   [sts, channel_index]   = pspm_expand_epochs(data_fn, channel, expansion , options)
 % ● Arguments 
-%   options.mode =  'datafile'
-%                   'missing_ep_file'
-%                   'missing_epochs'
-%   expansion = [pre , post] or [pre ; post]
-%
+%   *   epochs_fn:  An epochs file as defined in pspm_get_timing.
+%   *      epochs:  A 2-column matrix with epochs onsets and offsets in seconds.
+%   *     data_fn:  A PsPM data file.
+%   *     channel:  Channel identifier accepted by pspm_load_channel.
+%   *   expansion:  A 2-element vector with positive numbers [pre, post]
+%   ┌────────────options:
+%   ├─────────.overwrite: Define if already existing files should be
+%   │                     overwritten. Default ist 0. (Only used if input
+%   │                     is epochs file.)
+%   └────.channel_action: Channel action, add / replace existing data
+%                         data (default: add)
+% ● Output
+%   *  channel_index: index of channel containing the processed data
 % ● History
+%   Introduced in PsPM 7.0
 %   Written in 2024 by Bernhard Agoué von Raußendorf
 
-
+% Initialise
+% -------------------------------------------------------------------------
 global settings
 if isempty(settings)
   pspm_init;
 end
 
 sts = -1;
-ep_exp = [];
+out = [];
 
-if nargin < 3 || nargin > 4
-  warning('ID:invalid_input', 'Not enough or to many input arguments');
+% Input checks and parsing 
+%  ------------------------------------------------------------------------
+if nargin < 2 
+  warning('ID:invalid_input', 'Not enough input arguments');
   return;
 end
 
-
-% Checks if expantion vector is the valid
-if nargin == 3 
-    if numel(varargin{2})  ~= 2 || ~isnumeric(varargin{2})
-        warning('Invalid input to expand vector musst be 1x2 or 2x1.');
-        return;
+% parse first input and determine mode
+if isnumeric(varargin{1})
+    mode = 'epochs';
+    [gsts, epochs] = pspm_get_timing('epochs', varargin{1}, 'seconds');
+    if gsts < 1
+        return
     end
-end
-if nargin == 4 
-    if numel(varargin{3}) ~= 2 || ~isnumeric(varargin{3})
-      warning('Invalid input to expand vector musst be 1x2 or 2x1.');
-      return;
+elseif ischar(varargin{1})
+    fn = varargin{1};
+    warning off
+    [gsts, epochs] = pspm_get_timing('epochs', fn, 'seconds');
+    warning on
+    if gsts == 1
+        mode = 'epochfile';
+    else
+        fprint('Assuming input is a PsPM data file ...\n');
+        mode = 'datafile';
     end
+else 
+    warning('ID:invalid_input', 'First argument must be a file name or epoch matrix.');
 end
 
-
-
-if nargin == 3
-    
+% parse remaining arguments
+if ismember(mode, {'epochs', 'epochfile'})
     expansion = varargin{2};
-    options   = varargin{3};
-
-    switch options.mode
-        % missing epochs
-        case 'missing_epochs'
-            % Directly expand the given epochs
-            
-            epochs = varargin{1};
-            
-            [gsts, epochs] = pspm_get_timing('epochs',epochs,'seconds');
-            if gsts < 1
-                warning('Invaled epochs.')
-                return
-            end     
-            
-            % Checks if epoch is empty bc pspm_get_timing returns sts = 1
-            if isempty(epochs)
-                warning('Invaled epochs.')
-                return
-            end
-
-
-
-            [ests, ep_exp] = expand(epochs, expansion);
-
-            if ests < 1
-                warning('Failed to expand epochs.');
-                return;
-            end 
-            
-            sts = 1;
-            return;
-
-            
-        case 'missing_ep_file'
-            % Load missing epochs from file
-            filename = varargin{1};
-
-            [lsts, epochs] = pspm_get_timing('file', filename);
-            if isempty(epochs)
-                warning('Invaled epochs.')
-                return
-            end
-            
-            if lsts < 1
-                warning('Epoch could not be loaded');
-                return;
-            end
-
-           
-            % Expand the loaded epochs
-            [ests, epochs] = expand(epochs.epochs, expansion);
-            if ests < 1
-                warning('Failed to expand epochs.');
-                return;
-            end
-
-            % Save expanded missing epoch to a new file with 'e' prefix
-            [pathstr, name, ext] = fileparts(filename);
-            output_file = fullfile(pathstr, ['e' name ext]);
-            save(output_file, 'epochs'); 
-            disp(['Expanded epochs saved to: ', output_file]);
-
-            sts = 1;
-            return;
-    end
+    k = 2;
+else
+    channel   = varargin{2};
+    expansion = varargin{3};
+    k = 3;
 end
 
-if nargin == 4 %&& options.mode == 'datafile' % rename!!
-   
-    % Load channel data
-    filename = varargin{1};
-    channel  = varargin{2};
-    expansion = varargin{3};
-    [lsts, ~, data] = pspm_load_data(filename, channel);
+if nargin > k
+    options = varargin{3};
+else
+    options = struct();
+end
+
+% finalise options structure
+options = pspm_options(options, 'expand_epochs');
+
+% check if expansion vector is valid
+if  ~isnumeric(expansion) || numel(expansion) ~= 2
+    warning('Invalid input to expand vector musst be 1x2 or 2x1.');
+    return;
+end
+
+% work on input
+% -------------------------------------------------------------------------
+
+% construct epochs from data file
+if strcmpi(mode, 'datafile')
+    
+    [lsts, ~, data] = pspm_load_data(fn, channel);
     if lsts < 1
-        warning('Failed to load data from file.');
         return;
     end
 
@@ -136,89 +109,52 @@ if nargin == 4 %&& options.mode == 'datafile' % rename!!
     nan_indices = isnan(channel_data.data);
 
     % Convert NaN indices to epochs
-    nan_epochs = pspm_logical2epochs(nan_indices, sr);
+    epochs = pspm_logical2epochs(nan_indices, sr);
 
-    % Expand the epochs
-    [ests, ep_exp] = expand(nan_epochs, expansion);
-    if ests < 1
-        error('Failed to expand epochs.');
-    end
+end
+
+% expand epochs
+pre = expansion(1);
+post = expansion(2);
+expanded_epochs_temp = [epochs(:,1) - pre, epochs(:,2) + post];
+% remove negative values and merge overlapping epochs
+[ksts, expanded_epochs] = pspm_get_timing('missing',expanded_epochs_temp , 'seconds') ;
+if ksts < 1 
+    return
+end
+
+% generate output
+switch mode
+    case 'epochs'
+        out = expanded_epochs;
+    
+    case 'epochfile'
+        % save expanded epochs to a new file with 'e' prefix
+            [pathstr, name, ext] = fileparts(fn);
+            output_file = fullfile(pathstr, ['e', name, ext]);
+            overwrite_final = pspm_overwrite(output_file, options.overwrite);
+            if overwrite_final == 1
+                save(output_file, 'epochs'); 
+                fprintf(['Expanded epochs saved to file: ', output_file, '\n']);
+            end
+    
+    case 'datafile'
 
     % Convert expanded epochs back to logical indices
-    expanded_indices = pspm_epochs2logical(ep_exp, numel(channel_data.data), sr);
+    expanded_indices = pspm_epochs2logical(expanded_epochs, numel(channel_data.data), sr);
 
     % Set data to NaN at expanded indices
     channel_data.data(logical(expanded_indices)) = NaN;
 
-    % Save the data back to the file
-    opt = struct();
-    [wsts, ~] = pspm_write_channel(filename, {channel_data}, 'replace',opt); % add to options 'newfile'?
-     % channel_data.data;
-
+    % Save the data 
+    [wsts, out] = pspm_write_channel(fn, {channel_data}, options.channel_action, struct('channel', channel)); 
     if wsts < 1
-        warning('Failed to write the new channel.');
         return
     end
-
-    sts = 1;
-    return;
-
-
-else
-    warning('Unknown mode in options.'); 
-    return;
+    out = out.channel;
 end
 
-
-end
-
-
-
-function [ests, ep_exp] = expand(ep, expansion)
-% Helper function to expand epochs by the specified pre and post times
-% and merge overlapping epochs.
-% Also ensures that no epoch starts before time 0.
-
-% Initialize status of expand
-ests = -1;
-ep_exp = [];
+sts = 1;
 
 
 
-% Expand epochs
-pre = expansion(1);
-post = expansion(2);
-expanded_epochs_temp = [ep(:,1) - pre, ep(:,2) + post];
-
-
-% Ensure that the start of epoch is not neg. but 0
-[ksts, expanded_epochs_temp] = pspm_get_timing('epochs',expanded_epochs_temp , 'seconds') ;
-
-if ksts < 1 
-    warning('Offsets must be larger than onsets')
-    return
-end
-
-% If there is only one epoch, no need for merging
-if size(expanded_epochs_temp, 1) == 1
-    ep_exp = expanded_epochs_temp;
-    ests = 1;
-    return;
-end
-
-
-
-% Merge overlapping epochs
-ep_exp = expanded_epochs_temp(1, :);  % Start with the first epoch
-for i = 2:size(expanded_epochs_temp, 1)
-    % If the current epoch overlaps with the previous, merge them
-    if ep_exp(end, 2) >= expanded_epochs_temp(i, 1)
-        ep_exp(end, 2) = max(ep_exp(end, 2), expanded_epochs_temp(i, 2));
-    else
-        % Otherwise, add the current epoch as a new row
-        ep_exp = [ep_exp; expanded_epochs_temp(i, :)];
-    end
-end
-
-ests = 1;
-end
