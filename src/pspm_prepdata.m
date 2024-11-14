@@ -151,14 +151,8 @@ if ~ischar(filt.down) && filt.sr > filt.down
     warning('ID:freq_change', ...
       'Sampling rate was changed to %01.2f Hz to prevent aliasing', filt.down)
   end
-
-
-
-  [lsts, data, newsr] = pspm_downsample( data ,filt.sr,filt.down);
-
-
+  [lsts, data, newsr] = pspm_downsample(data, filt.sr, filt.down);
   if lsts == -1
-    warning('ID:downsampling_failed', ['\nDownsampling failed %s', errmsg]);
     return
   end
 else

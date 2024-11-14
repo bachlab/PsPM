@@ -1,10 +1,7 @@
 function [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
 % ● Description
 %   pspm_downsample performs a downsampling (resampling) operation on 
-%   the provided data. 
-%   
-%   
-%   used by pspm_prepdata & pspm_dcm
+%   the provided data. Currently used by used by pspm_prepdata & pspm_dcm
 %   
 % ● Format
 %           [sts, data, newsr] = pspm_downsample(data, sr,sr_down)
@@ -28,61 +25,39 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+
 %% 2 Check input arguments
 if nargin < 2
   warning('Not enough input arguments.'); return
 end
+
 %% 3 Performing downsampling
 
 freqratio = sr/sr_down;
-isL = false;
-
-% how to downsample a logical array (pspm_dcm_test>validinput uses one)
-if islogical(data)
-    data = double(data);
-    isL = true;
-end
-
 
 if settings.signal
-    % this filts the data on the way, which does not really matter
-    % for us anyway, but allows real sr ratios
+    % this allows real sr ratios but requires integer initial and final sr
     if sr == floor(sr) && sr_down == floor(sr_down)
         data = resample(data, sr_down, sr);
         newsr = sr_down;
-        sts = 1;
-        if isL
-           data = logical(data);
-        end
     else
-        % use a crude but very general way of getting to integer
-        % numbers
-        altsr = floor(sr);
-        altdownsr = floor(sr_down);
+        % use a crude but very general way of getting to integer numbers
+        altsr = round(sr);
+        altdownsr = round(sr_down);
         data = resample(data, altdownsr, altsr);
         newsr = sr * altdownsr/altsr;
-        warning('ID:nonint_sr', 'Note that the new sampling rate is a non-integer number.');
-        sts = 1;
-        if isL
-            data = logical(data);
-        end
+        warning('ID:changed_sr', 'The desired downsample rate was changed.');
     end
+    sts = 1;
 elseif freqratio == ceil(freqratio) % NB isinteger might not work for some values
     % to avoid toolbox use, but only works for integer sr ratios
     data = data(freqratio:freqratio:end); % from old pspm_downsample
     newsr = sr_down;
     sts = 1;
-    if isL
-        data = logical(data);
-    end    
 else
     sts = -1;
-    errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
-    % the function gives back the not downsampled data!
+    warning('ID:nonint_sr', 'Downsampling failed because signal processing toolbox is not installed and downsampling ratio is non-integer.');
+    % the function returns the original data
 end
 
 
-
-return
-
-end

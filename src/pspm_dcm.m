@@ -401,11 +401,7 @@ for vs = 1:numel(valid_subsessions)
   end
   [sts, sbs_data{isbSn, 1}, model.sr] = pspm_prepdata(sbSn_data, model.filter);
   % define missing epochs for inversion in final sampling rate
-  % sbs_missing{isbSn, 1} = downsample(sbs_miss, model.filter.sr/model.sr);
-  [stsl, sbs_missing{isbSn, 1}, ~] = pspm_downsample(sbs_miss, model.sr, model.filter.sr);
-
-
-
+  [stsl, sbs_missing{isbSn, 1}, ~] = logical(pspm_downsample(double(sbs_miss), model.sr, model.filter.sr));
   if sts == -1||stsl == -1 , return; end
   foo{vs, 1} = (sbs_data{isbSn}(:) - mean(sbs_data{isbSn}));
 end
