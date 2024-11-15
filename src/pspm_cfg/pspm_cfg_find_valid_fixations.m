@@ -12,12 +12,12 @@ chan             = pspm_cfg_selector_channel('pupil_both');
 ChanAct          = pspm_cfg_selector_channel_action;
 
 %% Visual angle
-box_degree              = cfg_entry;
-box_degree.name         = 'Visual angle';
-box_degree.tag          = 'box_degree';
-box_degree.strtype      = 'i';
-box_degree.num          = [1 1];
-box_degree.help         = pspm_cfg_help_format('pspm_find_valid_fixations', 'circle_degree');
+circle_degree              = cfg_entry;
+circle_degree.name         = 'Visual angle';
+circle_degree.tag          = 'circle_degree';
+circle_degree.strtype      = 'i';
+circle_degree.num          = [1 1];
+circle_degree.help         = pspm_cfg_help_format('pspm_find_valid_fixations', 'circle_degree');
 
 %% Distance
 distance                = cfg_entry;
@@ -79,7 +79,7 @@ FixPt.help              = pspm_cfg_help_format('pspm_find_valid_fixations', 'opt
 ValidSet                = cfg_branch;
 ValidSet.name           = 'Fixation point';
 ValidSet.tag            = 'validation_settings';
-ValidSet.val            = {box_degree, distance, unit, Resol, FixPt};
+ValidSet.val            = {circle_degree, distance, unit, Resol, FixPt};
 ValidSet.help           = {};
 
 %% Validate on bitmap

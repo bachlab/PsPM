@@ -5,11 +5,10 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %   It performs the steps described in [1]. This function uses
 %   a modified version of [2]. The modified version with a list of changes
 %   from the original is shipped with PsPM under pupil-size directory.
-%   The steps performed are listed below:
-%   1.  Pupil preprocessing is performed in two main steps. In the first
-%       step, the “valid” samples are determined. The samples that are not
-%       valid are not used in the second step. Determining valid samples is
-%       done by the following procedures.
+%   Pupil preprocessing is performed in three main steps:
+%   1.  In the first step, the "valid" samples are determined. Samples that 
+%       are not valid are not used in the second step. Determining valid 
+%       samples is done by the following procedures:
 %       (a) Range filtering: Pupil size values outside a predefined range
 %           are considered invalid. This range is configurable.
 %       (b) Speed filtering: Speed is computed as the 1st difference of

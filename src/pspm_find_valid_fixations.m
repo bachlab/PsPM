@@ -31,10 +31,8 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 % ● Arguments
 %   *             fn : The actual data file containing the eyelink recording with gaze
 %                      data converted to cm.
-%   *         bitmap : A nxm matrix representing the display window and holding for each
-%                      poisition a one, where a gaze value is valid. If there exists
-%                      gaze data at a point with a zero value in the bitmap the
-%                      corresponding data is set to NaN. IMPORTANT: the bitmap has to
+%   *         bitmap : A nxm matrix of the same size as the display, with 1 
+%                      for valid and 0 for invalid gaze points. IMPORTANT: the bitmap has to
 %                      be defined in terms of the eyetracker coordinate system, i.e.
 %                      bitmap(1,1) must correpond to the origin of the eyetracker
 %                      coordinate system, and must be of the same size as
