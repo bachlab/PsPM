@@ -54,7 +54,7 @@ if lsts < 1
 end
 
 
-
+% expands the epoch if  options.expand_epochs exists
 if isfield(options,'expand_epochs')
     if numel(options.expand_epochs) ~= 2 || ~isnumeric(options.expand_epochs)
         warning('Expansion must be a 2-element vector [pre, post].');
