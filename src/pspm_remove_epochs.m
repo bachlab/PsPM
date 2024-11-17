@@ -54,26 +54,17 @@ if lsts < 1
 end
 
 
-% add check for options.expand_epochs!!!
-% was ist mit commer werten??
 
-% was ist mit mehren daten?? channels??
-% event and this function??
-% float epochts?
-
-% options-> overwrite?? 
-% options -> load expansion??
-
-
-if numel(options.expand_epochs) ~= 2 || ~isnumeric(options.expand_epochs)
-    warning('Expansion must be a 2-element vector [pre, post].');
-else
-    [psts, ep] = pspm_expand_epochs(ep, options.expand_epochs);
-    if psts < 1
-        return;
+if isfield(options,'expand_epochs')
+    if numel(options.expand_epochs) ~= 2 || ~isnumeric(options.expand_epochs)
+        warning('Expansion must be a 2-element vector [pre, post].');
+    else
+        [psts, ep] = pspm_expand_epochs(ep, options.expand_epochs);
+        if psts < 1
+            return;
+        end
     end
 end
-
 
 
 
@@ -107,4 +98,4 @@ end
 
 [sts, out] = pspm_write_channel(datafile, data, options.channel_action, ...
     struct('channel', pos_of_channels));
-outchanel = out.channel; % out is channel_nr
+outchanel = out.channel;
