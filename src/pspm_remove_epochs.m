@@ -12,8 +12,8 @@ function [sts, outchannel] = pspm_remove_epochs(datafile, channel, epochfile, op
 %                 be in seconds. This parameter is passed to pspm_get_timing().
 %   * timeunits:  timeunits of the epochfile.
 %   ┌───options
-%   └─.channel_action: ['add'/'replace'] Defines whether new channels should be added or
-%                      corresponding channels should be replaced. The default value is 'add'.
+%   ├─.channel_action: ['add'/'replace'] Defines whether new channels should be added or
+%   │                  corresponding channels should be replaced. The default value is 'add'.
 %   └─.expand_epochs:  [pre, post]
 %                              
 % ● Output
@@ -38,7 +38,7 @@ if nargin < 3
 elseif nargin < 4
   options = struct();
 end
-options = pspm_options(options, 'remove_epochs'); % change!!! [0,0]
+options = pspm_options(options, 'remove_epochs');
 if options.invalid
   return
 end
@@ -54,19 +54,25 @@ if lsts < 1
 end
 
 
+% add check for options.expand_epochs!!!
+% was ist mit commer werten??
 
-expansion = options.expand_epochs;
+% was ist mit mehren daten?? channels??
+% event and this function??
+% float epochts?
 
-if numel(expansion) ~= 2
-    error('Expansion must be a 2-element vector [pre, post].');
+% options-> overwrite?? 
+% options -> load expansion??
+
+
+if numel(options.expand_epochs) ~= 2 || ~isnumeric(options.expand_epochs)
+    warning('Expansion must be a 2-element vector [pre, post].');
+else
+    [psts, ep] = pspm_expand_epochs(ep, options.expand_epochs);
+    if psts < 1
+        return;
+    end
 end
-% Expand the epochs
-
-[sts, ep_exp] = pspm_expand_epochs(ep, expansion, 'missing_ep');
-if psts < 1
-    return;
-end
-
 
 
 
@@ -98,6 +104,7 @@ for i_data = 1:n_data
   end
 end
 % save data to file
+
 [sts, out] = pspm_write_channel(datafile, data, options.channel_action, ...
     struct('channel', pos_of_channels));
-outchanel = out.channel;
+outchanel = out.channel; % out is channel_nr
