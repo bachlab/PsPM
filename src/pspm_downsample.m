@@ -35,24 +35,27 @@ end
 
 freqratio = sr/sr_down;
 
-if settings.signal
-    % this allows real sr ratios but requires integer initial and final sr
+if freqratio == ceil(freqratio) % NB isinteger might not work for some values
+    % this gives the same output as the signal processing toolbox function
+    % downsample(data, freqratio)
+    data = data(1:freqratio:end); % from old pspm_downsample
+    newsr = sr_down;
+    sts = 1;
+elseif settings.signal
+    % this uses a filter and is therefore not used for integer sampling
+    % ratio. It allows real sr ratios but requires integer initial and final sr
     if sr == floor(sr) && sr_down == floor(sr_down)
         data = resample(data, sr_down, sr);
         newsr = sr_down;
     else
-        % use a crude but very general way of getting to integer numbers
+        % use a crude but very general way of getting to integer numbers by
+        % changing the new sampling rate
         altsr = round(sr);
         altdownsr = round(sr_down);
         data = resample(data, altdownsr, altsr);
         newsr = sr * altdownsr/altsr;
         warning('ID:changed_sr', 'The desired downsample rate was changed.');
     end
-    sts = 1;
-elseif freqratio == ceil(freqratio) % NB isinteger might not work for some values
-    % to avoid toolbox use, but only works for integer sr ratios
-    data = data(freqratio:freqratio:end); % from old pspm_downsample
-    newsr = sr_down;
     sts = 1;
 else
     sts = -1;
