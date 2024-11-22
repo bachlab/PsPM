@@ -54,7 +54,7 @@ elseif settings.signal
         altdownsr = round(sr_down);
         data = resample(data, altdownsr, altsr);
         newsr = sr * altdownsr/altsr;
-        warning('ID:changed_sr', 'The desired downsample rate was changed.');
+        warning('ID:freq_change', 'The desired downsample rate was changed.');
     end
     sts = 1;
 else
