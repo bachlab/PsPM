@@ -294,12 +294,49 @@ function buttonPlot5_Callback(hObject, ~, handles)
 tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
+
   case 'glm'
     [~, handles.modelData{handles.currentModel}.fig] = ...
       pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 5);
+    
   case 'dcm'
-    [~, handles.modelData{handles.currentModel}.fig] = ...
-      pspm_rev_con(handles.modelData{handles.currentModel}.model);
+        modelfile = handles.modelData{handles.currentModel}.modelfile;
+        options = struct();
+        [ssts, segments] = pspm_extract_segments('model', modelfile, options);
+
+        if ssts == -1
+            uiwait(msgbox('Error extracting segments from the model.', 'Error')) 
+        else
+
+            glm = handles.modelData{handles.currentModel}.model;
+            sr = glm.input.sr;
+            cmap = lines(numel(segments.segments));  
+            f.h = figure;
+            f.a.h = axes(f.h);
+            hold on;
+
+            legendNames = cell(1, numel(segments.segments));
+
+            for x = 1:numel(segments.segments)
+
+                plotdata = segments.segments{x}.mean;
+                t = (1:length(plotdata)) / sr; 
+                f.a.p = plot(f.a.h, t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
+                legendNames{x} = segments.segments{x}.name;
+
+            end
+
+            f.a.l = legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
+            legend boxoff
+
+            set(get(f.a.h, 'xlabel'), 'String', 'Time (seconds)');
+            set(get(f.a.h, 'ylabel'), 'String', 'Mean Response (data units)');
+            set(get(f.a.h, 'title'), 'String', 'Mean Responses for All Segments');
+
+            hold off;
+        end
+
+
 
 end
 set(handles.textStatus,'String',tmpStatusString);
@@ -351,8 +388,10 @@ switch handles.modelData{handles.currentModel}.modeltype
 
             hold off;
         end
-
-
+  % contrast in comand window     
+  case 'dcm'
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_con(handles.modelData{handles.currentModel}.model);
 
 end
 
@@ -543,15 +582,17 @@ switch handles.modelData{handles.currentModel}.modeltype
     buttonPlotString = {'Display', ...
       'Display', ...
       'Display', ...
-      'Show'};
+      'Show', ...
+      'Plot'};
     textPlotString = {'All trials for one session', ...
       'Diagnostics for trial nr.', ...
       'Skin conductance response function (SCR)', ...
-      'Trial and condition names in command window'};
+      'Trial and condition names in command window', ...
+      'Plot data per condition'};
     % detect contrasts
     if isfield(handles.modelData{handles.currentModel}.model, 'con')
-      buttonPlotString{5} = 'Show';
-      textPlotString{5} = 'Contrast names in command window';
+      buttonPlotString{6} = 'Show';
+      textPlotString{6} = 'Contrast names in command window';
     end
     setInvisble(handles);
     setButtonPlotString(handles, buttonPlotString);
