@@ -496,6 +496,10 @@ if ~isempty(options.missing_epochs_filename)
         % 2.48 pspm_combine_markerchannels
         options = autofill(options, 'marker_chan_num',        'marker',   '*Int*Char'       );
         options = autofill_channel_action(options);
+    case 'expand_epochs'
+        % 2.49 pspm_expand_epochs
+        options = autofill(options, 'overwrite',              2,          [0,1]             );
+        options = autofill_channel_action(options);
 end
 return
 
