@@ -1,4 +1,4 @@
-function [out,datafile, datatype, import, options] = pspm_cfg_run_import(job)
+function out = pspm_cfg_run_import(job)
 % Updated on 08-01-2024 by Teddy
 global settings
 if isempty(settings), pspm_init; end
@@ -90,3 +90,4 @@ end
 options = struct();
 options = pspm_update_struct(options, job, 'overwrite');
 [sts, out] = pspm_import(datafile, datatype, import, options);
+out = {out}; % convert to cell for dependency handling of file names
