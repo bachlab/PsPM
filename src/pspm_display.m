@@ -863,24 +863,17 @@ else
   xlabel('Time [s]','Fontsize',settings.ui.FontSizeText);
   wv_chanid = handles.prop.wavechans(handles.prop.idwave);
   unit = deblank(handles.data{wv_chanid}.header.units);
-  Ylab = ['Unknown unit [',unit,']']; % default value
+  channeltypeindx = find(strcmpi(handles.data{wv_chanid}.header.chantype, ...
+      {settings.channeltypes.type}));
+  Ylab = [settings.channeltypes(channeltypeindx).description, ' [', unit,']']; % default value
   switch handles.prop.wave
-    case 'ecg'
-      Ylab = ['Amplitude [',unit,']'];
     case 'scr'
-      Ylab = ['Amplitude [',unit,']'];
-    case 'emg'
-      Ylab = ['Amplitude [',unit,']'];
-    case 'hp'
-      Ylab = 'Interpolated IBI [ms]';
-    case {'pupil','pupil_l','pupil_r',...
-        'pupil_pp','pupil_pp_l','pupil_pp_r'}
+      Ylab = ['Skin conductance [',unit,']'];
+    case {'pupil','pupil_l','pupil_r', 'pupil_c'}
       Ylab = ['Pupil size [',unit,']'];
-    case {'gaze_x','gaze_x_l','gaze_x_r',...
-        'gaze_x_pp','gaze_x_pp_l','gaze_x_pp_r'}
+      case {'gaze_x','gaze_x_l','gaze_x_r', 'gaze_x_c'}
       Ylab = ['Gaze x coordinate [',unit,']'];
-    case {'gaze_y','gaze_y_l','gaze_y_r',...
-        'gaze_y_pp','gaze_y_pp_l','gaze_y_pp_r'}
+      case {'gaze_y','gaze_y_l','gaze_y_r', 'gaze_y_c'}
       Ylab = ['Gaze y coordinate [',unit,']'];
   end
   ylabel(Ylab,'Fontsize',settings.ui.FontSizeText);
