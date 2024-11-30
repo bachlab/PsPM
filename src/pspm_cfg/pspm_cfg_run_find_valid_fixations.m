@@ -36,7 +36,7 @@ end
 %% options
 options.channel = pspm_cfg_selector_channel('run', job.chan); 
 options.channel_action = job.channel_action;
-options = pspm_update_struct(options, job.output_settings, {'missing', ...
+options = pspm_update_struct(options, job.output_settings, {'add_invalid', ...
                                                             'plot_gaze_coords'});
 %% run
 if isfield(job.val_method,'bitmap_file')

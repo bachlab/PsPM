@@ -41,7 +41,7 @@ Resol.name              = 'Resolution';
 Resol.tag               = 'resolution';
 Resol.strtype           = 'i';
 Resol.num               = [1 2];
-Resol.val               = {[1280 1024]};
+Resol.val               = {[1 1]};
 Resol.help              = pspm_cfg_help_format('pspm_find_valid_fixations', 'options.resolution');
 %% Fixation point default
 FixPtDefault            = cfg_const;
@@ -114,7 +114,7 @@ plot_gaze_coords.help   = pspm_cfg_help_format('pspm_find_valid_fixations', 'opt
 output                  = cfg_branch;
 output.name             = 'Output settings';
 output.tag              = 'output_settings';
-output.val              = {add_invalid, plot_gaze_coords};
+output.val              = {missing, plot_gaze_coords};
 %% Executable branch
 FindValidFixa           = cfg_exbranch;
 FindValidFixa.name      = 'Find valid fixations';

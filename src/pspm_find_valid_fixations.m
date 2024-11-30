@@ -45,13 +45,13 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %   │                  to the given resolution, and in the eyetracker coordinate system).
 %   │                  n should equal either 1 (constant fixation point) or the length
 %   │                  of the actual data. If resolution is not defined the values are
-%   │                  given in percent. Therefore [0.5 0.5] would correspond to the
-%   │                  middle of the screen. Default is [0.5 0.5]. Only taken into account
+%   │                  given in percent. Therefore (0.5 0.5) would correspond to the
+%   │                  middle of the screen. Default is (0.5 0.5). Only taken into account
 %   │                  if there is no bitmap.
 %   ├────.resolution : Resolution with which the fixation point is defined (Maximum value
 %   │                  of the x and y coordinates). This can be the screen resolution in
-%   │                  pixels (e.g. [1280 1024]) or the width and height of the screen
-%   │                  in cm (e.g. [50 30]). Default is [1 1]. Only taken into account
+%   │                  pixels (e.g. (1280 1024)) or the width and height of the screen
+%   │                  in cm (e.g. (50 30)). Default is (1 1). Only taken into account
 %   │                  if there is no bitmap.
 %   ├.plot_gaze_coords: Define whether to plot the gaze coordinates for visual
 %   │                 inspection of the validation process. Default is false.
@@ -256,7 +256,7 @@ if ~strcmpi(options.channel, 'both')
 
             % check plotting
             if options.plot_gaze_coords
-              fg = figure;
+              fg = figure('Name', 'Fixation plot');
               ax = axes('NextPlot', 'add');
               set(ax, 'Parent', handle(fg));
 
