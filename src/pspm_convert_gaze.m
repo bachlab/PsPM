@@ -16,7 +16,7 @@ function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 %   │                 inspect the channels.
 %   ├────────.target: Target unit of conversion: a metric distance unit,
 %   │                 'degree' or 'sps'.
-%   ├──.screen_width: With of the display in mm (not required if 'from' is
+%   ├──.screen_width: Width of the display in mm (not required if 'from' is
 %   │                 'degree', or if both source and target are metric).
 %   ├─.screen_height: Height of the display in mm (not required if 'from' is
 %   │                 'degree', or if both source and target are metric).
@@ -131,9 +131,14 @@ for i = 1:numel(channel)
     else
         % for channeltype specification, just consider channels in the correct units
         gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
+        warning off
         [lsts, data{i}, infos, pos_of_channel(i)] = pspm_load_channel(gazedata, channel{i}, channeltypes{i});
+        warning on
+        if lsts < 1
+            warning('ID:invalid_input', 'Either there is no gaze channel in the file, or all gaze channels are in the incorrect units.')
+            return;
+        end
         % map channel index from list of channels with correct units to list of all channels
-        if lsts < 1, return, end
         pos_of_channel(i) = channels_correct_units(pos_of_channel(i)); 
     end
 end
