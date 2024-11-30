@@ -97,7 +97,7 @@ val_method.help         = {};
 %% Missing
 missing                 = cfg_menu;
 missing.name            = 'Add channel with information invalid data points';
-missing.tag             = 'missing';
+missing.tag             = 'add_invalid';
 missing.labels          = {'Yes', 'No'};
 missing.values          = {1, 0};
 missing.val             = {0};
@@ -114,7 +114,7 @@ plot_gaze_coords.help   = pspm_cfg_help_format('pspm_find_valid_fixations', 'opt
 output                  = cfg_branch;
 output.name             = 'Output settings';
 output.tag              = 'output_settings';
-output.val              = {missing, plot_gaze_coords};
+output.val              = {add_invalid, plot_gaze_coords};
 %% Executable branch
 FindValidFixa           = cfg_exbranch;
 FindValidFixa.name      = 'Find valid fixations';
