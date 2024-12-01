@@ -13,6 +13,7 @@ function [sts, fig] = pspm_rev_glm(modelfile, plotNr)
 %                 3 - predicted & observed
 %                 4 - print regressor names
 %                 5 - reconstructed responses
+%                 6 - plot mean responses of all segments 
 % ● Outputs
 %   *       sts : status variable indicating whether the function run successfully
 %   *       fig : returns the figure handles
@@ -20,6 +21,7 @@ function [sts, fig] = pspm_rev_glm(modelfile, plotNr)
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
 
 % initialise
 global settings
@@ -226,6 +228,41 @@ for i=1:length(plotNr)
         XLim = cellfun(@(x){num2str(x)}, XLim);
         set(fig(5).ax(1).h, 'XTickLabel',XLim);
         set(fig(5).title, 'String', sprintf('Estimated responses per condition: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
+      case 6
+
+        options = struct();
+        [ssts, segments] = pspm_extract_segments('model', glm, options);
+        if ssts == -1
+            uiwait(msgbox('Error extracting segments from the model.', 'Error')) 
+        else
+            sr = glm.input.sr;
+            cmap = lines(numel(segments.segments));  
+            f.h = figure;
+            f.a.h = axes(f.h);
+            hold on;
+
+            legendNames = cell(1, numel(segments.segments));
+
+            for x = 1:numel(segments.segments)
+
+                plotdata = segments.segments{x}.mean;
+                t = (1:length(plotdata)) / sr; 
+                f.a.p = plot(f.a.h, t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
+                legendNames{x} = segments.segments{x}.name;
+
+            end
+
+            f.a.l = legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
+            legend boxoff
+
+            set(get(f.a.h, 'xlabel'), 'String', 'Time (seconds)');
+            set(get(f.a.h, 'ylabel'), 'String', 'Mean Response (data units)');
+            set(get(f.a.h, 'title'), 'String', 'Mean Responses for All Segments');
+
+            hold off;
+        end
+
+
 
     end
   end

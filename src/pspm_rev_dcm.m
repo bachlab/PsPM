@@ -19,12 +19,16 @@ function sts = pspm_rev_dcm(dcm, job, sn, trl)
 %            'scrf'  show peripheral skin conductance response function as used
 %                    for trial-by-trial estimation of sympathetic input
 %            'names' show trial and condition names in command window
+%            'seg'   show the mean responses of all segments identified in 
+%                    the DCM model. ('pspm_extract_segments')
 %   *  sn: session.
 %   * trl: trial.
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
+
 
 %% Initialise
 global settings
@@ -123,6 +127,47 @@ switch job
       fprintf('Condition %d: %s\n',n,dcm.condnames{n});
     end;
     fprintf('---------------------------------------\n');
+  case 'seg'
+         
+    options = struct();
+    [ssts, segments] = pspm_extract_segments('model', dcm, options);
+
+    if ssts == -1
+        uiwait(msgbox('Error extracting segments from the model.', 'Error')) 
+    else
+
+        
+        sr = dcm.input.sr;
+        cmap = lines(numel(segments.segments));  
+        f.h = figure;
+        f.a.h = axes(f.h);
+        hold on;
+
+        legendNames = cell(1, numel(segments.segments));
+
+        for x = 1:numel(segments.segments)
+
+            plotdata = segments.segments{x}.mean;
+            t = (1:length(plotdata)) / sr; 
+            f.a.p = plot(f.a.h, t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
+            legendNames{x} = segments.segments{x}.name;
+
+        end
+
+        f.a.l = legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
+        legend boxoff
+
+        set(get(f.a.h, 'xlabel'), 'String', 'Time (seconds)');
+        set(get(f.a.h, 'ylabel'), 'String', 'Mean Response (data units)');
+        set(get(f.a.h, 'title'), 'String', 'Mean Responses for All Segments');
+
+        hold off;
+    end
+
+
+
+
+
 end;
 
 sts = 1;
