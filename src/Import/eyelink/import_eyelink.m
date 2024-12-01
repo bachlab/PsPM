@@ -387,11 +387,12 @@ for sess_idx = 1:numel(messages)
       parts = split(msg);
       chan_info{sess_idx}.track_mode = parts{4};
       chan_info{sess_idx}.sr = str2num(parts{5});
-      if length(parts)>8
-          chan_info{sess_idx}.eyesObserved = parts{10};
-      else
-          chan_info{sess_idx}.eyesObserved = parts{8};
+      chan_info{sess_idx}.eyesObserved = parts{end};
+      if ~any(structfun( @(x) strcmpi(chan_info{sess_idx}.eyesObserved  , x), settings.eye.cap ) )
+         warning(['Parsing Error: The value for "eyesObserved"' ...
+             ' must be ''R'', ''L'', ''RL'', or ''LR''.']);
       end
+
     elseif contains(msg, pupil_str)
       parts = split(msg);
       chan_info{sess_idx}.diam_vals = lower(parts{2});
