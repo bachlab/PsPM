@@ -137,14 +137,14 @@ for iFile = 1:size(modelfileArray, 1)
 end
 setButtonEnable(handles)
 
-if handles.modelCnt > 1
-  set(handles.buttonRemoveModel2, 'Enable', 'on');
+if handles.modelCnt > 1 
+  set(handles.buttonRemoveModel, 'Enable', 'on');
 end
 guidata(hObject, handles);
 
-% --- Executes on button press in buttonRemoveModel2.
+% --- Executes on button press in buttonRemoveModel.
 function buttonRemoveModel_Callback(hObject, ~, handles)
-% hObject    handle to buttonRemoveModel2 (see GCBO)
+% hObject    handle to buttonRemoveModel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.modelData{handles.currentModel} = [];
@@ -157,8 +157,8 @@ if handles.currentModel > handles.modelCnt
   handles.currentModel = handles.modelCnt;
 end
 set(handles.listModel, 'Value', handles.currentModel);
-if handles.modelCnt < 2
-  set(handles.buttonRemoveModel2, 'Enable', 'off');
+if handles.modelCnt < 2 
+  set(handles.buttonRemoveModel, 'Enable', 'off');
 end
 showModel(handles);
 
