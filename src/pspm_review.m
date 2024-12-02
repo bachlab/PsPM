@@ -201,7 +201,7 @@ switch handles.modelData{handles.currentModel}.modeltype
   case 'dcm'
     sessionNr = checkSessionNr(handles);
     if sessionNr
-      pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'sum', sessionNr, [])
+      pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'sum', sessionNr, []);
     end
 
   case 'sf'
