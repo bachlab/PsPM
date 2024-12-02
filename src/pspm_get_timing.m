@@ -4,12 +4,13 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %   different formats and align with a number of files. Time units (seconds,
 %   samples, markers) are not changed.
 % ● Format
-%   [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
-%   [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
-%   [sts, events] = pspm_get_timing('events', events)
-%   [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
-%   for recursive calls also:
-%   [sts, epochs] = pspm_get_timing('file', filename)
+%   → Standard
+%     [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
+%     [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
+%     [sts, events] = pspm_get_timing('events', events)
+%     [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
+%   → For recursive calls also:
+%     [sts, epochs] = pspm_get_timing('file', filename)
 % ● Arguments
 %   onsets and timeunits are 'seconds', 'samples' or 'markers':
 %      for defining event onsets for multiple conditions (e. g. GLM)
@@ -59,8 +60,8 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %       for 'param'
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Written    in 2009-2015 by Dominik R Bach (WTCN, UZH)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -291,30 +292,67 @@ switch model
         temptiming(iFile).durations = in.durations;
         if isfield(in, 'pmod')
           temptiming(iFile).pmod  = in.pmodnew;
-        end  
-      end
-      % ensure same names exist for all sessions and re-sort if
-      % necesssary
-      outtiming = struct('names', {}, 'onsets', {}, 'durations', {});
-      for iFile = 1:nFiles
-        for iCond = 1:numel(allnames)
-            name_idx = find(strcmpi(temptiming(iFile).names, allnames{iCond}));
-            if numel(name_idx) > 1
-                warning('Names must be unique within each session.');
-                return;
-            elseif numel(name_idx) == 1
-                outtiming(iFile).onsets{iCond}    = temptiming(iFile).onsets{name_idx};
-                outtiming(iFile).durations{iCond}  = temptiming(iFile).durations{name_idx};
-                if isfield(temptiming, 'pmod') && numel(temptiming(iFile).pmod) >= name_idx
-                    outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
-                end
-            elseif numel(name_idx) == 0
-                outtiming(iFile).onsets{iCond}    = [];
-                outtiming(iFile).durations{iCond}  = [];
-            end
-            outtiming(iFile).names{iCond}  = allnames{iCond};
         end
       end
+      % ensure same names exist for all sessions and re-sort if
+      % necesssary; collect number and names of all pmods
+      outtiming = struct('names', {}, 'onsets', {}, 'durations', {});
+      pmodname = {};
+      try
+          for iFile = 1:nFiles
+              for iCond = 1:numel(allnames)
+                  name_idx = find(strcmpi(temptiming(iFile).names, allnames{iCond}));
+                  if numel(name_idx) > 1
+                      warning('Names must be unique within each session.');
+                      return;
+                  elseif numel(name_idx) == 1
+                      outtiming(iFile).onsets{iCond}    = temptiming(iFile).onsets{name_idx};
+                      outtiming(iFile).durations{iCond}  = temptiming(iFile).durations{name_idx};
+                      % assign pmods
+                      if isfield(temptiming, 'pmod') && ...
+                          ~isempty(temptiming(iFile).pmod) && ...
+                           numel(temptiming(iFile).pmod) >= name_idx
+                              outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
+                              % store pmod number and name for later use
+                              pmodno(iFile, iCond) = numel(temptiming(iFile).pmod(name_idx).param);
+                              % get pmodname from first session
+                              if isempty(pmodname) || ...
+                                      numel(pmodname) < iCond || ...
+                                      isempty(pmodname{iCond})
+                                    pmodname{iCond} = temptiming(iFile).pmod(name_idx).name;
+                              end
+                      else
+                          pmodno(iFile, iCond) = 0;
+                      end
+                  elseif numel(name_idx) == 0
+                      outtiming(iFile).onsets{iCond}    = [];
+                      outtiming(iFile).durations{iCond}  = [];
+                      pmodno(iFile, iCond) = 0;
+                  end
+                  outtiming(iFile).names{iCond}  = allnames{iCond};
+              end
+          end
+          if nFiles > 1
+              pmodno = max(pmodno);
+          end
+          % initialise pmods
+          for iFile = 1:nFiles
+              for iCond = 1:numel(allnames)
+                  % insert pmods if they exist in other sessions
+                  if pmodno(iCond) > 0 && ...
+                          (numel(outtiming(iFile).pmod) < iCond || ...
+                          isempty(outtiming(iFile).pmod(iCond).param))
+                      for i_pmod = 1:pmodno(iCond)
+                          outtiming(iFile).pmod(iCond).param{i_pmod} = [];
+                          outtiming(iFile).pmod(iCond).name{i_pmod} = pmodname{iCond}{i_pmod};
+                      end
+                  end
+              end
+          end
+      catch
+          keyboard
+      end
+
       % clear local variables
       clear iParam iParamNew iCond iFile iPmod
     else
@@ -328,7 +366,7 @@ switch model
       end
 
       nMarkers = numel(intiming);
-      for iMarker = 1: nMarkers
+      for iMarker = 1:nMarkers
         % check whether all fields are present and in correct format:
         if isstruct(intiming{iMarker})
           in = intiming{iMarker};
@@ -385,7 +423,7 @@ switch model
     % get epoch information from file or from input --
     if ischar(intiming)
       [sts, in] = pspm_get_timing('file', intiming);
-      if sts < 1, return; end;
+      if sts < 1, return; end
       if isfield(in, 'epochs')
         outtiming = in.epochs;
       elseif isfield(in, 'onsets')
@@ -427,8 +465,14 @@ switch model
       else
         warning('Unknown epoch definition format.');  return;
       end
-    else
-       return;
+    end
+
+    % remove negative values
+    if any(outtiming(:) < 0)
+        indx = outtiming(:,2) < 0;
+        outtiming(indx,:) = [];
+        indx = outtiming(:,1) < 0;
+        outtiming(indx,1) = 0;
     end
 
     % check time units --

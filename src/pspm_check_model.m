@@ -5,152 +5,124 @@ function model = pspm_check_model(model, modeltype)
 % ● Format
 %   model = pspm_check_model(model, modeltype)
 % ● Arguments
-%   ┌──────model:
-%   │ ▶︎ mandatory
-%   ├──.datafile: Values (any of the following)
-%   │               * A file name (single session)
-%   │               * A cell array of file names (multiple sessions)
-%   ├─.modelfile: a file name for the model output
-%   │ ├─.modelfile (GLM, DCM, TAM)
-%   │ │             * A file name
-%   │ └─.modelfile (SF)
-%   │               * A file name (single data file)
-%   │               * A cell array of file names (multiple data files)
-%   ├─.timeunits:
-%   │ ├─.timeunits (GLM, TAM)
-%   │ │           Acceptable values:
-%   │ │             'seconds', 'samples', 'markers', or 'markervalues'
-%   │ └─.timeunits (SF)
-%   │             Acceptable values:
-%   │               'seconds', 'samples', 'markers', or 'whole'
-%   ├─.timing:
-%   │ ├─.timing (DCM):
-%   │ │           Acceptable values (any of the following):
-%   │ │             * A file name/cell array of events (single session);
-%   │ │             * A cell array of file names/cell arrays.
-%   │ │           Descriptions:
-%   │ │             * When specifying file names, each file must be a *.mat
-%   │ │               file that contain a cell variable called 'events'.
-%   │ │             * Each cell should contain either one column (fixed
-%   │ │               response) or two columns (flexible response).
-%   │ │             * All matrices in the array need to have the same
-%   │ │               number of rows, i.e. the event structure must be the
-%   │ │               same for every trial. If this is not the case,
-%   │ │               include `dummy` events with negative onsets.
-%   │ ├─.timing (GLM, TAM):
-%   │ │           Acceptable values (any of the following):
-%   │ │             * A multiple condition file name (single session);
-%   │ │             * A cell array of multiple condition file names;
-%   │ │             * A struct (single session) or a cell array of struct
-%   │ │               (multiple sessions), where each struct show have the
-%   │ │               following fields:
-%   │ │               * .names (mandatory)
-%   │ │               * .onsets (mandatory)
-%   │ │               * .durations (optional)
-%   │ │               * .pmod (optional)
-%   │ │             * A struct (single session) or a cell array of struct
-%   │ │               (multiple sessions), if model.timeunits is set as
-%   │ │               'markervalues', where each
-%   │ │               struct show have the following fields:
-%   │ │               * .markervalues
-%   │ │               * .names
-%   │ └─.timing (SF) (ignored if .timeunits == 'whole' (SF)):
-%   │             Acceptable values (any of the following):
-%   │               * A SPM style onset file with two following event types:
-%   │                 * onset
-%   │                 * offset (other names are ignored)
-%   │               * a .mat file with a variable 'epochs', see below
-%   │               * a two-column text file with on/offsets
-%   │               * e x 2 array of epoch on- and offsets, with e: number
-%   │                 of epochs or cell array of any of these, for multiple
-%   │                 files.
-%   │ ▶︎ optional
-%   ├───.missing: allows to specify missing (e. g. artefact) epochs in the
-%   │             data file. See pspm_get_timing for epoch definition;
-%   │             specify a cell array for multiple input files. This
-%   │             must always be specified in SECONDS.
+%   ┌─────model
+%   ├─.datafile : Values (any of the following).
+%   │             A file name (single session);
+%   │             A cell array of file names (multiple sessions).
+%   ├.modelfile : A file name for the model output, can be any of the following.
+%   │             [for GLM, DCM, TAM] A file name.
+%   │             [for SF] A file name (single data file) or a cell array of file names
+%   │                      (multiple data files).
+%   ├.timeunits : A string.
+%   │             [for GLM, TAM] can be either 'seconds', 'samples', 'markers', or
+%   │                            'markervalues'.
+%   │             [for SF] can be either 'seconds', 'samples', 'markers', or 'whole'.
+%   ├───.timing :
+%   │             [timing for DCM]
+%   │               Acceptable values (any of the following):
+%   │                (1) A file name/cell array of events (single session);
+%   │                (2) A cell array of file names/cell arrays.
+%   │               Descriptions:
+%   │                 When specifying file names, each file must be a *.mat file that
+%   │                   contain a cell variable called 'events'.
+%   │                 Each cell should contain either one column (fixed response) or two
+%   │                   columns (flexible response).
+%   │                 All matrices in the array need to have the same number of rows,
+%   │                   i.e. the event structure must be the same for every trial. If
+%   │                   this is not the case, include `dummy` events with negative onsets.
+%   │             [timing for GLM and TAM]
+%   │               Acceptable values (any of the following):
+%   │                 (1) A multiple condition file name (single session);
+%   │                 (2) A cell array of multiple condition file names;
+%   │                 (3) A struct (single session) or a cell array of struct (multiple
+%   │                   sessions), where each struct show have the following fields:
+%   │                     (3a) .names (mandatory)
+%   │                     (3b) .onsets (mandatory)
+%   │                     (3c) .durations (optional)
+%   │                     (3d) .pmod (optional)
+%   │                 (4) A struct (single session) or a cell array of struct (multiple
+%   │                   sessions), if model.timeunits is set as 'markervalues', where each
+%   │                   struct show have the following fields:
+%   │                     (4a) .markervalues
+%   │                     (4b) .names
+%   │             [timing for SF] (ignored if .timeunits == 'whole' (SF)):
+%   │               Acceptable values (any of the following):
+%   │                 (1) A SPM style onset file with two following event types:
+%   │                     onset
+%   │                     offset (other names are ignored)
+%   │                 (2) A .mat file with a variable 'epochs', see below
+%   │                 (3) A two-column text file with on/offsets
+%   │                 (4) e x 2 array of epoch on- and offsets, with e: number of epochs
+%   │                     or cell array of any of these, for multiple files.
+%   ├──.missing : [optional] allows to specify missing (e. g. artefact) epochs in the
+%   │             data file. See pspm_get_timing for epoch definition; specify a cell
+%   │             array for multiple input files. This must always be specified in SECONDS.
 %   │             Default: no missing values
-%   ├───.channel: channel number (or, for GLM, channel type).
-%   │             If a channel type is specified the LAST channel matching
-%   │             the given type will be used. The rationale for this is
-%   │             that, in general channels later in the channel list are
-%   │             preprocessed/filtered versions of raw channels.
-%   │             SPECIAL: if 'pupil' is specified the function uses the
-%   │             last pupil channel returned by
-%   │             <a href="matlab:help pspm_load_data">pspm_load_data</a>.
-%   │             pspm_load_data loads 'pupil' channels according to a
-%   │             specific precedence order described in its documentation.
-%   │             In a nutshell, it prefers preprocessed channels and
-%   │             channels from the best eye to other pupil channels.
-%   │             SPECIAL: for the modality 'sps', the model.channel
-%   │             accepts only 'sps_l', 'sps_r', or 'sps'.
-%   │             DEFAULT: last channel of the specified modality for GLM;
-%   │             'scr' for DCM and SF
-%   ├─────.norm:  normalise data; default 0
-%   ├───.filter:  filter settings; modality specific default
-%   │
-%   │ ▶︎ optional, GLM (modeltype) only
-%   ├───.latency: allows to specify whether latency should be 'fixed'
-%   │             (default) or should be 'free'. In 'free' models, an
-%   │             additional dictionary matching algorithm will try to
-%   │             estimate the best latency. Latencies will then be added
-%   │             at the end of the output. In 'free' models the field
-%   │             model.window is MANDATORY and single basis functions
-%   │             are allowed only.
-%   ├───.window:  only required if model.latency equals 'free' and ignored
-%   │             otherwise. A scalar or 2-element vector in seconds that
-%   │             specifies over which time window (relative to the event
-%   │             onsets specified in model.timing) the model should be
-%   │             evaluated.
-%   ├────────.bf: basis function/basis set; modality specific default
-%   │             with subfields .fhandle (function handle or string) and
-%   │             .args (arguments, first argument sampling interval will
-%   │             be added by pspm_glm). The optional subfield .shiftbf = n
-%   │             indicates that the onset of the basis function precedes
-%   │             event onsets by n seconds (default: 0: used for
-%   │             interpolated data channels)
-%   ├─.modelspec: 'scr' (default); specify the model to be used.
-%   │             See pspm_init, defaults.glm() which modelspecs are
-%   │             possible with glm.
-%   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
-%   │             name; the file is either a .txt file containing the
-%   │             regressors in columns, or a .mat file containing the
-%   │             regressors in a matrix variable called R. There must be
-%   │             as many values for each column of R as there are data
-%   │             values. SCRalyze will call these regressors R1, R2, ...
-%   ├─.centering: if set to 0 the function would not perform the
-%   │             mean centering of the convolved X data. For example, to
-%   │             invert SPS model, set centering to 0. Default: 1
-%   │
-%   │ ▶︎ optional, DCM (modeltype) only
+%   ├──.channel : [optional] channel number (or, for GLM, channel type). If a channel type
+%   │             is specified the LAST channel matching the given type will be used.
+%   │             The rationale for this is that, in general channels later in the channel
+%   │             list are preprocessed/filtered versions of raw channels.
+%   │             SPECIAL: if 'pupil' is specified the function uses the last pupil channel
+%   │             returned by <a href="matlab:help pspm_load_data">pspm_load_data</a>.
+%   │             pspm_load_data loads 'pupil' channels according to a specific precedence
+%   │             order described in its documentation.
+%   │             In a nutshell, it prefers preprocessed channels and channels from the
+%   │             best eye to other pupil channels.
+%   │             SPECIAL: for the modality 'sps', the model.channel accepts only 'sps_l',
+%   │             'sps_r', or 'sps'.
+%   │             DEFAULT: last channel of the specified modality for GLM; 'scr' for DCM
+%   │             and SF.
+%   ├─────.norm : [optional] normalise data; default 0
+%   ├───.filter : [optional] filter settings; modality specific default
+%   ├──.latency : [optional, GLM (modeltype) only] allows to specify whether latency
+%   │             should be 'fixed'. (default) or should be 'free'. In 'free' models, an
+%   │             additional dictionary matching algorithm will try to estimate the best
+%   │             latency. Latencies will then be added at the end of the output. In
+%   │             'free' models the field model.window is MANDATORY and single basis
+%   │             functions are allowed only.
+%   ├───.window : [optional, GLM (modeltype) only] only required if model.latency equals
+%   │             'free' and ignored otherwise. A scalar or 2-element vector in seconds
+%   │             that specifies over which time window (relative to the event onsets
+%   │             specified in model.timing) the model should be evaluated.
+%   ├───────.bf : [optional, GLM (modeltype) only] basis function/basis set; modality
+%   │             specific default with subfields
+%   │               (1) .fhandle (function handle or string)
+%   │               (2) .args (arguments, first argument sampling interval will be added
+%   │                   by pspm_glm).
+%   │             The optional subfield .shiftbf = n indicates that the onset of the basis
+%   │             function precedes event onsets by n seconds (default: 0: used for
+%   │             interpolated data channels).
+%   ├.modelspec : [optional, GLM (modeltype) only] 'scr' (default); specify the model to
+%   │             be used. See pspm_init, defaults.glm() which modelspecs are possible
+%   │             with glm.
+%   ├─.nuisance : [optional, GLM (modeltype) only] allows to specify nuisance regressors.
+%   │             Must be a file name; the file is either a .txt file containing the
+%   │             regressors in columns, or a .mat file containing the regressors in a
+%   │             matrix variable called R. There must be as many values for each column
+%   │             of R as there are data values. SCRalyze will call these regressors R1,
+%   │             R2, ...
+%   ├.centering : [optional, GLM (modeltype) only] if set to 0 the function would not
+%   │             perform the mean centering of the convolved X data. For example, to
+%   │             invert SPS model, set centering to 0. Default as 1.
 %   ├─.lasttrialcutoff:
-%   │             If there fewer data after the end of then last trial in a
-%   │             session than this cutoff value (in s), then estimated
-%   │             parameters from this trial will be assumed inestimable
-%   │             and set to NaN after the
-%   │             inversion. This value can be set as inf to always retain
-%   │             parameters from the last trial.
-%   │             Default: 7 s
-%   ├─.substhresh:Minimum duration (in seconds) of NaN periods to cause
-%   │             splitting up into subsessions which get evaluated
-%   │             independently (excluding NaN values).
-%   │             Default: 2.
-%   ├─.constrained: Constrained model for flexible responses which have
-%   │             fixed dispersion (0.3 s SD) but flexible latency.
-%   │
-%   │ ▶︎ optional, SF (modeltype) only
-%   ├─────method: [string/cell_array]
-%   │              [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
-%   │              [cell_array] a cell array of methods mentioned above.
-%   │
-%   │ ▶︎ optional, GLM (modeltype) only
-
-
+%   │             [optional, DCM (modeltype) only] If there fewer data after the end of
+%   │             then last trial in a session than this cutoff value (in s), then
+%   │             estimated parameters from this trial will be assumed inestimable and
+%   │             set to NaN after the inversion. This value can be set as inf to always
+%   │             retain parameters from the last trial. Default as 7 s.
+%   ├.substhresh: [optional, DCM (modeltype) only] Minimum duration (in seconds) of NaN
+%   │             periods to cause splitting up into subsessions which get evaluated
+%   │             independently (excluding NaN values). Default as 2.
+%   ├.constrained: [optional, DCM (modeltype) only] Constrained model for flexible
+%   │             responses which have fixed dispersion (0.3 s SD) but flexible latency.
+%   └────method : [optional, SF (modeltype) only] [string/cell_array]
+%                   [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
+%                   [cell_array] a cell array of methods mentioned above.
 % ● History
 %   Introduced in PsPM 6.1.1
 %   Written in 2023 by Dominik Bach (UCL and Bonn)
 
-% 0. Initialise
+%% 0. Initialise
 global settings
 if isempty(settings)
   pspm_init;
@@ -224,7 +196,7 @@ elseif ~any(ismember(model.norm, [0, 1]))
 end
 
 %% 4. Check that session-related field entries have compatible size
-if nFile ~= numel(model.timing)
+if (nFile ~= numel(model.timing)) && ~(numel(model.timing) == 0 && isfield(model, 'nuisance'))
   warning('ID:number_of_elements_dont_match',...
     'Session numbers of data files and event definitions do not match.');
   return
@@ -258,7 +230,10 @@ if strcmpi(modeltype, 'glm')
             iscell(model.nuisance) && (sum(cellfun(@(f) isempty(f), model.nuisance)) == numel(model.nuisance))
             warning('ID:invalid_input', 'Event onsets and nuisance file are not specified. At least one of the two must be specified.'); return;
         end
-     else  % model.timing is defined -> check timing definition
+        % model.timing is defined -> check timing definition, unless
+        % timeunits are 'markervalues' - these cannot be checked upfront
+        % because they require loading the data
+    elseif ~strcmpi(model.timeunits, 'markervalues') && ~isempty(model.timing)
         for iFile = 1:nFile
             sts = pspm_get_timing('onsets', model.timing{iFile}, model.timeunits);
             if sts < 1, return; end

@@ -4,13 +4,13 @@ function [sts, data]=pspm_get_hb(import)
 % ● Format
 %   [sts, data]= pspm_get_hb(import)
 % ● Arguments
-%   import: import job structure with mandatory fields
-%     .data
-%   .marker ('timestamps', 'continuous')
-%       .sr (timestamps: timeunits in seconds, continuous: sample rate in 1/seconds)
-%                  and optional fields
-%                  .flank ('ascending', 'descending', 'both': optional field for
-%                   continuous channels; default: both)
+%   ┌──import
+%   ├───.data : heart beat data
+%   ├─.marker : ('timestamps', 'continuous')
+%   ├─────.sr : (timestamps: timeunits in seconds, continuous: sample
+%   │           rate in 1/seconds) and optional fields
+%   └──.flank : ('ascending', 'descending', 'both': optional field for
+%               continuous channels; default: both)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)

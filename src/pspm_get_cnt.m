@@ -1,24 +1,24 @@
 function [sts, import, sourceinfo] = pspm_get_cnt(datafile, import)
 % ● Description
-%   pspm_get_cnt is the main function for import of NeuroScan cnt files
+%   pspm_get_cnt imports NeuroScan cnt files using FieldTrip functions.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_cnt(datafile, import);
+% ● Developer's notes
 %   This function uses fieldtrip fileio functions
 % ● Arguments
-%       datafile:
-%   ┌─────import:
-%   ├────.typeno:
-%   ├───.channel:
-%   ├────────.sr:
-%   ├──────.data:
-%   ├────.marker:
-%   └.markerinfo:
-%     ├───.value:
-%     └────.name:
+%   *   datafile : The data file to be imported.
+%   ┌─────import
+%   ├────.typeno : The number of channel type.
+%   ├───.channel : The channel to be imported, check pspm_import.
+%   ├──────.type : The type of channel, check pspm_import.
+%   ├────────.sr : The sampling rate of the file.
+%   ├──────.data : The data read from the file.
+%   ├────.marker : The type of marker, such as 'continuous'.
+%   └.markerinfo : The information of the marker, has two fields, value and name.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -68,7 +68,7 @@ for k = 1:numel(import)
     if ~isempty(mrk)
       import{k}.data = [mrk(:).sample];
       import{k}.marker = 'timestamps';
-      import{k}.markerinfo.value = [mrk(:).value];
+      import{k}.markerinfo.value = pspm_struct2vec(mrk, 'value', 'marker');
       import{k}.markerinfo.name = {mrk(:).type};
     else
       import{k}.data = [];

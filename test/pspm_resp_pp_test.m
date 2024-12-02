@@ -6,7 +6,7 @@ classdef pspm_resp_pp_test < pspm_testcase
   properties(Constant)
     input_filename = ['ImportTestData' filesep 'resp' filesep 'pspm_resp_pp_input.mat'];
     backup_filename = ['ImportTestData' filesep 'resp' filesep 'pspm_resp_pp_input_backup.mat'];
-    r660_results_filename = ['ImportTestData' filesep 'resp' filesep 'pspm_resp_pp_r660_results.mat'];
+    r660_results_filename = ['ImportTestData' filesep 'resp' filesep 'pspm_resp_pp_r700_results.mat']; %changed to v700 on 24 July 2024; v660 are also kept in this folder but not used (see below)
     sampling_rate = 2000;
     resp_channel = 1;
     options = struct('systemtype', 'cushion');
@@ -27,14 +27,12 @@ classdef pspm_resp_pp_test < pspm_testcase
       this.verifyWarning(@()pspm_resp_pp(5, 20), 'ID:invalid_input');
       % pass nonnumeric sampling rate
       this.verifyWarning(@()pspm_resp_pp('filename', '205'), 'ID:invalid_input');
-      % pass nonnumeric sampling rate
-      this.verifyWarning(@()pspm_resp_pp('filename', '205'), 'ID:invalid_input');
-      % pass nonnumeric sampling rate
-      this.verifyWarning(@()pspm_resp_pp('filename', '205'), 'ID:invalid_input');
       % pass too high channel
-      this.verifyWarning(@()pspm_resp_pp(this.input_filename, 2000, 999999999), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_resp_pp(this.input_filename, 2000, struct('channel', 999999999)), 'ID:invalid_input');
     end
-    % Regression test. Compare results to r660 version which is presumably correct
+    % Regression test. Compare results to r700 version which corresponds
+    % to the last change in the algorithm. Previous test was for v660;
+    % these are kept in the same folder for comparison
     function compare_results_to_results_obtained_from_r660_version(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
@@ -46,7 +44,9 @@ classdef pspm_resp_pp_test < pspm_testcase
       assert(strcmpi(old_data{3}.header.chantype, 'ra'));
       assert(strcmpi(old_data{4}.header.chantype, 'rfr'));
       assert(strcmpi(old_data{5}.header.chantype, 'rs'));
-      sts = pspm_resp_pp(this.input_filename, this.sampling_rate, this.resp_channel, this.options);
+      options = this.options;
+      options.channel = this.resp_channel;
+      sts = pspm_resp_pp(this.input_filename, this.sampling_rate, options);
       assert(sts == 1);
       [sts, out, new_data] = pspm_load_data(this.input_filename);
       assert(sts == 1);

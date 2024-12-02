@@ -1,33 +1,52 @@
-function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
+function [sts,outchannel,debug_info] = pspm_convert_ecg2hb(fn, options)
 % ● Description
-%   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and
-%   writes them as heart beat channel into the datafile. This function
-%   implements the algorithm by Pan & Tompkins (1985) with some adjustments.
+%   pspm_convert_ecg2hb identifies the position of QRS complexes in ECG data and writes
+%   them as heart beat channel into the datafile. This function implements the algorithm
+%   by Pan & Tompkins (1985) with some adjustments described in the function 
+%   help under Developer's notes.
 % ● Format
-%   sts = pspm_convert_ecg2hb(fn, channel, options)
+%   [sts, channel_index, quality_info] = pspm_convert_ecg2hb(fn, options)
 % ● Arguments
-%                 fn: data file name
-%            channel: number of ECG channel (optional, default: last ECG
-%                     channel) if is empty (= 0 / []) then default channel will
-%                     be used.
-%   ┌────────options:
-%   ├──────────.semi: activates the semi automatic mode, allowing the
-%   │                 handcorrection of all IBIs that fulfill:
-%   │                 >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
-%   ├─────────.minHR: sets minimal HR [def. 20bpm].
-%   ├─────────.maxHR: sets maximal HR [def. 200bpm].
+%   *            fn : data file name
+%   ┌───────options
+%   ├──────.channel : [optional, numeric/string, default: 'ecg', i.e. last ECG channel
+%   │                 in the file] Channel type or channel ID to be preprocessed.
+%   │                 Channel can be specified by its index (numeric) in the file, or by
+%   │                 channel type (string). If there are multiple channels with this
+%   │                 type, only the last one will be processed. If you want to detect
+%   │                 R-peaks for several ECG channels in a PsPM file, call this function
+%   │                 multiple times with the index of each channel. In this case, set
+%   │                 the option 'channel_action' to 'add', to store each resulting 'hb'
+%   │                 channel separately.
+%   ├──────────.semi: Activates the semi automatic mode, allowing the handcorrection of
+%   │                 all IBIs that fulfill: >/< mean(ibi) +/- 3 * std(ibi) [def. 0].
+%   ├─────────.minHR: Minimal HR [def. 20bpm].
+%   ├─────────.maxHR: Maximal HR [def. 200bpm].
 %   ├─────.debugmode: [numeric, default as 0]
-%   │                 runs the algorithm in debugmode (additional results
+%   │                 Runs the algorithm in debugmode (additional results
 %   │                 in debug variable 'infos.pt_debug') and plots a graph
 %   │                 that allows quality checks.
-%   ├──────.twthresh: sets the threshold to perform the twave check.
+%   ├──────.twthresh: Sets the threshold to perform the twave check.
 %   │                 [def. 0.36s].
 %   └.channel_action: ['add'/'replace', default as 'replace']
 %                     Defines whether the new channel should be added or
 %                     the previous outputs of this function should be replaced.
+%
+% ● Output
+%   *  channel_index: index of channel containing the processed data
+%   *   quality_info: generated if options.debugmode == 1
 % ● Reference
-%   Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
-%   Transactions on Biomedical Engineering, 32, 230-236.
+%   [1] Adjusted algorithm:
+%       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related
+%       heart period responses. Psychophysiology, 53, 837-846.
+%   [2] Original algorithm:
+%       Pan J & Tomkins WJ (1985). A Real-Time QRS Detection Algorithm. IEEE
+%       Transactions on Biomedical Engineering, 32, 230-236.
+% ● History
+%   Introduced in PsPM 3.0
+%   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
+%   (Technische Universitaet Dresden, University of Zurich)
+%   Updated in 2022 Teddy
 % ● Developer's Notes
 %   ▶︎ Changes from the original Pan & Tompkins algorithm
 %   filter:       P. & T. intend to achieve a pass band from 5-15 Hz with a
@@ -88,11 +107,6 @@ function [sts,infos] = pspm_convert_ecg2hb(fn, channel, options)
 %
 %   R:            Vector of the same length as the raw data, containing
 %                 information on the position of the QRS complexes.
-% ● History
-%   Introduced in PsPM 3.0
-%   Written in 2013-2015 Philipp C Paulus & Dominik R Bach
-%   (Technische Universitaet Dresden, University of Zurich)
-%   Updated in 2022 Teddy Chao
 
 %% Initialise
 global settings
@@ -100,21 +114,13 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-infos = struct();
-
+outchannel = [];
+debug_info = [];
 
 %% check input
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
-elseif ~ischar(fn)
-  warning('ID:invalid_input', 'Need file name string as first input.'); return;
-elseif (nargin < 2) || isempty(channel) || (isnumeric(channel) && (channel == 0))
-  channel = 'ecg';
-elseif ~isnumeric(channel) && ~strcmp(channel,'ecg')
-  warning('ID:invalid_input', 'Channel number must be numeric'); return;
-end
-
-if ~exist('options','var')
+elseif nargin < 2
   options = struct();
 end
 options = pspm_options(options, 'convert_ecg2hb');
@@ -137,8 +143,8 @@ pt.settings.debugmode = options.debugmode;    %   no debuggin [def]
 pt_debug=[];
 
 %% get data
-[nsts, data] = pspm_load_channel(fn, channel, 'ecg');
-if nsts == -1, return; end
+[nsts, data] = pspm_load_channel(fn, options.channel, 'ecg');
+if nsts < 1, return; end
 
 % =========================================================================
 % Pan Tompkins QRS detection
@@ -274,8 +280,8 @@ action = options.channel_action;
 o.msg.prefix = 'QRS detection with Pan & Tompkins algorithm and HB-timeseries';
 [nsts, write_info] = pspm_write_channel(fn, newdata, action, o);
 if nsts == -1, return; end
-infos.channel = write_info.channel;
-infos.pt_debug = pt_debug;
+outchannel = write_info.channel;
+debug_info = pt_debug;
 sts = 1;
 return
 

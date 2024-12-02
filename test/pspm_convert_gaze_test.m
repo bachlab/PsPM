@@ -31,8 +31,9 @@ classdef pspm_convert_gaze_test < pspm_testcase
       import{end + 1}.type = 'gaze_y_l';
       import{end + 1}.type = 'marker';
       options = struct();
-      this.fn = pspm_import(this.raw_input_filename, 'eyelink', import, options);
-      this.fn = this.fn{1};
+      options.overwrite = 1; % to always overwrite
+
+      [sts, this.fn] = pspm_import(this.raw_input_filename, 'eyelink', import, options);
     end
   end
   methods (Test)
@@ -90,6 +91,7 @@ classdef pspm_convert_gaze_test < pspm_testcase
                 this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_l'), data)), 0);
                 this.verifyLength(find(cellfun(@(c) strcmp(c.header.chantype, 'sps_r'), data)), 0);
             end
+            %if strcmpi(from ,'mm') & strcmpi(channel_action, 'replace'), keyboard; end
             [sts, out_channel] = this.verifyWarningFree(@() pspm_convert_gaze(...
                 this.fn, struct('target', target, 'from', from, 'screen_width', screen_width, 'screen_height', screen_height, 'screen_distance', screen_distance), struct('channel_action', channel_action)));
             load(this.fn);

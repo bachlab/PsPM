@@ -1,4 +1,4 @@
-function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
+function [sts, outchannel] = pspm_convert_gaze(fn, conversion, options)
 % ● Description
 %   pspm_convert_gaze converts between any gaze units or scanpath speed.
 %   Display width and height are required for conversion from pixels to relate
@@ -6,20 +6,22 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   degrees, to translate the coordinate system to the centre of
 %   the display.
 % ● Format
-%   [sts, out_file] = pspm_convert_gaze(fn, conversion, options)
+%   [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 % ● Arguments
-%                 fn: A data file name
-%   ┌────────conversion [ struct ] with fields
-%   ├──────────.from: Original units to convert from: 'pixel', a metric distance
-%   │                 unit, or 'degree'
-%   ├────────.target: target unit of conversion: a metric distance unit,
-%   │                 'degree' or 'sps'
-%   ├──.screen_width: with of the display in mm (not required if 'from' is
-%   │                 'degree'
-%   ├─.screen_height: height of the display in mm (not required if 'from' is
-%   │                 'degree'
-%   └.screen_distance: Subject distance from the screen in mm (not required
-%                     if 'from' is'degree', or if 'target' is metric)
+%   *             fn: A data file name
+%   ┌─────conversion
+%   ├──────────.from: Original units of the source channel pair to convert 
+%   │                 from: 'pixel', a metric distance unit, or 'degree'. 
+%   │                 If in doubt, use the function 'pspm_display' to 
+%   │                 inspect the channels.
+%   ├────────.target: Target unit of conversion: a metric distance unit,
+%   │                 'degree' or 'sps'.
+%   ├──.screen_width: With of the display in mm (not required if 'from' is
+%   │                 'degree', or if both source and target are metric).
+%   ├─.screen_height: Height of the display in mm (not required if 'from' is
+%   │                 'degree', or if both source and target are metric).
+%   └.screen_distance: Eye distance from the screen in mm (not required
+%                     if 'from' is 'degree', or if 'target' is metric).
 %   ┌────────options
 %   ├───────.channel: gaze x and y channels to work on. This can be a pair
 %   │                 of channel numbers, any pair of channel types, 'gaze',
@@ -28,11 +30,8 @@ function [sts, channel_index] = pspm_convert_gaze(fn, conversion, options)
 %   │                 Default is 'gaze'.
 %   └.channel_action: Channel action for sps data, add / replace existing sps
 %                     data (default: add)
-%
 % ● Output
-%                sts: Status determining whether the execution was
-%                     successfull (sts == 1) or not (sts == -1)
-%      channel_index: Id of the added or replaced channels.
+%   *  channel_index: index of channel containing the processed data
 % ● History
 %   Introduced in PsPM 4.3.1
 %   Written in 2020 by Sam Maxwell (University College London)
@@ -45,6 +44,8 @@ if isempty(settings)
     pspm_init;
 end
 sts = -1;
+outchannel = 0;
+
 % Number of arguments validation
 if nargin < 2
     warning('ID:invalid_input','Not enough input arguments.'); return;
@@ -89,6 +90,9 @@ end
 
 % Parse channel specification
 channel = options.channel;
+if isnumeric(channel) && numel(channel) == 1 && channel == 0
+    channel = 'gaze';
+end
 if (iscell(channel) || isnumeric(channel)) && numel(channel) ~= 2
     warning('ID:invalid_input', 'This function operates on pairs of channels; two input channels required.');
     return
@@ -101,8 +105,9 @@ elseif ischar(channel)
         warning('ID:invalid_input', 'This function operates on pairs of channels; two input channels required.');
         return
     end
-else
+elseif ~iscell(channel)
     warning('ID:invalid_input', 'Channel specification not recognised');
+    return
 end
 
 % load data & check units
@@ -110,26 +115,29 @@ end
 if lsts < 1, return, end
 channelunits_list = cellfun(@(x) x.header.units, alldata.data, 'uni', false);
 channels_correct_units = find(contains(channelunits_list, from));
-gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
 channeltypes = {'gaze_x', 'gaze_y'};
 data = {};
 for i = 1:numel(channel)
     % for numeric channel specification, check if it has the right units
     if isnumeric(channel{i})
         if ismember(channel{i}, channels_correct_units)
-            [lsts, data{i}] = pspm_load_channel(alldata, channel{i}, 'gaze');
+            [lsts, data{i}, infos, pos_of_channel(i)] = pspm_load_channel(alldata, channel{i}, 'gaze');
         else
-            warning('ID:invalid_input', 'Channel %i is in units %s, expected was %s.', ...
+            warning('ID:invalid_input', 'Channel %i is in units "%s", expected was "%s".', ...
                 channel{i}, alldata.data{channel{i}}.header.units, from);
             return
         end
-        % for channeltype specification, just consider channels in the correct units
     else
-        [lsts, data{i}] = pspm_load_channel(gazedata, channel{i}, channeltypes{i});
+        % for channeltype specification, just consider channels in the correct units
+        gazedata = struct('infos', alldata.infos, 'data', {alldata.data(channels_correct_units)});
+        [lsts, data{i}, infos, pos_of_channel(i)] = pspm_load_channel(gazedata, channel{i}, channeltypes{i});
+        % map channel index from list of channels with correct units to list of all channels
+        pos_of_channel(i) = channels_correct_units(pos_of_channel(i)); 
     end
     if lsts < 1, return, end
 end
 
+% find eye of channels to use
 eye = {};
 for i = 1:2
     [sts, eye{i}] = pspm_find_eye(data{i}.header.chantype);
@@ -193,5 +201,5 @@ else
     outdata = data;
 end
 
-[sts, out] = pspm_write_channel(fn, outdata, options.channel_action);
-channel_index = out.channel;
+[sts, out] = pspm_write_channel(fn, outdata, options.channel_action, struct('channel', pos_of_channel));
+outchannel = out.channel;

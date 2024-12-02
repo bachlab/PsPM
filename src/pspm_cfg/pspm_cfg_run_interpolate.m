@@ -1,19 +1,14 @@
 function out = pspm_cfg_run_interpolate(job)
 % Updated 18-12-2023 by Teddy
 options = struct();
-fn = job.datafiles;
+fn = job.datafile{1};
 if isfield(job.mode, 'file')
   options = pspm_update_struct(options, job.mode.file, {'overwrite'});
-  options.newfile = true;
+  channel = 'all';
 elseif isfield(job.mode, 'channel')
-  options.channels = cell(size(job.datafiles));
-  options.channels{:} = job.mode.channel.source_chan;
+  channel = pspm_cfg_selector_channel('run', job.mode.channel);
   options.newfile = false;
-  if isfield(job.mode.channel.mode, 'new_chan')
-    options.channel_action = 'add';
-  elseif isfield(job.mode.channel.mode, 'replace_chan')
-    options.channel_action = 'replace';
-  end
+  options = pspm_update_struct(options, job.mode.channel, {'channel_action'});
 end
 options = pspm_update_struct(options, job, {'extrapolate'});
-[~, out] = pspm_interpolate(fn, options);
+[~, out] = pspm_interpolate(fn, channel, options);

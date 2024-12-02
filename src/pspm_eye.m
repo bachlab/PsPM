@@ -4,11 +4,14 @@ function Y = pspm_eye(X, feature)
 % ● Format
 %   Y = pspm_eye(X)
 % ● Arguments
-%   X:
-%   Y:
+%   * X: The input eye marker.
+%   * feature: The feature used for converting eye marker. Accepted values
+%   are 'lr2c', 'char2cell' and 'channel2lateral'.
+% ● Outputs
+%   * Y: The converted eye marker.
 % ● History
 %   Introduced in PsPM 6.0
-%   Written in 2015 by Teddy Chao (UCL)
+%   Written in 2015 by Teddy
 
 global settings
 if isempty(settings)
@@ -34,10 +37,15 @@ switch feature
               Y = settings.lateral.char.r;
         end
       case 'cell'
-        Y{Y=='l'} = settings.lateral.char.l;
-        Y{Y=='r'} = settings.lateral.char.r;
-        Y{Y=='lr'} = settings.lateral.char.c;
-        Y{Y=='rl'} = settings.lateral.char.c;
+        %Y{Y=='l'} = settings.lateral.char.l; 
+        %Y{Y=='r'} = settings.lateral.char.r;
+        %Y{Y=='lr'} = settings.lateral.char.c;
+        %Y{Y=='rl'} = settings.lateral.char.c;
+        Y(strcmp(Y, 'l')) = {settings.lateral.char.l};
+        Y(strcmp(Y, 'r')) = {settings.lateral.char.r};
+        Y(strcmp(Y, 'lr')) = {settings.lateral.char.c};
+        Y(strcmp(Y, 'rl')) = {settings.lateral.char.c};
+
     end
   case 'char2cell'
     % Examples

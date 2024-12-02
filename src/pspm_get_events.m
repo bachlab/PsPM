@@ -4,18 +4,17 @@ function [sts, import] = pspm_get_events(import)
 % ● Format
 %   [sts, data] = pspm_get_events(import)
 % ● Arguments
-%      import:  import job structure with mandatory fields
-%       .data:  mandatory
-%     .marker:  mandatory, accepts 'timestamps' and 'continuous'.
-%         .sr:  timestamps: timeunits in seconds, continuous: sample rate in
-%               1/seconds)
-%      .flank:  optional for continuous channels; default: both; accepts
-%               'ascending', 'descending', 'both', 'all'.
-%    .denoise:  for continuous marker channels: only retains markers of duration
-%               longer than the value given here (in seconds).
-
+%   ┌────import
+%   ├─────.data : mandatory
+%   ├───.marker : mandatory, accepts 'timestamps' and 'continuous'.
+%   ├───────.sr : timestamps: timeunits in seconds, continuous: sample rate
+%   │             in 1/seconds)
+%   ├────.flank : optional for continuous channels; default: both; accepts
+%   │             'ascending', 'descending', 'both', 'all'.
+%   └──.denoise : for continuous marker channels: only retains markers of
+%                 duration longer than the value given here (in seconds).
 % ● Output
-%       import: returns event timestamps in seconds in import.data
+%   *    import : returns event timestamps in seconds in import.data
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 by Dominik R Bach & Tobias Moser (University of Zurich)
@@ -129,7 +128,7 @@ elseif strcmpi(import.marker, 'continuous')
     warning('Different number of hi2lo and lo2hi transitions in marker channel - please choose ascending or descending flank.');
     import.data = [];
     return;
-  end;
+  end
 
   % check if markerinfo should be set and if there are any data points
   if ~isfield(import, 'markerinfo') && ~isempty(import.data)
@@ -173,7 +172,7 @@ elseif strcmpi(import.marker, 'timestamp') || strcmpi(import.marker, 'timestamps
   import.data = import.data(:) .* import.sr;
 else
   warning('ID:invalid_field_content', 'The value of ''marker'' must either be ''continuous'' or ''timestamps'''); return;
-end;
+end
 
 % set status
 % -------------------------------------------------------------------------

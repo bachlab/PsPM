@@ -1,35 +1,36 @@
-function [sts, output] = pspm_emg_pp(fn, options)
+function [sts, outchannel] = pspm_emg_pp(fn, options)
 % ● Description
-%   pspm_emg_pp reduces noise in emg data in 3 steps. Following from the
-%   literature[1] it does the following steps:
-%   1)  Initial filtering:
-%       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies
-%   2)  Remove mains noise:
-%       50 Hz (variable) notch filter
-%   3)  Smoothing and rectifying:
+%   pspm_emg_pp pre-processes startle eyeblink EMG data in 3 steps, which
+%   were optimised in reference [1].
+%   (1)  Initial filtering:
+%       4th order Butterworth with 50 Hz and 470 Hz cutoff frequencies.
+%   (2)  Removing mains noise:
+%       adjustable notch filter (default 50 Hz).
+%   (3)  Smoothing and rectifying:
 %       4th order Butterworth low-pass filter with a time constant of 3 ms
-%       (=> cutoff of 53.05Hz)
-%   Once the data is preprocessed, according to the option 'channel_action',
-%   it will either replace the existing channel or add it as new channel to
-%   the provided file.
+%       (corresponding to a cutoff of 53.05 Hz).
+%   While the input data must be an EMG channel, the output channel will be
+%   of type emg_pp, as required by the startle eyeblink GLM.
 % ● Format
-%   [sts, output] = pspm_emg_pp(fn, options)
+%   [sts, channel_index]  = pspm_emg_pp(fn, options)
 % ● Arguments
-%                fn:  [string]
+%   *             fn: [string]
 %                     Path to the PsPM file which contains the EMG data.
-%           options:
-%       .mains_freq:  [integer] Frequency of mains noise to remove
-%                     with notch filter (default: 50Hz).
-%          .channel:  [numeric/string] Channel to be preprocessed.
-%                     Can be a channel ID or a channel name.
-%                     Default is 'emg' (i.e. last EMG channel)
-%   .channel_action:  ['add'/'replace'] Defines whether the new channel should
+%   ┌─────── options:
+%   ├────.mains_freq: [integer] Frequency of mains noise to remove
+%   │                 with notch filter (default: 50 Hz).
+%   ├───────.channel: [numeric/string] Channel to be preprocessed.
+%   │                 Can be a channel ID or a channel name.
+%   │                 Default is 'emg' (i.e. last EMG channel)
+%   └.channel_action: ['add'/'replace'] Defines whether the new channel should
 %                     be added or the previous outputs of this function should
 %                     be replaced. (Default: 'replace')
+% ● Output
+%      channel_index: index of channel containing the processed data
 % ● References
-%   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2016).
-%       Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.
-%       Psychophysiology
+%   [1] Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2017).
+%       Modelling startle eye blink electromyogram to assess fear learning.
+%       Psychophysiology, 54, 202-214.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2009-2016 by Tobias Moser (University of Zurich)
@@ -40,7 +41,7 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-output = struct();
+outchannel = [];
 
 % set default values
 % -------------------------------------------------------------------------
@@ -73,7 +74,7 @@ if lsts ~= 1, return, end
 % -------------------------------------------------------------------------
 
 % (1) 4th order Butterworth band-pass filter with cutoff frequency of 50 Hz and 470 Hz
-filt.sr = data{1}.header.sr;
+filt.sr = data.header.sr;
 filt.lpfreq = 470;
 filt.lporder = 4;
 filt.hpfreq = 50;
@@ -81,8 +82,8 @@ filt.hporder = 4;
 filt.down = 'none';
 filt.direction = 'uni';
 
-[lsts, data{1}.data, data{1}.header.sr] = pspm_prepdata(data{1}.data, filt);
-if lsts == -1, return; end
+[lsts, data.data, data.header.sr] = pspm_prepdata(data.data, filt);
+if lsts < 1, return; end
 
 % (2) remove mains noise with notch filter
 % design from
@@ -101,11 +102,11 @@ b = poly( nZeros ); % Get moving average filter coefficients
 a = poly( nPoles ); % Get autoregressive filter coefficients
 
 % filter signal x
-data{1}.data = filter(b,a,data{1}.data);
+data.data = filter(b,a,data.data);
 
 % (3) smoothed using 4th order Butterworth low-pass filter with
 % a time constant of 3 ms corresponding to a cutoff frequency of 53.05 Hz
-filt.sr = data{1}.header.sr;
+filt.sr = data.header.sr;
 filt.lpfreq = 1/(2*pi*0.003);
 filt.lporder = 4;
 filt.hpfreq = 'none';
@@ -114,12 +115,12 @@ filt.down = 'none';
 filt.direction = 'uni';
 
 % rectify before with abs()
-[lsts, data{1}.data, data{1}.header.sr] = pspm_prepdata(abs(data{1}.data), filt);
-if lsts == -1, return; end
+[lsts, data.data, data.header.sr] = pspm_prepdata(abs(data.data), filt);
+if lsts < 1, return; end
 
 % change channel type to emg_pp to match sebr modality
-old_channeltype = data{1}.header.chantype;
-data{1}.header.chantype = 'emg_pp';
+old_channeltype = data.header.chantype;
+data.header.chantype = 'emg_pp';
 
 % save data
 % -------------------------------------------------------------------------
@@ -128,10 +129,10 @@ o.msg.prefix = sprintf(...
   'EMG preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channeltype: %s --', ...
   channel_str, ...
   old_channeltype, ...
-  data{1}.header.chantype);
-[lsts, outinfos] = pspm_write_channel(fn, data{1}, options.channel_action, o);
-if lsts ~= 1, return; end
+  data.header.chantype);
+[lsts, outinfos] = pspm_write_channel(fn, data, options.channel_action, o);
+if lsts < 1, return; end
 
-output.channel = outinfos.channel;
+outchannel = outinfos.channel;
 sts = 1;
-return
+

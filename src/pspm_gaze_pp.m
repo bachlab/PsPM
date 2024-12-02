@@ -1,25 +1,26 @@
 function [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Description
 %   pspm_gaze_pp combines left/right gaze x and gaze y channels at
-%   the same time and will add a combined gaze channel.
+%   the same time and will add two combined gaze channels, for the x and y
+%   coordinate.
 % ● Format
-%   [sts, channel_index] = pspm_gaze_pp(fn) or
+%   [sts, channel_index] = pspm_gaze_pp(fn)
 %   [sts, channel_index] = pspm_gaze_pp(fn, options)
 % ● Arguments
-%                 fn: [string] Path to the PsPM file which contains the gaze data.
-%   ┌────────options: [struct] options for processing, please check pspm_options.
-%   ├───────.channel: gaze_x_r/gaze_x_l/gaze_y_r/gaze_y_l channels to work on. 
+%   *             fn: [string] Path to the PsPM file which contains the gaze data.
+%   ┌────────options
+%   ├───────.channel: gaze_x_r/gaze_x_l/gaze_y_r/gaze_y_l channels to work on.
 %   │                 This can be a 4-element vector of channel numbers, or 'gaze',
 %   │                 which will use the last channel of the types
 %   │                 specified above. Default is 'gaze'.
 %   └.channel_action: 'replace' existing gaze_x_c and gaze_y_c channels, or
 %                     'add' new ones (default)
 % ● Output
-%                sts: Status determining whether the execution was
+%   *            sts: Status determining whether the execution was
 %                     successfull (sts == 1) or not (sts == -1)
-%      channel_index: Index of the generated combined gaze channels.
-%                     This can be in the end if channel action is specified to be 'add', 
-%                     or around the old left/right channels if channel_action is specified 
+%   *  channel_index: Index of the generated combined gaze channels.
+%                     This can be in the end if channel action is specified to be 'add',
+%                     or around the old left/right channels if channel_action is specified
 %                     to be 'replace'.
 % ● History
 %   Written in 2021 by Teddy
@@ -56,7 +57,8 @@ if isnumeric(options.channel) && numel(options.channel) == 4
     [stsc(3), gaze_y_r] = pspm_load_channel(alldata, options.channel(3), 'gaze_y_r');
     [stsc(4), gaze_y_l] = pspm_load_channel(alldata, options.channel(4), 'gaze_y_l');
     if sum(stsc) < 4, return, end
-elseif strcmp(options.channel, 'gaze')
+elseif (isnumeric(options.channel) && numel(options.channel) == 1 && options.channel == 0) || ...
+        (ischar(options.channel) && strcmp(options.channel, 'gaze'))
     [stsc(1), gaze_x_r, gaze_y_r] = pspm_load_gaze (fn, 'r');
     [stsc(2), gaze_x_l, gaze_y_l] = pspm_load_gaze (fn, 'l');
     if sum(stsc) < 2, return, end

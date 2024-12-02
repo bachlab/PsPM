@@ -1,13 +1,14 @@
-function varargout = pspm_ui(hObject,handles,window)
+function [hObject, handles] = pspm_ui(hObject,handles,window)
 % ● Description
 %   pspm_ui controls the UI of the referred handle.
 % ● Arguments
-%   hObject: UI controllor of the specific GUI window.
-%   handles: UI controllor of the specific GUI window.
-%    window: the name of the specific GUI window.
+%   * hObject : UI controllor of the specific GUI window.
+%   * handles : UI controllor of the specific GUI window.
+%   *  window : the name of the specific GUI window.
 % ● History
 %   Introduced in PsPM 5.1
 %   Written and maintained in 2021-2022
+%   Maintained in 2024 by Bernhard von Raußendorf
 
 %% Initialise
 global settings
@@ -15,12 +16,22 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+%% Check desktop system
+addons = matlab.addons.installedAddons;
+flag_new_desktop = any(strcmp(addons.Identifier,'ML_JAVASCRIPT_DESKTOP'));
 %% Parameters for UI optimisation
 if ispc
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 9;
+  if flag_new_desktop
+    FSTitle = 10;
+    FSText = 9;
+    FSCaption = 8;
+    FSAttr = 8;
+  else
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 9;
+  end
   DisplayUnit = 'points';
   FNRoman = 'Segoe UI';
   FNEmph = 'Segoe UI Bold';
@@ -30,10 +41,17 @@ if ispc
   DisplayHeight = 250/5;
   SwitchResize = 'off';
 elseif ismac
-  FSTitle = 16;
-  FSText = 14;
-  FSCaption = 12;
-  FSAttr = 13;
+  if flag_new_desktop
+    FSTitle = 12;
+    FSText = 12;
+    FSCaption = 10;
+    FSAttr = 11;
+  else
+    FSTitle = 14;
+    FSText = 14;
+    FSCaption = 12;
+    FSAttr = 13;
+  end
   FNRoman = 'Helvetica';
   FNEmph = 'Helvetica-Bold';
   DisplayUnit = 'points';
@@ -43,10 +61,17 @@ elseif ismac
   DisplayHeight = 60;
   SwitchResize = 'off';
 else
-  FSTitle = 11;
-  FSText = 10;
-  FSCaption = 9;
-  FSAttr = 10;
+  if flag_new_desktop
+    FSTitle = 10;
+    FSText = 9;
+    FSCaption = 8;
+    FSAttr = 9;
+  else
+    FSTitle = 11;
+    FSText = 10;
+    FSCaption = 9;
+    FSAttr = 10;
+  end
   FNRoman = 'DejaVu Sans';
   FNEmph = 'DejaVu Sans Bold';
   DisplayUnit = 'points';
@@ -87,8 +112,8 @@ switch window
     handles.tag_attribution.FontSize = FSAttr;
     %handles.tag_attribution.Visible = 'off';
     handles.tag_attribution.HorizontalAlignment = 'center';
-    attribution_disp_text = sprintf(['Version 6.1.2, Build 25-01-2024 with MATLAB 2023a, ',...
-      'The PsPM Team, University College London']);
+    attribution_disp_text = sprintf(['Version 7.0, Build 25-01-2024 with MATLAB 2023a, ',...
+      'The PsPM Team']);
     handles.tag_attribution.String = attribution_disp_text;
     handles.tag_PsPM.FontName = FNRoman;
     hObject.Position(3) = MainWeight;
@@ -150,6 +175,10 @@ switch window
       'text_time_window',...
       'text_y_max',...
       'text_y_min',...
+      'edit_start_x',...
+      'edit_winsize_x',...
+      'edit_y_max',...
+      'edit_y_min',...
       'tag_summary_source_file_content'};
     % EmphCase
     EmphComponents = {'tag_summary_recording_duration_title',...
@@ -208,6 +237,7 @@ switch window
                       'edtLowerLimit',...
                       'edtApplyDetSet',...
                       'lstEvents',...
+                      'cbManualMode',...
                       'push_last',...
                       'push_next',...
                       'push_done',...
@@ -233,6 +263,10 @@ switch window
       'buttonPlot4',...
       'textPlot5',...
       'buttonPlot5',...
+      'textPlot6',...
+      'buttonPlot6',...
+      'textPlot7',...
+      'buttonPlot7',...
       'buttonPlotClose',...
       'textSessionNr',...
       'editSessionNr',...
@@ -280,13 +314,6 @@ if exist('CaptionComponents', 'var')
 end
 if exist('EmphComponents', 'var')
   ApplyStyle(handles, EmphComponents, FNEmph, FSText);
-end
-switch nargout
-  case 1
-    varargout{1} = hObject;
-  case 2
-    varargout{1} = hObject;
-    varargout{2} = handles;
 end
 return
 function ApplyStyle(handles, widgt, FN, FS)

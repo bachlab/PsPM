@@ -1,9 +1,88 @@
 function tam = pspm_tam(model, options)
 % ● Description
-%   TAM stands for Trial Average Model and allows to fit models on
-%   trial-averaged data. pspm_tam starts by extracting and averaging signal segments of
-%   length `model.window` from each data file individually, then averages
-%   these mean segments and finally fits an LTI model.
+%   TAM stands for Trial Average Model and allows to fit models on trial-averaged data.
+%   pspm_tam starts by extracting and averaging signal segments of length `model.window`
+%   from each data file individually, then averages these mean segments and finally fits
+%   an LTI model.
+% ● Arguments
+%   ┌───────model
+%   ├──.modelfile:  a file name for the model output
+%   ├───.datafile:  a file name (single session) OR
+%   │               a cell array of file names
+%   ├─────.timing:  a multiple condition file name (single session) OR
+%   │               a cell array of multiple condition file names OR
+%   │               a struct (single session) with fields .names, .onsets,
+%   │               and (optional) .durations OR
+%   │               a cell array of struct OR
+%   │               a struct with fields 'markerinfos', 'markervalues',
+%   │               'names' OR
+%   │               a cell array of struct
+%   ├──.timeunits:  a char array equal to 'seconds', 'samples' or 'markers'
+%   ├─────.window:  a scalar in model.timeunits as unit that specifies
+%   │               over which time window (starting with the events specified
+%   │               in model.timing) the model should be evaluated.
+%   │               For model.timeunits == 'markers', the unit of the window
+%   │               should be specified in 'seconds'.
+%   ├──.modelspec:  [optional] 'dilation' (default); specify the model to be used.
+%   │               See pspm_init, defaults.tam() which modelspecs are possible
+%   │               with glm.
+%   ├───.modality:  [optional] specify the data modality to be processed. By
+%   │               default, this is determined automatically from "modelspec"
+%   ├─────────.bf:  [optional] basis function/basis set with required subfields (see below)
+%   ├─────────.if:  [optional, struct] input function (function which will be fitted)
+%   ├────.channel:  [optional] allows to specify channel number or channel type.
+%   │               If there is only one element specified, this element
+%   │               will be applied to each datafile.
+%   │               DEFAULT: last channel of 'pupil' data type
+%   ├───────.norm:  [optional] allows to specify whether data should be zscored or not
+%   │               DEFAULT: 1
+%   ├─────.filter:  [optional] filter settings; modality specific default
+%   ├───.baseline:  [optional] allows to specify a baseline in 'seconds' which is
+%   │               applied to the data before fitting the model. It has to
+%   │               be positive and smaller than model.window. If no baseline
+%   │               specified, data will be baselined wrt. the first datapoint.
+%   │               DEFAULT: 0
+%   ├.std_exp_cond: [optional] allows to specify the standard experimental condition
+%   │               as a string or an index in timing.names.
+%   │               if specified this experimental condition will be
+%   │               substracted from all the other conditions.
+%   │               DEFAULT: 'none'
+%   └───.norm_max:  [optional] set the first peak at 1 before model fitting.
+%                   DEFAULT: 0 (not normalize)
+%   ┌────model.bf
+%   ├────.fhandle:  function handle or string
+%   └───────.args:  arguments; the first two arguments (time resolution and duration)
+%                   will be added by pspm_pupil_model.
+%                   DEFAULT: specified by the modality
+%   ┌────model.if
+%   ├────.fhandle:  function handle or string
+%   ├────────.arg:  initial arguments, numeric array
+%   ├─────────.lb:  lower bounds, numeric array of the same size as .arg
+%   └─────────.ub:  upper bounds, numeric array of the same size as .arg
+%   ┌─────options
+%   ├.marker_chan:  marker channel number
+%   │               DEFAULT: 'marker' (i.e. last marker channel)
+%   └──.overwrite:  (optional) overwrite existing model output;
+%                   [logical] (0 or 1)
+%                   Define whether to overwrite existing output files or not.
+%                   Default value: determined by pspm_overwrite.
+% ● Outputs
+%   * tam: a structure 'tam' which is also written to file
+% ● Reference
+%   [1] Model development:
+%       Korn CW & Bach DR (2016). A solid frame for the window on cognition:
+%       Modelling event-related pupil responses. Journal of Vision, 16:28,
+%       1-6. https://doi.org/10.1167/16.3.28
+%   [2] Model application:
+%       Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR
+%       (2023). Acceleration of inferred neural responses to oddball
+%       targets in an individual with bilateral amygdala lesion compared to
+%       healthy controls. Scientific Reports, 13, 41357.
+%       https://doi.org/10.1038/s41598-023-41357-1
+% ● History
+%   Introduced In PsPM 4.2
+%   Written in 2020 by Ivan Rojkov (University of Zurich)
+%   Maintained in 2022 by Teddy
 % ● Developer's Notes
 %   The fitting process is a residual least square minimisation where the
 %   predicted value is calculated as following:
@@ -27,90 +106,7 @@ function tam = pspm_tam(model, options)
 %      names = {'condition a', 'condition b'};
 %      onsets = {[1 2 3], [4 5 6]};
 %      save('testfilcircle_degreee', 'names', 'onsets');
-% ● Arguments
-%   ┌───────model:  [struct]
-%   │ ▶︎ mandatory
-%   ├──.modelfile:  a file name for the model output
-%   ├───.datafile:  a file name (single session) OR
-%   │               a cell array of file names
-%   ├─────.timing:  a multiple condition file name (single session) OR
-%   │               a cell array of multiple condition file names OR
-%   │               a struct (single session) with fields .names, .onsets,
-%   │               and (optional) .durations OR
-%   │               a cell array of struct OR
-%   │               a struct with fields 'markerinfos', 'markervalues',
-%   │               'names' OR
-%   │               a cell array of struct
-%   ├──.timeunits:  a char array equal to 'seconds', 'samples' or 'markers'
-%   ├─────.window:  a scalar in model.timeunits as unit that specifies
-%   │               over which time window (starting with the events specified
-%   │               in model.timing) the model should be evaluated.
-%   │               For model.timeunits == 'markers', the unit of the window
-%   │               should be specified in 'seconds'.
-%   │ ▶︎ optional
-%   ├.modelspec:  'dilation' (default); specify the model to be used.
-%   │             See pspm_init, defaults.tam() which modelspecs are possible
-%   │             with glm.
-%   ├─.modality:  specify the data modality to be processed. By
-%   │             default, this is determined automatically from "modelspec"
-%   ├─────────.bf:  basis function/basis set with required subfields:
-%   │          ├────.fhandle: function handle or string
-%   │          └───────.args: arguments; the first two arguments
-%   │                          (time resolution and duration)
-%   │                          will be added by pspm_pupil_model.
-%   │               DEFAULT: specified by the modality
-%   ├─────────.if:  input function (function which will be fitted) with required
-%   │          │    subfields:
-%   │          ├────.fhandle: function handle or string
-%   │          ├────────.arg: initial arguments, numeric array
-%   │          ├─────────.lb: lower bounds, numeric array of the same size as
-%   │          │              .arg
-%   │          └─────────.ub: upper bounds, numeric array of the same size as
-%   │                         .arg
-%   │               If an argument should not be fitted, set the corresponding
-%   │               value of .lb and .ub to the same value as .arg.
-%   │               For unbounded parameters set -Inf or/and Inf respectively.
-%   │               DEFAULT: specified by the modality
-%   ├────.channel:  allows to specify channel number or channel type.
-%   │               If there is only one element specified, this element
-%   │               will be applied to each datafile.
-%   │               DEFAULT: last channel of 'pupil' data type
-%   ├─────.norm:  allows to specify whether data should be zscored or not
-%   │               DEFAULT: 1
-%   ├─────.filter:  filter settings; modality specific default
-%   ├───.baseline:  allows to specify a baseline in 'seconds' which is
-%   │               applied to the data before fitting the model. It has to
-%   │               be positive and smaller than model.window. If no baseline
-%   │               specified, data will be baselined wrt. the first datapoint.
-%   │               DEFAULT: 0
-%   ├.std_exp_cond: allows to specify the standard experimental condition
-%   │               as a string or an index in timing.names.
-%   │               if specified this experimental condition will be
-%   │               substracted from all the other conditions.
-%   │               DEFAULT: 'none'
-%   └───────.norm_max:  set the first peak at 1 before model fitting.
-%                   DEFAULT: 0 (not normalize)
-%   ┌─────options:  [struct]
-%   ├.marker_chan:  marker channel number
-%   │               DEFAULT: 'marker' (i.e. last marker channel)
-%   └──.overwrite:  (optional) overwrite existing model output;
-%                   [logical] (0 or 1)
-%                   Define whether to overwrite existing output files or not.
-%                   Default value: determined by pspm_overwrite.
-% ● Outputs
-%   tam: a structure 'tam' which is also written to file
-% ● Reference
-%   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
-%   cognition: Modeling event-related pupil responses. Journal of Vision,
-%   16(3), 28. https://doi.org/10.1167/16.3.28
-%   Abivardi, A., Korn, C.W., Rojkov, I. et al. Acceleration of inferred
-%   neural responses to oddball targets in an individual with bilateral
-%   amygdala lesion compared to healthy controls. Sci Rep 13, 14550 (2023).
-%   https://doi.org/10.1038/s41598-023-41357-1
-% ● History
-%   Introduced In PsPM 4.2
-%   Written in 2020 by Ivan Rojkov (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+
 
 %% Initialise
 global settings
@@ -202,7 +198,7 @@ end
 fprintf('Extracting segments ...\n')
 
 % temporary structure which is deleted after extracting segments
-extrsgopt.timeunit = model.timeunits;
+extrsgopt.timeunits = model.timeunits;
 extrsgopt.length = model.window;       % segments of 'model.window' time unit long
 extrsgopt.plot = 0;                    % do not plot mean value and std
 
@@ -399,11 +395,4 @@ end
 %% User output
 fprintf('done. \n');
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = tam;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = tam;
-end
 return

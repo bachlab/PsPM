@@ -4,7 +4,8 @@ function varargout = pspm_review(varargin)
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Gabriel Graeni (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
 
 %% Initialise
 global settings
@@ -47,10 +48,11 @@ set(handles.textPlot3,'HorizontalAlignment','left')
 set(handles.textPlot4,'HorizontalAlignment','left')
 set(handles.textPlot5,'HorizontalAlignment','left')
 set(handles.textPlot6,'HorizontalAlignment','left')
+set(handles.textPlot7,'HorizontalAlignment','left')
 set(handles.textStatus,'HorizontalAlignment','left')
 set(handles.textStatus,'String','Select a model...');
 
-handles.nrPlot = 6;
+handles.nrPlot = 7;
 %handles.figCnt = 0;
 handles.modelCnt = 0;
 handles.currentModel = 1;
@@ -193,9 +195,8 @@ tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
-    handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 1);
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 1);
 
   case 'dcm'
     sessionNr = checkSessionNr(handles);
@@ -227,9 +228,8 @@ tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
-    handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 2);
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 2);
 
   case 'dcm'
     sessionNr = checkSessionNr(handles);
@@ -256,9 +256,8 @@ tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
-    handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 3);
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 3);
 
   case 'dcm'
     sessionNr = checkSessionNr(handles);
@@ -279,9 +278,8 @@ tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
-    handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 4);
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 4);
   case 'dcm'
     pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'names');
 end
@@ -297,16 +295,16 @@ tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
-    handles.modelData{handles.currentModel}.fig = ...
-      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, ...
-      handles.modelData{handles.currentModel}.model, 5);
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 5);
   case 'dcm'
-    handles.modelData{handles.currentModel}.fig = ...
+    [~, handles.modelData{handles.currentModel}.fig] = ...
       pspm_rev_con(handles.modelData{handles.currentModel}.model);
 
 end
 set(handles.textStatus,'String',tmpStatusString);
 guidata(hObject, handles);
+
 
 % --- Executes on button press in buttonPlot6.
 function buttonPlot6_Callback(hObject, ~, handles)
@@ -316,8 +314,63 @@ function buttonPlot6_Callback(hObject, ~, handles)
 tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
+    case 'glm'
+
+        modelfile = handles.modelData{handles.currentModel}.modelfile;
+        options = struct();
+        [ssts, segments] = pspm_extract_segments('model', modelfile, options);
+
+        if ssts == -1
+            uiwait(msgbox('Error extracting segments from the model.', 'Error')) 
+        else
+
+            glm = handles.modelData{handles.currentModel}.model;
+            sr = glm.input.sr;
+            cmap = lines(numel(segments.segments));  
+            f.h = figure;
+            f.a.h = axes(f.h);
+            hold on;
+
+            legendNames = cell(1, numel(segments.segments));
+
+            for x = 1:numel(segments.segments)
+
+                plotdata = segments.segments{x}.mean;
+                t = (1:length(plotdata)) / sr; 
+                f.a.p = plot(f.a.h, t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
+                legendNames{x} = segments.segments{x}.name;
+
+            end
+
+            f.a.l = legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
+            legend boxoff
+
+            set(get(f.a.h, 'xlabel'), 'String', 'Time (seconds)');
+            set(get(f.a.h, 'ylabel'), 'String', 'Mean Response (data units)');
+            set(get(f.a.h, 'title'), 'String', 'Mean Responses for All Segments');
+
+            hold off;
+        end
+
+
+
+end
+
+set(handles.textStatus,'String',tmpStatusString);
+guidata(hObject, handles);
+
+
+% --- Executes on button press in buttonPlot7.
+function buttonPlot7_Callback(hObject, ~, handles)
+% hObject    handle to buttonPlot7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmpStatusString = get(handles.textStatus,'String');
+set(handles.textStatus,'String','Plotting is in progress. Please wait...');
+switch handles.modelData{handles.currentModel}.modeltype
   case 'glm'
-    handles.modelData{handles.currentModel}.fig = pspm_rev_con(handles.modelData{handles.currentModel}.model);
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_con(handles.modelData{handles.currentModel}.model);
 
 end
 set(handles.textStatus,'String',tmpStatusString);
@@ -467,16 +520,18 @@ switch handles.modelData{handles.currentModel}.modeltype
       'Plot', ...
       'Plot', ...
       'Show', ...
+      'Plot', ...
       'Plot'};
     textPlotString = {'Design matrix in SPM style', ...
       'Orthogonality in SPM style', ...
       'Predicted & observed', ...
       'Regressors in command window', ...
-      'Reconstructed responses'};
+      'Reconstructed responses', ...
+      'Plot data per condition'};
     % detect contrasts
     if isfield(handles.modelData{handles.currentModel}.model, 'con')
-      buttonPlotString{6} = 'Show';
-      textPlotString{6} = 'Contrast names in command window';
+      buttonPlotString{7} = 'Show';
+      textPlotString{7} = 'Contrast names in command window';
     end
     setInvisble(handles);
     setButtonPlotString(handles, buttonPlotString);

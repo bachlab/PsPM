@@ -9,21 +9,31 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-fs = filesep;
-if settings.scrpath, rmpath(settings.path), end;
-if any(contains(settings.path, 'VBA'))
-  rmpath(pspm_path('ext','VBA'));
-  rmpath(pspm_path('ext','VBA','subfunctions'));
-  rmpath(pspm_path('ext','VBA','stats&plots'));
+
+% close all windows - this should be done before paths are removed
+close all
+
+% Remove paths added during pspm_init
+if isfield(settings, 'added_paths') && ~isempty(settings.added_paths)
+   cellfun(@rmpath, settings.added_paths);
+   settings = rmfield(settings, 'added_paths');
 end
+
+% Add paths deleted during pspm_init
+if isfield(settings, 'removed_paths') && ~isempty(settings.removed_paths)
+   cellfun(@addpath, settings.removed_paths);
+   settings = rmfield(settings, 'removed_paths');
+end
+
+
 if isfile(fullfile(settings.path,'pspm_text.mat'))
   delete(fullfile(settings.path,'pspm_text.mat'))
 end
+
 clear settings
-close all
 disp(' ');
 disp('Thanks for using PsPM.');
 disp(repelem('-',20));
-disp('PsPM 6.1.1 (c) 2008-2024 Dominik R. Bach');
-disp('Uni Bonn, DE | UCL, UK | UZH, CH');
+disp('PsPM 6.1.1 (c) 2008-2024 The PsPM development team');
+disp('Developed at: Uni Bonn, DE | UCL, UK | UZH, CH');
 return

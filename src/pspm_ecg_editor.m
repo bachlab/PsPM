@@ -1,27 +1,33 @@
-function varargout = pspm_ecg_editor(varargin)
+function [sts, R] = pspm_ecg_editor(varargin)
 % ● Description
-%   pspm_ecg_edtior allows manual correction of ecg data and creates a hb
-%   output. Function can be called seperately.
+%   pspm_ecg_editor allows manual correction of ecg data and creates a hb
+%   output. This function can be automatically called during data 
+%   conversion or separately.
 % ● Format
 %   [sts, R] = pspm_ecg_editor(pt)
 %   [sts, R] = pspm_ecg_editor(fn, channel, options)
 % ● Arguments
-%         pt:  A struct() from pspm_convert_ecg2hb detection.
-%         fn:  A file to  data file containing the ecg channel to be edited
-%       channel:  Channel id of ecg channel in the data file
-% ┌──options:  A struct() of options
-% ├─.channel:  Channel id of the existing hb channel
-% ├────.semi:  Defines whether to navigate between potentially wrong hb events
-% │            only (semi = 1), or between all hb events (semi = 0 => manual
-% │            mode)
-% ├.artefact:  Epoch file with epochs of artefacts (to be ignored)
-% └──.factor:  To what factor should potentially wrong hb events
-%              deviate from the standard deviation. (Default: 1)
-%   variable r
-%       r(1,:) ... original r vector
-%       r(2,:) ... r vector containing potential faulty labeled qrs compl.
-%       r(3,:) ... removed
-%       r(4,:) ... added
+%   *       pt:  A struct() from pspm_convert_ecg2hb detection.
+%   *       fn:  A PsPM file containing the ecg channel to be edited
+%   *  channel:  Index of ecg channel in the data file
+%   ┌──options
+%   ├─.channel:  Channel id of the existing hb channel
+%   ├────.semi:  Defines whether to navigate between potentially wrong hb events
+%   │            only (semi = 1), or between all hb events (semi = 0 => manual
+%   │            mode)
+%   ├.missing:   Epoch file with artefact periods to be considered missing.
+%   │            These will be ignored for faulty heart beat detection.
+%   ├.limits:    [struct with fields .upper, .lower] Upper and lower limits 
+%   │            of the interbeat interval to be considered as potentially 
+%   │            faulty. 
+%   └──.factor:  Deviation by what factor of the standard deviation should 
+%                lead to inter beat intervals highlighted as potentially 
+%                faulty (Default: 1)
+% ● Outputs
+%   *        R:  r(1,:) ... original r vector
+%                r(2,:) ... r vector containing potential faulty labeled qrs compl.
+%                r(3,:) ... removed
+%                r(4,:) ... added
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2013-2016 Philipp C Paulus, Tobias Moser
@@ -34,7 +40,7 @@ if isempty(settings)
 end
 sts = -1;
 
-% Last Modified by GUIDE v2.5 31-Oct-2016 16:40:26
+% Last Modified by GUIDE v2.5 23-Sep-2024 11:21:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -50,7 +56,7 @@ if nargin && ischar(varargin{1}) && ...
 end
 
 if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+  [sts, R] = gui_mainfcn(gui_State, varargin{:});
 else
   gui_mainfcn(gui_State, varargin{:});
 end
@@ -65,8 +71,9 @@ function pspm_ecg_editor_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to pspm_ecg2hb_qc (see VARARGIN)
-
+global settings
 pspm_ui(hObject, handles, 'ecg_editor');
+
 % Choose default command line output for pspm_ecg2hb_qc
 handles.output = hObject;
 % -------------------------------------------------------------------------
@@ -74,7 +81,7 @@ handles.output = hObject;
 
 handles.edit_mode = '';
 handles.gui_mode = ''; % file or inline
-handles.artefact_mode = ''; % file or inline
+handles.missing_mode = ''; % file or inline
 handles.hb_chan = -1;
 handles.data_chan = -1;
 handles.write_chan = -1;
@@ -91,10 +98,10 @@ handles.plot.p = -1;
 handles.sts=[];       % outputvariable
 handles.R=[];
 handles.jo=0;       % default value for jump only - 0; plot data!
-handles.artefact_fn = '';
-handles.artefact_epochs = [];
+handles.missing_fn = '';
+handles.missing_epochs = [];
 handles.update_selection = true;
-handles.plot.artefact_layer = [];
+handles.plot.missing_layer = [];
 set(handles.togg_add,'Value',0);
 set(handles.togg_remove,'Value',0);
 % settings for manual mode
@@ -159,7 +166,7 @@ set(handles.edtUpperLimit, 'String', num2str(handles.plot.limits.upper));
 set(handles.edtLowerLimit, 'String', num2str(handles.plot.limits.lower));
 % -------------------------------------------------------------------------
 % UIWAIT makes pspm_ecg2hb_qc wait for user response (see UIRESUME)
-uiwait(handles.figure1);
+uiwait(handles.pspm_ecg_editor);
 % -------------------------------------------------------------------------
 
 % --- Outputs from this function are returned to the command line.
@@ -202,7 +209,7 @@ if strcmpi(handles.edit_mode, 'add_qrs')
   exitModus;
 else
   handles.edit_mode = 'add_qrs';
-  set(handles.figure1,'Pointer','crosshair');
+  set(handles.pspm_ecg_editor,'Pointer','crosshair');
   guidata(hObject, handles);
 end
 
@@ -220,7 +227,7 @@ if strcmpi(handles.edit_mode, 'remove_qrs')
   exitModus;
 else
   handles.edit_mode = 'remove_qrs';
-  set(handles.figure1,'Pointer','crosshair');
+  set(handles.pspm_ecg_editor,'Pointer','crosshair');
   guidata(hObject, handles);
 end
 % -------------------------------------------------------------------------
@@ -299,9 +306,9 @@ r(1,orig_R) = 1;
 r(1,r(3,:)==1)=NaN; % deleted QRS markers
 r(1,r(4,:)==1)=1;   % added QRS markers
 
-% remove artefact markers
-if get(handles.rbExcludeArtefactQRS, 'Value') == 1 && any(handles.plot.artefact_layer)
-  r(1, handles.plot.artefact_layer) = NaN;
+% remove missing markers
+if get(handles.rbExcludeArtefactQRS, 'Value') == 1 && any(handles.plot.missing_layer)
+  r(1, handles.plot.missing_layer) = NaN;
 end
 
 handles.R=[];
@@ -375,8 +382,8 @@ if numel(varargin) == 0 || ~isstruct(varargin{1})
   if isfield(handles.options, 'semi')
     handles.manualmode = ~handles.options.semi;
   end
-  if isfield(handles.options, 'artefact') && ~isempty(handles.options.artefact)
-    load_data_artefacts(hObject, handles, handles.options.artefact);
+  if isfield(handles.options, 'missing') && ~isempty(handles.options.missing)
+    load_data_missing(hObject, handles, handles.options.missing);
     % update handles
     handles = guidata(hObject);
   end
@@ -481,11 +488,11 @@ R = handles.plot.R;
 sr = handles.plot.sr;
 r = handles.plot.r;
 
-% create artefact layer
+% create missing layer
 % ------------------------------------------------------------------------
 a_lay = false(1, length(r));
-for i=1:length(handles.artefact_epochs)
-  a_coord = handles.artefact_epochs(i, 1:end);
+for i=1:length(handles.missing_epochs)
+  a_coord = handles.missing_epochs(i, 1:end);
   start = max(1, round(a_coord(1)*handles.plot.sr));
   stop = min(length(a_lay), round(a_coord(2)*handles.plot.sr));
   a_lay(start:stop) = 1;
@@ -521,8 +528,8 @@ r(1,R(flag==1))=0;
 % set default maxk
 maxk=length(find(flag==1));
 
-% reset according to artefact epochs
-if ~isempty(handles.artefact_epochs) && numel(R) > 0
+% reset according to missing epochs
+if ~isempty(handles.missing_epochs) && numel(R) > 0
   chans = [];
   if get(handles.rbDisableArtefactDetection, 'Value')
     chans = 2;
@@ -553,7 +560,7 @@ r(r==0)=NaN;
 
 handles.plot.ibi = ibi;
 handles.plot.r = r;
-handles.plot.artefact_layer = a_lay;
+handles.plot.missing_layer = a_lay;
 
 if exist('handles.maxk', 'var') == 0 && exist('maxk', 'var')
   handles.maxk = maxk;
@@ -568,6 +575,7 @@ guidata(hObject, handles);
 
 % --- plot data
 function pp_plot(hObject,handles)
+global settings
 % where are potential mislabeled qrs complexes?
 if any(not(isnan(handles.plot.r(2,:)))) && ~handles.manualmode
   fl = handles.plot.faulties;
@@ -655,7 +663,6 @@ end
 xlabel('time in seconds [s]')
 % -------------------------------------------------------------------------
 handles.count=count; % set current position.
-
 % Update handles structure
 guidata(hObject,handles);
 
@@ -689,9 +696,9 @@ if handles.update_selection
   end
 end
 
-% --- Executes when user attempts to close figure1.
-function figure1_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
+% --- Executes when user attempts to close pspm_ecg_editor.
+function pspm_ecg_editor_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -705,9 +712,9 @@ uiresume
 % delete(hObject);
 
 
-% --- Executes on key press with focus on figure1 and none of its controls.
-function figure1_KeyPressFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
+% --- Executes on key press with focus on pspm_ecg_editor and none of its controls.
+function pspm_ecg_editor_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  structure with the following fields (see MATLAB.UI.FIGURE)
 % Key: name of the key that was pressed, in lower case
 % Character: character interpretation of the key(s) that was pressed
@@ -720,14 +727,14 @@ end
 % -------------------------------------------------------------------------
 function exitModus()
 handles = guidata(gca);
-set(handles.figure1, 'Pointer', 'Arrow');
+set(handles.pspm_ecg_editor, 'Pointer', 'Arrow');
 handles.edit_mode = '';
 guidata(gca, handles);
 
 % --- Executes on mouse press over figure background, over a disabled or
 % --- inactive control, or over an axes background.
-function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
+function pspm_ecg_editor_WindowButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if strcmpi(handles.edit_mode,'remove_qrs')
@@ -857,7 +864,7 @@ end
 function load_data_file(hObject, handles, fn)
 [sts, ~, handles.data, ~] = pspm_load_data(fn);
 if sts == 1
-  ecg_chans = find(cellfun(@(x) strcmpi(x.header.chantype, 'ecg'), handles.data));
+  ecg_chans = find(cellfun(@(x) any(strcmpi(x.header.chantype, {'ecg', 'ppg'})), handles.data));
   % set possible ecg chans
   sel_ecg_chan = find(ecg_chans == handles.data_chan, 1, 'first');
   if isempty(sel_ecg_chan)
@@ -1027,7 +1034,7 @@ else
   cl = handles.clr{2}(1,:);
 end
 
-if handles.plot.artefact_layer(sample_id)
+if handles.plot.missing_layer(sample_id)
   f_cl = '777777';
 else
   f_cl = '000000';
@@ -1081,7 +1088,7 @@ function edtArtefactFile_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edtArtefactFile as text
 %        str2double(get(hObject,'String')) returns contents of edtArtefactFile as a double
 
-set(hObject, 'String', handles.artefact_fn);
+set(hObject, 'String', handles.missing_fn);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -1106,15 +1113,15 @@ function pbArtefactFile_Callback(hObject, eventdata, handles)
 [fname, fpath] = uigetfile({'*.mat'}, 'Select file with Artefact epochs');
 if ischar(fname) && ~isempty(fname)
   fn = fullfile(fpath, fname);
-  load_data_artefacts(hObject, handles, fn);
+  load_data_missing(hObject, handles, fn);
   handles = guidata(hObject);
   refresh_faulty(hObject, handles);
 end
 
-% --- Load artefact epochs file
-function load_data_artefacts(hObject, handles, artefacts)
+% --- Load missing epochs file
+function load_data_missing(hObject, handles, missing)
 
-[sts, handles.artefact_epochs] = pspm_get_timing('epochs', artefacts, 'seconds');
+[sts, handles.missing_epochs] = pspm_get_timing('epochs', missing, 'seconds');
 
 if sts ~= -1
   set(handles.rbShowArtefacts, 'Enable', 'on');
@@ -1123,11 +1130,11 @@ if sts ~= -1
   set(handles.rbIncludeArtefactQRS, 'Enable', 'on');
   set(handles.rbExcludeArtefactQRS, 'Enable', 'on');
 
-  if ischar(artefacts)
-    handles.artefact_mode = 'file';
+  if ischar(missing)
+    handles.missing_mode = 'file';
 
     % enable
-    set(handles.edtArtefactFile, 'String', artefacts);
+    set(handles.edtArtefactFile, 'String', missing);
     set(handles.edtArtefactFile, 'Enable', 'on');
     set(handles.pbArtefactsDisable, 'Enable', 'on');
 
@@ -1135,9 +1142,9 @@ if sts ~= -1
     set(handles.pbArtefactFile, 'Visible', 'on');
     set(handles.pbArtefactsDisable, 'Visible', 'on');
     set(handles.edtArtefactFile, 'Visible', 'on');
-    handles.artefact_fn = artefacts;
+    handles.missing_fn = missing;
   else
-    handles.artefact_mode = 'inline';
+    handles.missing_mode = 'inline';
 
     % disable
     set(handles.edtArtefactFile, 'String', '');
@@ -1152,8 +1159,8 @@ if sts ~= -1
     set(handles.pbArtefactsDisable, 'Visible', 'off');
   end
 else
-  handles.artefact_epochs = [];
-  warning('ID:invalid_input', 'Could not load artefacts.');
+  handles.missing_epochs = [];
+  warning('ID:invalid_input', 'Could not load missing.');
 end
 guidata(hObject, handles);
 
@@ -1310,9 +1317,9 @@ function pbArtefactsDisable_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.artefact_epochs = [];
-handles.artefact_fn = '';
-handles.plot.artefact_layer(:) = false;
+handles.missing_epochs = [];
+handles.missing_fn = '';
+handles.plot.missing_layer(:) = false;
 set(handles.edtArtefactFile, 'Enable', 'off');
 set(handles.edtArtefactFile, 'String', '');
 set(handles.pbArtefactsDisable, 'Enable', 'off');
@@ -1358,8 +1365,8 @@ reload_plot(hObject, handles);
 
 % --- Executes on mouse press over figure background, over a disabled or
 % --- inactive control, or over an axes background.
-function figure1_WindowButtonUpFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
+function pspm_ecg_editor_WindowButtonUpFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pt = get(handles.axes, 'CurrentPoint');
@@ -1470,8 +1477,8 @@ end
 
 
 % --- Executes on mouse motion over figure - except title and menu.
-function figure1_WindowButtonMotionFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
+function pspm_ecg_editor_WindowButtonMotionFcn(hObject, eventdata, handles)
+% hObject    handle to pspm_ecg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if handles.draw_selection
@@ -1535,12 +1542,12 @@ p_rules(2) = 2;
 for k=1:n_col*2
   if mod(k, 2) == 0
     ev_idx = k/2;
-    layer = handles.plot.artefact_layer;
+    layer = handles.plot.missing_layer;
     cl = handles.clr{ev_idx+1}(cl_type,:);
     b_cl = rgb2gray(cl);
   else
     ev_idx = (k+1)/2;
-    layer = ~handles.plot.artefact_layer;
+    layer = ~handles.plot.missing_layer;
     cl = handles.clr{ev_idx+1}(cl_type,:);
     b_cl = cl;
   end
@@ -1575,5 +1582,4 @@ for k=1:n_col*2
     end
     stem_handles(k) = -1;
   end
-
 end

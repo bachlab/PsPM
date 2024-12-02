@@ -2,15 +2,16 @@ function import_data = pspm_cfg_import
 
 %% Initialise
 global settings
-if isempty(settings), pspm_init; end
 
-% Get filetype
+%% Standard items
+overwrite = pspm_cfg_selector_overwrite;
+
+%% Get filetype
 fileoptions={settings.import.datatypes.long};
 channeltypesDescription = {settings.channeltypes.description};
 channeltypesData = {settings.channeltypes.data};
 cd(settings.path)
-[information, arguments] = pspm_help('pspm_import');
-cd([settings.path,'pspm_cfg/'])
+cd([settings.path,filesep,'pspm_cfg/'])
 
 %% Predefined struct
 % Channel/Column Search
@@ -27,8 +28,9 @@ sample_rate.name    = 'Sample Rate';
 sample_rate.tag     = 'sample_rate';
 sample_rate.strtype = 'r';
 sample_rate.num     = [1 1];
-sample_rate.help    = arguments(contains(arguments(:,1),'import.sr'),2);
-% 'Sample rate in Hz (i. e. samples per second).'
+sample_rate.help    = pspm_cfg_help_format('pspm_import', 'import.sr');
+% arguments(contains(arguments(:,1),'import.sr'),2);
+% will restore when it is finished.
 
 % Transfer function
 scr_file         = cfg_files;
@@ -175,7 +177,7 @@ exclude_columns.tag       = 'exclude_columns';
 exclude_columns.strtype   = 'r';
 exclude_columns.val       = {0};
 exclude_columns.help      = {['The number of columns which have to be excluded for the importing. By default 0. ',...
-  'It is usefull if the first columns have non numeric data (e.g. timestamps). ', ...
+  'It is useful if the first columns have non numeric data (e.g. timestamps). ', ...
   'Be aware that if you exclude some columns you have to adapt the channel number.']};
 
 %% Datatype dependend items
@@ -198,7 +200,7 @@ for datatype_i=1:length(fileoptions)
   channeltypes    = settings.import.datatypes(datatype_i).channeltypes;
   short        = settings.import.datatypes(datatype_i).short;
   ext          = settings.import.datatypes(datatype_i).ext;
-  help         = {settings.import.datatypes(datatype_i).help};
+  help         = pspm_cfg_help_format('import', settings.import.datatypes(datatype_i).help);
 
 
   %% Channel/Column Number
@@ -215,18 +217,13 @@ for datatype_i=1:length(fileoptions)
   chan_nr_spec.tag     = 'chan_nr_spec';
   chan_nr_spec.strtype = 'i';
   chan_nr_spec.num     = [1 1];
-  chan_nr_spec.help    = {['Specify the n-th channel. ',...
-    'This counts the number of channels actually recorded.']};
+  chan_nr_spec.help    = {};
 
   % Channel/Column Nr. (variable choice options)
   chan_nr        = cfg_choice;
   chan_nr.name   = [description ' Number'];
   chan_nr.tag    = 'chan_nr';
-  chan_nr.help   = {['Specify where in the original file to find the channel. You can ' ...
-    'either specify a number (i. e. the n-th channel in the file), or search for ' ...
-    'this channel by its name. Note: the channel number refers to the n-th recorded ' ...
-    'channel, not to its number during acquisition (if you did not save all recorded ' ...
-    'channels, these might be different for some data types).']};
+  chan_nr.help   = pspm_cfg_help_format('pspm_import', 'import.channel');
 
   %% Flank option for 'event' channel types
   flank_option        = cfg_menu;
@@ -235,7 +232,8 @@ for datatype_i=1:length(fileoptions)
   flank_option.values = {'ascending', 'descending', 'all', 'both', 'default'};
   flank_option.labels = {'ascending', 'descending', 'both', 'middle', 'default'};
   flank_option.val    = {'default'};
-  flank_option.help   = arguments(contains(arguments(:,1),'import.flank'),2);
+  flank_option.help   = {''};%arguments(contains(arguments(:,1),'import.flank'),2);
+  % will restore when this is finished
 
   %% Channel/Column Type Items
   importtype_item = cell(1,length(channeltypes));
@@ -316,17 +314,15 @@ for datatype_i=1:length(fileoptions)
   end
 
 
+  %% ACQ related
+  acq_import_python          = pspm_cfg_selector_python('Bioread', '3.0.1');
+  acq_import_python.help     = {['Import Biopac Acqknowledge (ACQ) files with the python package "Bioread". ',...
+                                  'Any ACQ version is supported.']};
   % Data File
-  datafile         = cfg_files;
-  datafile.name    = 'Data File(s)';
-  datafile.tag     = 'datafile';
-  datafile.num     = [1 Inf];
+  datafile         = pspm_cfg_selector_datafile(ext);
   if strcmpi(ext, 'any')
     datafile.filter ='.*';
-  else
-    datafile.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
   end
-  datafile.help    = {settings.datafilehelp} ;
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
     input_file = cfg_files;
@@ -343,7 +339,6 @@ for datatype_i=1:length(fileoptions)
     datafile.name    = 'Data File(s)';
     datafile.tag     = 'datafile';
     datafile.num     = [1 Inf];
-    datafile.help    = {settings.datafilehelp} ;
     datafile.values  = {input_file};
   end
 
@@ -389,6 +384,11 @@ for datatype_i=1:length(fileoptions)
     datatype_item{datatype_i}.val = ...
       [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
   end
+
+   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq_any'))
+     datatype_item{datatype_i}.val = ...
+       [datatype_item{datatype_i}.val, {acq_import_python}];
+   end
 end
 
 %% Data type
@@ -398,27 +398,12 @@ datatype.tag     = 'datatype';
 datatype.values  = datatype_item;
 datatype.help    = {''};
 
-%% Overwrite file
-overwrite         = cfg_menu;
-overwrite.name    = 'Overwrite Existing File';
-overwrite.tag     = 'overwrite';
-overwrite.val     = {false};
-overwrite.labels  = {'No', 'Yes'};
-overwrite.values  = {false, true};
-overwrite.help    = {'Overwrite if a file with the same name has existed?'};
-
 %% Executable branch
 import_data      = cfg_exbranch;
 import_data.name = 'Import';
 import_data.tag  = 'import';
 import_data.val  = {datatype, overwrite};
 import_data.prog = @pspm_cfg_run_import;
-import_data.vout = @pspm_cfg_vout_import;
-import_data.help = {['Import external data files for use by PsPM. First, specify the ' ...
-  'data type. Then, other fields will come up as required for this data type. The ' ...
-  'imported data will be written to a new .mat file, prepended with ''pspm_''.']};
+import_data.vout = @pspm_cfg_vout_outfile;
+import_data.help = pspm_cfg_help_format('pspm_import');
 
-function vout = pspm_cfg_vout_import(job)
-vout = cfg_dep;
-vout.sname      = 'Output File';
-vout.src_output = substruct('()',{':'});

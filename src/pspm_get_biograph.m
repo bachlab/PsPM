@@ -1,20 +1,25 @@
 function [sts, import, sourceinfo] = pspm_get_biograph(datafile, import)
 % ● Description
-%   pspm_get_biograph is the main function for import of text-exported
-%   BioGraph Infiniti files
+%   pspm_get_biograph imports text-exported BioGraph Infiniti files. Export
+%   the data using 'Export data to text format', both 'Export Channel Data'
+%   and 'Export Interval Data' are supported; a header is required.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_biograph(datafile, import);
 % ● Arguments
-%   datafile:
-%     import:
-%      .type:
-%    .marker:
-%        .sr:
-%      .data:
+%   *   datafile : The data file to be imported
+%   ┌─────import
+%   ├───.channel : The channel to be imported, check pspm_import
+%   ├──────.type : The type of channel, check pspm_import
+%   ├────────.sr : The sampling rate of the file.
+%   ├──────.data : The data read from the file.
+%   └────.marker : The type of marker, such as 'continuous'
+% ● Output
+%         import : The import struct that saves importing information
+%     sourceinfo : The struct that saves information of original data source
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

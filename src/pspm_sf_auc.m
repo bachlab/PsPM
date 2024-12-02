@@ -1,22 +1,26 @@
-function varargout = pspm_sf_auc(model, options)
+function [sts, auc] = pspm_sf_auc(model, options)
 % ● Description
 %   pspm_sf_auc returns the integral/area under the curve of an SCR time series
 % ● Format
-%   auc = pspm_sf_auc(scr, sr, options)
+%   [sts, auc] = pspm_sf_auc(scr, sr, options)
 % ● Arguments
-%       scr:
-%        sr:
-%   options:
+%   *     scr : the SCR time series
+%   *      sr : sampling rate.
+%   * options : the options struct.
 % ● Outputs
-%       auc:
+%   *     auc : The calculated area under the curve.
 % ● Reference
 %   Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
 %   quantification of arousal from spontanaeous skin conductance
 %   fluctuations. International Journal of Psychophysiology, 76, 52-55.
+% ● References
+%   [1] Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
+%       quantification of arousal from spontanaeous skin conductance
+%       fluctuations. International Journal of Psychophysiology, 76, 52-55.
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings
@@ -25,13 +29,6 @@ if isempty(settings)
 end
 sts = -1;
 auc = [];
-switch nargout
-  case 1
-    varargout{1} = auc;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = auc;
-end
 
 %% check input arguments
 if nargin < 1
@@ -44,11 +41,3 @@ sr = model.sr;
 scr = scr - min(scr);
 auc = mean(scr);
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = auc;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = auc;
-end
-end

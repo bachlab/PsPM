@@ -2,7 +2,7 @@ classdef pspm_gaze_pp_test < pspm_testcase
   % Definition
   % pspm_gaze_pp_test unittest classes for the pspm_gaze_pp function
   % PsPM TestEnvironment
-  % (C) 2021 Teddy Chao (UCL)
+  % (C) 2021 Teddy
   properties
     raw_input_fn = fullfile('ImportTestData', 'eyelink', 'S114_s2.asc');
     pspm_input_fn = '';
@@ -29,9 +29,10 @@ classdef pspm_gaze_pp_test < pspm_testcase
       import{end}.eyelink_trackdist = 600;
       import{end}.distance_unit = 'mm';
       import{end + 1}.type = 'marker';
-      this.pspm_input_fn = pspm_import(...
-        this.raw_input_fn, 'eyelink', import, struct());
-      this.pspm_input_fn = this.pspm_input_fn{1};
+      options = struct();
+      options.overwrite = 1; % to always overwrite
+      [sts, this.pspm_input_fn] = pspm_import(...
+        this.raw_input_fn, 'eyelink', import, options);
     end
   end
   methods(Test)

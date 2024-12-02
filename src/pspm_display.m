@@ -1,13 +1,24 @@
 function varargout = pspm_display(varargin)
 % ● Description
-%   pspm_display is the code for the GUI that is used to display different data from scr
-%   datafiles.
+%   pspm_display opens a GUI for displaying data from PsPM files. A PsPM file
+%   to be displayed can be specified in the function call or in the GUI
+%   itself.
+% ● Format
+%   → Standard
+%     pspm_display
+%     pspm_display(filename)
+%     pspm_display(filepath)
+%   → Examples
+%     pspm_display('test.mat')
+%     pspm_display('~/Documents/test.mat')
 % ● Arguments
-%   Accepts input: 'filepath/filename'
+%   * filename: the name of a file to be displayed, which must ends with '.mat'.
+%   * filepath: the path of a file to be displayed, which must ends with '.mat'.
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
-%   Maintained in 2021 by Teddy Chao (UCL)
+%   Written    in 2013 Philipp C Paulus (Technische Universitaet Dresden)
+%   Maintained in 2021 by Teddy
+%   Bug fixed  in 2024 by Teddy
 
 %% Initialise
 global settings
@@ -29,7 +40,11 @@ gui_State = struct('gui_Name',       mfilename, ...
   'gui_LayoutFcn',  [], ...
   'gui_Callback',   []);
 if nargin && ischar(varargin{1})
-  gui_State.gui_Callback = str2func(varargin{1});
+  if nargin == 1 && length(varargin{1})>5 && strcmp(varargin{1}(end-3:end), '.mat')
+    gui_State.gui_Callback = varargin{1};
+  else
+    gui_State.gui_Callback = str2func(varargin{1});
+  end
 end
 
 if nargout
@@ -56,7 +71,6 @@ global settings;
 if isempty(settings)
   pspm_init;
 end
-
 % load channeltypes from settings variable
 
 j = 1 ; l = 1;
@@ -141,8 +155,11 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+handles.pspm_display.HandleVisibility = settings.handle;
+
 % UIWAIT makes pspm_display wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+%uiwait(handles.pspm_display);
+
 end
 
 
@@ -154,7 +171,7 @@ function varargout = pspm_display_OutputFcn(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+
 end
 
 
@@ -478,8 +495,6 @@ if not(sts == 0)
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
 
-elseif numel(varargin)>1
-  warning('Too many input arguments. Inputs 2:end ignored. ');
 end
 
 % Update handles structure
@@ -510,7 +525,7 @@ saveas(q,savename);
 close(q)
 end
 % --------------------------------------------------------------------
-function exit_Callback(~, ~, ~)
+function exit_Callback(~, ~, handles)
 % hObject    handle to exit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -680,14 +695,8 @@ end
 %% pp_plot
 
 function pp_plot(handles)
-
-global settings;
-if isempty(settings)
-  pspm_init;
-end
-
 % ---header----------------------------------------------------------------
-
+global settings
 %      handles.name ... filename
 %      prop... struct with fields
 %              .wave (channel number)

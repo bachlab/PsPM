@@ -4,7 +4,7 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
     % ● History
     %   PsPM TestEnvironment
     %   (C) 2016 Tobias Moser (University of Zurich)
-    %   Updated in 2021 by Teddy Chao (UCL)
+    %   Updated in 2021 by Teddy
     %   Updated for fitting logic in 2024 by Dominik R Bach (Uni Bonn)
 
     properties
@@ -130,10 +130,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
             options.channel_action = 'add';
             [~,~, o_data] = pspm_load_data(fn);
             options.channel = work_chans;
-            [sts, outfile] = this.verifyWarningFree(@() ...
+            [sts, ~] = this.verifyWarningFree(@() ...
                 pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
             this.verifyEqual(sts, 1);
-            [~,~, n_data] = pspm_load_data(outfile);
+            [~,~, n_data] = pspm_load_data(fn);
             n_new_chans = numel(n_data);
             n_old_chans = numel(o_data);
             chantypes = cellfun(@(x) x.header.chantype, ...
@@ -160,10 +160,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
             options.fixation_point = [1280/4 1024*3/4];
             options.add_invalid = missing;
             options.channel_action = 'add';
-            [sts, outfile] = this.verifyWarningFree(@() ...
+            [sts, ~] = this.verifyWarningFree(@() ...
                 pspm_find_valid_fixations(fn, box_degree, dist,dist_unit,options));
             this.verifyEqual(sts, 1);
-            [~, ~, n_data] = pspm_load_data(outfile);
+            [~, ~, n_data] = pspm_load_data(fn);
             % look for channels with 'missing' in chantype
             missing_chans = cellfun(@(x) ...
                 numel(regexp(x.header.chantype, 'missing')) > 0, n_data);
@@ -189,10 +189,10 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
             options.fixation_point = [1280/4 1024*3/4];
             options.channel_action = channel_action;
             [~, ~, o_data] = pspm_load_data(fn);
-            [sts, outfile] = this.verifyWarningFree(@() ...
+            [sts, ~] = this.verifyWarningFree(@() ...
                 pspm_find_valid_fixations(fn, box_degree, dist, dist_unit,options));
             this.verifyEqual(sts, 1);
-            [~, ~, n_data] = pspm_load_data(outfile);
+            [~, ~, n_data] = pspm_load_data(fn);
             switch channel_action
                 case 'add'
                     this.verifyNotEqual(numel(n_data), numel(o_data));
@@ -228,11 +228,11 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
                         pspm_find_valid_fixations(testfn, box_degree, dist, dist_unit, options), ...
                         'ID:invalid_input');
                 else
-                    [sts, outfile] = this.verifyWarningFree(@() ...
+                    [sts, ~] = this.verifyWarningFree(@() ...
                         pspm_find_valid_fixations(testfn, box_degree, dist, dist_unit, options));
                     this.verifyEqual(sts, 1);
                 end
-                [~, ~, data] = pspm_load_data(outfile);
+                [~, ~, data] = pspm_load_data(testfn);
                 % this test is only possible if NaN pupil values also cause
                 % invalid gaze coordinates which will lead to 1's in the
                 % missing channel.
@@ -273,15 +273,15 @@ classdef pspm_find_valid_fixations_test < matlab.unittest.TestCase
                     options.channel = 'both';
                 end
                 if d.expect ~= 1
-                    [sts, outfile] = this.verifyWarningFree(@() ...
+                    [sts, ~] = this.verifyWarningFree(@() ...
                         pspm_find_valid_fixations(testfn,bitmap, options));
                     this.verifyEqual(sts, 1);
                 else
-                    [~, outfile] = this.verifyWarning(@() ...
+                    [~, ~] = this.verifyWarning(@() ...
                         pspm_find_valid_fixations(testfn,bitmap, options), ...
                         'ID:invalid_input');
                 end
-                [~, ~, data] = pspm_load_data(outfile);
+                [~, ~, data] = pspm_load_data(testfn);
                 % this test is only possible if NaN pupil values also cause
                 % invalid gaze coordinates which will lead to 1's in the
                 % missing channel.

@@ -1,24 +1,13 @@
 function export = pspm_cfg_export
-% Contrast (first level)
 
-% $Id$
-% $Rev$
-
-% Initialise
+%% Initialise
 global settings
-if isempty(settings), pspm_init; end
 
+%% Standard items
+outfile           = pspm_cfg_selector_outputfile();
+modelfile         = pspm_cfg_selector_datafile('model', inf);
 
-% Select File
-modelfile         = cfg_files;
-modelfile.name    = 'Model File(s)';
-modelfile.tag     = 'modelfile';
-modelfile.num     = [1 Inf];
-modelfile.filter  = '.*\.(mat|MAT)$';
-modelfile.help    = {'Specify file from which to export statistics.',...
-                      ' ',settings.datafilehelp};
-
-
+%% Specific items
 % Screen
 screen         = cfg_const;
 screen.name    = 'Screen';
@@ -26,50 +15,31 @@ screen.tag     = 'screen';
 screen.val     = {'screen'};
 screen.help    = {''};
 
-% Filename
-filename         = cfg_entry;
-filename.name    = 'Filename';
-filename.tag     = 'filename';
-filename.strtype = 's';
-filename.help    = {'Specify a filename.'};
-
 % Target
 target         = cfg_choice;
 target.name    = 'Target';
 target.tag     = 'target';
-target.values  = {screen, filename};
+target.values  = {screen, outfile};
 target.help    = {'Export to screen or to file?'};
 
 % Datatype
 datatype        = cfg_menu;
-datatype.name   = 'Stats type';
+datatype.name   = 'Stats type to export';
 datatype.tag    = 'datatype';
 datatype.val    = {'param'};
-datatype.labels = {'param','cond','recon'};
+datatype.labels = {'All parameters','One parameter per condition','Reconstructed amplitude estimate'};
 datatype.values = {'param','cond','recon'};
-datatype.help   = {['Normally, all parameter estimates are exported. For GLM, you can choose to ' ...
-    'only export the first basis function per condition, or the reconstructed response per condition. ' ...
-    'For DCM, you can specify contrasts based on conditions as well. This will average within conditions. ', ...
-    'This argument cannot be used for other first-level models.'], ...
-    '', ...
-    '- Parameter: Export all parameter estimates.', '', ...
-    ['- Condition: Export conditions in a GLM, automatically detects number ' ...
-    'of basis functions and uses only the first one (i.e. without derivatives), ', ...
-    'or export condition averages in DCM.'], '', ...
-    ['- Reconstructed: Export all conditions in a GLM, reconstructs estimated response ' ...
-    'from all basis functions and export the peak of the estimated response.'], ''};
+datatype.help   = pspm_cfg_help_format('pspm_export', 'options.statstype');
 
 %Exclude conditions with too many NaN
 exclude_missing         = cfg_menu;
-exclude_missing.name    = 'Exclude condtitions with too many NaN';
+exclude_missing.name    = 'Exclude conditions with too many NaN';
 exclude_missing.tag     = 'exclude_missing';
 exclude_missing.val     = {false};
 exclude_missing.labels  = {'No', 'Yes'};
 exclude_missing.values  = {false, true};
-exclude_missing.help  ={['Exclude parameters from conditions with too many NaN ',...
-                 'values. This option can only be used for GLM file for ',...
-                 'which the corresponding option was used during model ',...
-                 'setup. Otherwise this argument is ignored.']};
+exclude_missing.help    = pspm_cfg_help_format('pspm_export', 'options.exclude_missing');
+
 % Delimiter
 tab         = cfg_const;
 tab.name    = 'Tab';
@@ -109,11 +79,11 @@ delim.values = {tab,newline,semicolon,comma,userspec};
 delim.help   =  {''};
 
 
-
 %% Executable Branch
 export      = cfg_exbranch;
 export.name = 'Export Statistics';
 export.tag  = 'export';
 export.val  = {modelfile, datatype, exclude_missing, target, delim};
 export.prog = @pspm_cfg_run_export;
-export.help = {'Export statistics to a file for further analysis in statistical software, or to the screen.'};
+export.vout = @pspm_cfg_vout_outfile;
+export.help = pspm_cfg_help_format('pspm_export');

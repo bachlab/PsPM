@@ -1,17 +1,14 @@
 function [bf, x] = pspm_bf_sebrf(varargin)
 % ● Description
-%   pspm_bf_sebrf constructs the startle eyeblink response function
-%   consisting of gamma probability functions.
-%   Basis functions will be orthogonalized using spm_orth by default.
+%   pspm_bf_sebrf constructs the startle eyeblink response function consisting of gamma 
+%   probability functions. Basis functions will be orthogonalized using spm_orth by default.
 % ● Format
 %   [bf, x] = pspm_bf_sebrf(td, d, g)
 %   [bf, x] = pspm_bf_sebrf([td, d, g])
 % ● Arguments
-%   td: time resolution in s and
-%    d: whether first derivative should be included (1) or
-%       not (0 as default)
-%    g: whether gaussian to model the tail should be included (1)
-%       or not (0 as default)
+%   *    td : Time resolution in s.
+%   *     d : Whether first derivative should be included (1) or not (0). Default as 0.
+%   *     g : Whether gaussian to model the tail should be included (1) or not (0). Default as 0.
 % ● Reference
 %   Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2016)
 %   Modeling Startle Eyeblink Electromyogram to Assess Fear Learning.

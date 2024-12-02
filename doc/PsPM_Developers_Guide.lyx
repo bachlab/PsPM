@@ -103,7 +103,7 @@ Developer's Guide
 
 \begin_layout Standard
 \align center
-Version 6.1.2
+Version 7.0
 \end_layout
 
 \begin_layout Standard
@@ -4316,6 +4316,7 @@ Further settings
 \end_layout
 
 \begin_layout Standard
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="23" columns="8">
 <features tabularvalignment="middle">
@@ -6894,6 +6895,313 @@ pspm_cfg_run_functionname.m
 \end_layout
 
 \begin_layout Subsection
+Python Support
+\end_layout
+
+\begin_layout Standard
+PsPM provides some features that are enabled by using Python packages, namly
+ HeartPy and Bioread, and descriptions in the GUI.
+ This is controled through 
+\family typewriter
+pspm_cfg_python
+\family default
+.
+ Any PsPM functions or features that require Python-enabled features need
+ to call 
+\family typewriter
+pspm_cfg_python
+\family default
+ to show Python path specification in the GUI, so that users can select
+ appropriate Python location for calling the packages.
+\end_layout
+
+\begin_layout Subsubsection
+Python packages
+\end_layout
+
+\begin_layout Standard
+The Python packages that are used by PsPM are Bioread and HeartPy, until
+ PsPM version 7.0.
+ This is to support the features of importing .acq data for Bioread and process
+ PPG data for HeartPy.
+ The tested competible version of these packages are Python 3.11, Bioread
+ 3.0.1, and HeartPy 1.2.7.
+ Because some packages may have dependence on other packages such as numpy,
+ here is a list of Python packages that work on both Windows and macOS
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Pillow==10.1.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+aigpy==2022.7.8.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+bioread==3.0.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+certifi==2023.11.17 
+\end_layout
+
+\begin_layout Plain Layout
+
+charset-normalizer==3.3.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+colorama==0.4.6 
+\end_layout
+
+\begin_layout Plain Layout
+
+contourpy==1.2.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+cycler==0.12.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+docopt==0.6.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+fonttools==4.45.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+heartpy==1.2.7 
+\end_layout
+
+\begin_layout Plain Layout
+
+idna==3.4 
+\end_layout
+
+\begin_layout Plain Layout
+
+kiwisolver==1.4.5 
+\end_layout
+
+\begin_layout Plain Layout
+
+matplotlib==3.8.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+mutagen==1.47.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+numpy==1.26.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+packaging==23.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+pip==24.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+prettytable==3.9.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+pycryptodome==3.19.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+pydub==0.25.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+pyparsing==3.1.1 
+\end_layout
+
+\begin_layout Plain Layout
+
+python-dateutil==2.8.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+requests==2.31.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+scipy==1.11.4 
+\end_layout
+
+\begin_layout Plain Layout
+
+setuptools==68.2.2 
+\end_layout
+
+\begin_layout Plain Layout
+
+six==1.16.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+urllib3==2.1.0 
+\end_layout
+
+\begin_layout Plain Layout
+
+wcwidth==0.2.12 
+\end_layout
+
+\begin_layout Plain Layout
+
+wheel==0.41.3
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+HeartPy for processing PPG data
+\end_layout
+
+\begin_layout Standard
+The package 
+\family typewriter
+HeartPy
+\family default
+ (stylised to be in line with its official website) (https://pypi.org/project/hea
+rtpy/) is designed for analysing PPG signals and used for processing PPG
+ data in PsPM.
+\end_layout
+
+\begin_layout Standard
+The process of using HeartPy to process PPG data is described as following.
+ Initially, PsPM will check if python has been installed in the computer,
+ and this is done by using the function 
+\family typewriter
+pspm_check_python
+\family default
+.
+ In this process, 
+\family typewriter
+pspm_check_python
+\family default
+ requires a path of python that is provided by the user so that it can determine
+ if python has been installed there.
+ Secondly, PsPM checks if HeartPy package has been installed in the defined
+ python path, and this is handled with 
+\family typewriter
+pspm_check_python_modules
+\family default
+.
+ If both python and 
+\family typewriter
+HeartPy
+\family default
+ have been installed, it is then safe to use function family 
+\family typewriter
+py.heartpy
+\family default
+ to do analysis.
+ The details of available functions that are provided by 
+\family typewriter
+HeartPy
+\family default
+ can be found at https://python-heart-rate-analysis-toolkit.readthedocs.io/en/late
+st/heartpy.heartpy.html.
+ The details about how PPG data are processed can be found at 
+\family typewriter
+pspm_convert_ppg2hb
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection
+Bioread for importing biopac data
+\end_layout
+
+\begin_layout Standard
+The package 
+\family typewriter
+Bioread
+\family default
+ (https://pypi.org/project/bioread/) supports reading biopac files in any
+ version, and it has been included in PsPM for importing biopac files since
+ version 7.0.
+ 
+\family typewriter
+Bioread-based
+\family default
+ importing is set as an alternative method in parallel to previous methods,
+ and it is managed in 
+\family typewriter
+acqread_python
+\family default
+.
+ Users have to specify the functionality of importing biopac data with python
+ to use this method, but they can also call the function 
+\family typewriter
+acqread_python
+\family default
+ in command line or scripts to directly use this feature.
+ The method of checking python and 
+\family typewriter
+Bioread
+\family default
+ is identical to what has been checked for 
+\family typewriter
+HeartPy
+\family default
+.
+ The generic flowchart of 
+\family typewriter
+acqread_python
+\family default
+ is to get the main content and other metadata from original files and then
+ save such information to the corresponding places for meeting PsPM's data
+ storage requirements.
+ Further information is available in 
+\family typewriter
+acqread_python
+\family default
+ that is under the path 
+\family typewriter
+src/Import/acq
+\family default
+.
+\end_layout
+
+\begin_layout Subsection
 GUI Development Progress
 \end_layout
 
@@ -6995,8 +7303,183 @@ The new GUI is currently using the colour
 \family default
  for stylishing.
  The main typeface for UI design is Segoe UI, San Francisco (or Helvetica
- Neue for pre-macOS Yosemite) and DejaVu Sans for Windows, macOS and Linux,
- respectively.
+ Neue for Yosemite, Lucida Grande for pre-Yosemite) and DejaVu Sans for
+ Windows, macOS, and Linux, respectively.
+\end_layout
+
+\begin_layout Subsection
+Help Text
+\end_layout
+
+\begin_layout Subsubsection
+Introduction
+\end_layout
+
+\begin_layout Standard
+Help text refers to the descriptive text that is included in the initial
+ couple of lines of source code.
+ Such help text can be sorted by calling the function 
+\family typewriter
+pspm_help
+\family default
+ into a struct.
+ Typically, the help text shall be written into sections as 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Description The general introduction of a function.
+ This is normally describing the use of the function and how it works, such
+ as importing a specific type of data and how information is read and managed.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Format The format of a function as how it can be called.
+ If the function has some varabile arguments, then the details can be listed
+ as multiple lines.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Arguments The list of input variables of a function with their descriptions.
+ Every individual input variable shall be lead by a star mark.
+ Structs and their subfields shall be managed with table symbols.
+ An example of how this is managed is given below.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Outputs The list of output variables of a function with their descriptions,
+ similar to Arguments.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Developer's_notes This section can be used as a paragraph of technical notes
+ for the function.
+ Such information is typically useful for developing the function, and it
+ is relatively more useful for developers than for users.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+History The section includes some notes about who has contributed to a function,
+ which may be useful for future checking.
+\end_layout
+
+\begin_layout Subsubsection
+Typical example
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Description 
+\end_layout
+
+\begin_layout Standard
+\noindent
+General introduction of the function.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Format
+\end_layout
+
+\begin_layout Standard
+\noindent
+  [output1, output2, output3] = pspm_xxx(varargin);
+\end_layout
+
+\begin_layout Standard
+\noindent
+  [output1, output2, output3] = pspm_xxx(input1, input2);
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Arguments
+\end_layout
+
+\begin_layout Standard
+\noindent
+* input1     : description of input1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+* input2     : description of input2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+┌─input3
+\end_layout
+
+\begin_layout Standard
+\noindent
+├─.subfield1 : description of subfield1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+└─.subfield2 : description of subfield2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Outputs
+\end_layout
+
+\begin_layout Standard
+\noindent
+* output1    : description of output1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+* output2    : description of output2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+┌─output3
+\end_layout
+
+\begin_layout Standard
+\noindent
+├─.subfield1 : description of subfield1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+└─.subfield2 : description of subfield2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Developer's notes
+\end_layout
+
+\begin_layout Standard
+\noindent
+  A few sentences of technical information for this function.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● History
+\end_layout
+
+\begin_layout Standard
+\noindent
+Introduced in PsPM version a.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Written in 2024 by developer a.
 \end_layout
 
 \begin_layout Standard
@@ -7568,7 +8051,7 @@ ID:toolbox_missing
 \end_layout
 
 \begin_layout Subsection
-pspm_bf_test
+pspm_bf
 \end_layout
 
 \begin_layout Subsubsection
@@ -23720,7 +24203,7 @@ Function
 \begin_layout Standard
 
 \family typewriter
-wavedata = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
+[sts, wavedata] = pspm_pulse_convert(pulsedata, resamplingrate, samplingrate)
 \end_layout
 
 \begin_layout Subsubsection
@@ -26626,6 +27109,232 @@ test if new channel and added channel have same
 .
 \end_layout
 
+\begin_layout Subsection
+Python
+\end_layout
+
+\begin_layout Subsubsection
+Overview
+\end_layout
+
+\begin_layout Subparagraph
+Testclass
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_test
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_module_test
+\end_layout
+
+\begin_layout Subparagraph
+Format
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+out = pspm_cfg_python(package_name)
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+sts = pspm_check_python(valid_python_path)
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+sts = pspm_check_python_modules(package_name)
+\end_layout
+
+\begin_layout Subparagraph
+Note
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_cfg_python
+\family default
+ is a UI controller function that handles python path.
+ The function can be called by other UI functions if Python is required
+ for performing relavent processing.
+ The function will ask users to define the path for python that has been
+ installed in the system.
+\end_layout
+
+\begin_layout Subsubsection
+Test for python
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_test
+\family default
+ is a test function that checks the installation of python in the system
+ by using 
+\family typewriter
+pspm_check_python
+\family default
+, and the path of the python package that has been installed is detected
+ by 
+\family typewriter
+pspm_py_find_location.py
+\family default
+.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Enumerate
+
+\family typewriter
+test_current_python_environment
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+ensure a Python environment is already configured
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\family typewriter
+test_set_new_python_environment
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Automatically detect the python installed in the system and test if it can
+ be checked successfully by 
+\family typewriter
+pspm_check_python
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+test_set_invalid_python_environment
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Use an invalid python path to check if 
+\family typewriter
+pspm_check_python returns invalid results
+\family default
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\family typewriter
+test_python_environment_already_set
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Test when the specified Python environment is already set as the current.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Test for python modules
+\end_layout
+
+\begin_layout Subparagraph
+Function name
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_module_test
+\end_layout
+
+\begin_layout Subparagraph
+Description
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+pspm_check_python_module_test
+\family default
+ manages to check the modules that is installed in the system by using 
+\family typewriter
+pspm_check_python_modules
+\family default
+.
+ Currently, it only tests the module
+\family typewriter
+ 
+\begin_inset Quotes eld
+\end_inset
+
+math
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subparagraph
+Tests
+\end_layout
+
+\begin_layout Enumerate
+
+\family typewriter
+test_python_environment_with_modules
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+To test the package 
+\begin_inset Quotes eld
+\end_inset
+
+math
+\begin_inset Quotes erd
+\end_inset
+
+ that has been installed can be checked successfully by using 
+\family typewriter
+pspm_check_python_modules
+\family default
+.
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset

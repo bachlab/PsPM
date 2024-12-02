@@ -5,8 +5,11 @@ classdef pspm_trim_test < matlab.unittest.TestCase
   % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   %     2022 Teddy Chao
+  %     2024 Bernhard von Raußendorf
+  
   properties(Constant)
     fn = 'trim_test.mat';
+    missing_epochs_fn = 'missing_epochs.mat';  % 
   end
   properties
     numof_markertests = 3;
@@ -28,6 +31,13 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       testCase.event_channels = [2 4 5];
       testCase.cont_channels = [1 3 6 7];
       testCase.sr = 100;
+
+       epochs = [2, 4; 6, 8]; % Example missing epochs
+
+      save(testCase.missing_epochs_fn, 'epochs');  % 
+
+
+
       if exist(testCase.fn, 'file')
         delete(testCase.fn);
       end
@@ -42,9 +52,147 @@ classdef pspm_trim_test < matlab.unittest.TestCase
       if exist(testCase.fn, 'file')
         delete(testCase.fn);
       end
+      if exist(testCase.missing_epochs_fn, 'file')
+          delete(testCase.missing_epochs_fn);
+      end
     end
   end
   methods (Test)
+    %% Missing epochs test
+    function missing_epoch_trim_inside_both_test(testCase)
+        from = 3;  
+        to = 7;     
+        reference = 'file';  
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn; % Specify the missing epochs file
+        
+        
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+       
+        load(newepochfile, 'epochs');
+
+        % Expected result
+        expected_epochs = [0, 1; 3, 4];
+
+        
+        testCase.verifyEqual(epochs, expected_epochs, 'Missing epochs trimming failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end
+
+    function missing_epoch_one_outside_trim_touching_first_one_test(testCase)
+        from = 4;
+        to = 9;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [2,4]; % not [0, 0 ; 2, 4];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end
+
+    function missing_epoch_one_outside_trim_test(testCase)
+        from = 5;
+        to = 9;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [1, 3];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end
+   
+    function missing_epoch_both_inside_trim_test(testCase)
+        from = 1;
+        to = 9;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [1, 3; 5, 7];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end    
+
+    function missing_epoch_one_to_the_end_test(testCase)
+        from = 1;
+        to = 3;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs = [1, 2];
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end   
+    
+    function between_missing_epoch_test2(testCase)
+        from = 4;
+        to = 6;
+        reference = 'file';
+
+        % epochs = [2, 4; 6, 8];
+        options.missing = testCase.missing_epochs_fn;
+
+        [sts, newdatafile, newepochfile] = pspm_trim(testCase.fn, from, to, reference, options);
+
+        load(newepochfile, 'epochs');
+
+        % Expected result after trimming
+        expected_epochs =  zeros(0,2); % not [0, 0; 2, 2] but  0×2 empty double matrix
+
+        testCase.verifyEqual(epochs, expected_epochs, 'One missing epoch outside trimmed data failed.');
+
+
+        delete(newdatafile);
+        delete(newepochfile);
+    end   
+
+
     %% Invalid input arguments
     function invalid_inputargs(testCase)
       testCase.verifyWarning(@()pspm_trim(testCase.fn, [1 2], 5, 'marker'),...
@@ -82,58 +230,21 @@ classdef pspm_trim_test < matlab.unittest.TestCase
         trimtest(testCase, testCase.fn, 'num', k, 2);
       end
     end
-    %% Multiple file reference tests
-    function multiple_files(testCase)
-      %with datafile input
-      fn2 = 'trim_test_2.mat';
-      copyfile(testCase.fn,fn2);
-      fncell{1} = testCase.fn;
-      fncell{2} = fn2;
-      [from, to, exp_val{1}, ~, ~] = filetest_3(testCase);
-      newdatafile = pspm_trim(fncell, from, to, 'file');
-      import matlab.unittest.constraints.HasElementCount;
-      testCase.verifyTrue(iscell(newdatafile),...
-        'multiple_files test with datafile input (newdatafile is not a cell array)');
-      [~, act_val{1}.infos, act_val{1}.data] = pspm_load_data(newdatafile{1},0);
-      [~, act_val{2}.infos, act_val{2}.data] = pspm_load_data(newdatafile{2},0);
-      exp_val{1}.infos.trimdate = date;
-      exp_val{2} = exp_val{1};
-      exp_val{1}.infos.trimfile = newdatafile{1};
-      exp_val{2}.infos.trimfile = newdatafile{2};
-      import matlab.unittest.constraints.IsEqualTo;
-      testCase.verifyThat(act_val, IsEqualTo(exp_val), 'multiple_files test with datafile input');
-      delete(newdatafile{1});
-      delete(newdatafile{2});
-      delete(fn2);
-      % with struct input
-      [~, datafile{1}.infos, datafile{1}.data] = pspm_load_data(testCase.fn);
-      datafile{2} = datafile{1};
-      [from, to, exp_val{1}, ~, ~] = filetest_3(testCase);
-      newdatafile = pspm_trim(datafile, from, to, 'file');
-      import matlab.unittest.constraints.HasElementCount;
-      testCase.verifyTrue(iscell(newdatafile), ...
-        'multiple_files test with stuct input (newdatafile is not a cell array)');
-      act_val = newdatafile;
-      exp_val{1}.infos.trimdate = date;
-      exp_val{2} = exp_val{1};
-      import matlab.unittest.constraints.IsEqualTo;
-      testCase.verifyThat(act_val, IsEqualTo(exp_val), 'multiple_files test with stuct input');
-    end
     %% Option tests (marker channel number option)
     function marker_chan_num_option_test(testCase)
       options.marker_chan_num = 3;
-      newdatafile = testCase.verifyWarning(@() ...
+      [sts, newdatafile] = testCase.verifyWarning(@() ...
         pspm_trim(testCase.fn,'none','none','marker', options), ...
-        'ID:invalid_option', 'marker_chan_num_option_test test 1');
+        'ID:unexpected_channeltype', 'marker_chan_num_option_test test 1');
       delete(newdatafile);
       struct = load(testCase.fn);
       struct.data{5}.data = struct.data{5}.data(2:end);
       save(testCase.fn,'-struct', 'struct');
       options.marker_chan_num = 5;
-      newdatafile = pspm_trim(testCase.fn,'none','none',[2,length(struct.data{2}.data)]);
+      [sts, newdatafile] = pspm_trim(testCase.fn,'none','none',[2,length(struct.data{2}.data)]);
       [~, exp_val.infos, exp_val.data] = pspm_load_data(newdatafile, 0);
       delete(newdatafile);
-      newdatafile = pspm_trim(testCase.fn,'none','none', 'marker', options);
+      [sts, newdatafile] = pspm_trim(testCase.fn,'none','none', 'marker', options);
       [~, act_val.infos, act_val.data] = pspm_load_data(newdatafile, 0);
       delete(newdatafile);
       import matlab.unittest.constraints.IsEqualTo;
@@ -155,9 +266,9 @@ classdef pspm_trim_test < matlab.unittest.TestCase
           reference = num;
       end
       if strcmpi(warningID, 'none')
-        newdatafile=pspm_trim(datafile, from, to, reference);
+        [sts, newdatafile]=pspm_trim(datafile, from, to, reference);
       else
-        newdatafile = testCase.verifyWarning(@()...
+        [sts, newdatafile] = testCase.verifyWarning(@()...
           pspm_trim(datafile, from, to, reference),...
           warningID, [testmsg ' (invalid warning)']);
       end

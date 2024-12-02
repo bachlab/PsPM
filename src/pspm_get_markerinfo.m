@@ -1,36 +1,35 @@
 function [sts, markerinfo] = pspm_get_markerinfo(fn, options)
 % ● Description
 %   pspm_get_markerinfo extracts markerinfo from PsPM files that contain
-%   such information (typically after import of EEG-style data files, e.g.
-%   BrainVision or NeuroScan)
+%   such information (e.g. BrainVision or NeuroScan), and returns this or 
+%   writes it into a matlab file with a struct variable 'markerinfo', with
+%   one element per unique marker name/value.
 % ● Format
 %   [sts, markerinfo] = pspm_get_markerinfo(filename, options)
 % ● Arguments
-%       filename: [char]
-%                 name of PsPM file
-%                 if empty, you will be prompted for one
-%   ┌────options:
-%   ├.markerchan: [double]
-%   │             channel id of the marker channel;
-%   │             default value: -1, meaning to use the first found marker
-%   │             channel
-%   ├──.filename: [char]
-%   │             name of a file to write the markerinfo to;
-%   │             default value: empty, meaning no file will be written
-%   └──overwrite: [logical] (0 or 1)
-%                 Define whether to overwrite existing output files or not.
-%                 Default value: determined by pspm_overwrite.
+%   *   filename : [char]
+%                  name of PsPM file
+%                  if empty, you will be prompted for one
+%   ┌────options
+%   ├.marker_chan_num:  [int] marker channel number.
+%   │                   if undefined or 0, first marker channel is used.
+%   ├──.filename : [char]
+%   │              name of a file to write the markerinfo to;
+%   │              default value: empty, meaning no file will be written
+%   └──overwrite : [logical] (0 or 1)
+%                  Define whether to overwrite existing output files or not.
+%                  Default value: determined by pspm_overwrite.
 % ● Output
-%            sts: [double]
-%                 default value: -1 if unsuccessful
-%     markerinfo: [struct]
-%     ├────.name: [char]
-%     ├───.value:
-%     └─.element:
+%   *        sts : [double]
+%                  default value: -1 if unsuccessful
+%   ┌─markerinfo : [struct]
+%   ├──────.name : [char]
+%   ├─────.value : ...
+%   └───.element : ...
 % ● History
 %   Introduced in PsPM 6.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -48,21 +47,18 @@ options = pspm_options(options, 'get_markerinfo');
 if nargin < 1 || isempty(fn)
   fn = spm_select(1, 'mat', 'Extract markers from which file?');
 end
-if options.markerchan == -1
-  options.markerchan = 'events';
-end
 % get file
-[bsts, ~, data] = pspm_load_data(fn, options.markerchan);
+[bsts, data] = pspm_load_channel(fn, options.marker_chan_num, 'marker');
 if bsts == -1, return, end
 % check markers
-if isempty(data{1}.data)
+if ~isfield(data, 'markerinfo')
   sts = -1;
-  warning('File (%s) contains no event markers', fn);
+  warning('File (%s) contains no event marker infos', fn);
   return;
 end
 %% extract markers: find unique type/value combinations ...
-markertype = data{1}.markerinfo.name;
-markervalue = data{1}.markerinfo.value;
+markertype = data.markerinfo.name;
+markervalue = data.markerinfo.value;
 markerall = strcat(markertype', regexp(num2str(markervalue'), '\s+', 'split'));
 markerunique = unique(markerall);
 % ... and write them into a struct
