@@ -137,14 +137,14 @@ for iFile = 1:size(modelfileArray, 1)
 end
 setButtonEnable(handles)
 
-if handles.modelCnt > 1
-  set(handles.buttonRemoveModel2, 'Enable', 'on');
+if handles.modelCnt > 1 
+  set(handles.buttonRemoveModel, 'Enable', 'on');
 end
 guidata(hObject, handles);
 
-% --- Executes on button press in buttonRemoveModel2.
+% --- Executes on button press in buttonRemoveModel.
 function buttonRemoveModel_Callback(hObject, ~, handles)
-% hObject    handle to buttonRemoveModel2 (see GCBO)
+% hObject    handle to buttonRemoveModel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.modelData{handles.currentModel} = [];
@@ -157,8 +157,8 @@ if handles.currentModel > handles.modelCnt
   handles.currentModel = handles.modelCnt;
 end
 set(handles.listModel, 'Value', handles.currentModel);
-if handles.modelCnt < 2
-  set(handles.buttonRemoveModel2, 'Enable', 'off');
+if handles.modelCnt < 2 
+  set(handles.buttonRemoveModel, 'Enable', 'off');
 end
 showModel(handles);
 
@@ -201,7 +201,7 @@ switch handles.modelData{handles.currentModel}.modeltype
   case 'dcm'
     sessionNr = checkSessionNr(handles);
     if sessionNr
-      pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'sum', sessionNr, [])
+      pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'sum', sessionNr, []);
     end
 
   case 'sf'
@@ -294,12 +294,13 @@ function buttonPlot5_Callback(hObject, ~, handles)
 tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
+
   case 'glm'
     [~, handles.modelData{handles.currentModel}.fig] = ...
       pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 5);
+    
   case 'dcm'
-    [~, handles.modelData{handles.currentModel}.fig] = ...
-      pspm_rev_con(handles.modelData{handles.currentModel}.model);
+      pspm_rev_dcm(handles.modelData{handles.currentModel}.modelfile, 'seg', [], []);
 
 end
 set(handles.textStatus,'String',tmpStatusString);
@@ -315,44 +316,14 @@ tmpStatusString = get(handles.textStatus,'String');
 set(handles.textStatus,'String','Plotting is in progress. Please wait...');
 switch handles.modelData{handles.currentModel}.modeltype
     case 'glm'
-
-        modelfile = handles.modelData{handles.currentModel}.modelfile;
-        options = struct();
-        [ssts, segments] = pspm_extract_segments('model', modelfile, options);
-
-        if ssts == -1
-            uiwait(msgbox('Error extracting segments from the model.', 'Error')) 
-        else
-
-            glm = handles.modelData{handles.currentModel}.model;
-            sr = glm.input.sr;
-            cmap = lines(numel(segments.segments));  
-            f.h = figure;
-            f.a.h = axes(f.h);
-            hold on;
-
-            legendNames = cell(1, numel(segments.segments));
-
-            for x = 1:numel(segments.segments)
-
-                plotdata = segments.segments{x}.mean;
-                t = (1:length(plotdata)) / sr; 
-                f.a.p = plot(f.a.h, t, plotdata, 'Color', cmap(x, :), 'LineWidth', 1);
-                legendNames{x} = segments.segments{x}.name;
-
-            end
-
-            f.a.l = legend(legendNames, 'Interpreter', 'none', 'Location', 'best');
-            legend boxoff
-
-            set(get(f.a.h, 'xlabel'), 'String', 'Time (seconds)');
-            set(get(f.a.h, 'ylabel'), 'String', 'Mean Response (data units)');
-            set(get(f.a.h, 'title'), 'String', 'Mean Responses for All Segments');
-
-            hold off;
-        end
+       modelfile = handles.modelData{handles.currentModel}.modelfile;
+       [~, handles.modelData{handles.currentModel}.fig] = pspm_rev_glm(modelfile, 6);
 
 
+  % contrast in comand window     
+  case 'dcm'
+    [~, handles.modelData{handles.currentModel}.fig] = ...
+      pspm_rev_con(handles.modelData{handles.currentModel}.model);
 
 end
 
@@ -543,15 +514,17 @@ switch handles.modelData{handles.currentModel}.modeltype
     buttonPlotString = {'Display', ...
       'Display', ...
       'Display', ...
-      'Show'};
+      'Show', ...
+      'Plot'};
     textPlotString = {'All trials for one session', ...
       'Diagnostics for trial nr.', ...
       'Skin conductance response function (SCR)', ...
-      'Trial and condition names in command window'};
+      'Trial and condition names in command window', ...
+      'Plot data per condition'};
     % detect contrasts
     if isfield(handles.modelData{handles.currentModel}.model, 'con')
-      buttonPlotString{5} = 'Show';
-      textPlotString{5} = 'Contrast names in command window';
+      buttonPlotString{6} = 'Show';
+      textPlotString{6} = 'Contrast names in command window';
     end
     setInvisble(handles);
     setButtonPlotString(handles, buttonPlotString);
