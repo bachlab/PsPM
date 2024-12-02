@@ -188,7 +188,7 @@ tab = sprintf('\t');
 while strncmp(curr_line, '**', numel('**'))
   if contains(curr_line, 'DATE')
     colon_idx = strfind(curr_line, ':');
-    date_part = curr_line(colon_idx + 1 : end);
+    date_part = curr_line(colon_idx(1) + 1 : end);
     date_fmt = 'eee MMM d HH:mm:ss yyyy';
     date = datetime(date_part, 'InputFormat', date_fmt);
     file_info.record_date = sprintf('%.2d.%.2d.%.2d', date.Day, date.Month, date.Year);
@@ -364,6 +364,7 @@ end
 function chan_info = parse_session_headers(messages)
 prev_n_messages = 0;
 pupil_str = sprintf('PUPIL\t');
+global  settings;
 for sess_idx = 1:numel(messages)
   i = 1;
   while true
