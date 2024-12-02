@@ -300,8 +300,7 @@ switch handles.modelData{handles.currentModel}.modeltype
       pspm_rev_glm(handles.modelData{handles.currentModel}.modelfile, 5);
     
   case 'dcm'
-    [~, handles.modelData{handles.currentModel}.fig] = ...  
-      pspm_rev_dcm(handles.modelData{handles.currentModel}.model, 'seg', [], []);
+      pspm_rev_dcm(handles.modelData{handles.currentModel}.modelfile, 'seg', [], []);
 
 end
 set(handles.textStatus,'String',tmpStatusString);
