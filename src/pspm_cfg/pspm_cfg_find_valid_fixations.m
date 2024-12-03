@@ -55,18 +55,16 @@ FixPtFile               = cfg_files;
 FixPtFile.name          = 'File';
 FixPtFile.tag           = 'fixpoint_file';
 FixPtFile.num           = [1 1];
-FixPtFile.help          = {['.mat file containing a variable F with an ', ...
-                            'n x 2 matrix. N should have the length of ', ...
-                            'the recorded data and each row should ', ...
-                            'define the fixation point for the ', ...
-                            'respective recorded data row.']};
+temphelp                = pspm_cfg_help_format('pspm_find_valid_fixations', 'options.fixation_point');
+FixPtFile.help          = {['Specify a .mat file containing a variable ''F'': ', ...
+                           temphelp{1}]};
 %% Fixation point value
 FixPtVal                = cfg_entry;
 FixPtVal.name           = 'Point';
 FixPtVal.tag            = 'fixpoint';
 FixPtVal.strtype        = 'r';
 FixPtVal.num            = [1 2];
-FixPtVal.help           = {['x/y coordinates of constant fixation point.']};
+FixPtVal.help           = {'x/y coordinates of constant fixation point.'};
 
 %% Fixation point
 FixPt                   = cfg_choice;
@@ -87,7 +85,9 @@ bitmap                  = cfg_files;
 bitmap.name             = 'Bitmap file';
 bitmap.tag              = 'bitmap_file';
 bitmap.num              = [1 1];
-bitmap.help             = pspm_cfg_help_format('pspm_find_valid_fixations', 'bitmap');
+temphelp                = pspm_cfg_help_format('pspm_find_valid_fixations', 'bitmap');
+bitmap.help          = {['Specify a .mat file containing a variable ''bitmap'': ', ...
+                           temphelp{1}]};
 %% Validation method
 val_method              = cfg_choice;
 val_method.name         = 'Validation method';
