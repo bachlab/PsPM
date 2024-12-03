@@ -15,7 +15,7 @@ if isfield(job.diagnostic, 'diagnostics')
     end
     options.marker_chan_num = pspm_cfg_selector_channel('run', d.chan);
     if d.n_sounds > 0
-      options.expectedSoundCount = job.output.diagnostic.n_sounds;
+      options.expectedSoundCount = d.n_sounds;
     end
     options.maxdelay = d.max_delay;
     diag_out = fieldnames(d.diag_output);
