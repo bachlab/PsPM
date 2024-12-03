@@ -208,6 +208,7 @@ if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
         names{1} = 'all';
         n_cond = 1;
         options.timeunits = 'seconds';
+        onsets{1} = temponsets;
     end
 else
     [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
