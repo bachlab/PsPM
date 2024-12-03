@@ -122,7 +122,7 @@ usenames = 1;
 excl_stats_contained = false(numel(modelfile),1);
 for iFile = 1:numel(modelfile)
   [lsts, data(iFile), modeltype{iFile}] = pspm_load1(modelfile{iFile}, statstype);
-  if lsts == -1, return; end;
+  if lsts < 1, return; end;
   % set flag to indicate if exclude statistics are contained
   if isfield(data(iFile),'stats_exclude') && isfield(data(iFile),'stats_missing')
     excl_stats_contained(iFile) = true;
