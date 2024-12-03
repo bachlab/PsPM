@@ -186,14 +186,29 @@ for i_sn = 1:numel(data_raw)
 end
 
 if strcmpi(method, 'model') && strcmpi(data.modeltype, 'dcm')
-    % DCM has no condition information
-    onsets{1} = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
+    temponsets = cellfun(@(x, y) pspm_time2index(x, sr , y), ...
     data.input.trlstart(:), ...
     num2cell(session_duration), ...
     'UniformOutput', false);
-    names{1} = 'all';
-    n_cond = 1;
-    options.timeunits = 'seconds';
+    trlnum = cellfun(@(x) numel(x), temponsets);
+    trlnum = trlnum(:);
+    % if DCM has condition information
+    if isfield(data, 'trlnames') && numel(data.trlnames) == sum(trlnum)
+        names = unique(data.trlnames);
+        n_cond = numel(names);
+        prevtrlnum = [0; cumsum(trlnum(1:(end-1)))];
+        for i_cond = 1:numel(names)
+            for i_sn = 1:numel(temponsets)
+                snindx = prevtrlnum(i_sn) + (1:trlnum(i_sn));
+                onsets{i_cond}{i_sn} = temponsets{i_sn}(strcmpi(data.trlnames(snindx), names{i_cond}));
+            end
+        end
+    else
+    % if DCM has no condition information
+        names{1} = 'all';
+        n_cond = 1;
+        options.timeunits = 'seconds';
+    end
 else
     [lsts, multi] = pspm_get_timing('onsets', timing, options.timeunits);
      [msts, onsets] = pspm_multi2index(options.timeunits, multi, sr, session_duration, events);
