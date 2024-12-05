@@ -96,7 +96,7 @@ val_method.values       = {ValidSet,bitmap};
 val_method.help         = {};
 %% Missing
 missing                 = cfg_menu;
-missing.name            = 'Add channel with information invalid data points';
+missing.name            = 'Add channel with information on invalid data points';
 missing.tag             = 'add_invalid';
 missing.labels          = {'Yes', 'No'};
 missing.values          = {1, 0};
