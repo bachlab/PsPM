@@ -249,7 +249,7 @@ for i_cond = 1:numel(onsets)
 end
 
 if options.plot
-  fg = figure('Name', 'Condition mean per subject', 'Visible', 'off');
+  fg = figure('Name', 'Condition means and SEM', 'Visible', 'off');
   ax = axes('NextPlot', 'add');
   set(fg, 'CurrentAxes', ax);
 
