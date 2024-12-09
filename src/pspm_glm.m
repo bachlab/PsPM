@@ -519,7 +519,8 @@ for iCond = 1:numel(names)
   tmp.regscale{iCond} = 1;
   % first process event onset, then pmod
   if strcmpi(model.latency, 'free')
-      offset = model.window(1);
+      offset = round(model.window(1) * glm.infos.sr);
+      model.infos.offset = offset;
   else
       offset = 0;
   end
@@ -708,7 +709,7 @@ if strcmpi(model.latency, 'free')
     % obtain inner product and select max
     a = D * glm.YM;
     [~, ind] = max(a);
-    lat(iCol) = ind/glm.infos.sr;
+    lat(iCol) = (ind+model.infos.offset)/glm.infos.sr;
     XMnew(:, iCol) = D(ind, :);
     % create names
     glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];

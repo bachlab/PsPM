@@ -8,12 +8,15 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 %   [sts, outfile] = pspm_import(datafile, datatype, import, options)
 % ● Arguments
 %   *          datafile : [char] file name
-%   *          datatype : supported datatypes are defined in pspm_init (see manual).
-%   ┌────────────import
-%   ├─────────────.type : (mandatory for all data types and each job) not all data
+%   *          datatype : supported datatype as defined in pspm_init (see manual).
+%   *            import : A cell array of struct, with one cell per
+%                         channel to be imported.
+%   ┌────────────import 
+%   ├─────────────.type : [mandatory for all data types and each job] Channel  
+%   │                     type as defined in pspm_init (see manual). Not all data
 %   │                     types support all channel types.
-%   ├───────────────.sr : [mandatory for some data types and each channel] sampling rate
-%   │                     for waveforms or time units in second for event channels, in Hz.
+%   ├───────────────.sr : [mandatory for some data types and each channel] Sampling rate
+%   │                     for waveforms, or time units in second for event channels, in Hz.
 %   ├──────────.channel : [mandatory for some data types and each channel, 
 %   │                     positive integer; will search if set to 0 and data type allows] 
 %   │                     Specify where in the data file to find the channel; 

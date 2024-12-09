@@ -9,6 +9,7 @@ if isfield(job.roi, 'region')
 end
 options = pspm_update_struct(options, job, 'threshold');
 if isfield(job.diagnostic, 'diagnostics')
+    options.diagnostics = 1;
     d = job.diagnostic.diagnostics;
     if isfield(d.create_corrected_chan, 'yes')
         options.channel_output = 'corrected';
@@ -21,9 +22,9 @@ if isfield(job.diagnostic, 'diagnostics')
     diag_out = fieldnames(d.diag_output);
     switch diag_out{1}
       case 'hist_plot'
-        options.plot = true;
+        options.plot = 1;
       case 'text_only'
-        options.plot = false;
+        options.plot = 0;
     end
 end
 [~, out, ~] = pspm_find_sounds(file, options);
