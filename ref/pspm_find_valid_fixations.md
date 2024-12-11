@@ -25,13 +25,13 @@ By default, screen centre is assumed as fixation point. If an explicit fixation 
 | Variable | Definition |
 |:--|:--|
 | fn | The actual data file containing the eyelink recording with gaze data converted to cm. |
-| bitmap | A nxm matrix representing the display window and holding for each poisition a one, where a gaze value is valid. If there exists gaze data at a point with a zero value in the bitmap the corresponding data is set to NaN. IMPORTANT: the bitmap has to be defined in terms of the eyetracker coordinate system, i.e. bitmap(1,1) must correpond to the origin of the eyetracker coordinate system, and must be of the same size as the display. |
+| bitmap | A nxm matrix of the same size as the display, with 1 for valid and 0 for invalid gaze points. IMPORTANT: the bitmap has to be defined in terms of the eyetracker coordinate system, i.e. bitmap(1,1) must correpond to the origin of the eyetracker coordinate system, and must be of the same size as the display. |
 | circle_degree | Size of boundary circle given in degree visual angles. |
 | distance | Distance between eye and screen in length units. |
 | unit | Unit in which distance is given. |
 | options | See following fields. |
-| options.fixation_point | A nx2 vector containing x and y of the fixation point (with respect to the given resolution, and in the eyetracker coordinate system). n should equal either 1 (constant fixation point) or the length of the actual data. If resolution is not defined the values are given in percent. Therefore [0.5 0.5] would correspond to the middle of the screen. Default is [0.5 0.5]. Only taken into account if there is no bitmap. |
-| options.resolution | Resolution with which the fixation point is defined (Maximum value of the x and y coordinates). This can be the screen resolution in pixels (e.g. [1280 1024]) or the width and height of the screen in cm (e.g. [50 30]). Default is [1 1]. Only taken into account if there is no bitmap. |
+| options.fixation_point | A nx2 vector containing x and y of the fixation point (with respect to the given resolution, and in the eyetracker coordinate system). n should equal either 1 (constant fixation point) or the length of the actual data. If resolution is not defined the values are given in percent. Therefore (0.5 0.5) would correspond to the middle of the screen. Default is (0.5 0.5). Only taken into account if there is no bitmap. |
+| options.resolution | Resolution with which the fixation point is defined (Maximum value of the x and y coordinates). This can be the screen resolution in pixels (e.g. (1280 1024)) or the width and height of the screen in cm (e.g. (50 30)). Default is (1 1). Only taken into account if there is no bitmap. |
 | options.plot_gaze_coords | Define whether to plot the gaze coordinates for visual inspection of the validation process. Default is false. |
 | options.channel_action | Define whether to add or replace the data. Default is 'add'. Possible values are 'add' or 'replace'. |
 | options.add_invalid | [0/1] If this option is enabled, an extra channel will be written containing information about the valid samples. Data points equal to 1 correspond to invalid fixation. Default is not to add this channel. |

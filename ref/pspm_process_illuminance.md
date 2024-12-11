@@ -17,7 +17,7 @@ The illuminance file should be a .mat file with a vector variable called Lx. In 
 
 | Variable | Definition |
 |:--|:--|
-| ldata | Illuminance data as (cell of) 1x1 double or filename. |
+| ldata | Specify illuminance data as name of a file that contains a variable Lx, a n x 1 numeric vector containing the illuminance values [or directly specify ldata as a vector]. |
 | sr | Sample rate in Hz of the input illuminance data. |
 | options | See following fields. |
 | options.fn | [filename] Ff specified ldata{i,j} will be saved to a file with filename options.fn{i,j} into the variable 'R'. |

@@ -19,9 +19,9 @@ This allows for example creating GLM timing definitions based on markers distrib
 
 | Variable | Definition |
 |:--|:--|
-| datafile | data file name(s): char. |
+| datafile | data file name: char. |
 | options | See following fields. |
 | options.channel_action | Accepted values: 'add'/'replace' Defines whether the new channel should be added on top of combined marker channels ('add'), or all combined marker channels should be deleted and replaced with the one new channel ('replace'). If the first option is used, then use marker channel indexing in further processing which by default takes the first marker channel as input. |
-| options.marker_chan_num | any number of marker channel numbers - if undefined or 0, all marker channels of each file are used. |
+| options.marker_chan_num | Choose any number of marker channel numbers to combine. If 0 all marker channels are used [default: use all channels]. |
 
 [Back to index](/PsPM/ref/)

@@ -21,5 +21,6 @@ pspm_remove_epochs sets epochs of data, as defined by an epoch file, to NaN.
 | timeunits | timeunits of the epochfile. |
 | options | See following fields. |
 | options.channel_action | ['add'/'replace'] Defines whether new channels should be added or corresponding channels should be replaced. The default value is 'add'. |
+| options.expand_epochs | [pre, post]. |
 
 [Back to index](/PsPM/ref/)
