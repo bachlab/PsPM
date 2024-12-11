@@ -10,6 +10,10 @@ This function reference covers all user-facing functions in the develop branch.
 
 *Data preparation functions create new data files.*
 
+[`pspm_import`](pspm_import)
+   
+Import data into PsPM format.
+
 [`pspm_trim`](pspm_trim)
    
 Cut away unused intervals of data.
