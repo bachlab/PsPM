@@ -646,7 +646,7 @@ literal "true"
 \end_inset
 
 .
- This is why PsPM uses purely phenomenological models, which treat the periphera
+ This is why PsPM uses purely phenomenological models which regard the periphera
 l system as a black box.
  By applying controlled inputs into the system, and measuring the output,
  one can then approximate the workings of this black box in mathematical
@@ -766,12 +766,10 @@ Convolution is more generally defined by integration over
 
 ) ensures the causal structure of the model - only past inputs can have
  an effect only into the future, not future inputs into the past.
- It also reflects the implementation via Matlab's vector convolution function
- (
+ It also reflects the implementation via Matlab's vector convolution function,
+ 
 \family typewriter
-conv
-\family default
-) in PsPM.
+conv.m
 \end_layout
 
 \end_inset
@@ -826,7 +824,7 @@ Signal frequencies in the data that are not present in the RF do not contribute
  In most cases, the true RF is not precisely known, and also varies between
  individuals.
  This is why PsPM seeks to empirically determine the filter characteristics
- that maximise retrodictive validity of psychological state estimates.
+ that maximise predictive validity of psychological state estimates.
 \end_layout
 
 \begin_layout Subsection
@@ -841,7 +839,7 @@ The neural model in PsPM describes the form of the neural input that the
  i.e.
  from reducing the number of parameters that have to be estimated.
  We have empirically shown for SCR models that in many cases, a strongly
- constrained neural model will result in higher retrodictive validity 
+ constrained neural model will result in higher predictive validity 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bach:2013aa,Bach:2014aa,Staib:2015aa"
@@ -887,10 +885,11 @@ Hierarchical summary statistic approach
 
 \begin_layout Standard
 It is common in psychophysiology (and psychology in general) to compute
- summary statistics for each cell of the design, and for each participant.
+ summary statistics for each cell of the design, and for each subject.
  These estimates of are then entered into a group-level model.
  To implement this approach, PsPM estimates parameters for each participant
- separately, either per experimental condition, or per trial.
+ separately, either per experimental condition, or per trial with subsequent
+ averaging within the experimental condition.
  In line with fMRI terminology (and different from many branches of psychology),
  we use the terms 
 \begin_inset Quotes eld
@@ -931,7 +930,7 @@ literal "true"
  The idea is to take variance between trials into account: a summary statistic
  that is computed from individual data points with high variance is less
  precise that a statistic from low-variance data, and such information is
- lost when averaging within each condition.
+ lost when summarising within each condition.
  PsPM offers the possibility to compute trial-by-trial estimates (by modelling
  each trial as a separate condition in GLM, or by default in DCM for SCR).
  This approach has been used for SCR, PSR and SEBR 
@@ -961,10 +960,10 @@ literal "false"
 .
  For GLM, modelling trial-by-trial amplitudes and averaging within conditions
  yields the same result as modelling condition-by-condition amplitudes,
- if the design matrix is of full rank and if there is only one basis function.
+ if the design matrix is of full rank and there is only one basis function.
  With more than one basis function, the results will deviate for the second
  and further basis functions in the basis set, because the orthogonalisation
- with the basis set is a nonlinear operation.
+ with the basis set is not a linear operation.
 \end_layout
 
 \begin_layout Standard
@@ -1060,7 +1059,7 @@ name "subsec:General-linear-convolution"
 \end_layout
 
 \begin_layout Standard
-Under the assumption of a delta neural model, we can harness GLM to estimate
+Under the assumption of delta neural model, we can harness GLM to estimate
  the neural input amplitude.
  A GLM can be written as 
 \end_layout
@@ -1135,7 +1134,7 @@ where
 
 , implemented in the Matlab function 
 \family typewriter
-pinv
+pinv.m
 \family default
 : 
 \begin_inset Formula 
@@ -1511,7 +1510,7 @@ literal "true"
 \end_inset
 
 .
- Using a canonical SCRF, linear and non-linear models show a good retrodictive
+ Using a canonical SCRF, linear and non-linear models show a good predictive
  validity, superior to peak-scoring methods 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1538,9 +1537,9 @@ In GLM, one can estimate parameters of the (orthogonalised) time derivative
  In order to combine this with the canonical SCRF, the response can afterwards
  be reconstructed for each experimental condition, and the peak amplitude
  taken as estimate of SA.
- This approach has higher retrodictive validity than using the canonical
- SCRF alone, or using a less constrained SCRF (canonical with time and dispersio
-n derivative) 
+ This approach has higher predictive validity than using the canonical SCRF
+ alone, or using a less constrained SCRF (canonical with time and dispersion
+ derivative) 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bach:2013aa"
@@ -1555,9 +1554,9 @@ literal "true"
 In the non-linear model for event-related SCR, one can use the combined
  data from all evoked responses from one individual to estimate an SCRF.
  This approach only considers data within the inter-trial interval.
- In a validation experiments study with ITI of 7-11 s, this had lower retrodicti
-ve validity than using the canonical SCRF, and we would not recommend it
- unless the ITI is longer than 20 s, so that the SCRF tail can be unambigouosly
+ In a validation experiments study with ITI of 7-11 s, this had lower predictive
+ validity than using the canonical SCRF, and we would not recommend it unless
+ the ITI is longer than 20 s, so that the SCRF tail can be unambigouosly
  estimated 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2167,7 +2166,7 @@ In this model, the parameter space is too large to invert it at once.
  It also means that estimation errors accumulate over trials which is why
  part of the latent error is explicitly modelled as SF and SCL.
  At an inter trial interval of around 10 seconds, inverting 2 or 3 trials
- at the same time yields comparable retrodictive validity 
+ at the same time yields comparable predictive validity 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Staib:2015aa"
@@ -2383,10 +2382,10 @@ Normalisation
 For within-subjects analysis, we propose data normalisation after filtering
  to remove SCR scaling differences due to peripheral factors such as skin
  property.
- This increases retrodictive validity (unpublished analyses).
+ This increases predictive validity (unpublished analyses).
  For methods that yield trial-by-trial estimates, post-hoc normalisation
  of amplitude estimates across trials, before averaging within conditions,
- yields even better retrodictive validity 
+ yields even better predictive validity 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Staib:2015aa"
@@ -2475,11 +2474,11 @@ literal "true"
  filter.
  Peaks in the SN time series are then identified and used as operational
  index of SA.
- In a head-to-head comparison, retrodictive validity to identify states
- with known SA was compared for experiments involving short stimuli and
- evoked SA.
- PsPM had better retrodictive validity than Ledalab in 4 out of 5 tested
- contrasts, and equal validity in the fifth.
+ In a head-to-head comparison, predictive validity to identify states with
+ known SA was compared for experiments involving short stimuli and evoked
+ SA.
+ PsPM had better predictive validity than Ledalab in 4 out of 5 tested contrasts
+, and equal validity in the fifth.
  Ledalab did not consistently perform superior to classical peak scoring
  analysis 
 \begin_inset CommandInset citation
@@ -2562,12 +2561,6 @@ literal "true"
 \end_inset
 
 ).
- In case of sparse SCR (e.g.
- in paradigms with long ITIs), the bidirectional filter can distort the
- signal to an extent that it becomes difficult to model.
- In such cases, it might be preferable to use a unidirectional filter (see
- e.g.
- )
 \end_layout
 
 \begin_layout Itemize
@@ -2617,8 +2610,6 @@ flexible
 
  response, in particular at longer CS/US SOAs when this flexible response
  may absorb SCR elicited by US or US omission.
- See e.g.
- 
 \end_layout
 
 \begin_layout Itemize
@@ -2634,15 +2625,7 @@ Model inversion:
 \begin_deeper
 \begin_layout Itemize
 SF model: the VB inversion is theoretically better suited than the MP inversion
- when the expected number of SF is > 10/minute 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bach:2015ab"
-literal "false"
-
-\end_inset
-
-.
+ when the expected number of SF is > 10/minute.
 \end_layout
 
 \end_deeper
@@ -2718,7 +2701,7 @@ literal "true"
 
 \end_inset
 
- and a model for fear-conditioned bradycardia 
+ and a model for fear-conditioned bradicardia 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Castegnetti:2016aa"
@@ -2727,10 +2710,10 @@ literal "true"
 \end_inset
 
 .
- As in previous models for SCR, both models are optimised with regard to
- 
+ As in previous models for Skin Conductance Responses (SCR), both models
+ are optimised with regard to 
 \shape italic
-retrodictive validity
+predictive validity
 \shape default
 , i.e.
  the ability to separate experimental conditions (e.g., CS+ vs.
@@ -2758,7 +2741,7 @@ Peripheral and neural model
 \end_layout
 
 \begin_layout Standard
-In the absence of information on the time course of cardiac information,
+In the absence of information on the timecourse of cardiac information,
  it is difficult to separate a neural and a peripheral model.
  Hence, these two are collapsed for the purpose of quick and simple inversion
  with GLM (see 
@@ -2769,9 +2752,9 @@ reference "subsec:General-linear-convolution"
 \end_inset
 
 ).
- This means that the implemented models - for evoked HPR and fear-conditioned
- or reward-conditioned HPR - use a different RF, although of course the
- peripheral system is the same in both cases.
+ This means that the two implemented models - for evoked HRP and fear-conditione
+d HRP - use a different RF, although of course the peripheral system is
+ the same in both cases.
  Castegnetti et al.
  
 \begin_inset CommandInset citation
@@ -2846,7 +2829,7 @@ To test whether a modeled peak qualified as a RF, we tested whether it explained
  across all experiments, tested by a one-sample t-test, or to add to the
  
 \shape italic
-retrodictive validity
+predictive validity
 \shape default
  of the model.
  This second criterion was evaluated by subjecting the parameter estimates
@@ -3500,14 +3483,27 @@ To increase detection accuracy heart rate values were restricted to the
 \end_layout
 
 \begin_layout Itemize
-To allow for a manual inspection and possible correction of detection failures,
- the ECG editor allows visually inspecting the results of QRS detection.
+To allow for a manual inspection and possible correction of detection failures
+ QRS detection procedure also containes a tool to visually inspect the results
+ of QRS detection (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:ECG-editor"
+
+\end_inset
+
+).
+ In order to manually check only those QRS complexes that are likely to
+ be wrong, only those IBIs are checked that fall outside a user-defined
+ range.
+ To avoid the introduction of bias, the rater should blind to the experimental
+ conditions during manual correction of the QRS detection.
  
 \end_layout
 
 \begin_layout Standard
-Depending on the quality of the recordings, QRS detection can achieve a
- very high accuracy in detecting QRS complexes of up to 99.66% 
+Depending on the quality of the recordings QRS detection can achieve a very
+ high accuracy in detecting QRS complexes of up to 99.66% 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Paulus:2016aa"
@@ -3521,7 +3517,7 @@ literal "true"
 \begin_layout Paragraph
 
 \series medium
-PsPM also contains a QRS detection algorithm for ECG data acquired in MRI
+PsPM also offers a QRS detection algorithm for ECG data acquired in MRI
  environments.
  The algorithm is described in 
 \begin_inset CommandInset citation
@@ -3547,9 +3543,9 @@ name "subsec:Interpolation-and-Filtering"
 \end_layout
 
 \begin_layout Standard
-To transform the discontinuous heart-beat information into a continuous
- signal of heart-period, the heart-beat events are interpolated at a fixed
- sampling rate of 10 Hz using the built-in function 
+To transform the discontinuous heart-beat information into a continous signal
+ of heart-period, the heart-beat events are interpolated at a fixed sampling
+ rate of 10 Hz using the built-in function 
 \family typewriter
 pspm_hb2hp
 \family default
@@ -4017,7 +4013,7 @@ literal "true"
 \end_inset
 
 .
- retrodictive validity exceeds (or is at least equal to) peak scoring and
+ Predictive validity exceeds (or is at least equal to) peak scoring and
  calculating the area-under-the-curve.
  The response function was initially based on a CS to US SOA of 3.5 s but
  the same function can be used for an SOA of 6 s.
