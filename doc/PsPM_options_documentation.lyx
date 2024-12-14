@@ -93,12 +93,12 @@
 \begin_body
 
 \begin_layout Title
-PsPM: Option References
+PsPM: Options documentation
 \end_layout
 
 \begin_layout Standard
 \align center
-Version 6.1.2
+Version 7.0
 \end_layout
 
 \begin_layout Standard
@@ -138,9 +138,10 @@ literal "false"
 
 \begin_layout Standard
 \align center
-Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
- Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
- Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Teddy Zhao and collaborators
+Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Uzay
+ Gökay, Saurabh Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp
+ C Paulus, Ivan Rojkov, Matthias Staib, Bernhard Agoué von Raußendorf, Yanfang
+ Xia, Eshref Yozdemir, Dadi Zhao, and collaborators
 \end_layout
 
 \begin_layout Standard

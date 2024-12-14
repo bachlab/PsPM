@@ -124,11 +124,15 @@ status open
 \begin_layout Plain Layout
 \noindent
 If you have comments on or error corrections to this documentation, please
- send them to the PsPM team or post them on: 
+ send them to the PsPM team, 
+\family typewriter
+pspm@bachlab.org
+\family default
+, or post them on: 
 \begin_inset CommandInset href
 LatexCommand href
-name "bachlab.org/pspm"
-target "http://bachlab.org/pspm"
+name "Github"
+target "https://github.com/bachlab/PsPM/discussions"
 literal "false"
 
 \end_inset
@@ -2567,7 +2571,15 @@ literal "true"
  signal to an extent that it becomes difficult to model.
  In such cases, it might be preferable to use a unidirectional filter (see
  e.g.
- )
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Wehrli:2022aa"
+literal "false"
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
@@ -2619,6 +2631,14 @@ flexible
  may absorb SCR elicited by US or US omission.
  See e.g.
  
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Wehrli:2022aa,Xia:2023aa"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -2667,7 +2687,7 @@ literal "true"
 
 \end_deeper
 \begin_layout Section
-Heart Period (HP) Models
+Heart Period Response (HPR) Models
 \end_layout
 
 \begin_layout Standard
@@ -3362,9 +3382,9 @@ literal "true"
  between grand means.
  This function 
 \begin_inset Formula 
-\[
-y=\frac{A}{\theta^{k}\Gamma(k)}(x-x_{0})^{k-1}e^{-\frac{x-x_{0}}{\Theta}}
-\]
+\begin{equation}
+y=\frac{A}{\theta^{k}\Gamma(k)}(x-x_{0})^{k-1}e^{-\frac{x-x_{0}}{\Theta}}\label{eq:gamma}
+\end{equation}
 
 \end_inset
 
@@ -3480,11 +3500,48 @@ Model for reward-conditioned HPR
 \end_layout
 
 \begin_layout Standard
-For analysis of reward-conditioned HPR, we built a response function on
- an exploration data set and validated it on a confirmation data set.
+For analysis of reward-conditioned HPR with an SOA of 5 s, we built a response
+ function on an exploration data set and validated it on a confirmation
+ data set 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xia_liu:2024"
+literal "false"
+
+\end_inset
+
+.
  The RF caputured responses observed during acqusition, as well as during
  retention 7 days later.
  The RF implemented in PsPM was updated on the combined data set.
+ Parameters for eq.
+ (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:gamma"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) were estimated as 
+\begin_inset Formula $k=171.6$
+\end_inset
+
+, 
+\begin_inset Formula $\theta=0.1400$
+\end_inset
+
+, 
+\begin_inset Formula $x_{0}=-17.60$
+\end_inset
+
+, with 
+\begin_inset Formula $A$
+\end_inset
+
+ left free to vary during the model inversion.
  
 \end_layout
 
@@ -3493,7 +3550,7 @@ Data Conditioning
 \end_layout
 
 \begin_layout Subsubsection
-QRS detection 
+Heart beat detection 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:QRS-detection"
@@ -3561,7 +3618,7 @@ literal "true"
 .
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Standard
 
 \series medium
 PsPM also contains a QRS detection algorithm for ECG data acquired in MRI
@@ -3576,6 +3633,27 @@ literal "false"
 
 .
  The implementation is obtained from the software link given in the paper.
+ 
+\series default
+To process pulse oxymetry data, PsPM contains a template matching algorithm
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Castegnetti:2016aa"
+literal "true"
+
+\end_inset
+
+ and an interface to the HeartPy toolbox 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Gent:2019aa"
+literal "false"
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Subsubsection
@@ -3651,6 +3729,11 @@ fear-conditioned HPR: use default model for CS/US-SOAs between approximately
  
 \end_layout
 
+\begin_layout Itemize
+reward-conditioned HPR: use default model for CS-US-SOA of around 5 s.
+ The model is tested for 5 s.
+\end_layout
+
 \end_deeper
 \begin_layout Itemize
 Model set up:
@@ -3667,8 +3750,21 @@ literal "true"
 
 \end_inset
 
-; 0.015 - 0.5 Hz bidirectional 6th order Butterworth filter for fear-conditioned
- HPR 
+; 0.015 - 0.5 Hz bidirectional 6th order Butterworth filter for fear- and
+ reward-conditioned HPR 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Castegnetti:2016aa,xia_liu:2024"
+literal "true"
+
+\end_inset
+
+, although there is apparently no strong impact of filter frequency.
+\end_layout
+
+\begin_layout Itemize
+Fear-conditioned HPR: using first derivative and reconstructing response
+ amplitude is more sensitive that using just the canonical RF 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Castegnetti:2016aa"
@@ -3676,7 +3772,7 @@ literal "true"
 
 \end_inset
 
-, although there is apparently no strong impact of filter frequency.
+.
 \end_layout
 
 \end_deeper
@@ -4202,6 +4298,58 @@ Finally, we found that filtering provided equal or worse proportions of
  this may be beneficial for other experimental designs.
 \end_layout
 
+\begin_layout Subsection
+Recommendations
+\end_layout
+
+\begin_layout Itemize
+Experimental design: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+fear-conditioned PSR: use default model for CS/US-SOAs between approximately
+ 2-8 s.
+ The model is tested for 3.5 - 6 s.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Model set up:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+fear-conditioned PSR: use no filter 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Korn:2017a"
+literal "true"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+fear-conditioned PSR: use no derivative, If possible, model the US response
+ separately (requires a command-line function call to 
+\family typewriter
+pspm_glm
+\family default
+) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Korn:2017a"
+literal "true"
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Section
 Respiratory response models
 \end_layout
@@ -5256,10 +5404,6 @@ User Guide
 \end_layout
 
 \begin_layout Section
-General points
-\end_layout
-
-\begin_layout Subsection
 File types
 \end_layout
 
@@ -5288,7 +5432,7 @@ pspm_load1
 .
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Functions that create new data files
 \end_layout
 
@@ -5326,7 +5470,7 @@ Rename - user-defined file name
 Interpolation - prepended with 'i' (only if run on all channels of the file)
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Functions that create or modify data channels in an existing file
 \end_layout
 
@@ -6787,7 +6931,9 @@ name "sec:tutorial_GLM"
 \end_layout
 
 \begin_layout Standard
-Here, we analyze SCR data using a general linear model (GLM).
+To analyse this data set, follow tutorials 1-2 on the PsPM website.
+ Tutorial 6 shows how to adapt your scripts for multiple participants.
+ In this tutorial, we analyze SCR data using a general linear model (GLM).
  The example data set comprises SCR data from 15 participants and can be
  downloaded from 
 \begin_inset CommandInset href
@@ -6815,11 +6961,6 @@ literal "true"
  
 \end_layout
 
-\begin_layout Standard
-To analyse this data set, follow tutorials 1-2 on the PsPM website.
- Tutorial 6 shows how to adapt your scripts for multiple participants.
-\end_layout
-
 \begin_layout Section
 Non-linear SCR analysis: Delay fear conditioning data
 \begin_inset CommandInset label
@@ -6832,7 +6973,13 @@ name "sec:Delay-fear-conditioning"
 \end_layout
 
 \begin_layout Standard
-The example data set comprises SCR data from 20 participants, with 40 trials
+To analyse this data set, follow tutorial 3 on the PsPM website.
+ Tutorial 6 shows how to adapt your scripts for multiple participants.
+ In this tutorial, the non-linear model is estimated.
+ The estimated parameters can then be used to test the within-subject hypothesis
+ that the sympathetic arousal between CS+ and CS- are different on a group
+ level.
+ The example data set comprises SCR data from 20 participants, with 40 trials
  each, which can be downloaded from 
 \begin_inset CommandInset href
 LatexCommand href
@@ -6865,22 +7012,13 @@ ic response.
 ons that occur between trials.
 \end_layout
 
-\begin_layout Standard
-In this tutorial, the non-linear model is estimated.
- The estimated parameters can then be used to test the within-subject hypothesis
- that the sympathetic arousal between CS+ and CS- are different on a group
- level.
- To analyse this data set, follow tutorial 3 on the PsPM website.
- Tutorial 6 shows how to adapt your scripts for multiple participants.
-\end_layout
-
 \begin_layout Part
 How to reference PsPM
 \end_layout
 
 \begin_layout Standard
-To justify our continued effort in the face of tight resources, we ask you
- acknowledge PsPM when you use it: 
+To justify our development and maintenance effort, we ask you acknowledge
+ PsPM when you use it: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6890,7 +7028,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://bachlab.org/pspm
+http://bachlab.github.io/pspm
 \end_layout
 
 \end_inset
@@ -6903,7 +7041,7 @@ http://bachlab.org/pspm
 \end_layout
 
 \begin_layout Standard
-We suggest you reference our papers to justify your analysis steps and models
+We ask you reference our papers to justify your analysis steps and models
  in the following way:
 \end_layout
 
@@ -7102,109 +7240,51 @@ Acknowledgements
 \end_layout
 
 \begin_layout Standard
-SCRalyze versions 1–2 were developed at the FIL, Wellcome Centre for Human
- Neuroimaging, University College London, under the auspices of Karl J.
- Friston and Raymond J.
- Dolan.
- Guillaume Flandin contributed to GLM, and Jean Daunizeau to DCM.
- Eric Featherstone, Alfonso Reid, Oliver Josephs, and Chloe Hutton helped
- with the import functions.
- This development was funded by the Swiss National Science Foundation with
- a personal grant to Dominik R.
- Bach, and by the Wellcome Trust with a programme grant to Raymond J.
- Dolan.
+Beyond the authors named on this manual, the following persons contributed
+ to PsPM.
  
 \end_layout
 
-\begin_layout Standard
-\begin_inset VSpace defskip
-\end_inset
-
-
+\begin_layout Itemize
+Import functions: Eric Featherstone, Chloe Hutton, Oliver Josephs, Alfonso
+ Reid.
 \end_layout
 
-\begin_layout Standard
-PsPM 3.0 was developed at the University of Zurich, funded by the University
- of Zurich and by the Swiss National Science Foundation with a project grant.
- The Matlabbatch GUI was written by Gabriel Gräni at University of Zurich.
- Help texts and tutorial were developed by Christoph Korn and Matthias Staib.
- The data display was written by Philipp C Paulus, University of Dresden.
- The test environment was contributed by Linus Rüttimann, and extended by
- Tobias Moser, both University of Zurich.
+\begin_layout Itemize
+Model development and model inversion: Jean Daunizeau, Guillaume Flandin,
+ Karl Friston.
 \end_layout
 
 \begin_layout Standard
-\begin_inset VSpace defskip
-\end_inset
+PsPM uses code from the following toolboxes:
+\end_layout
 
+\begin_layout Itemize
+SON library for CED spike *.smr import (Malcolm Lidierth at King's College
+ London)
+\end_layout
 
+\begin_layout Itemize
+SPM physiology toolbox for CED spike *.smr import (Eric Featherstone, Chloe
+ Hutton)
+\end_layout
+
+\begin_layout Itemize
+Biopac Acknowledge import (Sebastien Authier, Vincent Finnertyat the University
+ of Montreal)
+\end_layout
+
+\begin_layout Itemize
+FieldTrip for various import routines (Robert Oostenveldt at Radboud University
+ Nijmegen)
 \end_layout
 
 \begin_layout Standard
-Various models have been developed by different researchers.
- These are:
+PsPM incorporates the following published toolboxes and/or methods:
 \end_layout
 
 \begin_layout Itemize
-Dominik R.
- Bach: SCR models and GLM for evoked respiratory responses
-\end_layout
-
-\begin_layout Itemize
-Matthias Staib: Optimisation of non-linear SCR model
-\end_layout
-
-\begin_layout Itemize
-Philipp Paulus: GLM for evoked HPR
-\end_layout
-
-\begin_layout Itemize
-Giuseppe Castegnetti: GLM for fear-conditioned HPR and RAR
-\end_layout
-
-\begin_layout Itemize
-Christoph Korn: PSM models
-\end_layout
-
-\begin_layout Itemize
-Saurabh Khemka: GLM for SEBR
-\end_layout
-
-\begin_layout Itemize
-Yanfang Xia: GLM for scanpath speed, GLM for reward-conditioned HPR
-\end_layout
-
-\begin_layout Standard
-\begin_inset Separator plain
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Some PsPM functions depend on external scripts/libraries implemented by
- other groups:
-\end_layout
-
-\begin_layout Itemize
-For import of smr data, PsPM makes use of the SON library written by Malcolm
- Lidierth at King's College London, and of functions provided by the SPM
- physiology toolbox, written by Chloe Hutton and Eric Featherstone at the
- FIL.
-\end_layout
-
-\begin_layout Itemize
-Biopac AcqKnowledge import uses a routine created by Sebastien Authier and
- Vincent Finnerty at the University of Montreal.
-\end_layout
-
-\begin_layout Itemize
-The DCM inversion uses a variational Bayesian inversion scheme written by
- Jean Daunizeau.
-\end_layout
-
-\begin_layout Itemize
-Some SCR quality control functions use the method described in 
+SCR quality control 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Kleckner:2017a"
@@ -7212,26 +7292,11 @@ literal "false"
 
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Itemize
-Pupil preprocessing uses external scripts adapted from the implementations
- by Mariska Kret and Elio Sjak-Shie at 
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset CommandInset href
-LatexCommand href
-name "https://github.com/ElioS-S/pupil-size"
-target "https://github.com/ElioS-S/pupil-size"
-literal "false"
-
-\end_inset
-
-.
- The original reference is 
+pupil preprocessing 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kret2018preprocessing"
@@ -7239,12 +7304,11 @@ literal "false"
 
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Itemize
-Pupil foreshortening error correction implements the method proposed in
- 
+pupil foreshortening error correction 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Hayes:2015a"
@@ -7252,23 +7316,11 @@ literal "false"
 
 \end_inset
 
- by Taylor Hayes and Alexander Petrov.
+ 
 \end_layout
 
 \begin_layout Itemize
-QRS detection for fMRI environment uses external scripts adapted from the
- code by Zhongming Liu, Jacco A de Zwart, Peter van Gelderen, Li-Wei Kuo,
- and Jeff H Duyn at 
-\begin_inset CommandInset href
-LatexCommand href
-name "https://www.amri.ninds.nih.gov/software.html"
-target "https://www.amri.ninds.nih.gov/software.html"
-literal "false"
-
-\end_inset
-
-.
- The original reference is 
+QRS detection for fMRI enviornments 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "liu2012statistical"
@@ -7276,7 +7328,31 @@ literal "false"
 
 \end_inset
 
-.
+
+\end_layout
+
+\begin_layout Itemize
+HeartPy toolbox for pulse oxymetry 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Gent:2019aa"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+VBA toolbox 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Daunizeau:2014aa"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part

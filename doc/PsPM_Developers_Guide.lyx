@@ -143,9 +143,10 @@ literal "false"
 
 \begin_layout Standard
 \align center
-Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Saurabh
- Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp C Paulus,
- Ivan Rojkov, Matthias Staib, Eshref Yozdemir, Teddy Zhao and collaborators
+Dominik R Bach, Giuseppe Castegnetti, Laure Ciernik, Samuel Gerster, Uzay
+ Gökay, Saurabh Khemka, Christoph Korn, Samuel Maxwell, Tobias Moser, Philipp
+ C Paulus, Ivan Rojkov, Matthias Staib, Bernhard Agoué von Raußendorf, Yanfang
+ Xia, Eshref Yozdemir, Dadi Zhao, and collaborators
 \end_layout
 
 \begin_layout Standard
@@ -820,6 +821,526 @@ data
 infos
 \family default
  will be updated.
+\end_layout
+
+\begin_layout Subsection
+Types of functions in PsPM
+\end_layout
+
+\begin_layout Subsubsection
+Interactive functions
+\end_layout
+
+\begin_layout Itemize
+pspm_data_editor 
+\end_layout
+
+\begin_layout Itemize
+pspm_display 
+\end_layout
+
+\begin_layout Itemize
+pspm_ecg_editor 
+\end_layout
+
+\begin_layout Itemize
+pspm_guide 
+\end_layout
+
+\begin_layout Itemize
+pspm_review
+\end_layout
+
+\begin_layout Subsubsection
+Functions that create data files
+\end_layout
+
+\begin_layout Itemize
+pspm_import 
+\end_layout
+
+\begin_layout Itemize
+pspm_trim 
+\end_layout
+
+\begin_layout Itemize
+pspm_split_sessions 
+\end_layout
+
+\begin_layout Itemize
+pspm_merge 
+\end_layout
+
+\begin_layout Itemize
+pspm_ren 
+\end_layout
+
+\begin_layout Itemize
+pspm_interpolate (only if run on all channels)
+\end_layout
+
+\begin_layout Subsubsection
+Functions that change channels
+\end_layout
+
+\begin_layout Itemize
+pspm_combine_markerchannels 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_area2diameter 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_au2unit 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_ecg2hb 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_ecg2hb_amri 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_gaze 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_hb2hp 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_ppg2hb 
+\end_layout
+
+\begin_layout Itemize
+pspm_emg_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_sounds 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_valid_fixations 
+\end_layout
+
+\begin_layout Itemize
+pspm_gaze_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_interpolate 
+\end_layout
+
+\begin_layout Itemize
+pspm_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_correct_eyelink 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_remove_epochs 
+\end_layout
+
+\begin_layout Itemize
+pspm_resp_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_scr_pp
+\end_layout
+
+\begin_layout Itemize
+pspm_remove_epochs (not available in GUI) 
+\end_layout
+
+\begin_layout Itemize
+pspm_expand_epochs (not available in GUI)
+\end_layout
+
+\begin_layout Subsubsection
+First level models
+\end_layout
+
+\begin_layout Itemize
+pspm_dcm 
+\end_layout
+
+\begin_layout Itemize
+pspm_glm 
+\end_layout
+
+\begin_layout Itemize
+pspm_process_illuminance 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf
+\end_layout
+
+\begin_layout Itemize
+pspm_tam (not available in GUI)
+\end_layout
+
+\begin_layout Subsubsection
+User-accessible I/O functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_exp 
+\end_layout
+
+\begin_layout Itemize
+pspm_extract_segments 
+\end_layout
+
+\begin_layout Itemize
+pspm_get_markerinfo
+\end_layout
+
+\begin_layout Subsubsection
+Internal and helper functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_align_channels 
+\end_layout
+
+\begin_layout Itemize
+pspm_blink_saccade_filt 
+\end_layout
+
+\begin_layout Itemize
+pspm_butter 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_model 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_pixel2unit_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_unit 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_visangle2sps_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_visual_angle_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_denoise_spike 
+\end_layout
+
+\begin_layout Itemize
+pspm_downsample 
+\end_layout
+
+\begin_layout Itemize
+pspm_epochs2logical
+\end_layout
+
+\begin_layout Itemize
+pspm_extract_segments_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_eye pspm_filtfilt 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_channel 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_eye 
+\end_layout
+
+\begin_layout Itemize
+pspm_get_timing 
+\end_layout
+
+\begin_layout Itemize
+pspm_interp1 
+\end_layout
+
+\begin_layout Itemize
+pspm_leaky_integrator 
+\end_layout
+
+\begin_layout Itemize
+pspm_load1 
+\end_layout
+
+\begin_layout Itemize
+pspm_load_channel 
+\end_layout
+
+\begin_layout Itemize
+pspm_load_data 
+\end_layout
+
+\begin_layout Itemize
+pspm_load_gaze 
+\end_layout
+
+\begin_layout Itemize
+pspm_logical2epochs 
+\end_layout
+
+\begin_layout Itemize
+pspm_multi2index 
+\end_layout
+
+\begin_layout Itemize
+pspm_prepdata 
+\end_layout
+
+\begin_layout Itemize
+pspm_pulse_convert 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_correct 
+\end_layout
+
+\begin_layout Itemize
+pspm_select_channels 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_auc 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_dcm 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_mp 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_scl 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_theta 
+\end_layout
+
+\begin_layout Itemize
+pspm_show_arms 
+\end_layout
+
+\begin_layout Itemize
+pspm_struct2vec 
+\end_layout
+
+\begin_layout Itemize
+pspm_time2index 
+\end_layout
+
+\begin_layout Itemize
+pspm_transfer_function 
+\end_layout
+
+\begin_layout Itemize
+pspm_update_channeltype 
+\end_layout
+
+\begin_layout Itemize
+pspm_version pspm_write_channel
+\end_layout
+
+\begin_layout Itemize
+pspm_dcm_inv 
+\end_layout
+
+\begin_layout Itemize
+pspm_get_rf 
+\end_layout
+
+\begin_layout Itemize
+pspm_glm_recon
+\end_layout
+
+\begin_layout Subsubsection
+Basis functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_data 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_FIR 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf_fc 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf_fc_f 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_lcrf_gm 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_ldrf_gm 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_ldrf_gu 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_psrf_erl 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_psrf_fc 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rarf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rarf_fc 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rfrrf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rprf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_scrf 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_scrf_f 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_sebrf 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_spsrf_box 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_spsrf_gamma 
+\end_layout
+
+\begin_layout Itemize
+f_SCR 
+\end_layout
+
+\begin_layout Itemize
+f_SF 
+\end_layout
+
+\begin_layout Itemize
+g_SCR
+\end_layout
+
+\begin_layout Subsubsection
+Housekeeping functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_model 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_python 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_python_modules 
+\end_layout
+
+\begin_layout Itemize
+pspm_init 
+\end_layout
+
+\begin_layout Itemize
+pspm_options 
+\end_layout
+
+\begin_layout Itemize
+pspm_overwrite 
+\end_layout
+
+\begin_layout Itemize
+pspm_path 
+\end_layout
+
+\begin_layout Itemize
+pspm_quit 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_pp_options
+\end_layout
+
+\begin_layout Subsubsection
+Convencience functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_multi_channel 
+\end_layout
+
+\begin_layout Itemize
+pspm_pull_zenodo
+\end_layout
+
+\begin_layout Subsubsection
+Not accessible to users 
+\end_layout
+
+\begin_layout Itemize
+pspm_jobman 
+\end_layout
+
+\begin_layout Itemize
+pspm_format_history 
+\end_layout
+
+\begin_layout Itemize
+pspm_format_history_from_file
 \end_layout
 
 \begin_layout Subsection
