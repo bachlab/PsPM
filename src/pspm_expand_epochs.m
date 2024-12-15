@@ -117,6 +117,11 @@ end
 pre = expansion(1);
 post = expansion(2);
 expanded_epochs_temp = [epochs(:,1) - pre, epochs(:,2) + post];
+
+% delets epochs whos difference is negative or 0
+epoch_duration = diff(expanded_epochs_temp, 1, 2);
+expanded_epochs_temp(epoch_duration < 1, :) = []; 
+
 % remove negative values and merge overlapping epochs
 [ksts, expanded_epochs] = pspm_get_timing('missing',expanded_epochs_temp , 'seconds') ;
 if ksts < 1 

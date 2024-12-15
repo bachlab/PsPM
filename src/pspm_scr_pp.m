@@ -141,12 +141,15 @@ if ~any(size(indata) > 1)
     return;
 end
 %% Create filters
+
+
 data_changed = NaN(size(indata));
 filt_range = indata < options.max & indata > options.min;
 filt_slope = true(size(indata));
 filt_slope(2:end) = abs(diff(indata)*sr) < options.slope;
 if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
-    slope_epochs = filter_to_epochs(filt_slope);
+    slope_epochs = pspm_logical2epochs(1-filt_slope); % sr = 1 
+    slope_epochs(:,2) = slope_epochs(:,2) -1; % to get the same epoch as before 
     for r = transpose(slope_epochs)
         if range(indata(r(1):r(2))) < options.deflection_threshold
             filt_slope(r(1):r(2)) = 1;
@@ -162,41 +165,40 @@ end
 filt = filt_range & filt_slope;
 filt = filt & (1-filt_clipping);
 %% Find data islands and expand artefact islands
+
+
 if isempty(find(filt==0, 1))
     warning('Epoch was empty based on the current settings.');
 else
     if options.data_island_threshold > 0 || options.expand_epochs > 0
         % work out data epochs
-        filt_epochs = filter_to_epochs(1-filt); % gives data (rather than artefact) epochs
+
+        filt_epochs = pspm_logical2epochs(filt,sr); % gives data (rather than artefact) epochs
         if options.expand_epochs > 0
-            % remove data epochs too short to be shortened
-            epoch_duration = diff(filt_epochs, 1, 2);
-            filt_epochs(epoch_duration < 2 * ceil(options.expand_epochs * sr), :) = [];
-            % shorten data epochs
-            filt_epochs(:, 1) = filt_epochs(:, 1) + ceil(options.expand_epochs * sr);
-            filt_epochs(:, 2) = filt_epochs(:, 2) - ceil(options.expand_epochs * sr);
+            exp = options.expand_epochs;
+            [~,filt_epochs] = pspm_expand_epochs(filt_epochs,[-exp,-exp]);          
         end
-        % correct possibly negative values
-        filt_epochs(filt_epochs(:, 2) < 1, 2) = 1;
+        
+        % island threshold
         if options.data_island_threshold > 0
             epoch_duration = diff(filt_epochs, 1, 2);
             filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
         end
+
         % write back into data
-        index(filt_epochs(:, 1)) = 1;
-        index(filt_epochs(:, 2)) = -1;
-        filt = (cumsum(index(:)) == 1);
-        % (thanks Jan: https://www.mathworks.com/matlabcentral/answers/
-        % 324955-replace-multiple-intervals-in-array-with-nan-no-loops)
+        filt = pspm_epochs2logical(filt_epochs, length(indata), sr); 
+        filt = logical(filt);
+
     end
+
 end
 data_changed(filt) = indata(filt);
-% Compute epochs
+
+% Compute epochs missing
 if ~isempty(find(filt == 0, 1))
-    epochs = filter_to_epochs(filt);
-    epochs = epochs / sr; %convert into seconds
+    epochs_missing = pspm_logical2epochs(1-filt,sr);
 else
-    epochs = [];
+    epochs_missing = [];
 end
 %% Save data
 if ~isempty(options.missing_epochs_filename)
@@ -205,7 +207,7 @@ if ~isempty(options.missing_epochs_filename)
         warning('ID:invalid_input', 'Missing epoch file exists, and overwriting not allowed by user.');
         return
     else
-        save(options.missing_epochs_filename, 'epochs');
+        save(options.missing_epochs_filename, 'epochs_missing');
         out = options.missing_epochs_filename;
     end
 else
@@ -224,22 +226,7 @@ end
 sts = 1; % sts is true if all processing above is successful
 return
 
-function epochs = filter_to_epochs(filt)    % Return the start and end points of the excluded interval
-epoch_on = find(diff(filt) == -1) + 1;      % Return the start points of the excluded interval
-epoch_off = find(diff(filt) == 1);          % Return the end points of the excluded interval
-if ~isempty(epoch_on) && ~isempty(epoch_off)
-    if (epoch_on(end) > epoch_off(end))       % ends on
-        epoch_off = [epoch_off; length(filt)];  % Include the end point of the whole data sequence
-    end
-    if (epoch_on(1) > epoch_off(1))           % starts on
-        epoch_on = [ 1; epoch_on ];             % Include the start point of the whole data sequence
-    end
-elseif ~isempty(epoch_on) && isempty(epoch_off)
-    epoch_off = length(filt);
-elseif isempty(epoch_on) && ~isempty(epoch_off)
-    epoch_on = 1;
-end
-epochs = [ epoch_on, epoch_off ];
+
 
 function [index_clipping, index_baseline] = detect_clipping_baseline(data, step_size, window_size, jump, threshold)
 l_data = length(data);
