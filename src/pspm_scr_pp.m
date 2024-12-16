@@ -140,9 +140,8 @@ if ~any(size(indata) > 1)
     warning('ID:invalid_input', 'Argument ''data'' should contain > 1 data points.');
     return;
 end
+
 %% Create filters
-
-
 data_changed = NaN(size(indata));
 filt_range = indata < options.max & indata > options.min;
 filt_slope = true(size(indata));
@@ -161,18 +160,19 @@ end
 if options.include_baseline
     filt_clipping = filt_clipping | filt_baseline;
 end
-% combine filters
+% combine filters: filt == 1 if sample is valid and filt == 0 if it is
+% invalid
 filt = filt_range & filt_slope;
 filt = filt & (1-filt_clipping);
+
+
 %% Find data islands and expand artefact islands
-
-
 if isempty(find(filt==0, 1))
     warning('Epoch was empty based on the current settings.');
 else
     if options.data_island_threshold > 0 || options.expand_epochs > 0
+        
         % work out data epochs
-
         filt_epochs = pspm_logical2epochs(filt,sr); % gives data (rather than artefact) epochs
         if options.expand_epochs > 0
             exp = options.expand_epochs;
