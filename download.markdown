@@ -1,0 +1,46 @@
+---
+layout: default
+title: Download
+permalink: /download/
+---
+
+# Download & getting started
+
+PsPM is tested on Matlab 2020 and higher. Most command-line functions will also run in previous Matlab versions.
+
+---
+## Download latest version: PsPM installer
+
+1. <a href="https://github.com/bachlab/PsPM/raw/develop/src/helper/pspm_installer.m" download>Download the installer into an arbitrary directoy</a>
+2. Open Matlab.
+3. Navigate to the directory into which you downloaded the installer, and type "pspm_installer" at the command line. In the next dialogue, you can optionally download the GLM and DCM tutorial data set.
+4. Start the GUI by typing "pspm" in the matlab command line
+
+---
+
+## Download any version directly from github
+
+1. [List of available versions](https://github.com/bachlab/PsPM/releases)
+2. For the chosen version, download the file PsPM_v...zip
+3. Unzip into any directory.
+4. Put the unzipped "PsPM" directory on the matlab search path, using "Set path" (without subfolders) or by typing addpath('folder')
+5. Start the GUI by typing "pspm" in the matlab command line
+
+---
+
+## Clone the development source code from the github repository
+
+1. Navigate to the [repository](https://github.com/bachlab/PsPM)
+2. Click on "code" and copy the clone URL. Use https for an anomymous clone. For ssh, you need a github account with a linked ssh key pair.
+3. Open a terminal.
+4. Navigate to a folder of your choice.
+5. Type "clone <URL>", inserting the URL you copied in step 2. 
+6. Put the "src" subdirectory onto the matlab search path.
+7. Start the GUI by typing "pspm" in the matlab command line
+
+---
+
+## Help
+* [Function reference](https://bachlab.github.io/PsPM/ref/)
+* [Q&A](https://github.com/bachlab/PsPM/issues)
+* [Bug reports & eature requests](https://github.com/bachlab/PsPM/discussions)

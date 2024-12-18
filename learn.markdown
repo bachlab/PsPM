@@ -1,0 +1,76 @@
+---
+layout: default
+title: Learn
+permalink: /learn/
+---
+
+# Learn PsPM 
+
+The best place to start learning PsPM is the online course. We also run face-to-face courses, and you can drop in at our Q&A sessions. At the bottom of this page, you can find useful additional resources.
+
+## Online course
+### **Lecture 1: Theoretical overview (beginner)** 
+
+[![PsPM Lecture 1](https://www.caian.uni-bonn.de/media/pspm-lecture-1_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=a256bf0a-3c51-4bcf-bf6f-45b6f1013613)
+
+### **Lecture 2: Practical overview (beginner)** 
+We are sorry. There is currently no material available for Lecture 2.
+
+### **Lecture 3: Theoretical overview (advanced)** 
+
+[![PsPM Lecture 3](https://www.caian.uni-bonn.de/media/pspm-lecture-3_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=99bbede5-f3a2-4993-8af0-0493f5dc11ab)
+
+### **Lecture 4: Practical overview (advanced)** 
+We are sorry. There is currently no material available for Lecture 4.
+
+### **Lecture 5: Skin Conductance Responses (SCR)** 
+
+[![PsPM Lecture 5](https://www.caian.uni-bonn.de/media/pspm-lecture-5_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=9710ce99-a74f-4073-aa8c-8edd400d1570)
+
+### **Lecture 6: Pupil and gaze** (Dominik R. Bach)
+
+[![PsPM Lecture 6](https://www.caian.uni-bonn.de/media/pspm-lecture-6_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=bd2ed4fb-14ed-4e71-b32e-c3098912ac29)
+
+### **Lecture 7: Cardiac, respiratory and startle responses** 
+*Lecture 7a:* 
+[![PsPM Lecture 7a](https://www.caian.uni-bonn.de/media/pspm-lecture-7a_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=9bdf9373-fdb8-4b59-8a45-69263e715cc5)
+
+*Lecture 7b:* 
+[![PsPM Lecture 7b](https://www.caian.uni-bonn.de/media/pspm-lecture-7b_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=a98b09d2-571f-4b9f-a6d9-f579f3bb8eec)     
+
+### **Lecture 8: Measuring fear conditioning with PsPM**
+We are sorry. There is currently no material available for Lecture 8.
+
+### **Tutorial 1: Data import and preprocessing**
+[![PsPM Tutorial 1](https://www.caian.uni-bonn.de/media/pspm-tutorial-1_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=99dbec06-b744-4461-8e70-131ce687a9b4)
+
+### **Tutorial 2: GLM and timing definitions** 
+[![PsPM Tutorial 2](https://www.caian.uni-bonn.de/media/pspm-tutorial-2_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=e803118a-77c8-4f31-8744-c03b23bef6dc)
+
+### **Tutorial 3: SCR and non-linear models** 
+[![PsPM Tutorial 3](https://www.caian.uni-bonn.de/media/pspm-tutorial-3_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=a310e31a-010b-4ebb-9076-daf15d3bf2f0)
+
+### **Tutorial 4: Pupil and gaze analysis** 
+[![PsPM Tutorial 4](https://www.caian.uni-bonn.de/media/pspm-tutorial-4_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=c15a44c7-7e04-4b7b-a0df-fa2e7b565739)   
+
+### **Tutorial 5: Cardiac, respiratory and SEBR analysis** 
+[![PsPM Tutorial 5](https://www.caian.uni-bonn.de/media/pspm-tutorial-5_small.jpg)](https://electure.uni-bonn.de/paella7/ui/watch.html?id=a98b09d2-571f-4b9f-a6d9-f579f3bb8eec)
+
+### **Tutorial 6: Workflow automation** 
+* [Slides tutorial 6a](https://docs.google.com/presentation/d/1LsaEB3MozxvxJVSfZUQdXBhJ6BjEkqLeFf_0nZiD4Zc/edit?usp=sharing)
+* [Files tutorial 6a](https://drive.google.com/open?id=1na1wGlCaDZLreLtEi1iEj1Y5Glqd4mFP)  
+* [Slides tutorial 6b](https://docs.google.com/presentation/d/1YuNKejeTsCrpURCYGjCTf0_m62dsVh9Z9xu05JRnpfw/edit?usp=sharing)
+* [Files tutorial 6b](https://drive.google.com/open?id=1g5Wnmu1ghUtNWo9vMWv52WTL4qNi8N88)  
+
+## Course preparation
+Before getting started with our lectures and tutorials, we suggest to installing Matlab and PsPM and the example data sets, in order to replicate the demonstrations. 
+
+* [Download latest PsPM version](https://bachlab.github.io/PsPM/download/)
+* [Download GLM dataset](https://github.com/bachlab/PsPM-tutorial-datasets/releases/download/tutorial-datasets/Tutorial_dataset_GLM.zip)
+* [Download non-linear model dataset](https://github.com/bachlab/PsPM-tutorial-datasets/releases/download/tutorial-datasets/Tutorial_dataset_DCM.zip)
+* [PsPM overview paper](https://doi.org/10.1111/psyp).13209) ([open version](https://discovery.ucl.ac.uk/id/eprint/10070115/))
+
+## Getting help
+
+* [Function reference](https://bachlab.github.io/PsPM/reference/)
+* [Discussion forum on github](https://github.com/bachlab/PsPM/discussions).
