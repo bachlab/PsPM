@@ -306,11 +306,11 @@ end
 
 %% 8 check & get missing values
 for iSn = 1:nFile
-if isempty(model.missing{iSn})
-  sts = 1; missing{iSn} = [];
-else
-  [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
-end
+    if isempty(model.missing{iSn})
+      sts = 1; missing{iSn} = [];
+    else
+      [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
+    end
 end
 
 %% 9 check and get nuisance regressors
