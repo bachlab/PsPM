@@ -6,7 +6,7 @@ layout: default
 title: Start
 ---
 
-# Psychophysiological Modelling with PsPM
+# Psychophysiological Modelling with PsPM: precision psychophysiology made easy
 
 **Current version: PsPM 6.1.2, released on 25.01.2024**
 
