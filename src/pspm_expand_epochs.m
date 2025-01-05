@@ -59,7 +59,7 @@ elseif ischar(varargin{1})
     if gsts == 1
         mode = 'epochfile';
     else
-        fprint('Assuming input is a PsPM data file ...\n');
+        fprintf('Assuming input is a PsPM data file ...\n');
         mode = 'datafile';
     end
 else 
@@ -77,7 +77,7 @@ else
 end
 
 if nargin > k
-    options = varargin{3};
+    options = varargin{end};
 else
     options = struct();
 end
@@ -130,28 +130,30 @@ switch mode
     
     case 'epochfile'
         % save expanded epochs to a new file with 'e' prefix
-            [pathstr, name, ext] = fileparts(fn);
-            output_file = fullfile(pathstr, ['e', name, ext]);
-            overwrite_final = pspm_overwrite(output_file, options.overwrite);
-            if overwrite_final == 1
-                save(output_file, 'epochs'); 
-                fprintf(['Expanded epochs saved to file: ', output_file, '\n']);
-            end
+        [pathstr, name, ext] = fileparts(fn);
+        output_file = fullfile(pathstr, ['e', name, ext]);
+        overwrite_final = pspm_overwrite(output_file, options.overwrite);
+        if overwrite_final == 1
+            epochs = expanded_epochs; 
+            save(output_file, 'epochs'); 
+            fprintf(['Expanded epochs saved to file: ', output_file, '\n']);
+            out = output_file; % the function outputs the filename of the expanded epochfile
+        end
     
     case 'datafile'
 
-    % Convert expanded epochs back to logical indices
-    expanded_indices = pspm_epochs2logical(expanded_epochs, numel(channel_data.data), sr);
-
-    % Set data to NaN at expanded indices
-    channel_data.data(logical(expanded_indices)) = NaN;
-
-    % Save the data 
-    [wsts, out] = pspm_write_channel(fn, {channel_data}, options.channel_action, struct('channel', channel)); 
-    if wsts < 1
-        return
-    end
-    out = out.channel;
+        % Convert expanded epochs back to logical indices
+        expanded_indices = pspm_epochs2logical(expanded_epochs, numel(channel_data.data), sr);
+    
+        % Set data to NaN at expanded indices
+        channel_data.data(logical(expanded_indices)) = NaN;
+    
+        % Save the data 
+        [wsts, out] = pspm_write_channel(fn, {channel_data}, options.channel_action, struct('channel', channel)); 
+        if wsts < 1
+            return
+        end
+        out = out.channel;
 end
 
 sts = 1;
