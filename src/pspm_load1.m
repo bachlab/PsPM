@@ -289,6 +289,7 @@ switch action
       end
     else
       warning('ID:invalid_input', '%s. ''recon'' option only defined for GLM files', errmsg);
+      return;
     end
   case 'con'
     if conflag

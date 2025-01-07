@@ -117,7 +117,6 @@ end
 % 2.4 check files
 % stop the script if files are not allowed to overwrite
 if ~pspm_overwrite(model.modelfile, options)
-  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
 

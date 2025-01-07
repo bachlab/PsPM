@@ -15,10 +15,7 @@ lum_file.name   = 'Illuminance file';
 lum_file.filter  = '.*\.(mat|MAT)$';
 lum_file.tag    = 'lum_file';
 lum_file.num    = [1 1];
-lum_file.help   = {['Select a file that contains illuminance data. ', ...
-                    'The file should contain a variable ''Lx'' ', ...
-                    'which should be an n x 1 numeric ', ...
-                    'vector containing the illuminance values. ']};
+lum_file.help   = pspm_cfg_help_format('pspm_process_illuminance', 'ldata');
 %% Sample rate
 sr              = cfg_entry;
 sr.name         = 'Sample rate';
