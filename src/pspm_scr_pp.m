@@ -1,11 +1,12 @@
 function [sts, out] = pspm_scr_pp(datafile, options)
 % ● Description
 %   pspm_scr_pp implements a simple skin conductance response (SCR) quality
-%   check according to the following two rules. 
+%   check according to the following steps: 
 %   (1) Microsiemens values must be within range (0.05 to 60). 
 %   (2) Absolute slope of value change must be less than 10 microsiemens
 %           per second. 
-%   Data points not corresponding to these rules are considered missing.   
+%   (3) Clipping detection: value stays constant at a floor or ceiling.
+%   (4) Detect and remove data islands neighboured by artefacts.
 %   If a missing epochs filename is specified, the detected epochs
 %   will be written to a missing epochs file to be used for GLM
 %   (recommended). Otherwise, the function will create a channel in the 
