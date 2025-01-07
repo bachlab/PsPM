@@ -153,7 +153,7 @@ if isstruct(channel)
       channel.options = [];
     end
     % add default values
-    if ~isfield(channel.options, 'overwrite')
+    if ~isfield(channel.options, 'overwrite') ||  channel.options.overwrite == 2
       channel.options.overwrite = pspm_overwrite(fn);
     end
 end
