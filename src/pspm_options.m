@@ -217,7 +217,7 @@ switch FunName
     % 2.23 pspm_find_sounds --
     options = autofill_channel_action(options,            'add',     {'replace'} );
     options = autofill(options, 'channel_output',         'all',      'corrected'       );
-    options = autofill(options, 'diagnostics',            1,          0                 );
+    options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'expectedSoundCount',     0,          '*Int'            );
     options = autofill(options, 'maxdelay',               3,          '>=',  0          );
     options = autofill(options, 'mindelay',               0,          '>=',  0          );
