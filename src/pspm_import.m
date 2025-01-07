@@ -290,12 +290,8 @@ for blk = 1:blkno
     clear savedata
     savedata.data = data;
     savedata.infos = infos;
-    if exist('options','var')
-        savedata.options = options;
-    end
-    if pspm_overwrite(outfile{blk}, options)
-        lsts = pspm_load_data(outfile{blk}, savedata);
-    end
+    savedata.options = options;
+    lsts = pspm_load_data(outfile{blk}, savedata);
     if lsts ~= 1
         warning('Import unsuccessful for file %s.\n', datafile);
         outfile{blk} = [];
