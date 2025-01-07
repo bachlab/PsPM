@@ -26,22 +26,6 @@ sr.tag          = 'sr';
 sr.strtype      = 'i';
 sr.num          = [1 1];
 sr.help         = pspm_cfg_help_format('pspm_process_illuminance', 'sr');
-%% Duration
-duration        = cfg_entry;
-duration.name   = 'Duration';
-duration.tag    = 'duration';
-duration.strtype= 'r';
-duration.val    = {20};
-duration.num    = [1 1];
-duration.help   = pspm_cfg_help_format('pspm_process_illuminance', 'options.bf.duration');
-%% Offset
-offset          = cfg_entry;
-offset.name     = 'Offset';
-offset.tag      = 'offset';
-offset.strtype  = 'r';
-offset.val      = {0.2};
-offset.num      = [1 1];
-offset.help     = pspm_cfg_help_format('pspm_process_illuminance', 'options.bf.offset');
 %% LDRF_GM
 ldrf_gm         = cfg_const;
 ldrf_gm.name    = 'pspm_bf_ldrf_gm';
@@ -78,7 +62,7 @@ constrict.help  = pspm_cfg_help_format('pspm_process_illuminance', 'options.bf.c
 bf              = cfg_branch;
 bf.name         = 'Basis function options';
 bf.tag          = 'bf';
-bf.val          = {duration, offset, dilation, constrict};
+bf.val          = {dilation, constrict};
 bf.help         = {'Specify options for the basis functions.'};
 
 %% Executable branch
