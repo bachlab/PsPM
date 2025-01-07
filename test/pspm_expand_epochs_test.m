@@ -9,6 +9,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
         epochs_filename = 'test_epochs.mat';
         data_filename = 'test_data.mat';
         backup_data_filename = 'test_data_backup.mat';
+        NoNaN_data_filename  = 'test_data_NoNaN.mat';
         expansion = [1, 1]; % Expand epochs by 1 second before and after
         options = struct('overwrite', 1);
     end
@@ -25,6 +26,8 @@ classdef pspm_expand_epochs_test < pspm_testcase
 
             duration = 25; % seconds
             outfile = pspm_testdata_gen(channels, duration, this.data_filename);
+
+            copyfile(this.data_filename, this.NoNaN_data_filename);
 
         % Introduce missing data (NaNs) between 12 and 18 seconds
             sr = channels{1}.sr;
@@ -48,19 +51,99 @@ classdef pspm_expand_epochs_test < pspm_testcase
 
     methods(Test)
         function InValidInputError(this)
-
+            % no input
             this.verifyWarning(@()pspm_expand_epochs(), 'ID:invalid_input');
-
+            % invalid input
+            this.verifyWarning(@()pspm_expand_epochs('invalid input'), 'ID:invalid_input');
             % Invalid expansion vector
-            % epochs = [5, 10; 15, 20];
-            % invalid_expansion = [1]; % Should be a 2-element vector
-            % this.verifyWarning(@()pspm_expand_epochs(epochs, invalid_expansion), 'ID:invalid_input');
-            % 
-            % % Invalid first argument
-            % this.verifyWarning(@()pspm_expand_epochs(5, this.expansion), 'ID:invalid_input');
+            epochs = [5, 10; 15, 20];
+            invalid_expansion = [1]; % Should be a 2-element vector
+            this.verifyWarning(@()pspm_expand_epochs(epochs, invalid_expansion), 'ID:invalid_input');
         end
 
-        function test_expand_epochs_with_epochs(this)
+        function InValidInputEpochfileError(this)
+
+            expansion = this.expansion;
+            options = this.options;
+            fn = 'nofile.mat';
+            
+            this.verifyWarning(@()pspm_expand_epochs(fn, expansion, options)  , 'ID:invalid_input');
+        end
+
+        function InValidInputDataFileError(this)
+
+            expansion = this.expansion;
+            options = this.options;
+            epoch = [1 , 1];
+            fn = 'nofile.mat';
+            this.verifyWarning(@()pspm_expand_epochs(fn, expansion, options)  , 'ID:invalid_input');
+        end
+
+        function InValidEpochsFormatError(this)
+            options = this.options;
+
+            % Test single column epochs
+            invalid_epochs = [1; 2; 3];
+            this.verifyWarning(@()pspm_expand_epochs(invalid_epochs, this.expansion,options), 'ID:invalid_input');
+
+            % Test empty epochs
+            empty_epochs = [];
+            this.verifyWarning(@()pspm_expand_epochs(empty_epochs, this.expansion,options), 'ID:invalid_input');
+
+            % Test non-numeric epochs
+            cell_epochs = {[1,2]; [3,4]};
+            this.verifyWarning(@()pspm_expand_epochs(cell_epochs, this.expansion,options), 'ID:invalid_input');
+        end
+        
+        function InValidInputDataFileChannelError(this)
+            % Tests the error handeling of the loading of the channel
+
+            channel1 = 99; 
+            channel2 = -99;
+            channel3 = 'not a channel';
+
+            Exp = this.expansion;
+            options = struct('channel_action', 'replace');
+            fn = this.data_filename;
+     
+            this.verifyWarning(@()pspm_expand_epochs(fn, channel1, Exp, options), 'ID:invalid_input' )
+            this.verifyWarning(@()pspm_expand_epochs(fn, channel2, Exp, options), 'ID:invalid_input' )
+            this.verifyWarning(@()pspm_expand_epochs(fn, channel3, Exp, options), 'ID:invalid_chantype' )
+
+            % Restors the datafile
+            copyfile(this.backup_data_filename, this.data_filename);
+        end
+        
+        function InValidInputDataFileChannelActionError(this)
+            % Tests the error handeling of the loading of the channel
+
+            channel1 = 1; 
+            Exp = this.expansion;
+            options = struct('channel_action', 'no_action');
+            fn = this.data_filename;
+     
+            this.verifyWarning(@()pspm_expand_epochs(fn, channel1, Exp, options), 'ID:invalid_input' )
+
+            % Restors the datafile
+            copyfile(this.backup_data_filename, this.data_filename);
+
+
+        end
+
+        function NoNaNDataFileError(this)
+            % Tests the error handeling of the loading of the channel
+
+            channel1 = 1; 
+            Exp = this.expansion;
+            options = struct('channel_action', 'replace');
+            fn = this.NoNaN_data_filename;
+     
+            this.verifyWarning(@()pspm_expand_epochs(fn, channel1, Exp, options), 'ID:invalid_input')
+
+
+        end
+        
+        function EpandEpochsWithEpochsTest(this)
             % Test expanding epochs given an epoch matrix
             import matlab.unittest.constraints.IsEqualTo
 
@@ -71,14 +154,26 @@ classdef pspm_expand_epochs_test < pspm_testcase
             % Expected expanded epochs
             expected_epochs = [4, 11; 14, 21];
 
-            % Check for overlapping and merge if necessary
-            [~, expected_epochs] = pspm_get_timing('missing', expected_epochs, 'seconds');
+            this.verifyEqual(sts, 1);
+            this.verifyThat(expanded_epochs, IsEqualTo(expected_epochs));
+        end
+
+        function ExpandEpochsWithEpochsNegativeTest(this)
+            % Test expanding epochs given an epoch matrix
+            import matlab.unittest.constraints.IsEqualTo
+
+            epochs = [5, 10; 15, 20];
+            expansion = [-2 , -2];
+            [sts, expanded_epochs] = pspm_expand_epochs(epochs, expansion);
+
+            % Expected expanded epochs
+            expected_epochs = [7, 8; 17, 18];
 
             this.verifyEqual(sts, 1);
             this.verifyThat(expanded_epochs, IsEqualTo(expected_epochs));
         end
 
-        function test_expand_epochs_with_epoch_file(this)
+        function ExpandEpochsWithEpochsFileTest(this)
 
 
             expansion = this.expansion;
@@ -98,7 +193,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
             this.verifyEqual(expanded_epochs,expected_epochs)
         end
 
-        function test_expand_epochs_with_data_file_replace(this)
+        function ExpandEpochsWithDataFileReplaceTest(this)
             % Test expanding epochs given a data file
 
             channel = 1; % Assuming the missing data is in channel 1
@@ -127,14 +222,14 @@ classdef pspm_expand_epochs_test < pspm_testcase
             expected_missing_logical = false(size(data_values)); 
             expected_missing_logical(expanded_missing_indices) = true;
 
-          
+            this.verifyEqual(sts, 1)
             this.verifyEqual(missing_indices,expected_missing_logical);
 
             % Restors the datafile
             copyfile(this.backup_data_filename, this.data_filename);
         end
 
-        function test_expand_epochs_with_data_file_add(this)
+        function ExpandEpochsWithDataFileAddTest(this)
             % Test expanding epochs given a data file with 'add' option
 
             channel = 1;
@@ -164,7 +259,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
             %expected_missing_logical(original_missing_indices) = true;
             expected_missing_logical(expanded_missing_indices) = true;
             
-
+            this.verifyEqual(sts,1)
             this.verifyEqual(filestruct.numofchan , 2)  % checks if the channel was added?
             this.verifyEqual(missing_indices, expected_missing_logical);
             
@@ -190,6 +285,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
 
 
             delete(this.data_filename);
+            delete(this.NoNaN_data_filename);
         end
     end
 end
