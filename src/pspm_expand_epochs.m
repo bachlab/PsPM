@@ -47,8 +47,11 @@ end
 % parse first input and determine mode
 if isnumeric(varargin{1})
     mode = 'epochs';
+    warning off
     [gsts, epochs] = pspm_get_timing('epochs', varargin{1}, 'seconds');
-    if gsts < 1
+    warning on
+    if gsts < 1 || isempty(varargin{1}) % because pspm_get_timing allows empty []
+        warning('ID:invalid_input', 'Wrong epochs format!');
         return
     end
 elseif ischar(varargin{1})
@@ -59,11 +62,12 @@ elseif ischar(varargin{1})
     if gsts == 1
         mode = 'epochfile';
     else
-        fprint('Assuming input is a PsPM data file ...\n');
+        fprintf('Assuming input is a PsPM data file ...\n');
         mode = 'datafile';
     end
 else 
     warning('ID:invalid_input', 'First argument must be a file name or epoch matrix.');
+    return
 end
 
 % parse remaining arguments
@@ -73,11 +77,15 @@ if ismember(mode, {'epochs', 'epochfile'})
 else
     channel   = varargin{2};
     expansion = varargin{3};
+    if ~isnumeric(expansion)
+        warning('ID:invalid_input', 'For data file expansion must be  numeric');
+        return
+    end
     k = 3;
 end
 
 if nargin > k
-    options = varargin{3};
+    options = varargin{end};
 else
     options = struct();
 end
@@ -87,7 +95,7 @@ options = pspm_options(options, 'expand_epochs');
 
 % check if expansion vector is valid
 if  ~isnumeric(expansion) || numel(expansion) ~= 2
-    warning('Invalid input to expand vector musst be 1x2 or 2x1.');
+    warning('ID:invalid_input','Invalid input to expand vector musst be 1x2 or 2x1.');
     return;
 end
 
@@ -97,8 +105,11 @@ end
 % construct epochs from data file
 if strcmpi(mode, 'datafile')
     
+   % warning off
     [lsts, ~, data] = pspm_load_data(fn, channel);
+   % warning on
     if lsts < 1
+       % warning('ID:invalid_input','Invalid channel input. Channel does not exist!');
         return;
     end
 
@@ -106,7 +117,12 @@ if strcmpi(mode, 'datafile')
     sr = channel_data.header.sr;
 
     % Find NaN indices
-    nan_indices = isnan(channel_data.data);
+    if any(isnan(channel_data.data))
+        nan_indices = isnan(channel_data.data);
+    else
+        warning('ID:invalid_input', 'The channel does not have any NaN');
+        return;
+    end
 
     % Convert NaN indices to epochs
     epochs = pspm_logical2epochs(nan_indices, sr);
@@ -117,13 +133,10 @@ end
 pre = expansion(1);
 post = expansion(2);
 expanded_epochs_temp = [epochs(:,1) - pre, epochs(:,2) + post];
-
-% delets epochs whos difference is negative or 0
-epoch_duration = diff(expanded_epochs_temp, 1, 2);
-expanded_epochs_temp(epoch_duration < 1, :) = []; 
-
 % remove negative values and merge overlapping epochs
+warning off
 [ksts, expanded_epochs] = pspm_get_timing('missing',expanded_epochs_temp , 'seconds') ;
+warning on
 if ksts < 1 
     return
 end
@@ -135,31 +148,34 @@ switch mode
     
     case 'epochfile'
         % save expanded epochs to a new file with 'e' prefix
-            [pathstr, name, ext] = fileparts(fn);
-            output_file = fullfile(pathstr, ['e', name, ext]);
-            overwrite_final = pspm_overwrite(output_file, options.overwrite);
-            if overwrite_final == 1
-                save(output_file, 'epochs'); 
-                fprintf(['Expanded epochs saved to file: ', output_file, '\n']);
-            end
+        [pathstr, name, ext] = fileparts(fn);
+        output_file = fullfile(pathstr, ['e', name, ext]);
+        overwrite_final = pspm_overwrite(output_file, options.overwrite);
+        if overwrite_final == 1
+            epochs = expanded_epochs; 
+            save(output_file, 'epochs'); 
+            fprintf(['Expanded epochs saved to file: ', output_file, '\n']);
+            out = output_file; % the function outputs the filename of the expanded epochfile
+        end
     
     case 'datafile'
 
-    % Convert expanded epochs back to logical indices
-    expanded_indices = pspm_epochs2logical(expanded_epochs, numel(channel_data.data), sr);
+        % Convert expanded epochs back to logical indices
+        expanded_indices = pspm_epochs2logical(expanded_epochs, numel(channel_data.data), sr);
+    
+        % Set data to NaN at expanded indices
+        channel_data.data(logical(expanded_indices)) = NaN;
+    
+        % Save the data 
+        [wsts, out] = pspm_write_channel(fn, {channel_data}, options.channel_action, struct('channel', channel)); 
+        if wsts < 1
+            return
+        end
+        out = out.channel;
 
-    % Set data to NaN at expanded indices
-    channel_data.data(logical(expanded_indices)) = NaN;
 
-    % Save the data 
-    [wsts, out] = pspm_write_channel(fn, {channel_data}, options.channel_action, struct('channel', channel)); 
-    if wsts < 1
-        return
     end
-    out = out.channel;
-end
 
 sts = 1;
-
-
+end
 
