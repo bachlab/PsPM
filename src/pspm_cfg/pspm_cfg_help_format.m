@@ -34,6 +34,8 @@ if nargin < 2
             'References:'; ...
             settings.help.(funcname).References(:)];
         end
+         helptext = [ helptext(:); ''; ...
+         '------------------------------------------------------------------------------------------------'];
     end
 elseif strcmpi(funcname, 'import')
     A = strrep(argname, newline, [newline, newline]);
