@@ -50,8 +50,9 @@ if isnumeric(varargin{1})
     warning off
     [gsts, epochs] = pspm_get_timing('epochs', varargin{1}, 'seconds');
     warning on
+
     if gsts < 1 
-        warning('ID:invalid_input', 'Wrong epochs format!');
+        warning('ID:invalid_input', 'Wrong epochs format!'); 
         return
     elseif isequal(varargin{1},[]) % isequal so that {},'' ... not work
         warning('ID:empty_epoch','The epoch is empty. The function will return an empty array ([]).')
@@ -61,19 +62,31 @@ if isnumeric(varargin{1})
 
 elseif ischar(varargin{1})
     fn = varargin{1};
+
     warning off
-    [gsts, epochs] = pspm_get_timing('epochs', fn, 'seconds'); % if the epochfile is empty?
+    [dsts, infos, ~, filestruct] = pspm_load_data(fn, 'none');
     warning on
-    if gsts == 1
-        mode = 'epochfile';
-        if isequal(epochs,[])
-            sts = 1;
-            warning('ID:empty_epoch','The epoch file is empty. The function will return an empty array ([]).')
+
+    if dsts == 1
+        %fprintf('Assuming input is a PsPM data file ...\n');
+        mode = 'datafile';
+    else
+        warning off
+        [gsts, epochs] = pspm_get_timing('epochs', fn, 'seconds'); % if the epochfile is empty?
+        warning on
+
+        if gsts == 1
+            if isequal(epochs,[])
+                sts = 1;
+                warning('The epoch file is empty. The function will return an empty array ([]).')
+                return
+            else
+                mode = 'epochfile'; 
+            end
+        else % neither a empty nor a normal epochfile gsts < 1
+            warning('ID:invalid_input', 'First argument must be a file name or epoch matrix.');
             return
         end
-    else
-        fprintf('Assuming input is a PsPM data file ...\n');
-        mode = 'datafile';
     end
 else 
     warning('ID:invalid_input', 'First argument must be a file name or epoch matrix.');
