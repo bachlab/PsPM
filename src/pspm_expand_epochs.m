@@ -50,17 +50,27 @@ if isnumeric(varargin{1})
     warning off
     [gsts, epochs] = pspm_get_timing('epochs', varargin{1}, 'seconds');
     warning on
-    if gsts < 1 || isempty(varargin{1}) % because pspm_get_timing allows empty []
+    if gsts < 1 
         warning('ID:invalid_input', 'Wrong epochs format!');
         return
+    elseif isequal(varargin{1},[]) % isequal so that {},'' ... not work
+        warning('ID:empty_epoch','The epoch is empty. The function will return an empty array ([]).')
+        sts = 1;
+        return
     end
+
 elseif ischar(varargin{1})
     fn = varargin{1};
     warning off
-    [gsts, epochs] = pspm_get_timing('epochs', fn, 'seconds');
+    [gsts, epochs] = pspm_get_timing('epochs', fn, 'seconds'); % if the epochfile is empty?
     warning on
     if gsts == 1
         mode = 'epochfile';
+        if isequal(epochs,[])
+            sts = 1;
+            warning('ID:empty_epoch','The epoch file is empty. The function will return an empty array ([]).')
+            return
+        end
     else
         fprintf('Assuming input is a PsPM data file ...\n');
         mode = 'datafile';
@@ -94,10 +104,17 @@ end
 options = pspm_options(options, 'expand_epochs');
 
 % check if expansion vector is valid
-if  ~isnumeric(expansion) || numel(expansion) ~= 2
-    warning('ID:invalid_input','Invalid input to expand vector musst be 1x2 or 2x1.');
+% if isequal(expansion, []) 
+%     waring('The function [] epochs')
+%     sts = 1;
+%     return;
+% else...
+if   ~isnumeric(expansion)  || numel(expansion) ~= 2 || expansion(1) < 0 || expansion(2) < 0
+    warning('ID:invalid_input','Invalid input to expand vector musst be 1x2 or 2x1 with positive values.');
     return;
 end
+
+
 
 % work on input
 % -------------------------------------------------------------------------

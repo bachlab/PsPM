@@ -445,7 +445,7 @@ switch model
       if filewarning
         warning('File %s is not a valid epochs or onsets file', ...
           intiming);
-        sts = -1;
+        %sts = -1;
         return;
       end
     else
