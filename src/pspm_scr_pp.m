@@ -174,20 +174,37 @@ else
     if options.data_island_threshold > 0 || options.expand_epochs > 0
         
         % work out data epochs
-        filt_epochs = pspm_logical2epochs(filt,sr); % gives data (rather than artefact) epochs
+        %filt_epochs = pspm_logical2epochs(filt,sr); % gives data (rather than artefact) epochs
+        missing_epochs = pspm_logical2epochs(1-filt,sr); % gives NaN (artefact) epochs
+        
         if options.expand_epochs > 0
             exp = options.expand_epochs;
-            [~,filt_epochs] = pspm_expand_epochs(filt_epochs,[-exp,-exp]);          
+            [~, missing_epochs] = pspm_expand_epochs(missing_epochs, [exp,exp]);          
         end
         
+        
+        %Data_epochs = [0; NaN_epochs(:,1), NaN_epochs(:, 2); ]; 
+
+        index = pspm_epochs2logical(missing_epochs,length(indata) ,sr);
+        Data_epochs = pspm_logical2epochs(1-index,sr);
+
+
+        % % Alternative
+        % data_start = 0; % could be different
+        % data_end   = data_duration;
+        % epoch_starts = [data_start; missing_epochs(:,2)];
+        % epoch_ends = [missing_epochs(:,1); data_end];
+        % data_epochs = [epoch_starts, epoch_ends];
+
+
         % island threshold
         if options.data_island_threshold > 0
-            epoch_duration = diff(filt_epochs, 1, 2);
-            filt_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
+            epoch_duration = diff(Data_epochs, 1, 2);
+            Data_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
         end
 
         % write back into data
-        filt = pspm_epochs2logical(filt_epochs, length(indata), sr); 
+        filt = pspm_epochs2logical(Data_epochs, length(indata), sr); 
         filt = logical(filt);
 
     end

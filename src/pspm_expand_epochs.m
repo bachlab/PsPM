@@ -150,7 +150,19 @@ if strcmpi(mode, 'datafile')
     if any(isnan(channel_data.data))
         nan_indices = isnan(channel_data.data);
     else
-        warning('ID:invalid_input', 'The channel does not have any NaN');
+        % Makes an empty epochs file
+        [pathstr, name, ext] = fileparts(fn);
+        output_file = fullfile(pathstr, ['e', name, ext]);
+        overwrite_final = pspm_overwrite(output_file, options.overwrite);
+        
+        if overwrite_final == 1
+            epochs = []; 
+            save(output_file, 'epochs'); 
+            fprintf(['Empty epoch saved to file: ', output_file, '\n']);
+            out = output_file; % the function outputs the filename of the expanded epochfile
+        end
+
+        warning('ID:empty_channel', 'The channel does not have any NaN.' );
         return;
     end
 
