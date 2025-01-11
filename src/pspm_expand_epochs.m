@@ -47,42 +47,31 @@ end
 % parse first input and determine mode
 if isnumeric(varargin{1})
     mode = 'epochs';
-    warning off
     [gsts, epochs] = pspm_get_timing('epochs', varargin{1}, 'seconds');
-    warning on
-
     if gsts < 1 
-        warning('ID:invalid_input', 'Wrong epochs format!'); 
-        return
-    elseif isequal(varargin{1},[]) % isequal so that {},'' ... not work
-        warning('ID:empty_epoch','The epoch is empty. The function will return an empty array ([]).')
-        sts = 1;
         return
     end
 
 elseif ischar(varargin{1})
     fn = varargin{1};
-
+    % we turn the downstream warning off because the return status is used to determine the
+    % format of the first input argument
     warning off
     [dsts, infos, ~, filestruct] = pspm_load_data(fn, 'none');
     warning on
 
     if dsts == 1
-        %fprintf('Assuming input is a PsPM data file ...\n');
+        fprintf('Assuming input is a PsPM data file ...\n');
         mode = 'datafile';
     else
+        % we turn the downstream warning off because we want to give a summary warning
+        % below
         warning off
         [gsts, epochs] = pspm_get_timing('epochs', fn, 'seconds'); % if the epochfile is empty?
         warning on
 
         if gsts == 1
-            if isequal(epochs,[])
-                sts = 1;
-                warning('The epoch file is empty. The function will return an empty array ([]).')
-                return
-            else
-                mode = 'epochfile'; 
-            end
+            mode = 'epochfile'; 
         else % neither a empty nor a normal epochfile gsts < 1
             warning('ID:invalid_input', 'First argument must be a file name or epoch matrix.');
             return
@@ -100,15 +89,11 @@ if ismember(mode, {'epochs', 'epochfile'})
 else
     channel   = varargin{2};
     expansion = varargin{3};
-    if ~isnumeric(expansion)
-        warning('ID:invalid_input', 'For data file expansion must be  numeric');
-        return
-    end
     k = 3;
 end
 
 if nargin > k
-    options = varargin{end};
+    options = varargin{k+1};
 else
     options = struct();
 end
@@ -117,13 +102,8 @@ end
 options = pspm_options(options, 'expand_epochs');
 
 % check if expansion vector is valid
-% if isequal(expansion, []) 
-%     waring('The function [] epochs')
-%     sts = 1;
-%     return;
-% else...
 if   ~isnumeric(expansion)  || numel(expansion) ~= 2 || expansion(1) < 0 || expansion(2) < 0
-    warning('ID:invalid_input','Invalid input to expand vector musst be 1x2 or 2x1 with positive values.');
+    warning('ID:invalid_input','Expansion vector must have 2 positive elements.');
     return;
 end
 
@@ -135,52 +115,35 @@ end
 % construct epochs from data file
 if strcmpi(mode, 'datafile')
     
-   % warning off
     [lsts, ~, data] = pspm_load_data(fn, channel);
-   % warning on
     if lsts < 1
-       % warning('ID:invalid_input','Invalid channel input. Channel does not exist!');
         return;
     end
 
     channel_data = data{1};
     sr = channel_data.header.sr;
 
-    % Find NaN indices
-    if any(isnan(channel_data.data))
-        nan_indices = isnan(channel_data.data);
-    else
-        % Makes an empty epochs file
-        [pathstr, name, ext] = fileparts(fn);
-        output_file = fullfile(pathstr, ['e', name, ext]);
-        overwrite_final = pspm_overwrite(output_file, options.overwrite);
-        
-        if overwrite_final == 1
-            epochs = []; 
-            save(output_file, 'epochs'); 
-            fprintf(['Empty epoch saved to file: ', output_file, '\n']);
-            out = output_file; % the function outputs the filename of the expanded epochfile
-        end
-
-        warning('ID:empty_channel', 'The channel does not have any NaN.' );
-        return;
-    end
-
-    % Convert NaN indices to epochs
+    % find NaN indices
+    nan_indices = isnan(channel_data.data);
+    
+    % convert NaN indices to epochs
     epochs = pspm_logical2epochs(nan_indices, sr);
 
 end
 
 % expand epochs
-pre = expansion(1);
-post = expansion(2);
-expanded_epochs_temp = [epochs(:,1) - pre, epochs(:,2) + post];
-% remove negative values and merge overlapping epochs
-warning off
-[ksts, expanded_epochs] = pspm_get_timing('missing',expanded_epochs_temp , 'seconds') ;
-warning on
-if ksts < 1 
-    return
+if isempty(epochs)
+    warning('No epochs found.');
+    expanded_epochs = [];
+else
+    pre = expansion(1);
+    post = expansion(2);
+    expanded_epochs_temp = [epochs(:,1) - pre, epochs(:,2) + post];
+    % remove negative values and merge overlapping epochs
+    [ksts, expanded_epochs] = pspm_get_timing('missing', expanded_epochs_temp, 'seconds') ;
+    if ksts < 1 
+        return
+    end
 end
 
 % generate output

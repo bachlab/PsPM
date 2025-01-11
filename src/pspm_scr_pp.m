@@ -143,26 +143,27 @@ if ~any(size(indata) > 1)
 end
 
 %% Create filters
+% filt == 1 if sample is valid and filt == 0 if it is invalid
 data_changed = NaN(size(indata));
 filt_range = indata < options.max & indata > options.min;
 filt_slope = true(size(indata));
 filt_slope(2:end) = abs(diff(indata)*sr) < options.slope;
 if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
     slope_epochs = pspm_logical2epochs(1-filt_slope); % sr = 1 
-    slope_epochs(:,2) = slope_epochs(:,2) -1; % to get the same epoch as before 
     for r = transpose(slope_epochs)
         if range(indata(r(1):r(2))) < options.deflection_threshold
             filt_slope(r(1):r(2)) = 1;
         end
     end
 end
-[filt_clipping, filt_baseline] = detect_clipping_baseline(indata, options.clipping_step_size, ...
+[index_clipping, index_baseline] = detect_clipping_baseline(indata, options.clipping_step_size, ...
     options.clipping_window_size, options.baseline_jump, options.clipping_threshold);
 if options.include_baseline
-    filt_clipping = filt_clipping | filt_baseline;
+    filt_clipping = 1 - (index_clipping | index_baseline);
+else
+    filt_clipping = 1-index_clipping;
 end
-% combine filters: filt == 1 if sample is valid and filt == 0 if it is
-% invalid
+% combine filters: 
 filt = filt_range & filt_slope;
 filt = filt & (1-filt_clipping);
 
@@ -174,37 +175,25 @@ else
     if options.data_island_threshold > 0 || options.expand_epochs > 0
         
         % work out data epochs
-        %filt_epochs = pspm_logical2epochs(filt,sr); % gives data (rather than artefact) epochs
         missing_epochs = pspm_logical2epochs(1-filt,sr); % gives NaN (artefact) epochs
         
         if options.expand_epochs > 0
             exp = options.expand_epochs;
-            [~, missing_epochs] = pspm_expand_epochs(missing_epochs, [exp,exp]);          
+            [lsts, missing_epochs] = pspm_expand_epochs(missing_epochs, [exp,exp]);   
+            if lsts < 1, return, end
         end
         
-        
-        %Data_epochs = [0; NaN_epochs(:,1), NaN_epochs(:, 2); ]; 
-
-        index = pspm_epochs2logical(missing_epochs,length(indata) ,sr);
-        Data_epochs = pspm_logical2epochs(1-index,sr);
-
-
-        % % Alternative
-        % data_start = 0; % could be different
-        % data_end   = data_duration;
-        % epoch_starts = [data_start; missing_epochs(:,2)];
-        % epoch_ends = [missing_epochs(:,1); data_end];
-        % data_epochs = [epoch_starts, epoch_ends];
-
+        missing_index = pspm_epochs2logical(missing_epochs,length(indata) ,sr);
+        data_epochs = pspm_logical2epochs(1-missing_index,sr);
 
         % island threshold
         if options.data_island_threshold > 0
-            epoch_duration = diff(Data_epochs, 1, 2);
-            Data_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
+            epoch_duration = diff(data_epochs, 1, 2);
+            data_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
         end
 
         % write back into data
-        filt = pspm_epochs2logical(Data_epochs, length(indata), sr); 
+        filt = pspm_epochs2logical(data_epochs, length(indata), sr); 
         filt = logical(filt);
 
     end
