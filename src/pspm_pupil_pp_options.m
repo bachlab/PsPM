@@ -5,8 +5,8 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %   structure used by pspm_pupil_pp for pupil preprocessing. You can modify the
 %   returned structure and then pass it to pspm_pupil_pp. See below for
 %   explanation of the parameters. Adapted from:
-%   - pspm/pupil-size/code/helperFunctions/rawDataFilter.m lines 63 to 149,
-%   - pspm/pupil-size/code/dataModels/ValidSamplesModel.m lines 357 to 373.
+%   - src/ext/pupil-size/code/helperFunctions/rawDataFilter.m lines 63 to 149,
+%   - src/ext/pupil-size/code/dataModels/ValidSamplesModel.m lines 357 to 373.
 % ● Format
 %   [sts, default_settings] = pspm_pupil_pp_options()
 % ● Outputs
@@ -101,10 +101,10 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %   ┌───────────────valid
 %   ├interp_upsamplingFreq:The upsampling frequency used to generate the smooth
 %   │                      signal. (Default: 1000 Hz)
-%   ├───LpFilt_cutoffFreq: Cutoff frequency of the lowpass filter used during
-%   │                      final smoothing. (Default: 4 Hz)
-%   ├────────LpFilt_order: Filter order of the lowpass filter used during final
-%   │                      smoothing. (Default: 4)
+%   ├─────────────LpFilt_B:The numerator coefficients of the digital Butterworth 
+%   │                      low-pass filter. 
+%   ├─────────────LpFilt_A:The denominator coefficients of the digital 
+%   │                      Butterworth low-pass filter.
 %   └───────interp_maxGap: Maximum gap in the used (valid) raw samples to
 %                          interpolate over. Sections that were interpolated
 %                          over distances larger than this value will be set
