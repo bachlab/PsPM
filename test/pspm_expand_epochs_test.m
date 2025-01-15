@@ -103,7 +103,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
             channel3 = 'not a channel';
 
             Exp = this.expansion;
-            options = struct('channel_action', 'replace');
+            options = struct('channel_action', 'replace','overwrite',1);
             fn = this.data_filename;
      
             this.verifyWarning(@()pspm_expand_epochs(fn, channel1, Exp, options), 'ID:invalid_input' )
@@ -157,7 +157,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
 
             channel1 = 1; 
             Exp = this.expansion;
-            options = struct('channel_action', 'add');
+            options = struct('channel_action', 'add','overwrite',1);
          
             fn = this.NoNaN_data_filename;
 
@@ -242,7 +242,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
 
             channel = 1; % Assuming the missing data is in channel 1
             Exp = [1,1]; %this.expansion;
-            options = struct('channel_action', 'replace');
+            options = struct('channel_action', 'replace','overwrite',1);
             fn = this.data_filename;
 
             % Run the function
@@ -278,7 +278,7 @@ classdef pspm_expand_epochs_test < pspm_testcase
 
             channel = 1;
             Exp = [5,2]; % different expansion then above
-            options = struct('channel_action', 'add');
+            options = struct('channel_action', 'add','overwrite',1);
             fn = this.data_filename;
 
             % Run the function

@@ -17,7 +17,7 @@ function [sts, out] = pspm_expand_epochs(varargin)
 %   *   expansion:  A 2-element vector with positive numbers [pre, post]
 %   ┌────────────options:
 %   ├─────────.overwrite: Define if already existing files should be
-%   │                     overwritten. Default ist 0. (Only used if input
+%   │                     overwritten. Default ist 2. (Only used if input
 %   │                     is epochs file.)
 %   └────.channel_action: Channel action, add / replace existing data
 %                         data (default: add)
