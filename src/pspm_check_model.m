@@ -196,7 +196,8 @@ elseif ~any(ismember(model.norm, [0, 1]))
 end
 
 %% 4. Check that session-related field entries have compatible size
-if (nFile ~= numel(model.timing)) && ~(numel(model.timing) == 0 && isfield(model, 'nuisance'))
+if (nFile ~= numel(model.timing)) && ...
+    ~(numel(model.timing) == 0 && (isfield(model, 'nuisance') || (isfield(model, 'timeunits') && strcmpi(model.timeunits, 'whole'))))
   warning('ID:number_of_elements_dont_match',...
     'Session numbers of data files and event definitions do not match.');
   return
