@@ -219,7 +219,8 @@ end
 
 % 2.4 check files
 % stop the script if files are not allowed to overwrite
-if ~pspm_overwrite(model.modelfile, options)
+options.overwrite = pspm_overwrite(model.modelfile, options);
+if ~options.overwrite
   warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
   return
 end
@@ -305,11 +306,11 @@ end
 
 %% 8 check & get missing values
 for iSn = 1:nFile
-if isempty(model.missing{iSn})
-  sts = 1; missing{iSn} = [];
-else
-  [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
-end
+    if isempty(model.missing{iSn})
+      sts = 1; missing{iSn} = [];
+    else
+      [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
+    end
 end
 
 %% 9 check and get nuisance regressors
@@ -518,7 +519,8 @@ for iCond = 1:numel(names)
   tmp.regscale{iCond} = 1;
   % first process event onset, then pmod
   if strcmpi(model.latency, 'free')
-      offset = model.window(1);
+      offset = round(model.window(1) * glm.infos.sr);
+      model.infos.offset = offset;
   else
       offset = 0;
   end
@@ -707,7 +709,7 @@ if strcmpi(model.latency, 'free')
     % obtain inner product and select max
     a = D * glm.YM;
     [~, ind] = max(a);
-    lat(iCol) = ind/glm.infos.sr;
+    lat(iCol) = (ind+model.infos.offset)/glm.infos.sr;
     XMnew(:, iCol) = D(ind, :);
     % create names
     glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];

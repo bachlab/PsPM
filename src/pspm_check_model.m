@@ -258,7 +258,7 @@ if strcmpi(modeltype, 'glm')
       model = rmfield(model, 'window');
     end
 
-    if strcmpi(model.latency, 'free') && diff(model.window < 0)
+    if strcmpi(model.latency, 'free') && diff(model.window) < 0
         warning('ID:invalid_input', 'model.window invalid');
     end
 
