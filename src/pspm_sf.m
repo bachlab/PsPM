@@ -114,9 +114,16 @@ if options.invalid
   return
 end
 
+[~, ~, ext] = fileparts(model.modelfile);
+if isempty(ext{1})
+    modelfile_temp = strcat(model.modelfile,'.mat');
+else
+    modelfile_temp = model.modelfile;
+end
+
 % 2.4 check files
 % stop the script if files are not allowed to overwrite
-if ~pspm_overwrite(model.modelfile, options)
+if ~pspm_overwrite(modelfile_temp, options)
   return
 end
 
