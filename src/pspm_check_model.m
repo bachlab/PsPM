@@ -167,17 +167,13 @@ end
 %% 3. Fill missing fields common to all models, and accept only allowed values
 if ~isfield(model, 'timing')
     model.timing = cell(nFile, 1);
-else
-  if ~isempty(model.timing)
-    if ~iscell(model.timing) || ...
-      (strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1}) && ~ischar(model.timing{1}))
-      % for DCM, model.timing is either a file name or a cell array of
-      % events, or a cell array of file names or cell arrays, so we need to
-      % take care of cases where model.timing is a cell array but not a cell
-      % array of cell arrays or a cell array of char
-      model.timing = {model.timing};
-    end
-  end
+elseif ~iscell(model.timing) || ...
+  (strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1}) && ~ischar(model.timing{1}))
+  % for DCM, model.timing is either a file name or a cell array of
+  % events, or a cell array of file names or cell arrays, so we need to
+  % take care of cases where model.timing is a cell array but not a cell
+  % array of cell arrays or a cell array of char
+  model.timing = {model.timing};
 end
 if ~isfield(model, 'missing')
   model.missing = cell(nFile, 1);

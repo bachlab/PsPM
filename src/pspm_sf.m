@@ -142,13 +142,12 @@ for k = 1:numel(model.method)
     end
 
 end
+
 % 2.6 Get timing --
 if strcmpi(model.timeunits, 'whole')
-    epochs = repmat({[1 1]}, numel(model.datafile), 1);
+    epochs = [1 1];
 else
-    for iFile = 1:numel(model.datafile)
-        [sts, epochs{iFile}] = pspm_get_timing('epochs', model.timing, model.timeunits);
-    end
+    epochs = pspm_get_timing('epochs', model.timing, model.timeunits);
 end
 
 
@@ -177,7 +176,7 @@ if ~strcmpi(data.header.units, 'uS') && any(strcmpi('dcm', method))
 end
 % 3.4 Get missing epochs --
 if ~isempty(model.missing)
-    [~, missing{iFile}] = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
+    [~, missing{iFile}] = pspm_get_timing('missing', model.missing, 'seconds');
     model.missing_data = zeros(size(y{2}));
     missing_index = pspm_time2index(missing, sr(datatype(k)));
     model.missing_data((missing_index(:,1)+1):(missing_index(:,2)+1)) = 1;
@@ -191,18 +190,18 @@ if any(strcmp(model.timeunits, {'marker', 'markers'}))
     events{iFile} = ndata.data(:);
 end
 
-for iEpoch = 1:size(epochs{iFile}, 1)
+for iEpoch = 1:size(epochs, 1)
     if iEpoch > 1, fprintf('\n\t\t\t'); end
     fprintf('epoch %01.0f ...', iEpoch);
     for k = 1:numel(method)
         fprintf('%s ', method{k});
         switch model.timeunits
             case 'seconds'
-                win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)));
+                win = round(epochs(iEpoch, :) * sr(datatype(k)));
             case 'samples'
-                win = round(epochs{iFile}(iEpoch, :) * sr(datatype(k)) / sr(1));
+                win = round(epochs(iEpoch, :) * sr(datatype(k)) / sr(1));
             case 'markers'
-                win = round(events{iFile}(epochs{iFile}(iEpoch, :)) * sr(datatype(k)));
+                win = round(events{iFile}(epochs(iEpoch, :)) * sr(datatype(k)));
             case 'whole'
                 win = [1 numel(y{datatype(k)})];
         end
@@ -221,7 +220,7 @@ for iEpoch = 1:size(epochs{iFile}, 1)
         end
         % 3.6.1 collect information --
         sf.model{k}(iEpoch).modeltype = method{k};
-        sf.model{k}(iEpoch).boundaries = squeeze(epochs{iFile}(iEpoch, :));
+        sf.model{k}(iEpoch).boundaries = squeeze(epochs(iEpoch, :));
         sf.model{k}(iEpoch).timeunits  = model.timeunits;
         sf.model{k}(iEpoch).samples    = win;
         sf.model{k}(iEpoch).sr         = sr(datatype(k));
