@@ -168,7 +168,7 @@ end
 if ~isfield(model, 'timing')
     model.timing = cell(nFile, 1);
 elseif ~iscell(model.timing) || ...
-  (strcmpi(modeltype, 'dcm') && ~iscell(model.timing{1}) && ~ischar(model.timing{1}))
+  (strcmpi(modeltype, 'dcm') && ~isempty(model.timing) && ~iscell(model.timing{1})  && ~ischar(model.timing{1}))
   % for DCM, model.timing is either a file name or a cell array of
   % events, or a cell array of file names or cell arrays, so we need to
   % take care of cases where model.timing is a cell array but not a cell
