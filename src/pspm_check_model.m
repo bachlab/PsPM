@@ -10,11 +10,8 @@ function [model, options] = pspm_check_model(model, options, modeltype)
 %   ┌─────model
 %   ├─.datafile : Values (any of the following).
 %   │             A file name (single session);
-%   │             A cell array of file names (multiple sessions).
-%   ├.modelfile : A file name for the model output, can be any of the following.
-%   │             [for GLM, DCM, TAM] A file name.
-%   │             [for SF] A file name (single data file) or a cell array of file names
-%   │                      (multiple data files).
+%   │             A cell array of file names (multiple sessions, not allowed for SF).
+%   ├.modelfile : A file name for the model output.
 %   ├.timeunits : A string.
 %   │             [for GLM, TAM] can be either 'seconds', 'samples', 'markers', or
 %   │                            'markervalues'.
@@ -58,7 +55,7 @@ function [model, options] = pspm_check_model(model, options, modeltype)
 %   │                     or cell array of any of these, for multiple files.
 %   ├──.missing : [optional] allows to specify missing (e. g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition; specify a cell
-%   │             array for multiple input files. This must always be specified in SECONDS.
+%   │             array for multiple input files (not allowed for SF). This must always be specified in SECONDS.
 %   │             Default: no missing values
 %   ├──.channel : [optional] channel number (or, for GLM, channel type). If a channel type
 %   │             is specified the LAST channel matching the given type will be used.
@@ -158,10 +155,8 @@ nFile = numel(model.datafile);
 % 3. Reject wrong type of mandatory fields --------------------------------
 if ~iscell(model.datafile) && ~ischar(model.datafile)
   warning('ID:invalid_input', 'Input data must be a cell or string.'); return;
-elseif ~ischar(model.modelfile) && ~strcmpi (modeltype, 'sf')
+elseif ~ischar(model.modelfile) 
   warning('ID:invalid_input', 'Output model must be a string.'); return;
-elseif ischar(model.modelfile) && strcmpi (modeltype, 'sf')
-    model.modelfile = {model.modelfile};
 end
 
 % NOTE we need to separate the case of DCM timing being
@@ -351,12 +346,11 @@ if strcmpi(modeltype, 'sf')
         warning('ID:invalid_input', 'No timeunits specified.'); return;
     elseif ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'markers', 'samples','whole'})
         warning('ID:invalid_input', 'Timeunits (%s) not recognised; only ''seconds'', ''markers'', ''samples'' and ''whole'' are supported', model.timeunits); return;
+    elseif nFile > 1
+        warning('ID:invalid_input', 'Only one data file allowed for SF.'); return;
     elseif ~strcmpi(model.timeunits, 'whole') && sum(cellfun(@(f) isempty(f), model.timing)) > 0
         warning('ID:number_of_elements_dont_match',...
             'Number of data files and epoch definitions does not match.'); return;
-    elseif numel(model.modelfile) ~= nFile
-        warning('ID:number_of_elements_dont_match',...
-            'Number of data files and model files does not match.'); return;
     end
 
     % Check optional fields, set default values and reject invalid values
