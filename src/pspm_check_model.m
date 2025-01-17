@@ -131,16 +131,18 @@ if isempty(settings)
   pspm_init;
 end
 
-options = pspm_options(options, modeltype);
-if options.invalid
-    return
-end
-
 %% 1. General checks  ------------------------------------------------------
 if ~isstruct(model) || isempty(model)
   warning('ID:invalid_input', 'Model must be a non-empty struct.');
   model = struct('invalid', 1);
   return
+else
+    model.invalid = 1;
+end
+
+options = pspm_options(options, modeltype);
+if options.invalid
+    return
 end
 
 %% 2. Reject missing mandatory fields common to all models -----------------
