@@ -147,7 +147,7 @@ end
 if strcmpi(model.timeunits, 'whole')
     epochs = [1 1];
 else
-    epochs = pspm_get_timing('epochs', model.timing, model.timeunits);
+    [sts, epochs] = pspm_get_timing('epochs', model.timing, model.timeunits);
 end
 
 
