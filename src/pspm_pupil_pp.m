@@ -116,6 +116,11 @@ outchannel = [];
 if nargin == 1
   options = struct();
 end
+% temporary
+if isempty(options.channel_combine)
+    options.channel_combine = 'none';
+end
+
 options = pspm_options(options, 'pupil_pp');
 if options.invalid
   return
@@ -139,7 +144,7 @@ for seg = options.segments
   end
 end
 %% 4 Load
-action_combine = ~strcmp(options.channel_combine, 'none');
+action_combine = ~strcmp(options.channel_combine, 'none');% check here?
 alldata = struct();
 [sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
 if sts_load < 1, return, end
