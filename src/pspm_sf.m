@@ -102,29 +102,10 @@ sts = -1;
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
 
-% 2.2 check model
-model = pspm_check_model(model, 'sf');
-if model.invalid
+% 2.2 check model and options
+[model, options] = pspm_check_model(model, options, 'sf');
+if model.invalid || options.invalid
     return
-end
-
-% 2.3 check options
-options = pspm_options(options, 'sf');
-if options.invalid
-  return
-end
-
-[~, ~, ext] = fileparts(model.modelfile);
-if isempty(ext{1})
-    modelfile_temp = strcat(model.modelfile,'.mat');
-else
-    modelfile_temp = model.modelfile;
-end
-
-% 2.4 check files
-% stop the script if files are not allowed to overwrite
-if ~pspm_overwrite(modelfile_temp, options)
-  return
 end
 
 %% 3. Parse methods

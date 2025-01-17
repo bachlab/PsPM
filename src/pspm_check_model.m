@@ -1,7 +1,9 @@
-function model = pspm_check_model(model, modeltype)
+function [model, options] = pspm_check_model(model, options, modeltype)
 % ● Definition
 %   pspm_check_model automatically determine the fields of the struct model
-%   for the corresponding function.
+%   for the corresponding function. It also checks the options structure
+%   and uses it to determine whether overwriting of the model file is
+%   allowed
 % ● Format
 %   model = pspm_check_model(model, modeltype)
 % ● Arguments
@@ -118,27 +120,27 @@ function model = pspm_check_model(model, modeltype)
 %   └────method : [optional, SF (modeltype) only] [string/cell_array]
 %                   [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %                   [cell_array] a cell array of methods mentioned above.
+%   options: see calling functions and pspm_options
 % ● History
 %   Introduced in PsPM 6.1.1
 %   Written in 2023 by Dominik Bach (UCL and Bonn)
 
-%% 0. Initialise
+%% 0. Initialise & check options
 global settings
 if isempty(settings)
   pspm_init;
 end
 
+options = pspm_options(options, modeltype);
+if options.invalid
+    return
+end
+
 %% 1. General checks  ------------------------------------------------------
-if ~isstruct(model)
-  warning('ID:invalid_input', 'Model must be a struct.');
+if ~isstruct(model) || isempty(model)
+  warning('ID:invalid_input', 'Model must be a non-empty struct.');
   model = struct('invalid', 1);
   return
-else
-  model.invalid = 1;
-  if isempty(model)
-    warning('ID:invalid_input', 'Model is empty.');
-    return
-  end
 end
 
 %% 2. Reject missing mandatory fields common to all models -----------------
@@ -193,6 +195,17 @@ if ~isfield(model, 'norm')
   model.norm = 0;
 elseif ~any(ismember(model.norm, [0, 1]))
   warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
+end
+
+% make sure file extension is '.mat'
+[pth, fn, ext] = fileparts(model.modelfile);
+model.modelfile = fullfile(pth, [fn, '.mat']);
+
+% check that overwriting output is allowed
+options.overwrite = pspm_overwrite(model.modelfile, options);
+if ~options.overwrite
+  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
+  return
 end
 
 %% 4. Check that session-related field entries have compatible size
