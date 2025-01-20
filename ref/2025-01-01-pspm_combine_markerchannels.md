@@ -1,4 +1,11 @@
 # pspm_combine_markerchannels
+
+---
+layout: post
+title: pspm_combine_markerchannels
+permalink: /ref/pspm_combine_markerchannels
+---
+
 [Back to index](/PsPM/ref/)
 
 ## Description
