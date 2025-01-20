@@ -1,4 +1,11 @@
 # pspm_import
+
+---
+layout: post
+title: pspm_import
+permalink: /ref/pspm_import
+---
+
 [Back to index](/PsPM/ref/)
 
 ## Description
