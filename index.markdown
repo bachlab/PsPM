@@ -1,13 +1,12 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
-layout: page
+layout: home
+title: PsPM
+permalink: /
 ---
 
 **Current version: PsPM 6.1.2, released on 25.01.2024**
 
-<img class="PsPM_Web" src="images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
+<img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
 
 **PsPM** stands for PsychoPhysiological Modelling. It is a powerful matlab toolbox for model-based analysis of psychophysiological signals, for example SCR, ECG, respiration, pupil size, or startle eye-blink EMG. Currently, PsPM implements models for all of these modalities, and we are working towards further models, for example, for skin potential and ocular scan path length.
 
@@ -23,4 +22,4 @@ Further features are simple programming of add-ons for import and modelling of n
 
 **PsPM** incorporates the previous software package **SCRalyze** and offers all features of SCRalyze plus many more. If you started working on a project with SCRalyze and want to continue, you can still find previous software versions, help, and resources on <a title="http://scralyze.sourceforge.net" href="http://scralyze.sourceforge.net">http://scralyze.sourceforge.net</a>.
 
-**PsPM** is provided under the GNU General Public License (c) <a title="The Bach lab" href="http://www.bachlab.org">Dominik R. Bach</a>, University of Zurich and University College London
+**PsPM** is provided under the GNU General Public License (c) <a title="The Bach lab" href="http://www.bachlab.org">Dominik R. Bach</a>, University of Zurich and University College London.
