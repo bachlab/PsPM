@@ -1,46 +1,74 @@
-### Site info:
-title: PsPM
-tagline: A matlab suite for Psycho Physiological Modelling
-description: "A matlab suite for Psycho Physiological Modelling"
-baseurl: "/PsPM" # the subpath of your site, e.g. /blog/
-url: "" # the base hostname & protocol for your site
-locale: en_US
+# Configurations
+title:            PsPM
+longtitle:        PsPM
+author:           Dominik R Bach
+email:            sighingnow@gmail.com
+description: >
+  A matlab suite for Psycho Physiological Modelling.
 
-### Personal info and site tools info:
-twitter_username: bachlab_cog
-github_username:  bachlab
+version:          1.0
+gitbook_version:  3.2.3
 
-### Site setting:
-ShowContactInfo: "True" # Personal Info (twitter,github,email) can be seen on aboutme-sidebar, those info only shown where ShowContactInfo == True
-#default_column: "two" # blog style: two columns, if default_column != "two", you will see a one column blog.
-default_locale: "en" # blog sidebar language set, only include: English (en), Chinese (cn), Japanese (jp), Polish (pl), Korean (kr),  Russian (ru), Turkish (tr), and Indonesian (id).
+url:              'https://sighingnow.github.io'
+baseurl:          '/PsPM'
+rss:              RSS
+
+# bootstrap: use the remote theme for the site itself
 remote_theme: sighingnow/jekyll-gitbook
+
+toc:
+  enabled: true
+  h_min:   1
+  h_max:   3
+
+# customize the link favicon in header, will be {{site.baseurl}}/{{site.favicon_path}}
+favicon_path:     /assets/gitbook/images/favicon.ico
+
+# markdown render engine.
+markdown:         kramdown
+kramdown:
+  auto_ids:               true
+  input:                  GFM
+  math_engine:            mathjax
+  smart_quotes:           lsquo,rsquo,ldquo,rdquo
+  toc_levels:             1..6
+  syntax_highlighter:     rouge
+  syntax_highlighter_opts:
+    guess_lang:           true
+
 syntax_highlighter_style: colorful
 
-locales:
-    en:
-      Aboutme: "About Me"
-      Archives: "Archives"
-      Blogroll: "Blogroll"
-      Categories: "Categories"
-      Copyright_Notice: "Copyright Notice"
-      Recent_Posts: "Recent Posts"
-      Tags: "Tags"
-      Previous: "Older"
-      Next: "Newer"
-      PostedInCategories: "Posted in"
-      Taggedwith: "and tagged"
-      PostDate: "on "
-      Google_search: "Site Search"
-      Home: "Home"
-      About: "About"
-      Guestbook: "Guestbook"
-      Subscribe: "Subscribe"
+markdown_ext:             markdown,mkdown,mkdn,mkd,md
 
-### Build settings
-markdown: kramdown
-#highlighter: pygments
-kramdown:
-        input: GFM
-        syntax_highlighter: rouge
-excerpt_separator: <!-- more -->
+# Permalinks
+permalink:                /:categories/:year-:month-:day-:title:output_ext
+
+# Disqus comments
+# disqushandler:            sighingnow
+
+exclude:
+  - _drafts
+
+collections:
+  pages:
+    output: true
+    permalink: /:collection/:path/
+  others:
+    output: true
+    permalink: /:collection/:path/
+
+ordered_collections:
+  - posts
+  - pages
+  - others
+
+page_width: 800px
+
+destination:      ./_site
+incremental:      false
+regenerate:       true
+
+plugins:
+  - jekyll-feed
+  - jekyll-readme-index
+  - jemoji
