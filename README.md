@@ -26,4 +26,4 @@ Further features are simple programming of add-ons for import and modelling of n
 
 **PsPM** incorporates the previous software package **SCRalyze** and offers all features of SCRalyze plus many more. If you started working on a project with SCRalyze and want to continue, you can still find previous software versions, help, and resources on <a title="http://scralyze.sourceforge.net" href="http://scralyze.sourceforge.net">http://scralyze.sourceforge.net</a>.
 
-**PsPM** is provided under the GNU General Public License (c) <a title="The Bach lab" href="http://www.bachlab.org">Dominik R. Bach</a>, University of Zurich and University College London
+**PsPM** is provided under the GNU General Public License (c) <a title="The Bach lab" href="http://www.bachlab.org">Dominik R. Bach</a>, University of Zurich and University College London.
