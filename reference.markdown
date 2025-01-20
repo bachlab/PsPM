@@ -10,7 +10,7 @@ This function reference covers all user-facing functions in the develop branch.
 
 *Data preparation functions create new data files.*
 
-[`pspm_import`](https://github.com/bachlab/PsPM/ref/pspm_import)
+[`pspm_import`](https://bachlab.github.io/PsPM/ref/pspm_import)
    
 Import data into PsPM format.
 
