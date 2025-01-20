@@ -1,6 +1,7 @@
 ---
 layout: home
 title: PsPM
+permalink: /
 ---
 ##### A matlab suite for Psycho Physiological Modelling
 
