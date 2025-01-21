@@ -205,24 +205,10 @@ tmp = struct([]); % temporary model structure
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
 
-% 2.2 check model
-model = pspm_check_model(model, 'glm');
-if model.invalid
+% 2.2 check model and options
+[model, options] = pspm_check_model(model, options, 'glm');
+if model.invalid || options.invalid
     return
-end
-
-% 2.3 check options
-options = pspm_options(options, 'glm');
-if options.invalid
-  return
-end
-
-% 2.4 check files
-% stop the script if files are not allowed to overwrite
-options.overwrite = pspm_overwrite(model.modelfile, options);
-if ~options.overwrite
-  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
-  return
 end
 
 %% 3 Check & get data
