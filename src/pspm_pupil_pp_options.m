@@ -1,4 +1,4 @@
-function [sts, default_settings] = pspm_pupil_pp_options()
+function [sts, default_settings] = pspm_pupil_pp_options(custom_settings)
 % ● Description
 %   pspm_pupil_pp_options is a helper function that can be used to modify the
 %   behaviour of pspm_pupil_pp function. This function returns the settings
@@ -113,16 +113,81 @@ function [sts, default_settings] = pspm_pupil_pp_options()
 %   Introduced In PsPM version ?.
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard von Raußendorf
 
 global settings
 if isempty(settings)
   pspm_init;
 end
+
 sts = -1;
+default_settings = struct(); 
+
+if nargin < 1
+    flag = 0;
+elseif ~isstruct(custom_settings)
+    warning('Input must be a struct. Returning default settings.');
+    flag = 0;
+else
+    flag = 1;
+end
+
+
+
+if nargin == 1 && flag == 1
+
+    reqFieldsRaw = {'residualsFilter_interpFs','residualsFilter_lowpassCF'};
+    if isfield(custom_settings,'raw') && all(isfield(custom_settings.raw, reqFieldsRaw))
+        % from src/ext/pupil-size/code/helperFunctions/rawDataFilter.m
+      
+        [custom_settings.raw.residualsFilter_lowpassB , custom_settings.raw.residualsFilter_lowpassA]   ...
+            = butter(1 , custom_settings.raw.residualsFilter_lowpassCF/(custom_settings.raw.residualsFilter_interpFs/2) );
+    else
+        warning('Missing required fields in custom_settings.raw: Default filter coefficients will be use.'); % change
+    end
+
+    reqFieldsValid = {'LpFilt_cutoffFreq','interp_upsamplingFreq','LpFilt_order'};
+    if isfield(custom_settings,'valid') && all(isfield(custom_settings.valid, reqFieldsValid))
+        % settingsOut = getDefaultSettings() from ValidSamplesModel
+        [custom_settings.valid.LpFilt_B, custom_settings.valid.LpFilt_A] = butter(custom_settings.valid.LpFilt_order, ...
+            2*custom_settings.valid.LpFilt_cutoffFreq/custom_settings.valid.interp_upsamplingFreq );
+    else
+        warning('Missing required fields in custom_settings.valid: Default filter coefficients will be use.'); % change
+    end    
+
+end
+
+
 libbase_path = pspm_path('ext','pupil-size', 'code');
 libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
 addpath(libpath{:});
 default_settings = PupilDataModel.getDefaultSettings();
+
+default_settings.valid.LpFilt_cutoffFreq   = 4; % could also be added to the default_settings in ValidSamplesModel
+default_settings.valid.LpFilt_order        = 4; % could also be added to the default_settings in ValidSamplesModel
+
+if nargin == 1 && flag == 1 
+    default_settings = pspm_assign_fields_recursively(default_settings, custom_settings);
+end
+
+
 rmpath(libpath{:});
 sts = 1;
 return
+end
+
+function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
+% Definition
+% pspm_assign_fields_recursively assign all fields of in_struct to
+% out_struct recursively, overwriting when necessary.
+fnames = fieldnames(in_struct);
+for i = 1:numel(fnames)
+  name = fnames{i};
+  if isstruct(in_struct.(name)) && isfield(out_struct, name)
+    out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
+  else
+    out_struct.(name) = in_struct.(name);
+  end
+end
+
+end

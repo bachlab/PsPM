@@ -116,23 +116,25 @@ outchannel = [];
 if nargin == 1
   options = struct();
 end
-% temporary
-if isempty(options.channel_combine)
-    options.channel_combine = 'none';
-end
+
 
 options = pspm_options(options, 'pupil_pp');
 if options.invalid
   return
 end
-[lsts, default_settings] = pspm_pupil_pp_options();
+
+% when batch editor has default settings
+if ~isfield(options,'custom_settings')
+    [lsts, default_settings] = pspm_pupil_pp_options(); % so now warings are displayed
+else
+    [lsts, default_settings] = pspm_pupil_pp_options(options.custom_settings);
+end
+
+
 if lsts ~= 1
   return
 end
-if isfield(options, 'custom_settings')
- default_settings = pspm_assign_fields_recursively(...
-   default_settings, options.custom_settings);
-end
+
 options.custom_settings = default_settings;
 
 %% 3 Input checks
@@ -144,7 +146,7 @@ for seg = options.segments
   end
 end
 %% 4 Load
-action_combine = ~strcmp(options.channel_combine, 'none');% check here?
+action_combine = ~strcmp(options.channel_combine, 'none');
 alldata = struct();
 [sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
 if sts_load < 1, return, end
@@ -355,18 +357,5 @@ for eyestr = seg_eyes
     for i = 1:numel(segments)
       segments{i}.(eyecolstr) = col(i);
     end
-  end
-end
-function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
-% Definition
-% pspm_assign_fields_recursively assign all fields of in_struct to
-% out_struct recursively, overwriting when necessary.
-fnames = fieldnames(in_struct);
-for i = 1:numel(fnames)
-  name = fnames{i};
-  if isstruct(in_struct.(name)) && isfield(out_struct, name)
-    out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
-  else
-    out_struct.(name) = in_struct.(name);
   end
 end

@@ -133,7 +133,7 @@ ResdFiltInterpFs.help   = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.res
 % Residual filter for lowpass cut-off
 ResdFiltLPCF            = cfg_entry;
 ResdFiltLPCF.name       = 'Butterworth cutoff frequency (Hz)';
-ResdFiltLPCF.tag        = 'residualsFilter_interpFs';% should be residualsFilter_lowpassCF?
+ResdFiltLPCF.tag        = 'residualsFilter_lowpassCF';
 ResdFiltLPCF.num        = [1 1];
 ResdFiltLPCF.val        = {16};% 
 ResdFiltLPCF.help       = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.residualsFilter_lowpassCF');
