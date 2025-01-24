@@ -8,7 +8,7 @@ permalink: /
 
 
 
-**Current version: PsPM 6.1.2, released on 25.01.2024**
+**Current version: PsPM 6.1.2, released on 25.01.2024.**
 
 <img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
 
