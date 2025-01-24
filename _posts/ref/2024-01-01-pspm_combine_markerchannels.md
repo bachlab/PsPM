@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: search-base
 title: pspm_combine_markerchannels
 permalink: /ref/pspm_combine_markerchannels
 ---
