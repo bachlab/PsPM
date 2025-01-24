@@ -40,11 +40,11 @@
             },
         },
         "theme": "default",
-        "author": "Tao He",
+        "author": " ",
         "pdf": {
             "pageNumbers": true,
             "fontSize": 12,
-            "fontFamily": "Arial",
+            "fontFamily": "Helvetica",
             "paperSize": "a4",
             "chapterMark": "pagebreak",
             "pageBreaksBefore": "/",

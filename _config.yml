@@ -2,14 +2,14 @@
 title:            PsPM
 longtitle:        PsPM
 author:           Dominik R Bach
-email:            sighingnow@gmail.com
+email:            d.bach@ucl.ac.uk
 description: >
   A matlab suite for Psycho Physiological Modelling.
 
 version:          1.0
 gitbook_version:  3.2.3
 
-url:              'https://sighingnow.github.io'
+url:              'https://bachlab.github.io'
 baseurl:          '/PsPM'
 rss:              RSS
 
