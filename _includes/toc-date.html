@@ -66,7 +66,7 @@
                                 {% else %}
                                 <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
                                 {% endif %}
-                                    {% if post.title[0] == "C" %} <!-- This is working code -->
+                                    {% if post.url == "/courses" %} <!-- This is working code -->
                                         <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
                                             {{ post.title | escape }}
                                         </a>
