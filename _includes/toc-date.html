@@ -66,7 +66,6 @@
                                 {% else %}
                                 <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
                                 {% endif %}
-                                    <!-- {% if post.url.startswith("/cour") %} --> <!-- This is working code -->
                                     {% if post.url == "/courses/" or post.url == "/documentation/" or post.url == "/faq/" or post.url == "/news/" or post.url == "/opendata/" or post.url == "/reference/" or post.url == "/software/" %}
                                         <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
                                             {{ post.title | escape }}
