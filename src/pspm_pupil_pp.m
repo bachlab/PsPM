@@ -85,7 +85,7 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %   ├─────.end : [decimal][Unit: second] Ending time of the segment.
 %   ├────.name : [string] Name of the segment. Segment will be stored by this name.
 %   ├.plot_data: [Boolean][Default: false or 0] Plot the preprocessing steps.
-%   ├─.chan_valid_cutoff : [optional][Default: 0.01]
+%   ├─.chan_valid_cutoff : [optional][Default: 0.2]
 %   │            A cut-off value for checking whether there are too many missing values
 %   │            in a data channel for combination. If the difference in 
 %   │            missing data percentage between the two channels exceeds 

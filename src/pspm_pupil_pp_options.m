@@ -90,14 +90,27 @@ function [sts, default_settings] = pspm_pupil_pp_options(custom_settings)
 %   │                      Cutoff frequency for first order Butterworth filter. 
 %   │                      (Default: 16 Hz)
 %   │
+%   ├─residualsFilter_lowpassB:
+%   │                      Numerator (B) coefficients of the first-order 
+%   │                      Butterworth filter used in the residuals filter passes.
+%   │                      Automatically computed from residualsFilter_lowpassCF  
+%   │                      and residualsFilter_interpFs.
+%   ├─residualsFilter_lowpassA:
+%   │                      Denominator (A) coefficients of the first-order 
+%   │                      Butterworth filter used in the residuals filter
+%   │                      passes. Automatically computed.
+%   │
 %   │ // Keep filter data
 %   │
-%   └─keepFilterData:      If true, intermediate filter data will be stored.
+%   └───────keepFilterData:If true, intermediate filter data will be stored.
 %                          Set to false to save memory and improve plotting
 %                          performance. (Default: true)
-%    
-%     // Final data smoothing
 %
+%     // Final data smoothing
+%     // The below computation is performed:
+%     // [LpFilt_B, LpFilt_A]  = butter(LpFilt_order, ...
+%     //               2*LpFilt_cutoffFreq/interp_upsamplingFreq );
+%            
 %   ┌───────────────valid
 %   ├interp_upsamplingFreq:The upsampling frequency used to generate the smooth
 %   │                      signal. (Default: 1000 Hz)
@@ -105,10 +118,16 @@ function [sts, default_settings] = pspm_pupil_pp_options(custom_settings)
 %   │                      low-pass filter. 
 %   ├─────────────LpFilt_A:The denominator coefficients of the digital 
 %   │                      Butterworth low-pass filter.
-%   └───────interp_maxGap: Maximum gap in the used (valid) raw samples to
-%                          interpolate over. Sections that were interpolated
-%                          over distances larger than this value will be set
-%                          to NaN. (Default: 250 ms)
+%   ├───────interp_maxGap: Maximum gap in the used (valid) raw samples to
+%   │                      interpolate over. Sections that were interpolated
+%   │                      over distances larger than this value will be set
+%   │                      to NaN. (Default: 250 ms)
+%   ├────LpFilt_cutoffFreq:The cutoff frequency (in Hz) for the low-pass Butterworth filter
+%   │                      that is applied to the upsampled signal. (Default: 4 Hz)
+%   └─────────LpFilt_order:The order of the Butterworth filter used on the 
+%                          upsampled signal. (Default: 4)
+%       
+%   
 % ● History
 %   Introduced In PsPM version ?.
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
@@ -163,6 +182,7 @@ libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperF
 addpath(libpath{:});
 default_settings = PupilDataModel.getDefaultSettings();
 
+% gets 
 default_settings.valid.LpFilt_cutoffFreq   = 4; % could also be added to the default_settings in ValidSamplesModel
 default_settings.valid.LpFilt_order        = 4; % could also be added to the default_settings in ValidSamplesModel
 
