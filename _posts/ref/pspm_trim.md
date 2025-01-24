@@ -1,5 +1,8 @@
-# pspm_trim
-[Back to index](/PsPM/ref/)
+---
+layout: post
+title: pspm_trim
+permalink: /ref/pspm_trim
+---
 
 ## Description
 
