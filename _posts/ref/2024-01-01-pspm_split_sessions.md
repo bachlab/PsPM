@@ -1,4 +1,9 @@
-# pspm_split_sessions
+---
+layout: post
+title: pspm_split_sessions
+permalink: /ref/pspm_split_sessions
+---
+
 [Back to index](/PsPM/ref/)
 
 ## Description
