@@ -31,7 +31,7 @@
             <a href="{{site.baseurl}}/assets/search.html">Click to Search</a>
         </div>
         <ul class="summary">
-            {% if page.url == "/PsPM/courses/" %}
+            
                 {% if page.url == "/index.html" or page.url == "/" %}
                 <li class="chapter active" data-level="1.1" data-path="{{site.baseurl}}">
                 {% else %}
@@ -66,12 +66,14 @@
                                 {% else %}
                                 <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
                                 {% endif %}
-                                    <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
-                                        {{ post.title | escape }}
-                                    </a>
-                                    {% if site.toc.enabled %}
-                                        {% if page.url == post.url %}
-                                            {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                                    {% if post.url[:5] != "/ref/" %}
+                                        <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
+                                            {{ post.title | escape }}
+                                        </a>
+                                        {% if site.toc.enabled %}
+                                            {% if page.url == post.url %}
+                                                {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                                            {% endif %}
                                         {% endif %}
                                     {% endif %}
                                 </li>
@@ -98,12 +100,14 @@
                                 {% else %}
                                 <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
                                 {% endif %}
-                                    <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
-                                        {{ post.title | escape }}
-                                    </a>
-                                    {% if site.toc.enabled %}
-                                        {% if page.url == post.url %}
-                                            {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                                    {% if post.url[:5] != "/ref/" %}
+                                        <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
+                                            {{ post.title | escape }}
+                                        </a>
+                                        {% if site.toc.enabled %}
+                                            {% if page.url == post.url %}
+                                                {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                                            {% endif %}
                                         {% endif %}
                                     {% endif %}
                                 </li>
@@ -117,8 +121,7 @@
                 {% endif %}
                 <li class="chapter" data-level="1.1">
                 <a href="http://bachlab.org">Bachlab</a>
-                </li>
-            {% endif %}
+              </li>
         </ul>
     </nav>
 </div>
