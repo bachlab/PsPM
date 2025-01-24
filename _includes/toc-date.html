@@ -66,7 +66,7 @@
                                 {% else %}
                                 <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
                                 {% endif %}
-                                    <!-- {% if post.url[:5] != "/ref/" %}
+                                    {% if post.url[:5] != "/ref/" %}
                                         <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
                                             {{ post.title | escape }}
                                         </a>
@@ -75,7 +75,7 @@
                                                 {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
                                             {% endif %}
                                         {% endif %}
-                                    {% endif %} -->
+                                    {% endif %}
                                 </li>
                             {% endfor %}
     
