@@ -32,7 +32,8 @@ pspm_import imports data from various formats and writes them to a PsPM file on 
 | import.eyelink_trackdist | The distance between eyetracker and the participants' eyes; If is a numeric value the data in a pupil channel obtained with an eyelink eyetracking system are converted from arbitrary units to distance unit; If value is 'none' the conversion is disabled; (only for Eyelink imports). |
 | import.distance_unit | Unit in which the eyelink_trackdist is measured; If eyelink_trackdist contains a numeric value, the default value is 'mm' otherwise the distance unit is ''; Accepted values include 'mm', 'cm', 'm', and 'inches'. |
 | import.denoise | for continuous marker channels or those recorded as digital level with two values (e.g. CED spike); retains markers of duration longer than the value given here (in seconds). |
-| import.delimiter | for delimiter separated values, value used as delimiter for file read. || options | See following fields. |
+| import.delimiter | for delimiter separated values, value used as delimiter for file read. |
+| options | See following fields. |
 | options.overwrite | overwrite existing files by default. [logical] (0 or 1) Define whether to overwrite existing output files or not. Default value: determined by pspm_overwrite. |
 
 [Back to index](/PsPM/ref/)
