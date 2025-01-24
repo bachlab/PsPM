@@ -1,5 +1,3 @@
-# pspm_combine_markerchannels
-
 ---
 layout: post
 title: pspm_combine_markerchannels
