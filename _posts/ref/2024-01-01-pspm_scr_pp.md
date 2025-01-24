@@ -1,4 +1,10 @@
-# pspm_scr_pp
+---
+layout: post
+title: pspm_scr_pp
+permalink: /ref/pspm_scr_pp
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

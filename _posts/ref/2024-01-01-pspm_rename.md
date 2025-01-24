@@ -1,4 +1,10 @@
-# pspm_rename
+---
+layout: post
+title: pspm_rename
+permalink: /ref/pspm_rename
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

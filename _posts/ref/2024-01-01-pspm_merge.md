@@ -1,4 +1,10 @@
-# pspm_merge
+---
+layout: post
+title: pspm_merge
+permalink: /ref/pspm_merge
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

@@ -1,4 +1,10 @@
-# pspm_interpolate
+---
+layout: post
+title: pspm_interpolate
+permalink: /ref/pspm_interpolate
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

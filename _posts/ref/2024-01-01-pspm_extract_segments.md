@@ -1,4 +1,10 @@
-# pspm_extract_segments
+---
+layout: post
+title: pspm_extract_segments
+permalink: /ref/pspm_extract_segments
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

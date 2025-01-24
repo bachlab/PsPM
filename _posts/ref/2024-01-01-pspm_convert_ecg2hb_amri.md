@@ -1,4 +1,9 @@
-# pspm_convert_ecg2hb_amri
+---
+layout: post
+title: pspm_convert_ecg2hb_amri
+permalink: /ref/pspm_convert_ecg2hb_amri
+---
+
 [Back to index](/PsPM/ref/)
 
 ## Description

@@ -1,4 +1,10 @@
-# pspm_pupil_correct_eyelink
+---
+layout: post
+title: pspm_pupil_correct_eyelink
+permalink: /ref/pspm_pupil_correct_eyelink
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

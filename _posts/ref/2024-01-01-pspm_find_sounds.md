@@ -1,4 +1,11 @@
-# pspm_find_sounds
+---
+layout: post
+title: pspm_find_sounds
+permalink: /ref/pspm_find_sounds
+---
+
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

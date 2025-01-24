@@ -1,4 +1,11 @@
-# pspm_remove_epochs
+---
+layout: post
+title: pspm_remove_epochs
+permalink: /ref/pspm_remove_epochs
+---
+
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

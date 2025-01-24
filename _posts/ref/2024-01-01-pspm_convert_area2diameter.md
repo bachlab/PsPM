@@ -1,4 +1,9 @@
-# pspm_convert_area2diameter
+---
+layout: post
+title: pspm_convert_area2diameter
+permalink: /ref/pspm_convert_area2diameter
+---
+
 [Back to index](/PsPM/ref/)
 
 ## Description

@@ -1,4 +1,10 @@
-# pspm_convert_ecg2hb
+---
+layout: post
+title: pspm_convert_ecg2hb
+permalink: /ref/pspm_convert_ecg2hb
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

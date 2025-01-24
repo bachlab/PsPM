@@ -1,4 +1,10 @@
-# pspm_find_valid_fixations
+---
+layout: post
+title: pspm_find_valid_fixations
+permalink: /ref/pspm_find_valid_fixations
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

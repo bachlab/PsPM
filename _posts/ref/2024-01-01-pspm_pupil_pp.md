@@ -1,4 +1,10 @@
-# pspm_pupil_pp
+---
+layout: post
+title: pspm_pupil_pp
+permalink: /ref/pspm_pupil_pp
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

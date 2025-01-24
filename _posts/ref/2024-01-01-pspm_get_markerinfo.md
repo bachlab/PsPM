@@ -1,4 +1,10 @@
-# pspm_get_markerinfo
+---
+layout: post
+title: pspm_get_markerinfo
+permalink: /ref/pspm_get_markerinfo
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

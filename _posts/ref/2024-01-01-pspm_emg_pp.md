@@ -1,4 +1,10 @@
-# pspm_emg_pp
+---
+layout: post
+title: pspm_emg_pp
+permalink: /ref/pspm_emg_pp
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

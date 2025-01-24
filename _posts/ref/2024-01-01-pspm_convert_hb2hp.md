@@ -1,4 +1,10 @@
-# pspm_convert_hb2hp
+---
+layout: post
+title: pspm_convert_hb2hp
+permalink: /ref/pspm_convert_hb2hp
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

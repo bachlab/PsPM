@@ -1,4 +1,11 @@
-# pspm_process_illuminance
+---
+layout: post
+title: pspm_process_illuminance
+permalink: /ref/pspm_process_illuminance
+---
+
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

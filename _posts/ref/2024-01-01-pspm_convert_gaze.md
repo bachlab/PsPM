@@ -1,4 +1,10 @@
-# pspm_convert_gaze
+---
+layout: post
+title: pspm_convert_gaze
+permalink: /ref/pspm_convert_gaze
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description

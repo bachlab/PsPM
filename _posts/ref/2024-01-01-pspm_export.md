@@ -1,4 +1,10 @@
-# pspm_export
+---
+layout: post
+title: pspm_export
+permalink: /ref/pspm_export
+---
+
+
 [Back to index](/PsPM/ref/)
 
 ## Description
