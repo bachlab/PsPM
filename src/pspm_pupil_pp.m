@@ -125,7 +125,7 @@ end
 
 % when batch editor has default settings
 if ~isfield(options,'custom_settings')
-    [lsts, default_settings] = pspm_pupil_pp_options(); % so now warings are displayed
+    [lsts, default_settings] = pspm_pupil_pp_options(); % so no warnings are displayed
 else
     [lsts, default_settings] = pspm_pupil_pp_options(options.custom_settings);
 end

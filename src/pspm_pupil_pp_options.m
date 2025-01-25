@@ -105,27 +105,27 @@ function [sts, default_settings] = pspm_pupil_pp_options(custom_settings)
 %   └───────keepFilterData:If true, intermediate filter data will be stored.
 %                          Set to false to save memory and improve plotting
 %                          performance. (Default: true)
-%
-%     // Final data smoothing
-%     // The below computation is performed:
-%     // [LpFilt_B, LpFilt_A]  = butter(LpFilt_order, ...
-%     //               2*LpFilt_cutoffFreq/interp_upsamplingFreq );
 %            
 %   ┌───────────────valid
 %   ├interp_upsamplingFreq:The upsampling frequency used to generate the smooth
 %   │                      signal. (Default: 1000 Hz)
-%   ├─────────────LpFilt_B:The numerator coefficients of the digital Butterworth 
-%   │                      low-pass filter. 
-%   ├─────────────LpFilt_A:The denominator coefficients of the digital 
-%   │                      Butterworth low-pass filter.
 %   ├───────interp_maxGap: Maximum gap in the used (valid) raw samples to
 %   │                      interpolate over. Sections that were interpolated
 %   │                      over distances larger than this value will be set
 %   │                      to NaN. (Default: 250 ms)
+%   │ 
+%   │  // For final data smoothing, the below computation is performed:
+%   │  // [LpFilt_B, LpFilt_A]  = butter(LpFilt_order, ...
+%   │  //               2*LpFilt_cutoffFreq/interp_upsamplingFreq );
+%   │
 %   ├────LpFilt_cutoffFreq:The cutoff frequency (in Hz) for the low-pass Butterworth filter
 %   │                      that is applied to the upsampled signal. (Default: 4 Hz)
-%   └─────────LpFilt_order:The order of the Butterworth filter used on the 
-%                          upsampled signal. (Default: 4)
+%   ├─────────LpFilt_order:The order of the Butterworth filter used on the 
+%   │                      upsampled signal. (Default: 4)
+%   ├─────────────LpFilt_B:The numerator coefficients of the digital Butterworth 
+%   │                      low-pass filter. Automatically computed.
+%   └─────────────LpFilt_A:The denominator coefficients of the digital 
+%                          Butterworth low-pass filter. Automatically computed.
 %       
 %   
 % ● History
@@ -162,7 +162,7 @@ if nargin == 1 && flag == 1
         [custom_settings.raw.residualsFilter_lowpassB , custom_settings.raw.residualsFilter_lowpassA]   ...
             = butter(1 , custom_settings.raw.residualsFilter_lowpassCF/(custom_settings.raw.residualsFilter_interpFs/2) );
     else
-        warning('Missing required fields in custom_settings.raw: Default filter coefficients will be use.'); % change
+        warning('Missing required fields in custom_settings.raw: Default filter coefficients will be used.'); % change
     end
 
     reqFieldsValid = {'LpFilt_cutoffFreq','interp_upsamplingFreq','LpFilt_order'};
@@ -171,7 +171,7 @@ if nargin == 1 && flag == 1
         [custom_settings.valid.LpFilt_B, custom_settings.valid.LpFilt_A] = butter(custom_settings.valid.LpFilt_order, ...
             2*custom_settings.valid.LpFilt_cutoffFreq/custom_settings.valid.interp_upsamplingFreq );
     else
-        warning('Missing required fields in custom_settings.valid: Default filter coefficients will be use.'); % change
+        warning('Missing required fields in custom_settings.valid: Default filter coefficients will be used.'); % change
     end    
 
 end
