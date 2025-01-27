@@ -42,6 +42,7 @@ function [sts, import, sourceinfo] = pspm_get_viewpoint(datafile, import)
 %   ├─────.units: Units of the channel.
 %   ├────────.sr: Sampling rate.
 %   └───.chan_id: Channel index of the imported channel in the raw data columns.
+%   //sourceinfo: is missing
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Maintained in 2021-2022 by Teddy

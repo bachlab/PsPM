@@ -1,5 +1,5 @@
 function [gx,dgdx,dgdPhi] = g_SCR(Xt,Phi,ut,inG)
-% ● Description
+% ● Description // needs description
 %   TBA.
 % ● Arguments
 %     Xt:
