@@ -4111,14 +4111,7 @@ In GLM-based analyses, these systems explain considerable variance in pupil
  short duration (with the second LTI system being particularly relevant
  for brief, i.e., sub-second, inputs).
  The modeled pupil size time series can be easily specified given a time
- series of (il)luminance values (see 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Prepare-illuminance-GLM"
-
-\end_inset
-
-).
+ series of (il)luminance values.
  These time series can be used as nuisance regressors in GLMs.
  Because the end stage of the pupil system does not depend on where the
  neural input comes from, the specified canonical response functions can
@@ -4156,7 +4149,7 @@ literal "true"
 \end_inset
 
 .
- retrodictive validity exceeds (or is at least equal to) peak scoring and
+ Retrodictive validity exceeds (or is at least equal to) peak scoring and
  calculating the area-under-the-curve.
  The response function was initially based on a CS to US SOA of 3.5 s but
  the same function can be used for an SOA of 6 s.
@@ -4164,23 +4157,23 @@ literal "true"
  but this is still accessible in PsPM.
  The gamma probability density function followed the same form specified
  above with the parameter values 
-\begin_inset Formula $k=6.03$
+\begin_inset Formula $k=5.94$
 \end_inset
 
 , 
-\begin_inset Formula $\theta=0.73s^{-1}$
+\begin_inset Formula $\theta=0.75s^{-1}$
 \end_inset
 
 , 
-\begin_inset Formula $c=1.6$
+\begin_inset Formula $c=1.7$
 \end_inset
 
 , 
-\begin_inset Formula $t0=0.029$
+\begin_inset Formula $t_{0}=0.002$
 \end_inset
 
  (
-\begin_inset Formula $t0$
+\begin_inset Formula $t_{0}$
 \end_inset
 
  was fitted for this model).
@@ -4333,12 +4326,7 @@ literal "true"
 \end_layout
 
 \begin_layout Itemize
-fear-conditioned PSR: use no derivative, If possible, model the US response
- separately (requires a command-line function call to 
-\family typewriter
-pspm_glm
-\family default
-) 
+fear-conditioned PSR: use no derivative 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Korn:2017a"
