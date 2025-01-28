@@ -7,8 +7,8 @@ function [sts, import, sourceinfo] = pspm_get_smr(datafile, import)
 % ● Arguments
 %     datafile
 %   ┌───import
-%   ├───
-%   └───denoise:
+%   └───denoise: for marker channels in CED spike format (recorded as 'level'),
+%                only retains markers with duration longer than the value given here (in ms).
 % ● Outputs
 %     import
 %   ┌──sourceinfo
