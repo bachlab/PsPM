@@ -10,7 +10,7 @@ This function reference covers all user-facing functions in the develop branch.
 
 *Data preparation functions create new data files.*
 
-[`pspm_import`](/PsPM/ref/pspm_import)
+[`pspm_import`](pspm_import)
    
 Import data into PsPM format.
 
@@ -134,7 +134,7 @@ Models for non-specific SCR (aka spontaneous fluctuations).
 
 Model for trial averaged responses. (Not available in GUI)
 
-[`pspm_export`](pspm_export)
+[`pspm_export`](pspm_exp)
 
 Export model output.
 
