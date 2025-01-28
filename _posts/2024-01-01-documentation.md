@@ -4,8 +4,6 @@ title: Documentation
 permalink: /documentation/
 ---
 
-# Documentation
-
 When you use PsPM code or concepts, we ask you to
 reference our papers - an annotated reference list is provided below. 
 Some PsPM pre-processing algorithms are based on other
