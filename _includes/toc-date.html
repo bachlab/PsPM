@@ -66,7 +66,7 @@
                                 {% else %}
                                 <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
                                 {% endif %}
-                                    {% if post.url == "/courses/" or post.url == "/documentation/" or post.url == "/faq/" or post.url == "/news/" or post.url == "/opendata/" or post.url == "/ref/" or post.url == "/software/" %}
+                                    {% if post.url == "/learn/" or post.url == "/documentation/" or or post.url == "/news/" or post.url == "/opendata/" or post.url == "/ref/" or post.url == "/download/" %}
                                         <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
                                             {{ post.title | escape }}
                                         </a>
@@ -120,7 +120,7 @@
                     {% endfor %}
                 {% endif %}
                 <li class="chapter" data-level="1.1">
-                <a href="http://bachlab.org">Bachlab</a>
+                <a href="http://caian.uni-bonn.de/en/">Bachlab</a>
               </li>
         </ul>
     </nav>

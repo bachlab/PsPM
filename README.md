@@ -3,27 +3,29 @@ layout: home
 title: PsPM
 permalink: /
 ---
-##### A matlab suite for Psycho Physiological Modelling
+# Psychophysiological Modelling with PsPM: precision psychophysiology made easy
 
+**Current version: PsPM 6.1.2, released on 25.01.2024**
 
+<img class="PsPM_Web" src="images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
 
+Psychophysiological data (e.g. SCR, pupil size, heart rhythm) are routinely used to quantify psychological states or latent variables (e.g. arousal, attention, decision uncertainty, or fear and reward memory). PsPM uses statistical models of the mind-body relationship in order to make this inference transparent. With an integrated and automated work flow from raw data import to export of participant-level (condition-level or trial-by-trial) summary statistics, PsPM combines analytical reproducibility with plug-and-play implementation.
 
-**Current version: PsPM 6.1.2, released on 25.01.2024.**
+To describe between psychological variables and the observed signal, and to estimate the psychological input into that generated the observed signal, PsPM implements convolution models. These models have been developed on large and independent data set.
 
-<img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
+PsPM implements models for skin conductance, pupil size, gaze patterns, heart beats, respiratory signals, and startle eyeblink EMG. PsPM supports import of a number of data formats, including CED Spike, Biopac AcqKnowledge, VarioPort, (exported) ADInstruments LabChart, (exported) Biograph Infiniti, (exported) MindMedia BioTrace, Dataq/Windaq, ScanPhysLog, EDF, (asc-exported) Eyelink, Matlab, and Text files.
 
-**PsPM** stands for PsychoPhysiological Modelling. It is a powerful matlab toolbox for model-based analysis of psychophysiological signals, for example SCR, ECG, respiration, pupil size, or startle eye-blink EMG. Currently, PsPM implements models for all of these modalities, and we are working towards further models, for example, for skin potential and ocular scan path length.
+Further features are simple programming of add-ons for import and modelling of new data types, and automatic creation of batch scripts via the GUI.
 
-A PsPM allows inferring a psychological variable from observable physiological data. For example, associative memory can be inferred from observed skin conductance responses (SCR). This allows for quantitative description of hidden processes, increases the temporal resolution of analysis, and suppresses noise.
+To install the toolbox, go to [download](https://bachlab.github.io/PsPM/download/).
 
-**PsPM** implements simple General Linear Convolution Models (GLM) for evoked SCR, or uses the Dynamic Causal Modelling (DCM) framework - as a tool to invert more complicated, non-linear models of SCR signals, for example for spontaneous fluctuations or anticipatory responses. Inference is drawn in a hierarchical summary-statistic approach (similar to SPM software for functional magnetic resonance imaging).
+Our [online course](https://bachlab.github.io/PsPM/learn/) provides in-depth information about the software and about the implemented methods, whether you are a newcomer to psychophysiological modelling or an experienced user who wants more detail.
 
-**PsPM** also supports other kinds of data for which no models exist yet, in particular we have extended support for eyetracking data.
+For help, see the [Discussion forum on github](https://github.com/bachlab/PsPM/discussions).
 
-The flexible software allows import of a number of data formats, including Spike, Biopac, VarioPort, (exported) ADInstruments LabChart, (exported) Biograph Infiniti, (exported) MindMedia BioTrace, Dataq/Windaq, AckKnowledge, ScanPhysLog, EDF, (exported) Eyelink, Matlab, and Text files.
+![](images/PsPM_Website_Figure_2.png)
 
-Further features are simple programming of add-ons for import and modelling of new data types and automatic creation of batch scripts via the GUI.
+The most common application of psychophysiology is inverse inference: estimate a psychological, cognitive or neural state, given peripheral data. In such cases, the interest is not on the physiology itself - the interest is in the psychological process. Psychophysiological Modelling offers a statistically rigorous approach to this problem, which is implemented in PsPM.
 
-**PsPM** incorporates the previous software package **SCRalyze** and offers all features of SCRalyze plus many more. If you started working on a project with SCRalyze and want to continue, you can still find previous software versions, help, and resources on <a title="http://scralyze.sourceforge.net" href="http://scralyze.sourceforge.net">http://scralyze.sourceforge.net</a>.
+PsPM is provided under the GNU General Public License by the PsPM team, hosted at [the Centre for Artificial Intelligence and Neuroscience, University of Bonn](https://www.caian.uni-bonn.de/en/home)
 
-**PsPM** is provided under the GNU General Public License (c) <a title="The Bach lab" href="http://www.bachlab.org">Dominik R. Bach</a>, University of Zurich and University College London.

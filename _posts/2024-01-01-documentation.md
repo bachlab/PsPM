@@ -108,7 +108,7 @@ size response model to assess fear learning. *Psychophysiology*, *54*,
 * Korn CW & Bach DR (2016). A solid frame for the window on
 cognition: Modeling event-related pupil responses. *Journal of Vision*,
 *16*, 28. [\[PubMed\]](https://www.ncbi.nlm.nih.gov/pubmed/26894512) (illuminance model and its application to cognitive paradigms)
-* Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR (2023). Acceleration of inferred neural responses to oddball targets in an individual with bilateral amygdala lesion compared to healthy controls. *Scientific Reports*, *13*, 41357. [\doi\](https://doi.org/10.1038/s41598-023-41357-1) (application of the illuminance model to a lesion patient group)
+* Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR (2023). Acceleration of inferred neural responses to oddball targets in an individual with bilateral amygdala lesion compared to healthy controls. *Scientific Reports*, *13*, 41357. [\[doi\][(https://doi.org/10.1038/s41598-023-41357-1) (application of the illuminance model to a lesion patient group)
 
 ## Models for heart data
 * Castegnetti G, Tzovara A, Staib M, Paulus PC, Hofer N, & Bach DR (2016).
@@ -136,8 +136,8 @@ to assess fear learning. *Psychophysiology*, *54*, 202-214.
 [\[PubMed\]](https://www.ncbi.nlm.nih.gov/pubmed/27753123)
 
 ## Recent examples for application studies using PsPM
-* Wehrli J, Xia Y, Abivardi A , Kleim B, Bach DR (2024). The impact of doxycycline on human contextual fear memory. *Psychopharmacology*, *241*, 1065–1077.
 * Xia Y, Wehrli J, Abivardi A , Hostiuc M, Kleim B, Bach DR (2024). Attenuating human fear memory retention with minocycline: a randomized placebo-controlled trial. *Translational Psychiatry*, *14*, 28.
+* Wehrli J, Xia Y, Abivardi A , Kleim B, Bach DR (2024). The impact of doxycycline on human contextual fear memory. *Psychopharmacology*, *241*, 1065–1077.
 * Wehrli J, Xia Y, Offenhammer B, Kleim B, Müller D, Bach DR (2023). Effect of the matrix metalloproteinase inhibitor doxycycline on human trace fear memory. *eNeuro*, ENEURO.0243-22.2023.
 * Xia Y, Wehrli J, Gerster S, Kroes M, Houtekamer M, Bach DR (2023). Measuring human context fear conditioning and retention after consolidation. *Learning & Memory*, *30*, 139–150.
 * Ojala KE*, Staib M*, Gerster S, Ruff CC, Bach DR (2022). Inhibiting human aversive memory by transcranial theta-burst stimulation to primary sensory cortex. *Biological Psychiatry*, *92*, 149-157.
