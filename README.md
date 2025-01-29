@@ -1,13 +1,13 @@
 ---
 layout: home
-title: PsPM
+title: Home
 permalink: /
 ---
 # Psychophysiological Modelling with PsPM: precision psychophysiology made easy
 
 **Current version: PsPM 6.1.2, released on 25.01.2024**
 
-<img class="PsPM_Web" src="images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
+<img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
 
 Psychophysiological data (e.g. SCR, pupil size, heart rhythm) are routinely used to quantify psychological states or latent variables (e.g. arousal, attention, decision uncertainty, or fear and reward memory). PsPM uses statistical models of the mind-body relationship in order to make this inference transparent. With an integrated and automated work flow from raw data import to export of participant-level (condition-level or trial-by-trial) summary statistics, PsPM combines analytical reproducibility with plug-and-play implementation.
 
@@ -23,7 +23,7 @@ Our [online course](https://bachlab.github.io/PsPM/learn/) provides in-depth inf
 
 For help, see the [Discussion forum on github](https://github.com/bachlab/PsPM/discussions).
 
-![](images/PsPM_Website_Figure_2.png)
+<img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_2.jpg" type="image/jpg" alt="PsPM" >
 
 The most common application of psychophysiology is inverse inference: estimate a psychological, cognitive or neural state, given peripheral data. In such cases, the interest is not on the physiology itself - the interest is in the psychological process. Psychophysiological Modelling offers a statistically rigorous approach to this problem, which is implemented in PsPM.
 

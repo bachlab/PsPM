@@ -108,7 +108,7 @@ size response model to assess fear learning. *Psychophysiology*, *54*,
 * Korn CW & Bach DR (2016). A solid frame for the window on
 cognition: Modeling event-related pupil responses. *Journal of Vision*,
 *16*, 28. [\[PubMed\]](https://www.ncbi.nlm.nih.gov/pubmed/26894512) (illuminance model and its application to cognitive paradigms)
-* Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR (2023). Acceleration of inferred neural responses to oddball targets in an individual with bilateral amygdala lesion compared to healthy controls. *Scientific Reports*, *13*, 41357. [\[doi\][(https://doi.org/10.1038/s41598-023-41357-1) (application of the illuminance model to a lesion patient group)
+* Abivardi A, Korn CW, Rojkov I, Gerster S, Hurlemann R, Bach DR (2023). Acceleration of inferred neural responses to oddball targets in an individual with bilateral amygdala lesion compared to healthy controls. *Scientific Reports*, *13*, 41357. [\[doi\]](https://doi.org/10.1038/s41598-023-41357-1) (application of the illuminance model to a lesion patient group)
 
 ## Models for heart data
 * Castegnetti G, Tzovara A, Staib M, Paulus PC, Hofer N, & Bach DR (2016).
