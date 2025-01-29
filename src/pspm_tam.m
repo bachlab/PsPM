@@ -120,23 +120,10 @@ tam = struct();
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
 
-% 2.2 check model
-model = pspm_check_model(model, 'tam');
-if model.invalid
+% 2.2 check model and options
+[model, options] = pspm_check_model(model, options, 'tam');
+if model.invalid || options.invalid
     return
-end
-
-% 2.3 check options
-options = pspm_options(options, 'tam');
-if options.invalid
-  return
-end
-
-% 2.4 check files
-% stop the script if files are not allowed to overwrite
-if ~pspm_overwrite(model.modelfile, options)
-  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
-  return
 end
 
 %% Loading files

@@ -1,9 +1,10 @@
 function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 % ● Description
-%   pspm_load_data checks and returns the structure of PsPM 3-5.x and
+%   pspm_load_data checks and returns the structure of PsPM 3-7.x and
 %   SCRalyze 2.x data files - SCRalyze 1.x is not supported
 % ● Format
 %   [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
+%   [sts, infos, data, filestruct] = pspm_load_data(fn)
 % ● Arguments
 %        * fn: [char] filename / [struct] with fields
 %   ┌──────fn
@@ -25,7 +26,7 @@ function [sts, infos, data, filestruct] = pspm_load_data(fn, channel)
 %                           returns the respective channels (see settings for
 %                           permissible channel types)
 %                'none'    just checks the file
-%              ▶ struct  check and save file
+%              ▶ struct  check and save file 
 %   ┌────channel
 %   ├───.infos: (mandatory)
 %   ├────.data: (mandatory)
@@ -153,7 +154,7 @@ if isstruct(channel)
       channel.options = [];
     end
     % add default values
-    if ~isfield(channel.options, 'overwrite')
+    if ~isfield(channel.options, 'overwrite') ||  channel.options.overwrite == 2
       channel.options.overwrite = pspm_overwrite(fn);
     end
 end

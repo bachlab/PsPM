@@ -104,7 +104,8 @@ if strcmpi(method, 'file') % in this case use pspm_check_model to verify
     if isfield(options, 'missing')
         model.missing = options.missing;
     end
-    model = pspm_check_model(model, 'glm');
+    % set overwrite = 1 to override test of existing model file
+    model = pspm_check_model(model, struct('overwrite', 1), 'glm'); 
     if model.invalid, return; end
     timing = model.timing;
     datafile = model.datafile;
