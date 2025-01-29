@@ -11,7 +11,7 @@ permalink: /
 
 Psychophysiological data (e.g. SCR, pupil size, heart rhythm) are routinely used to quantify psychological states or latent variables (e.g. arousal, attention, decision uncertainty, or fear and reward memory). PsPM uses statistical models of the mind-body relationship in order to make this inference transparent. With an integrated and automated work flow from raw data import to export of participant-level (condition-level or trial-by-trial) summary statistics, PsPM combines analytical reproducibility with plug-and-play implementation.
 
-To describe between psychological variables and the observed signal, and to estimate the psychological input into that generated the observed signal, PsPM implements convolution models. These models have been developed on large and independent data set.
+To describe between psychological variables and the observed signal, and to estimate the psychological input that generated the observed signal, PsPM implements convolution models. These models have been developed on large and independent data set.
 
 PsPM implements models for skin conductance, pupil size, gaze patterns, heart beats, respiratory signals, and startle eyeblink EMG. PsPM supports import of a number of data formats, including CED Spike, Biopac AcqKnowledge, VarioPort, (exported) ADInstruments LabChart, (exported) Biograph Infiniti, (exported) MindMedia BioTrace, Dataq/Windaq, ScanPhysLog, EDF, (asc-exported) Eyelink, Matlab, and Text files.
 
@@ -25,7 +25,7 @@ For help, see the [Discussion forum on github](https://github.com/bachlab/PsPM/d
 
 <img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_2.jpg" type="image/jpg" alt="PsPM" >
 
-The most common application of psychophysiology is inverse inference: estimate a psychological, cognitive or neural state, given peripheral data. In such cases, the interest is not on the physiology itself - the interest is in the psychological process. Psychophysiological Modelling offers a statistically rigorous approach to this problem, which is implemented in PsPM.
+The most common application of psychophysiology is inverse inference: estimating a psychological, cognitive or neural state, given peripheral data. In such cases, the interest is not in the physiology itself - the interest is in the psychological process. Psychophysiological Modelling offers a statistically rigorous approach to this problem, which is implemented in PsPM.
 
 PsPM is provided under the GNU General Public License by the PsPM team, hosted at [the Centre for Artificial Intelligence and Neuroscience, University of Bonn](https://www.caian.uni-bonn.de/en/home)
 
