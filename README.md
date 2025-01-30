@@ -1,8 +1,10 @@
 ---
 layout: home
-title: Psychophysiological Modelling with PsPM: precision psychophysiology made easy
+title: PsPM
 permalink: /
 ---
+
+# Psychophysiological Modelling with PsPM: precision psychophysiology made easy
 
 **Current version: PsPM 6.1.2, released on 25.01.2024**
 
