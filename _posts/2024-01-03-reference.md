@@ -70,6 +70,10 @@ Convert pulse oxymetry data into heart beat time stamps.
 
 Preprocess EMG data.
 
+[`pspm_expand_epochs`](pspm_expand_epochs) 
+
+Expand missing data epochs. (Not available in GUI)
+
 [`pspm_find_sounds`](pspm_find_sounds)
 
 Find sound onsets from sound recordings.
