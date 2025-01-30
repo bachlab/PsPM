@@ -1,9 +1,8 @@
 ---
 layout: home
-title: .
+title: Psychophysiological Modelling with PsPM: precision psychophysiology made easy
 permalink: /
 ---
-# Psychophysiological Modelling with PsPM: precision psychophysiology made easy
 
 **Current version: PsPM 6.1.2, released on 25.01.2024**
 
@@ -28,8 +27,6 @@ To install the toolbox, go to [download](https://bachlab.github.io/PsPM/download
 Our [online course](https://bachlab.github.io/PsPM/learn/) provides in-depth information about the software and about the implemented methods, whether you are a newcomer to psychophysiological modelling or an experienced user who wants more detail.
 
 For help, see the [Discussion forum on github](https://github.com/bachlab/PsPM/discussions).
-
-
 
 PsPM is provided under the GNU General Public License by the PsPM team, hosted at [the Centre for Artificial Intelligence and Neuroscience, University of Bonn](https://www.caian.uni-bonn.de/en/home)
 
