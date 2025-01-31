@@ -2,7 +2,7 @@ require(['gitbook', 'jquery'], function(gitbook, $) {
     var SITES = {
         'bluesky': {
             'label': 'Bluesky',
-            'icon': 'fa fa-bluesky',
+            'icon': 'fa fa-twitter',
             'onClick': function(e) {
                 e.preventDefault();
                 window.open('https://bsky.app/profile/bachlab.bsky.social');
