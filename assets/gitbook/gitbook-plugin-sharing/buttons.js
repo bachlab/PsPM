@@ -1,19 +1,11 @@
 require(['gitbook', 'jquery'], function(gitbook, $) {
     var SITES = {
-        'facebook': {
-            'label': 'Facebook',
-            'icon': 'fa fa-facebook',
+        'bluesky': {
+            'label': 'Bluesky',
+            'icon': 'fa fa-bluesky',
             'onClick': function(e) {
                 e.preventDefault();
-                window.open('http://www.facebook.com/sharer/sharer.php?s=100&p[url]='+encodeURIComponent(location.href));
-            }
-        },
-        'twitter': {
-            'label': 'Twitter',
-            'icon': 'fa fa-twitter',
-            'onClick': function(e) {
-                e.preventDefault();
-                window.open('http://twitter.com/home?status='+encodeURIComponent(document.title+' '+location.href));
+                window.open('https://bsky.app/profile/bachlab.bsky.social');
             }
         },
         'github': {
@@ -21,49 +13,9 @@ require(['gitbook', 'jquery'], function(gitbook, $) {
             'icon': 'fa fa-github',
             'onClick': function(e) {
                 e.preventDefault();
-                window.open('https://github.com');
+                window.open('https://github.com/bachlab/PsPM');
             }
         },
-        'telegram': {
-            'label': 'Telegram',
-            'icon': 'fa fa-telegram',
-            'onClick': function(e) {
-                e.preventDefault();
-                window.open('https://t.me');
-            }
-        },
-        'google': {
-            'label': 'Google+',
-            'icon': 'fa fa-google-plus',
-            'onClick': function(e) {
-                e.preventDefault();
-                window.open('https://plus.google.com/share?url='+encodeURIComponent(location.href));
-            }
-        },
-        'weibo': {
-            'label': 'Weibo',
-            'icon': 'fa fa-weibo',
-            'onClick': function(e) {
-                e.preventDefault();
-                window.open('http://service.weibo.com/share/share.php?content=utf-8&url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title));
-            }
-        },
-        'instapaper': {
-            'label': 'Instapaper',
-            'icon': 'fa fa-instapaper',
-            'onClick': function(e) {
-                e.preventDefault();
-                window.open('http://www.instapaper.com/text?u='+encodeURIComponent(location.href));
-            }
-        },
-        'vk': {
-            'label': 'VK',
-            'icon': 'fa fa-vk',
-            'onClick': function(e) {
-                e.preventDefault();
-                window.open('http://vkontakte.ru/share.php?url='+encodeURIComponent(location.href));
-            }
-        }
     };
 
 
