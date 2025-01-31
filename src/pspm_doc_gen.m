@@ -72,6 +72,7 @@ end
 for i_func = 1:length(list_func)
   options = struct();
   options.path = savepath;
+  options.post = 1;
   disp(list_func{i_func});
   sts_temp = pspm_doc(list_func{i_func}, options);
   if sts_temp == -1
