@@ -1,7 +1,7 @@
 require(['gitbook', 'jquery'], function(gitbook, $) {
     var SITES = {
         'bluesky': {
-            'label': 'Bluesky',
+            'label': 'Twitter',
             'icon': 'fa fa-twitter',
             'onClick': function(e) {
                 e.preventDefault();
