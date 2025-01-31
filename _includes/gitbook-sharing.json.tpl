@@ -1,11 +1,7 @@
             "sharing": {
 
                 "github": true,
-              {% if site.github_username %}
-                "github_link": "https://github.com/{{ site.github_username }}",
-              {% else %}
-                "github_link": "https://github.com",
-              {% endif %}
+                "github_link": "https://github.com/bachlab/PsPM",
 
                 "bluesky": true,
 
