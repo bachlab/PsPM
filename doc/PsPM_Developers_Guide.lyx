@@ -29237,6 +29237,35 @@ Now the script should be running ok.
 \end_layout
 
 \begin_layout Section
+Website and function descriptions
+\end_layout
+
+\begin_layout Quote
+Contributed by Teddy Zhao in January 2025
+\end_layout
+
+\begin_layout Standard
+This chapter describes how to contribute to the PsPM website and generate documents of function description.
+\end_layout
+
+\begin_layout Subsection
+Website
+\end_layout
+
+\begin_layout Standard
+The official website of PsPM is bachlab.github.io/pspm.
+ The website is hosted on GitHub at the branch 
+\begin_inset Quotes eld
+\end_inset
+
+gh-pages
+\begin_inset Quotes erd
+\end_inset
+
+ under the PsPM repository at github.com/bachlab/PsPM.
+\end_layout
+
+\begin_layout Section
 List of Functions
 \end_layout
 
