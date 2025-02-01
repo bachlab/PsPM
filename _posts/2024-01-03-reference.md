@@ -138,7 +138,7 @@ Models for non-specific SCR (aka spontaneous fluctuations).
 
 Model for trial averaged responses. (Not available in GUI)
 
-[`pspm_export`](pspm_exp)
+[`pspm_export`](pspm_export)
 
 Export model output.
 
