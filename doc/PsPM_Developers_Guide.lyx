@@ -29263,6 +29263,57 @@ gh-pages
 \end_inset
 
  under the PsPM repository at github.com/bachlab/PsPM.
+ The website is built up based on the website template Jekyll Gitbook:
+ https://sighingnow.github.io/jekyll-gitbook/.
+ The current gh-pages branch includes three folders and a few individual files,
+ which are introduced as following:
+\end_layout
+
+\begin_layout Subsubsection
+_includes
+\end_layout
+
+\begin_layout Standard
+This folder contains the required module and behaviour control files in html or json.tpl format.
+ Most of the files are not expected to be modified,
+ such as “mathjax.html”,
+ as they are just required for rendering the webpage components.
+ However,
+ a few files should be noticed when updating the webpage content in the future.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+_layouts
+\end_layout
+
+\begin_layout Standard
+This folder stores the html-based webpage templates.
+ There are two kinds of webpage templates,
+ which are “home” and “post”.
+ In PsPM website,
+ only the home page use “home” as the template,
+ and all other webpages should use “post”.
+ A markdown file is required for adding the corresponding content,
+ which will be introduced as below.
+\end_layout
+
+\begin_layout Subsubsection
+_posts
+\end_layout
+
+\begin_layout Standard
+This folder stores the content for all the webpages on PsPM website except for the main page that is stored in README.md.
+ All the files in this folder need to be markdown files,
+ and the format of markdown file content can follow the currently available files.
+ Each file has its file name as “date-filename.md”.
+ The date needs to be written in the format of “YYYY-MM-DD” (American date style).
+ If every file has the same date,
+ they will be ranked alphabetically in the table of content,
+ otherwise it will be based on the date.
+ The table of content will not be automatically updated after adding new markdown files.
+ To update the table of content,
+ please check the _layouts section.
 \end_layout
 
 \begin_layout Section
