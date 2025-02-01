@@ -3,8 +3,7 @@ layout: post
 title: pspm_resp_pp
 permalink: /ref/pspm_resp_pp
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -29,6 +28,7 @@ pspm_resp_pp preprocesses raw respiration traces. The function detects respirati
 | options.datatype | a cell array with any of 'rp', 'ra', 'rfr', 'rs', 'all' (default). |
 | options.plot | [0/1] Create a respiratory cycle detection plot. |
 | options.channel_action | ['add'(default) /'replace'] Defines whether the new channels should be added or the corresponding channel should be replaced. |
+
 
 ## References
 

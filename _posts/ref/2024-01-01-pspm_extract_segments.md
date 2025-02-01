@@ -3,8 +3,7 @@ layout: post
 title: pspm_extract_segments
 permalink: /ref/pspm_extract_segments
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -46,5 +45,6 @@ The output can also be written to a matlab file.
 | options.missing | allows to specify missing (e. g. artefact) epochs in the data file. See pspm_get_timing for epoch definition; specify a cell array for multiple input files. This must always be specified in SECONDS. if method is 'model', then this option overides the missing values given in the model Default: no missing values. |
 | options.nan_output | ['screen', filename, or 'none'] Output NaN ratios of the trials for each condition. Values can be printed on the screen or written to a matlab file. Default is no NaN output. |
 | options.norm | If 1, z-scores the entire data time series (default: 0). |
+
 
 [Back to index](/PsPM/ref/)

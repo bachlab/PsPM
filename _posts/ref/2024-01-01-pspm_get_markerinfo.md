@@ -3,8 +3,7 @@ layout: post
 title: pspm_get_markerinfo
 permalink: /ref/pspm_get_markerinfo
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -26,5 +25,6 @@ pspm_get_markerinfo extracts markerinfo from PsPM files that contain such inform
 | options.marker_chan_num | [int] marker channel number. if undefined or 0, first marker channel is used. |
 | options.filename | [char] name of a file to write the markerinfo to; default value: empty, meaning no file will be written. |
 | options.overwrite | [logical] (0 or 1) Define whether to overwrite existing output files or not. Default value: determined by pspm_overwrite. |
+
 
 [Back to index](/PsPM/ref/)

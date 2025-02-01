@@ -3,8 +3,7 @@ layout: post
 title: pspm_find_valid_fixations
 permalink: /ref/pspm_find_valid_fixations
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -42,6 +41,7 @@ By default, screen centre is assumed as fixation point. If an explicit fixation 
 | options.channel_action | Define whether to add or replace the data. Default is 'add'. Possible values are 'add' or 'replace'. |
 | options.add_invalid | [0/1] If this option is enabled, an extra channel will be written containing information about the valid samples. Data points equal to 1 correspond to invalid fixation. Default is not to add this channel. |
 | options.channel | Choose channels in which the data should be set to NaN during invalid fixations. This can be a channel number, any channel type including 'pupil' (which will select a channel according to the precedence order specified in pspm_load_channel), or 'both', which will work on 'pupil_r' and 'pupil_l' and then update channel statistics and best eye. The selected channel must be an eyetracker channel, and the file must contain the corresponding gaze channel(s) in the correct units: distance units for mode "fixation" and distance or pixel units for mode "bitmap". Default is 'pupil'. |
+
 
 ## References
 

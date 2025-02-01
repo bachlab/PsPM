@@ -3,9 +3,7 @@ layout: post
 title: pspm_find_sounds
 permalink: /ref/pspm_find_sounds
 ---
-
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -38,5 +36,6 @@ A sound is detected as event if it is longer than 10 ms, and events are recogniz
 | options.threshold | [0...1] percent of the max of the power in the signal that will be accepted as a sound event. Default is 0.1. |
 | options.marker_chan_num | [integer] number of a channel holding markers. By default first 'marker' channel. |
 | options.expectedSoundCount | [integer] Checks for correct number of detected sounds. If too few are found, lowers threshold until at least specified count is reached. Threshold is lowered by .01 until 0.05 is reached for a max of 95 iterations. This is a EXPERIMENTAL variable, use with caution!. |
+
 
 [Back to index](/PsPM/ref/)

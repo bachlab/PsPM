@@ -3,8 +3,7 @@ layout: post
 title: pspm_import
 permalink: /ref/pspm_import
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -35,5 +34,6 @@ pspm_import imports data from various formats and writes them to a PsPM file on 
 | import.delimiter | for delimiter separated values, value used as delimiter for file read. |
 | options | See following fields. |
 | options.overwrite | overwrite existing files by default. [logical] (0 or 1) Define whether to overwrite existing output files or not. Default value: determined by pspm_overwrite. |
+
 
 [Back to index](/PsPM/ref/)

@@ -3,8 +3,7 @@ layout: post
 title: pspm_pupil_correct_eyelink
 permalink: /ref/pspm_pupil_correct_eyelink
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -38,6 +37,7 @@ In order to perform PFE, we need both pupil and gaze data. If the gaze data in t
 | options.S_z | [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>. |
 | options.channel | [optional][numeric/string] [Default: 'pupil'] Channel ID to be preprocessed. To process a specific eye, use 'pupil_l' or 'pupil_r'. To process the combined left and right eye, use 'pupil_c'. The default identifier 'pupil' will use the first existing option out of the following: (1) L-R-combined pupil; (2) non-lateralised pupil; (3) best eye pupil; (4) any pupil channel. If there are multiple channels of the specified type, only last one will be processed. You can also specify the number of a channel. |
 | options.channel_action | [optional] ['add'/'replace'] Defines whether output data should be added or the corresponding preprocessed channel should be replaced. (Default: 'add'). |
+
 
 ## Outputs
 

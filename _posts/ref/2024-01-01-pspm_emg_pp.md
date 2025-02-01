@@ -3,8 +3,7 @@ layout: post
 title: pspm_emg_pp
 permalink: /ref/pspm_emg_pp
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -34,6 +33,7 @@ While the input data must be an EMG channel, the output channel will be of type 
 | options.mains_freq | [integer] Frequency of mains noise to remove with notch filter (default: 50 Hz). |
 | options.channel | [numeric/string] Channel to be preprocessed. Can be a channel ID or a channel name. Default is 'emg' (i.e. last EMG channel). |
 | options.channel_action | ['add'/'replace'] Defines whether the new channel should be added or the previous outputs of this function should be replaced. (Default: 'replace'). |
+
 
 ## References
 

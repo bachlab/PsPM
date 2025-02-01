@@ -3,8 +3,7 @@ layout: post
 title: pspm_pupil_pp
 permalink: /ref/pspm_pupil_pp
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -49,8 +48,9 @@ Pupil preprocessing is performed in three main steps: 1. In the first step, the 
 | options.end | [decimal][Unit: second] Ending time of the segment. |
 | options.name | [string] Name of the segment. Segment will be stored by this name. |
 | options.plot_data | [Boolean][Default: false or 0] Plot the preprocessing steps. |
-| options.chan_valid_cutoff | [optional][Default: 0.01] A cut-off value for checking whether there are too many missing values in a data channel for combination. If the difference in missing data percentage between the two channels exceeds this cutoff, then combining will be skipped, and both channels will be processed separately. |
+| options.chan_valid_cutoff | [optional][Default: 0.2] A cut-off value for checking whether there are too many missing values in a data channel for combination. If the difference in missing data percentage between the two channels exceeds this cutoff, then combining will be skipped, and both channels will be processed separately. |
 | options.out_chan | Channel ID of the preprocessed output. |
+
 
 ## Outputs
 

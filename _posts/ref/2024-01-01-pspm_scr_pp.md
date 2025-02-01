@@ -3,8 +3,7 @@ layout: post
 title: pspm_scr_pp
 permalink: /ref/pspm_scr_pp
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -47,6 +46,7 @@ If a missing epochs filename is specified, the detected epochs will be written t
 | options.include_baseline | [Optional] A bool value to determine if detected baseline alteration will be included in the calculated clippings. Default: 0 (not to include baseline alteration in clippings). |
 | options.overwrite | [logical] (0 or 1) [Optional] Define whether to overwrite existing missing epochs files or not (default). Will only be used if options.missing_epochs_filename is specified. |
 | options.channel_action | [Optional] Accepted values: 'add'/'replace' Defines whether the new channel should be added or the previous outputs of this function should be replaced. Default: 'add'. Will not be used if options.missing_epochs_filename is specified. |
+
 
 ## Outputs
 

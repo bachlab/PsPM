@@ -3,8 +3,7 @@ layout: post
 title: pspm_merge
 permalink: /ref/pspm_merge
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -27,5 +26,6 @@ pspm_merge merges two PsPM datafiles recorded in an overlapping time interval by
 | options | See following fields. |
 | options.overwrite | overwrite existing file by default [logical] (0 or 1) Default value: determined by pspm_overwrite. |
 | options.marker_chan_num | 2-element vector of marker channel numbers to be used as a reference. Ignored if reference is specified as 'file'. If undefined or 0, the first marker channel of either file is used. |
+
 
 [Back to index](/PsPM/ref/)

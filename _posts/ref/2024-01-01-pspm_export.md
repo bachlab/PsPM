@@ -3,8 +3,7 @@ layout: post
 title: pspm_export
 permalink: /ref/pspm_export
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -29,5 +28,6 @@ The output is organised as a matrix with rows for observations (first-level mode
 | options.statstype | [optional, string, accepts 'param'/'cond'/'recon'] By default, all parameter estimates are exported. The following options are available: 1. 'param': export all parameter estimates (default) 2. 'cond': For GLMs: automatically detects number of basis functions and exports only the first one (e.g. without derivatives). For non-linear models: average estimate, based on unique trial names. 3. 'recon': For GLMs only: reconstructs estimated response from all basis functions and exports the peak amplitude of the estimated response. |
 | options.delim | [optional, default is tab('\t')] delimiter for output file. |
 | options.exclude_missing | [optional, default as 0] Exclude parameters from conditions with too many NaN values. This option can only be used for GLM files when exclude_missing was set during model setup. Otherwise this argument is ignored. |
+
 
 [Back to index](/PsPM/ref/)

@@ -3,8 +3,7 @@ layout: post
 title: pspm_convert_hb2hp
 permalink: /ref/pspm_convert_hb2hp
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -29,5 +28,6 @@ pspm_convert_hb2hp transforms heart beat data into an interpolated heart rate si
 | options.limit | [struct] Specifies upper and lower limit for heart periods. If the limit is exceeded, the values will be ignored/removed and interpolated. |
 | options.upper | [numeric] Specifies the upper limit of the heart periods in seconds. Default is 2. |
 | options.lower | [numeric] Specifies the lower limit of the heart periods in seconds. Default is 0.2. |
+
 
 [Back to index](/PsPM/ref/)

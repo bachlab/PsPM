@@ -3,8 +3,7 @@ layout: post
 title: pspm_interpolate
 permalink: /ref/pspm_interpolate
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -30,5 +29,6 @@ pspm_interpolate interpolates NaN values. It either acts on one selected channel
 | options.extrapolate | [not recommended; 0 or 1] Determine extrapolation for query points out of the data range. Default is no extrapolation. |
 | options.overwrite | Defines if existing datafiles should be overwritten. [logical] (0 or 1) Define whether to overwrite existing output files or not. Default value: do not overwrite. Only used if 'channel' is 'all'. |
 | options.channel_action | Defines whether the interpolated data should be added or the corresponding channel should be replaced. [optional; accept: 'add', 'replace'; default: 'add'] Only used if 'channel' is not 'all'. |
+
 
 [Back to index](/PsPM/ref/)

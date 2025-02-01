@@ -3,8 +3,7 @@ layout: post
 title: pspm_rename
 permalink: /ref/pspm_rename
 ---
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -25,5 +24,6 @@ pspm_ren renames a PsPM datafile and updates the internal structure (the field '
 | newfilename | new name of the PsPM file. |
 | options | See following fields. |
 | options.overwrite | [Optional, logical] overwrite existing file by default The default value is determined by pspm_overwrite. |
+
 
 [Back to index](/PsPM/ref/)

@@ -3,9 +3,7 @@ layout: post
 title: pspm_process_illuminance
 permalink: /ref/pspm_process_illuminance
 ---
-
-
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -35,6 +33,7 @@ The illuminance file should be a .mat file with a vector variable called Lx. In 
 | options.bf.dilation | [struct with field .fhandle] Options for the dilation response function. Currently allowed values are @pspm_bf_ldrf_gm and @pspm_bf_ldrf_gu. |
 | options.bf.duration | Duration of the basis functions in seconds. |
 | options.bf.offset | Offset in seconds. |
+
 
 
 ## Outputs

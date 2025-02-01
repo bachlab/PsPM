@@ -3,7 +3,7 @@ layout: post
 title: pspm_convert_ecg2hb_amri
 permalink: /ref/pspm_convert_ecg2hb_amri
 ---
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -32,6 +32,7 @@ pspm_convert_ecg2hb_amri performs R-peak detection from an ECG signal using the 
 | options.min_cross_corr | [numeric, default as 0.5] Minimum cross correlation between a candidate R-peak and the found template such that the candidate is classified as an R-peak. |
 | options.min_relative_amplitude | [numeric, default as 0.4] Minimum relative peak amplitude of a candidate R-peak such that it is classified as an R-peak. |
 | options.channel_action | ['add'/'replace'] Defines whether corrected data should be added or the corresponding preprocessed channel should be replaced. Note that 'replace' mode does not replace the raw data channel, but a previously stored heartbeat channel. Default as 'replace'. |
+
 
 ## Outputs
 

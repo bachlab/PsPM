@@ -3,7 +3,7 @@ layout: post
 title: pspm_split_sessions
 permalink: /ref/pspm_split_sessions
 ---
-
+ 
 [Back to index](/PsPM/ref/)
 
 ## Description
@@ -38,6 +38,7 @@ The individual session dat will be written to new files with a suffix '_sn' and 
 | options.randomITI | [default:0] Tell the function to use all the markers to evaluate the mean distance between them. Usefull for random ITI since it reduces the variance. |
 | options.verbose | [default:1] printing processing messages. |
 | options.missing | Optional name of an epoch file, e.g. containing a missing epochs definition in s. This is then split accordingly. |
+
 
 ## Outputs
 
