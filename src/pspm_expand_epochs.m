@@ -9,7 +9,7 @@ function [sts, out] = pspm_expand_epochs(varargin)
 %   [sts, output_file]     = pspm_expand_epochs(epochs_fn, expansion, options)
 %   [sts, expanded_epochs] = pspm_expand_epochs(epochs, expansion, options) 
 %   [sts, channel_index]   = pspm_expand_epochs(data_fn, channel, expansion , options)
-% ● Arguments 
+% ● Arguments
 %   *   epochs_fn:  An epochs file as defined in pspm_get_timing.
 %   *      epochs:  A 2-column matrix with epochs onsets and offsets in seconds.
 %   *     data_fn:  A PsPM data file.
