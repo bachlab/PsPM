@@ -29253,8 +29253,8 @@ Website
 \end_layout
 
 \begin_layout Standard
-The official website of PsPM is bachlab.github.io/pspm.
- The website is hosted on GitHub at the branch 
+The official website of PsPM is located at bachlab.github.io/pspm,
+ and it is hosted on GitHub at the branch 
 \begin_inset Quotes eld
 \end_inset
 
@@ -29263,10 +29263,37 @@ gh-pages
 \end_inset
 
  under the PsPM repository at github.com/bachlab/PsPM.
+ Any update to the website will need to be made by upadting this branch.
  The website is built up based on the website template Jekyll Gitbook:
  https://sighingnow.github.io/jekyll-gitbook/.
- The current gh-pages branch includes three folders and a few individual files,
- which are introduced as following:
+ Therefore,
+ further website behaviour and action changes to the PsPM website may need to refer to the original jekyll-gitbook manual.
+ Instead of writing fixed-content websites,
+ the jekyll-gitbook website template uses markdown files for generating HTML files automatically.
+ In early 2025,
+ the jekyll-gitbook template was adopted for PsPM website and live for users.
+ The content of the website repository includes three folders and a few individual files,
+ which are introduced as following.
+\end_layout
+
+\begin_layout Subsection
+General structure
+\end_layout
+
+\begin_layout Standard
+The PsPM website includes a main page and a few subpages.
+ The main page is stored at README.md,
+ which means the updates to the main page should be addressed by modifying README.md.
+ This file is located in the root folder.
+ Please follow the previously updated formats,
+ such as hyperlinks and images,
+ for future content updates.
+ The subpages are stored in _posts,
+ whose main description can be found in the next section.
+\end_layout
+
+\begin_layout Subsection
+Folders
 \end_layout
 
 \begin_layout Subsubsection
@@ -29283,6 +29310,22 @@ This folder contains the required module and behaviour control files in html or 
  
 \end_layout
 
+\begin_layout Standard
+To update the table of content for the website,
+ please go to the file 
+\begin_inset Quotes eld
+\end_inset
+
+toc-date.html
+\begin_inset Quotes erd
+\end_inset
+
+,
+ at around line 69 or 70,
+ there is a if-else clause explaining how the table of content will be generated.
+ Only the listed pages in this line of code will be displayed in the table of content.
+\end_layout
+
 \begin_layout Subsubsection
 _layouts
 \end_layout
@@ -29295,7 +29338,7 @@ This folder stores the html-based webpage templates.
  only the home page use “home” as the template,
  and all other webpages should use “post”.
  A markdown file is required for adding the corresponding content,
- which will be introduced as below.
+ which is introduced as below.
 \end_layout
 
 \begin_layout Subsubsection
@@ -29313,7 +29356,19 @@ This folder stores the content for all the webpages on PsPM website except for t
  otherwise it will be based on the date.
  The table of content will not be automatically updated after adding new markdown files.
  To update the table of content,
- please check the _layouts section.
+ please check the _includes section.
+\end_layout
+
+\begin_layout Subsubsection
+asset
+\end_layout
+
+\begin_layout Standard
+This folder stores the required resources,
+ such as images,
+ for the website.
+ Images should be put at the location /assets/images,
+ and they need to be properly refered when being added to the webpages.
 \end_layout
 
 \begin_layout Section
