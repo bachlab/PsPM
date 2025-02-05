@@ -1,7 +1,7 @@
 % This is a convenience PsPM installer. As an alternative, download the
 % lastest release from https://github.com/bachlab/PsPM, or clone the
 % develop branch.
-% Uzay Gökay & Dominik Bach, 2024
+% Uzay Gökay & Dominik Bach, 2025
 
 fprintf('Welcome to the PsPM installer.\n');
 [indx,tf] = listdlg('ListString',{'Latest PsPM release', 'GLM tutorial dataset', 'DCM tutorial dataset'}, ...
@@ -20,9 +20,9 @@ destinationFolder = uigetdir('','Select parent directory for your PsPM installat
 if ismember(1, indx)
 
     % GitHub release URL for PsPM and the desired version
-    githubReleaseURL = 'https://github.com/bachlab/PsPM/releases/download';
-    version = 'v6.1.2';
-    packageName = 'PsPM_v6.1.2';
+    githubReleaseURL = 'https://github.com/bachlab/PsPM/releases/download'; % add the relase URL
+    version = 'v7.0';
+    packageName = 'PsPM_v7.0';
 
     % Create the destination folder if it does not exist
     if ~exist(destinationFolder, 'dir')
