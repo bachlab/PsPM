@@ -158,6 +158,7 @@ Dominik R Bach,
  Giuseppe Castegnetti,
  Laure Ciernik,
  Samuel Gerster,
+ Uzay Gökay,
  Saurabh Khemka,
  Christoph Korn,
  Samuel Maxwell,
@@ -165,8 +166,11 @@ Dominik R Bach,
  Philipp C Paulus,
  Ivan Rojkov,
  Matthias Staib,
+ Bernhard Agoué von Raußendorf,
+ Yanfang Xia,
  Eshref Yozdemir,
- Teddy Zhao and collaborators
+ Teddy Zhao,
+ and collaborators
 \end_layout
 
 \begin_layout Standard
@@ -195,7 +199,7 @@ Introduction
 \end_layout
 
 \begin_layout Quote
-Contributed by Teddy Zhao in July 2024
+Contributed by Teddy Zhao in April 2023
 \end_layout
 
 \begin_layout Standard
@@ -210,8 +214,8 @@ PsychoPhysiological Modelling,
  and can be easily utilised in customised shell scripts.
  PsPM is actively updated and maintained by bringing new features and fixing bugs,
  thus the latest version of PsPM is always encouraged for users.
- The recommended version of MATLAB for running PsPM is MATLAB 2024a (version 24),
- and the earliest version of MATLAB (https://uk.mathworks.com/support/requirements/previous-releases.html) that could be used for running PsPM version 7.0 is MATLAB 2019a (version 9.6).
+ The recommended version of MATLAB for running PsPM is MATLAB 2023a (version 9.14),
+ and the earliest version of MATLAB that could be used for running PsPM is MATLAB 2006a (version 7.2).
 \end_layout
 
 \begin_layout Section
@@ -854,6 +858,526 @@ data
 infos
 \family default
  will be updated.
+\end_layout
+
+\begin_layout Subsection
+Types of functions in PsPM
+\end_layout
+
+\begin_layout Subsubsection
+Interactive functions
+\end_layout
+
+\begin_layout Itemize
+pspm_data_editor 
+\end_layout
+
+\begin_layout Itemize
+pspm_display 
+\end_layout
+
+\begin_layout Itemize
+pspm_ecg_editor 
+\end_layout
+
+\begin_layout Itemize
+pspm_guide 
+\end_layout
+
+\begin_layout Itemize
+pspm_review
+\end_layout
+
+\begin_layout Subsubsection
+Functions that create data files
+\end_layout
+
+\begin_layout Itemize
+pspm_import 
+\end_layout
+
+\begin_layout Itemize
+pspm_trim 
+\end_layout
+
+\begin_layout Itemize
+pspm_split_sessions 
+\end_layout
+
+\begin_layout Itemize
+pspm_merge 
+\end_layout
+
+\begin_layout Itemize
+pspm_ren 
+\end_layout
+
+\begin_layout Itemize
+pspm_interpolate (only if run on all channels)
+\end_layout
+
+\begin_layout Subsubsection
+Functions that change channels
+\end_layout
+
+\begin_layout Itemize
+pspm_combine_markerchannels 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_area2diameter 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_au2unit 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_ecg2hb 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_ecg2hb_amri 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_gaze 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_hb2hp 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_ppg2hb 
+\end_layout
+
+\begin_layout Itemize
+pspm_emg_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_sounds 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_valid_fixations 
+\end_layout
+
+\begin_layout Itemize
+pspm_gaze_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_interpolate 
+\end_layout
+
+\begin_layout Itemize
+pspm_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_correct_eyelink 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_remove_epochs 
+\end_layout
+
+\begin_layout Itemize
+pspm_resp_pp 
+\end_layout
+
+\begin_layout Itemize
+pspm_scr_pp
+\end_layout
+
+\begin_layout Itemize
+pspm_remove_epochs (not available in GUI) 
+\end_layout
+
+\begin_layout Itemize
+pspm_expand_epochs (not available in GUI)
+\end_layout
+
+\begin_layout Subsubsection
+First level models
+\end_layout
+
+\begin_layout Itemize
+pspm_dcm 
+\end_layout
+
+\begin_layout Itemize
+pspm_glm 
+\end_layout
+
+\begin_layout Itemize
+pspm_process_illuminance 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf
+\end_layout
+
+\begin_layout Itemize
+pspm_tam (not available in GUI)
+\end_layout
+
+\begin_layout Subsubsection
+User-accessible I/O functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_exp 
+\end_layout
+
+\begin_layout Itemize
+pspm_extract_segments 
+\end_layout
+
+\begin_layout Itemize
+pspm_get_markerinfo
+\end_layout
+
+\begin_layout Subsubsection
+Internal and helper functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_align_channels 
+\end_layout
+
+\begin_layout Itemize
+pspm_blink_saccade_filt 
+\end_layout
+
+\begin_layout Itemize
+pspm_butter 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_model 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_pixel2unit_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_unit 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_visangle2sps_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_convert_visual_angle_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_denoise_spike 
+\end_layout
+
+\begin_layout Itemize
+pspm_downsample 
+\end_layout
+
+\begin_layout Itemize
+pspm_epochs2logical
+\end_layout
+
+\begin_layout Itemize
+pspm_extract_segments_core 
+\end_layout
+
+\begin_layout Itemize
+pspm_eye pspm_filtfilt 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_channel 
+\end_layout
+
+\begin_layout Itemize
+pspm_find_eye 
+\end_layout
+
+\begin_layout Itemize
+pspm_get_timing 
+\end_layout
+
+\begin_layout Itemize
+pspm_interp1 
+\end_layout
+
+\begin_layout Itemize
+pspm_leaky_integrator 
+\end_layout
+
+\begin_layout Itemize
+pspm_load1 
+\end_layout
+
+\begin_layout Itemize
+pspm_load_channel 
+\end_layout
+
+\begin_layout Itemize
+pspm_load_data 
+\end_layout
+
+\begin_layout Itemize
+pspm_load_gaze 
+\end_layout
+
+\begin_layout Itemize
+pspm_logical2epochs 
+\end_layout
+
+\begin_layout Itemize
+pspm_multi2index 
+\end_layout
+
+\begin_layout Itemize
+pspm_prepdata 
+\end_layout
+
+\begin_layout Itemize
+pspm_pulse_convert 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_correct 
+\end_layout
+
+\begin_layout Itemize
+pspm_select_channels 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_auc 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_dcm 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_mp 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_scl 
+\end_layout
+
+\begin_layout Itemize
+pspm_sf_theta 
+\end_layout
+
+\begin_layout Itemize
+pspm_show_arms 
+\end_layout
+
+\begin_layout Itemize
+pspm_struct2vec 
+\end_layout
+
+\begin_layout Itemize
+pspm_time2index 
+\end_layout
+
+\begin_layout Itemize
+pspm_transfer_function 
+\end_layout
+
+\begin_layout Itemize
+pspm_update_channeltype 
+\end_layout
+
+\begin_layout Itemize
+pspm_version pspm_write_channel
+\end_layout
+
+\begin_layout Itemize
+pspm_dcm_inv 
+\end_layout
+
+\begin_layout Itemize
+pspm_get_rf 
+\end_layout
+
+\begin_layout Itemize
+pspm_glm_recon
+\end_layout
+
+\begin_layout Subsubsection
+Basis functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_data 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_FIR 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf_fc 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_hprf_fc_f 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_lcrf_gm 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_ldrf_gm 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_ldrf_gu 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_psrf_erl 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_psrf_fc 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rarf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rarf_fc 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rfrrf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_rprf_e 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_scrf 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_scrf_f 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_sebrf 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_spsrf_box 
+\end_layout
+
+\begin_layout Itemize
+pspm_bf_spsrf_gamma 
+\end_layout
+
+\begin_layout Itemize
+f_SCR 
+\end_layout
+
+\begin_layout Itemize
+f_SF 
+\end_layout
+
+\begin_layout Itemize
+g_SCR
+\end_layout
+
+\begin_layout Subsubsection
+Housekeeping functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_model 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_python 
+\end_layout
+
+\begin_layout Itemize
+pspm_check_python_modules 
+\end_layout
+
+\begin_layout Itemize
+pspm_init 
+\end_layout
+
+\begin_layout Itemize
+pspm_options 
+\end_layout
+
+\begin_layout Itemize
+pspm_overwrite 
+\end_layout
+
+\begin_layout Itemize
+pspm_path 
+\end_layout
+
+\begin_layout Itemize
+pspm_quit 
+\end_layout
+
+\begin_layout Itemize
+pspm_pupil_pp_options
+\end_layout
+
+\begin_layout Subsubsection
+Convencience functions 
+\end_layout
+
+\begin_layout Itemize
+pspm_multi_channel 
+\end_layout
+
+\begin_layout Itemize
+pspm_pull_zenodo
+\end_layout
+
+\begin_layout Subsubsection
+Not accessible to users 
+\end_layout
+
+\begin_layout Itemize
+pspm_jobman 
+\end_layout
+
+\begin_layout Itemize
+pspm_format_history 
+\end_layout
+
+\begin_layout Itemize
+pspm_format_history_from_file
 \end_layout
 
 \begin_layout Subsection
@@ -1730,561 +2254,11 @@ rate_below_minimum
 \end_layout
 
 \begin_layout Section
-Help text
-\end_layout
-
-\begin_layout Quote
-Contributed by Teddy Zhao in September 2024
+List of data formats
 \end_layout
 
 \begin_layout Subsection
-Introduction
-\end_layout
-
-\begin_layout Standard
-Help text refers to the descriptive text that is included in the initial couple of lines of source code.
- Such text is designed to be written by developers and used as references for developers and users.
- Although written in the source code,
- the text can be read by PsPM functions,
- such as 
-\family typewriter
-pspm_help
-\family default
-,
- for exporting to documents that will be part of PsPM reference website.
- The help text needs to be carefully written to make sure they are accurate and up to date.
-\end_layout
-
-\begin_layout Standard
-Typically,
- the help text shall be written into sections as 
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Description The general introduction of a function.
- This is normally describing the use of the function and how it works,
- such as importing a specific type of data and how information is read and managed.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Format The format of a function as how it can be called.
- If the function has some variable arguments,
- then the details can be listed as multiple lines.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Arguments The list of input variables of a function with their descriptions.
- Every individual input variable shall be lead by a star mark.
- Structs and their subfields shall be managed with table symbols.
- An example of how this is managed is given below.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Outputs The list of output variables of a function with their descriptions,
- similar to Arguments.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Developer's_notes This section can be used as a paragraph of technical notes for the function.
- Such information is typically useful for developing the function,
- and it is relatively more useful for developers than for users.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-History The section includes some notes about who has contributed to a function,
- which may be useful for future checking.
-\end_layout
-
-\begin_layout Standard
-The aforementioned sections are normally required for all the functions,
- but may be depending on the actual situation.
- For example,
- a function that does not have outputs may not need the section 
-\shape italic
-Outputs
-\shape default
-.
-\end_layout
-
-\begin_layout Subsection
-Management
-\end_layout
-
-\begin_layout Standard
-Three PsPM functions manage the help text,
- namely 
-\family typewriter
-pspm_help
-\family default
-,
- 
-\family typewriter
-pspm_doc
-\family default
-,
- and 
-\family typewriter
-pspm_doc_gen
-\family default
-.
-\end_layout
-
-\begin_layout Subsubsection
-pspm_help
-\end_layout
-
-\begin_layout Standard
-
-\family typewriter
-pspm_help
-\family default
- is used to obtain the help text from source code and generate a struct of such content.
- Whilst there is a suggested structure of the help text,
- it is not required by 
-\family typewriter
-pspm_help
-\family default
- that every section needs to present.
- The input of 
-\family typewriter
-pspm_help
-\family default
- needs to refer to only one function,
- and multiple functions cannot be processed with 
-\family typewriter
-pspm_help
-\family default
- in one time.
- The function may be written as the path,
- full name,
- or simply the name without extra name.
- For example,
- the input can be written as 
-\family typewriter
-~/Documents/pspm/src/pspm_dcm.m
-\family default
-,
- 
-\family typewriter
-pspm_dcm.m
-\family default
-,
- or 
-\family typewriter
-pspm_dcm
-\family default
-,
- and all of them will let 
-\family typewriter
-pspm_help
-\family default
- to understand it will process 
-\family typewriter
-pspm_dcm
-\family default
-.
- The output of 
-\family typewriter
-pspm_help
-\family default
- is a struct.
- It has the following rules which may need to pay attention to.
-\end_layout
-
-\begin_layout Paragraph
-General
-\end_layout
-
-\begin_layout Enumerate
-It is expected that the source code is written with UTF-8 encoding.
- This is determined by considering the compatibility between Windows and Unix computers and the requirement of special characters that are used for structuring the parameters.
-\end_layout
-
-\begin_layout Enumerate
-The help text must start from the line following the function definition line,
- and no empty line is permitted between the definition and help text or inside help text.
- Following the help text,
- there must be an empty line that divide the help text and the main code.
-\end_layout
-
-\begin_layout Enumerate
-Every line of help text must start with the comment symbol (%) that is used in Matlab language system.
- A space following this comment symbol is required to increase readability of help text.
-\end_layout
-
-\begin_layout Enumerate
-It is common practice that one line of code shall not be too long and start a new line if necessary.
- It is useful to make sure sentences have a full stop if they are expected to be shown to PsPM users.
-\end_layout
-
-\begin_layout Enumerate
-Although not mandatory,
- it is recommended that the help text shall be written in an understandable way instead of highly technical way so that users can understand what the text mean without too much references.
-\end_layout
-
-\begin_layout Enumerate
-Wherever applicable,
- please add the full name of some terms and the abbreviation following that.
- Most academic paper writing rules are useful when considering writing styles here,
- although PsPM's help text may not be as strict as publications.
-\end_layout
-
-\begin_layout Enumerate
-The output struct of pspm_help consists of the full fields,
- from 
-\shape italic
-Description
-\shape default
- to 
-\shape italic
-History
-\shape default
-.
-\end_layout
-
-\begin_layout Paragraph
-Description
-\end_layout
-
-\begin_layout Enumerate
-\align block
-
-\shape italic
-Description
-\shape default
- is normally written as one or multiple full sentences.
- The first sentence normally explain the purpose of the function.
- For example,
- 
-\family typewriter
-pspm_glm
-\family default
- retains its explaination as 
-\shape italic
-pspm_glm specifies a within-subject general linear convolution model (GLM) of predicted signals and calculates amplitude estimates for these responses
-\shape default
-.
- Further refinement of the functionality can be written following the main sentence.
- 
-\end_layout
-
-\begin_layout Enumerate
-\align block
-It is not recommended to add specific details of the function that are used by developers only in 
-\shape italic
-Description
-\shape default
-,
- and such content may be put in 
-\shape italic
-Developer's notes
-\shape default
-.
- This may be used as the cutoff to determine if specific content can be put in 
-\shape italic
-Description
-\shape default
- or 
-\shape italic
-Developer's notes
-\shape default
-.
-\end_layout
-
-\begin_layout Enumerate
-
-\shape italic
-Description
-\shape default
- can be written into multiple paragraphs if they are not really relevant enough.
- These paragraph settings will be reflected in the exported markdown documents.
-\end_layout
-
-\begin_layout Subsubsection
-pspm_doc
-\end_layout
-
-\begin_layout Standard
-
-\family typewriter
-pspm_help
-\family default
- is used to generate the help text of a specific function into a markdown document.
- To use 
-\family typewriter
-pspm_help
-\family default
- for generating help text,
- the easiest way is to run 
-\family typewriter
-pspm_help('pspm_glm')
-\family default
-directly in the command line window,
- then the help text from 
-\family typewriter
-pspm_glm
-\family default
- will be generated as a markdown file in the current folder.
- The variable 
-\begin_inset Quotes eld
-\end_inset
-
-options
-\begin_inset Quotes erd
-\end_inset
-
- can be customised for specifying the location,
- for example.
-\end_layout
-
-\begin_layout Subsubsection
-pspm_doc_gen
-\end_layout
-
-\begin_layout Standard
-The function 
-\family typewriter
-pspm_text
-\family default
- handles the text of warning messages in PsPM.
- Any help text that is used in PsPM is encouraged to be written in 
-\family typewriter
-pspm_text
-\family default
- and called when it is to be displayed.
- This is to help make GUI help text and warning messages consistent throughout PsPM.
- When PsPM is started,
- the function 
-\family typewriter
-pspm_text
-\family default
- will create a file 
-\family typewriter
-pspm_text.mat
-\family default
- that contains such text.
- When the GUI or other places of PsPM require displaying such text,
- PsPM will read text from this 
-\family typewriter
-pspm_text.mat
-\family default
- and then display text at the corresponding places.
- When PsPM quits,
- the file 
-\family typewriter
-pspm_text.mat
-\family default
- will be deleted.
-\end_layout
-
-\begin_layout Subsection
-Format
-\end_layout
-
-\begin_layout Subsubsection
-Typical example
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Description 
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-General introduction of the function.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Format
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  [output1,
- output2,
- output3] = pspm_xxx(varargin);
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  [output1,
- output2,
- output3] = pspm_xxx(input1,
- input2);
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Arguments
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * input1     :
- description of input1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * input2     :
- description of input2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ┌─input3
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ├─.subfield1 :
- description of subfield1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  └─.subfield2 :
- description of subfield2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Outputs
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * output1    :
- description of output1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  * output2    :
- description of output2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ┌─output3
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  ├─.subfield1 :
- description of subfield1.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  └─.subfield2 :
- description of subfield2.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● Developer's notes
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  A few sentences of technical information for this function.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-● History
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  Introduced in PsPM version 7.0.
-\end_layout
-
-\begin_layout LyX-Code
-\noindent
-  Written in 2024 by Developer A (University).
-\end_layout
-
-\begin_layout Subsubsection
-Index of commonly used symbols
-\end_layout
-
-\begin_layout Description
-● Used for leading new sessions,
- such as 
-\begin_inset Quotes eld
-\end_inset
-
-Description
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Description
-* Used for listing variables.
-\end_layout
-
-\begin_layout Description
-:
- Used for dividing variables and their descriptions.
-\end_layout
-
-\begin_layout Description
-┌ Table symbols are used for structs.
- Because structs often have multiple levels of subfields,
- please make sure 
-\begin_inset Quotes eld
-\end_inset
-
-┌
-\begin_inset Quotes erd
-\end_inset
-
- leads to the name of the struct,
- 
-\begin_inset Quotes eld
-\end_inset
-
-├
-\begin_inset Quotes erd
-\end_inset
-
- leads to the first to the last but one subfield,
- and 
-\begin_inset Quotes eld
-\end_inset
-
-└
-\begin_inset Quotes erd
-\end_inset
-
- leads to the last subfield.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Data formats
-\end_layout
-
-\begin_layout Subsection
-Supported channel types
+Supported Channel types
 \end_layout
 
 \begin_layout Standard
@@ -2292,22 +2266,22 @@ Supported channel types
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="22" columns="13">
-<features booktabs="true" islongtable="true" longtabularalignment="center">
-<column alignment="center" valignment="top" width="30text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
-<column alignment="center" valignment="top" width="3text%">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="3.6cm">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2316,7 +2290,7 @@ Data format
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2325,7 +2299,7 @@ SCR
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2334,7 +2308,7 @@ ECG
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2343,7 +2317,7 @@ Heart Rate
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2352,7 +2326,7 @@ Heart Beat
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2361,7 +2335,7 @@ Heart Period
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2370,7 +2344,7 @@ Respiration
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2379,7 +2353,7 @@ Pupil Size
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2388,7 +2362,7 @@ Marker
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2397,7 +2371,7 @@ Custom
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2406,7 +2380,7 @@ Sound channel
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2415,7 +2389,7 @@ Pulse oxymeter
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" rotate="90" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2788,36 +2762,11 @@ Text
 \begin_inset Text
 
 \begin_layout Plain Layout
-Biopach AcqKnowledge 
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-Biopach Acqknowledge is supported by both PsPM's internal importing function and the python package 
-\begin_inset Quotes eld
+Biopach AcqKnowledge (
+\begin_inset Formula $\leq$
 \end_inset
 
-Bioread
-\begin_inset Quotes erd
-\end_inset
-
-.
- However,
- only Biopach AcqKnowledge that is of a version no later than version 3.9.0 is supported by PsPM's internal function.
- Any version of Biopach AcqKnowledge is supported by the python package 
-\begin_inset Quotes eld
-\end_inset
-
-Bioread
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
- 
+ v3.9.0)
 \end_layout
 
 \end_inset
@@ -6855,7 +6804,7 @@ By selecting PsPM the desired action can be selected (at the moment,
 \end_layout
 
 \begin_layout Subsubsection
-Example function:
+Example Function:
  Trim
 \end_layout
 
@@ -6883,73 +6832,6 @@ After you have chosen a file and filled in all values correctly,
 
 \begin_layout Itemize
 By pressing on the green arrow the selected file will be trimmed according to the filled in values 
-\end_layout
-
-\begin_layout Subsubsection
-Path definition
-\end_layout
-
-\begin_layout Standard
-Since version 7.0,
- 
-\family typewriter
-pspm_init
-\family default
- will conttol the path of PsPM by temporarily freezing the unrelated paths.
- This is because users reported that they had pre-defined paths and these paths caused issues when running PsPM.
- The current solution is,
- PsPM will remember the paths that users have defined but are not used by PsPM,
- and it will remove such paths from MATLAB before starting up PsPM.
- Then PsPM will load its own required paths to MATLAB and check these paths can work properly.
- After running PsPM,
- if users would like to exit from PsPM,
- PsPM will remove its own paths and added back the users' defined paths to MATLAB.
-\end_layout
-
-\begin_layout Standard
-The paths required for running PsPM are 
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm/pspm_cfg
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm/ext/spm
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm/ext/matlabbatch
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm/ext/matlabbatch/cfg_basicio
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm/ext/vba
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm/ext/vba/subfunctions
-\end_layout
-
-\begin_layout Itemize
-
-\family typewriter
-pspm/ext/vba/stats&plots
 \end_layout
 
 \begin_layout Subsection
@@ -7686,7 +7568,7 @@ pspm_cfg_run_functionname.m
 \end_layout
 
 \begin_layout Subsection
-Python support
+Python Support
 \end_layout
 
 \begin_layout Standard
@@ -7990,7 +7872,7 @@ src/Import/acq
 \end_layout
 
 \begin_layout Subsection
-GUI development progress
+GUI Development Progress
 \end_layout
 
 \begin_layout Standard
@@ -8099,6 +7981,193 @@ The new GUI is currently using the colour
  respectively.
 \end_layout
 
+\begin_layout Subsection
+Help Text
+\end_layout
+
+\begin_layout Subsubsection
+Introduction
+\end_layout
+
+\begin_layout Standard
+Help text refers to the descriptive text that is included in the initial couple of lines of source code.
+ Such help text can be sorted by calling the function 
+\family typewriter
+pspm_help
+\family default
+ into a struct.
+ Typically,
+ the help text shall be written into sections as 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Description The general introduction of a function.
+ This is normally describing the use of the function and how it works,
+ such as importing a specific type of data and how information is read and managed.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Format The format of a function as how it can be called.
+ If the function has some varabile arguments,
+ then the details can be listed as multiple lines.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Arguments The list of input variables of a function with their descriptions.
+ Every individual input variable shall be lead by a star mark.
+ Structs and their subfields shall be managed with table symbols.
+ An example of how this is managed is given below.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Outputs The list of output variables of a function with their descriptions,
+ similar to Arguments.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Developer's_notes This section can be used as a paragraph of technical notes for the function.
+ Such information is typically useful for developing the function,
+ and it is relatively more useful for developers than for users.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+History The section includes some notes about who has contributed to a function,
+ which may be useful for future checking.
+\end_layout
+
+\begin_layout Subsubsection
+Typical example
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Description 
+\end_layout
+
+\begin_layout Standard
+\noindent
+General introduction of the function.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Format
+\end_layout
+
+\begin_layout Standard
+\noindent
+  [output1,
+ output2,
+ output3] = pspm_xxx(varargin);
+\end_layout
+
+\begin_layout Standard
+\noindent
+  [output1,
+ output2,
+ output3] = pspm_xxx(input1,
+ input2);
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Arguments
+\end_layout
+
+\begin_layout Standard
+\noindent
+* input1     :
+ description of input1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+* input2     :
+ description of input2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+┌─input3
+\end_layout
+
+\begin_layout Standard
+\noindent
+├─.subfield1 :
+ description of subfield1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+└─.subfield2 :
+ description of subfield2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Outputs
+\end_layout
+
+\begin_layout Standard
+\noindent
+* output1    :
+ description of output1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+* output2    :
+ description of output2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+┌─output3
+\end_layout
+
+\begin_layout Standard
+\noindent
+├─.subfield1 :
+ description of subfield1.
+\end_layout
+
+\begin_layout Standard
+\noindent
+└─.subfield2 :
+ description of subfield2.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● Developer's notes
+\end_layout
+
+\begin_layout Standard
+\noindent
+  A few sentences of technical information for this function.
+\end_layout
+
+\begin_layout Standard
+\noindent
+● History
+\end_layout
+
+\begin_layout Standard
+\noindent
+Introduced in PsPM version a.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Written in 2024 by developer a.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
@@ -8107,7 +8176,7 @@ The new GUI is currently using the colour
 \end_layout
 
 \begin_layout Section
-Test environment
+Test Environment
 \end_layout
 
 \begin_layout Quote
@@ -8818,7 +8887,7 @@ Checks for warnings,
  
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Standard
 Tests
 \begin_inset Newline linebreak
 \end_inset
@@ -9289,10 +9358,6 @@ Pass invalid input arguments and check if the warnings are as expected.
 
 \begin_layout Subparagraph
 Tests
-\begin_inset Newline linebreak
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -9613,10 +9678,6 @@ Pass valid input arguments and check if there are no warnings.
 
 \begin_layout Subparagraph
 Tests
-\begin_inset Newline linebreak
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -9749,11 +9810,7 @@ Check if added hb channels show an expected behaviour.
 \end_layout
 
 \begin_layout Subparagraph
-Tests 
-\end_layout
-
-\begin_layout Standard
-(for each channel)
+Tests (for each channel)
 \begin_inset Newline linebreak
 \end_inset
 
@@ -10089,13 +10146,7 @@ ID:invalid_input
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_filtfilt([1:10],[1:20],[1:10]) 
-\end_layout
-
-\begin_layout Plain Layout
-
-\family typewriter
-[data length less than 3 times filter order]
+pspm_filtfilt([1:10],[1:20],[1:10]) [data length less than 3 times filter order]
 \end_layout
 
 \end_inset
@@ -10746,7 +10797,7 @@ Tests
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -11119,10 +11170,6 @@ Runs
 pspm_extract_segments
 \family default
  with a particular GLM model stored in 
-\end_layout
-
-\begin_layout Standard
-
 \family typewriter
 ImportTestData/fitted_models
 \family default
@@ -11235,10 +11282,6 @@ Runs
 pspm_extract_segments
 \family default
  with a particular DCM model stored in 
-\end_layout
-
-\begin_layout Standard
-
 \family typewriter
 ImportTestData/fitted_models
 \family default
@@ -17012,8 +17055,8 @@ Tests
 \begin_inset Tabular
 <lyxtabular version="3" rows="17" columns="2">
 <features tabularvalignment="middle" tabularwidth="100text%">
-<column alignment="center" valignment="top" width="50text%">
-<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="60text%">
+<column alignment="center" valignment="top" width="30text%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -18331,7 +18374,7 @@ Checks for warnings,
  if the structure of the import variable is invalid.
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Standard
 Tests
 \begin_inset Newline linebreak
 \end_inset
@@ -18613,6 +18656,10 @@ These are parameters which define what kind of data should be passed to
 pspm_interpolate
 \family default
  and which options should be set.
+\begin_inset Newline linebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -20526,6 +20573,10 @@ Tries to pass invalid data structures,
 
 \begin_layout Subparagraph
 Tests for GLM
+\begin_inset Newline linebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -20645,6 +20696,10 @@ ID:invalid_input
 
 \begin_layout Subparagraph
 Tests for DCM & SF
+\begin_inset Newline linebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -20790,6 +20845,10 @@ ID:invalid_input
 
 \begin_layout Subparagraph
 Tests for DCM
+\begin_inset Newline linebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -20912,6 +20971,10 @@ options.zscored = 1 & pspm_load1(dfn,
 
 \begin_layout Subparagraph
 Tests for GLM & SF
+\begin_inset Newline linebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -22127,7 +22190,7 @@ Tests
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="6cm">
-<column alignment="center" valignment="top" width="0pt" varwidth="true">
+<column alignment="center" valignment="top" width="6cm">
 <column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -23348,22 +23411,13 @@ Function name
 invalid_input(this)
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Standard
 Description
 \end_layout
 
 \begin_layout Standard
 Checks for warnings,
  if the input arguments are invalid.
-\end_layout
-
-\begin_layout Subparagraph
-\noindent
-Tests
-\begin_inset Newline linebreak
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subparagraph
@@ -23526,6 +23580,11 @@ ID:invalid_input
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\noindent
+Tests
 \end_layout
 
 \begin_layout Paragraph
@@ -28499,7 +28558,7 @@ pspm_check_python_modules
 \end_layout
 
 \begin_layout Section
-External functions and tools
+External Functions and Tools
 \end_layout
 
 \begin_layout Subsection
@@ -28582,7 +28641,7 @@ VBA_NLStateSpaceModel.m Added resetting warning to preceeding state.
 \end_layout
 
 \begin_layout Section
-GitHub actions
+GitHub Actions
 \end_layout
 
 \begin_layout Quote
@@ -29178,21 +29237,15 @@ Now the script should be running ok.
 \end_layout
 
 \begin_layout Section
-List of functions
-\end_layout
-
-\begin_layout Quote
-Updated 27 October 2024
+List of Functions
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="184" columns="6">
+<lyxtabular version="3" rows="158" columns="4">
 <features booktabs="true" islongtable="true" longtabularalignment="center">
-<column alignment="center" valignment="top" width="40text%">
-<column alignment="center" valignment="top" width="10text%">
-<column alignment="center" valignment="top" width="10text%">
-<column alignment="center" valignment="top" width="10text%">
+<column alignment="center" valignment="top" width="50text%">
+<column alignment="center" valignment="top" width="15text%">
 <column alignment="center" valignment="top" width="10text%">
 <column alignment="center" valignment="top" width="10text%">
 <row>
@@ -29200,7 +29253,7 @@ Updated 27 October 2024
 \begin_inset Text
 
 \begin_layout Plain Layout
-Function name
+Function Name
 \end_layout
 
 \end_inset
@@ -29209,41 +29262,7 @@ Function name
 \begin_inset Text
 
 \begin_layout Plain Layout
-Main author(s)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Initially 
-\end_layout
-
-\begin_layout Plain Layout
-introduced 
-\end_layout
-
-\begin_layout Plain Layout
-PsPM version
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Lastly 
-\end_layout
-
-\begin_layout Plain Layout
-updated 
-\end_layout
-
-\begin_layout Plain Layout
-PsPM version
+Main Author(s)
 \end_layout
 
 \end_inset
@@ -29252,7 +29271,7 @@ PsPM version
 \begin_inset Text
 
 \begin_layout Plain Layout
-Test function
+Test Function
 \end_layout
 
 \end_inset
@@ -29261,7 +29280,7 @@ Test function
 \begin_inset Text
 
 \begin_layout Plain Layout
-Test document
+Test Document
 \end_layout
 
 \end_inset
@@ -29284,24 +29303,6 @@ f_SCR
 
 \begin_layout Plain Layout
 DB & JD
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -29346,24 +29347,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -29404,24 +29387,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -29457,25 +29422,7 @@ pspm
 \begin_inset Text
 
 \begin_layout Plain Layout
-DB & TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
+DB
 \end_layout
 
 \end_inset
@@ -29484,7 +29431,7 @@ DB & TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -29493,7 +29440,7 @@ DB & TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -29520,29 +29467,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -29551,7 +29480,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -29578,29 +29507,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.2
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -29609,7 +29520,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -29622,7 +29533,7 @@ DB
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_bf_data
+pspm_axpos
 \end_layout
 
 \end_inset
@@ -29636,20 +29547,42 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.1.1
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-6.1.2
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_bf_brf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SK & DB
 \end_layout
 
 \end_inset
@@ -29694,20 +29627,42 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_bf_Fourier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
 \end_layout
 
 \end_inset
@@ -29747,25 +29702,7 @@ pspm_bf_hprf
 \begin_inset Text
 
 \begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
+DB
 \end_layout
 
 \end_inset
@@ -29790,7 +29727,7 @@ TM
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -29801,7 +29738,7 @@ pspm_bf_hprf_e
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -29810,25 +29747,7 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -29837,65 +29756,7 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_bf_hprf_f
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -29922,24 +29783,6 @@ pspm_bf_hprf_fc
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -29984,24 +29827,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -30038,24 +29863,6 @@ pspm_bf_lcrf_gm
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -30100,24 +29907,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -30158,24 +29947,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -30197,64 +29968,6 @@ TM
 </row>
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_bf_psrf_erl
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30265,7 +29978,7 @@ pspm_bf_psrf_fc
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30274,25 +29987,7 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30301,7 +29996,7 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30328,24 +30023,6 @@ pspm_rarf_e
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -30390,24 +30067,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -30444,24 +30103,6 @@ pspm_rfrrf_e
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -30506,20 +30147,42 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_bf_scrf_f
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
 \end_layout
 
 \end_inset
@@ -30564,24 +30227,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -30592,122 +30237,6 @@ DB
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_bf_scrf_f
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_bf_sebrf
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30734,24 +30263,6 @@ pspm_bf_spsrf_box
 
 \begin_layout Plain Layout
 LC
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -30796,24 +30307,6 @@ LC
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -30854,29 +30347,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.2
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+X
 \end_layout
 
 \end_inset
@@ -30885,25 +30360,25 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+X
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_check_data
+pspm_con1
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30912,25 +30387,7 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30939,7 +30396,7 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30950,18 +30407,18 @@ DB
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_check_model
+pspm_con2
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -30970,199 +30427,7 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_check_python_models
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_check_python
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_combine_markerchannels
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31171,7 +30436,47 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_contrast
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31202,24 +30507,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.2
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -31246,7 +30533,7 @@ TM
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_convert_au2unit
+pspm_convert_au2mm
 \end_layout
 
 \end_inset
@@ -31260,20 +30547,42 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.1
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_convert_illum2lum
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TM
 \end_layout
 
 \end_inset
@@ -31298,45 +30607,27 @@ TM
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_convert_ecg2hb
+pspm_convert_lux2cdm2
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-EY
+TM
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31345,7 +30636,7 @@ EY
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31356,45 +30647,27 @@ EY
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_convert_ecg2hb_amri
+pspm_convert_mm2visdeg
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-EY
+TM
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31403,123 +30676,7 @@ EY
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_convert_gaze
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_convert_hb2hp
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31550,24 +30707,6 @@ LC
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -31578,64 +30717,6 @@ LC
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_convert_ppg2hb
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SG & TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -31666,29 +30747,11 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -31697,7 +30760,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -31710,7 +30773,7 @@ TM
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_convert_visangle2sps_core
+pspm_convert_visangle2sps
 \end_layout
 
 \end_inset
@@ -31720,24 +30783,6 @@ pspm_convert_visangle2sps_core
 
 \begin_layout Plain Layout
 LC
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -31786,24 +30831,6 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 -
 \end_layout
 
@@ -31836,24 +30863,6 @@ pspm_data_editor
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
 \end_layout
 
 \end_inset
@@ -31898,24 +30907,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -31952,24 +30943,6 @@ pspm_dcm
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -32014,24 +30987,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -32072,24 +31027,6 @@ PCP
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -32110,116 +31047,40 @@ PCP
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_doc
+pspm_down
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
+DB
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+x
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_doc_gen
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
+-
 \end_layout
 
 \end_inset
@@ -32246,20 +31107,33 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_ecg2hb
 \end_layout
 
 \end_inset
@@ -32268,7 +31142,56 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+PCP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_ecg2hb_amri
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+EY
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
 \end_layout
 
 \end_inset
@@ -32304,24 +31227,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -32342,129 +31247,13 @@ TM
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_emg_pp
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_epochs2logical
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_export
+pspm_exp
 \end_layout
 
 \end_inset
@@ -32478,29 +31267,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32536,29 +31307,11 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.3
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32567,123 +31320,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_extract_segments_core
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_eye
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -32710,29 +31347,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32741,7 +31360,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32768,29 +31387,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32799,52 +31400,34 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_find_eye
+pspm_find_data_epochs
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
+TM
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -32853,7 +31436,7 @@ TZ
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -32884,29 +31467,11 @@ SG
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32915,7 +31480,7 @@ SG
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32942,29 +31507,11 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -32973,181 +31520,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_format_history
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-EY
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_format_history_from_file
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-EY
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_gaze_pp
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33169,25 +31542,7 @@ pspm_get_acq_bioread
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
+TM
 \end_layout
 
 \end_inset
@@ -33196,7 +31551,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33205,65 +31560,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_acq_python
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33285,25 +31582,7 @@ pspm_get_acq
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
+DB
 \end_layout
 
 \end_inset
@@ -33312,7 +31591,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33321,7 +31600,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33348,29 +31627,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33379,7 +31640,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33406,29 +31667,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33437,7 +31680,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33464,29 +31707,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33495,7 +31720,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33522,29 +31747,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33553,7 +31760,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33575,25 +31782,7 @@ pspm_get_blink_l
 \begin_inset Text
 
 \begin_layout Plain Layout
-LC
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
+TM
 \end_layout
 
 \end_inset
@@ -33633,25 +31822,7 @@ pspm_get_blink_r
 \begin_inset Text
 
 \begin_layout Plain Layout
-LC
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
+TM
 \end_layout
 
 \end_inset
@@ -33696,29 +31867,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33727,7 +31880,47 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_get_cell
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
 \end_layout
 
 \end_inset
@@ -33750,24 +31943,6 @@ pspm_get_cnt
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -33812,24 +31987,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -33870,29 +32027,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33901,7 +32040,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33928,29 +32067,11 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -33959,65 +32080,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_emg
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -34044,29 +32107,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34075,7 +32120,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34102,29 +32147,11 @@ CK & TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1.2
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34133,7 +32160,7 @@ CK & TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34156,24 +32183,6 @@ pspm_get_gaze_x_l
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -34218,24 +32227,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -34272,24 +32263,6 @@ pspm_get_gaze_x_r
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -34334,24 +32307,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -34392,29 +32347,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34423,7 +32360,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34446,24 +32383,6 @@ pspm_get_hp
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -34508,29 +32427,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34539,65 +32440,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_labchart
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -34624,29 +32467,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34655,7 +32480,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34682,29 +32507,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34713,7 +32520,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34740,29 +32547,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34771,7 +32560,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34794,24 +32583,6 @@ pspm_get_markerinfo
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -34856,29 +32627,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34887,7 +32640,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34914,29 +32667,11 @@ LR
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34945,7 +32680,7 @@ LR
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -34972,24 +32707,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -35000,64 +32717,6 @@ TM
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_ppg
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35088,29 +32747,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -35119,7 +32760,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -35142,24 +32783,6 @@ pspm_get_pupil_l
 
 \begin_layout Plain Layout
 TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -35204,24 +32827,6 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -35262,29 +32867,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -35293,7 +32880,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -35316,24 +32903,6 @@ pspm_get_rf
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -35378,24 +32947,6 @@ LC
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -35432,24 +32983,6 @@ pspm_get_saccade_r
 
 \begin_layout Plain Layout
 LC
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -35494,29 +33027,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -35525,7 +33040,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -35552,24 +33067,6 @@ EY
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -35580,180 +33077,6 @@ EY
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_smr
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_smrx
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_sound
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35784,24 +33107,6 @@ LC
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -35828,7 +33133,7 @@ LC
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_get_sps_l
+pspm_get_smr
 \end_layout
 
 \end_inset
@@ -35837,7 +33142,38 @@ pspm_get_sps_l
 \begin_inset Text
 
 \begin_layout Plain Layout
-LC
+DB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_get_smrx
 \end_layout
 
 \end_inset
@@ -35846,7 +33182,7 @@ LC
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+TZ
 \end_layout
 
 \end_inset
@@ -35855,7 +33191,38 @@ LC
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_get_sound
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TM
 \end_layout
 
 \end_inset
@@ -35870,64 +33237,6 @@ LC
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_get_sps_r
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-LC
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35958,29 +33267,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -35989,7 +33280,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36016,29 +33307,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36047,7 +33320,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36074,29 +33347,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36105,7 +33360,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36128,24 +33383,6 @@ pspm_get_viewpoint
 
 \begin_layout Plain Layout
 EY
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -36190,24 +33427,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -36248,29 +33467,11 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36279,7 +33480,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36302,24 +33503,6 @@ pspm_glm_recon
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -36364,29 +33547,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36395,65 +33560,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_guide
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1 (terminated)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -36466,7 +33573,7 @@ TZ
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_help_init
+pspm_hb2hp
 \end_layout
 
 \end_inset
@@ -36475,25 +33582,47 @@ pspm_help_init
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
+DB
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+x
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-7.0
+x
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_hb2hr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
 \end_layout
 
 \end_inset
@@ -36508,122 +33637,6 @@ TZ
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_help_text
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_help
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36654,29 +33667,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36685,7 +33680,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36712,24 +33707,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -36744,64 +33721,6 @@ DB
 
 \begin_layout Plain Layout
 -
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_interp1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
 \end_layout
 
 \end_inset
@@ -36828,29 +33747,11 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36859,7 +33760,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -36886,24 +33787,6 @@ GG
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -36924,76 +33807,18 @@ GG
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_leaky_integrator
+pspm_job_create
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_load_channel
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37002,25 +33827,7 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37029,7 +33836,7 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37060,29 +33867,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -37091,65 +33880,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_load_gaze
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+x
 \end_layout
 
 \end_inset
@@ -37176,29 +33907,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -37207,7 +33920,7 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -37220,7 +33933,7 @@ DB
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_logical2epochs
+pspm_load_single_chan
 \end_layout
 
 \end_inset
@@ -37229,25 +33942,7 @@ pspm_logical2epochs
 \begin_inset Text
 
 \begin_layout Plain Layout
-BA
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
+EY
 \end_layout
 
 \end_inset
@@ -37292,24 +33987,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -37320,180 +33997,6 @@ DB
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_multi_channel
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_multi2index
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_options
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37520,24 +34023,6 @@ pspm_overwrite
 
 \begin_layout Plain Layout
 TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -37582,20 +34067,33 @@ EY
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+x
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_peakscore
 \end_layout
 
 \end_inset
@@ -37604,7 +34102,16 @@ EY
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+DB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
 \end_layout
 
 \end_inset
@@ -37640,29 +34147,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -37671,14 +34160,94 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_ppg2hb
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SG
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_predval
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37689,7 +34258,7 @@ pspm_prepdata
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37698,45 +34267,27 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+x
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37747,7 +34298,7 @@ pspm_process_illuminance
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37756,92 +34307,16 @@ TM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.1
+x
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_pull_zenodo
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -37872,20 +34347,33 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+x
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_pupil_correct_eyelink
 \end_layout
 
 \end_inset
@@ -37894,7 +34382,16 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+EY
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
 \end_layout
 
 \end_inset
@@ -37930,92 +34427,16 @@ EY
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_pupil_correct_eyelink
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-EY
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38041,25 +34462,7 @@ pspm_pupil_pp
 \begin_inset Text
 
 \begin_layout Plain Layout
-EY & TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
+EY
 \end_layout
 
 \end_inset
@@ -38068,7 +34471,7 @@ EY & TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -38100,24 +34503,6 @@ pspm_pupil_pp_options
 
 \begin_layout Plain Layout
 EY
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -38162,24 +34547,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -38200,76 +34567,18 @@ DB
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_remove_epochs
+pspm_ren
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_rename
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -38278,38 +34587,20 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+x
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -38332,24 +34623,6 @@ pspm_resp_pp
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -38394,24 +34667,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -38448,24 +34703,6 @@ pspm_rev_dcm
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -38510,20 +34747,42 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_rev2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
 \end_layout
 
 \end_inset
@@ -38568,20 +34827,42 @@ GG
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_segment_mean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TM
 \end_layout
 
 \end_inset
@@ -38626,29 +34907,11 @@ TZ
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -38657,65 +34920,7 @@ TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_select_channels
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -38738,24 +34943,6 @@ pspm_sf_auc
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -38800,24 +34987,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -38854,24 +35023,6 @@ pspm_sf_mp
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -38916,24 +35067,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -38970,24 +35103,6 @@ pspm_sf_theta
 
 \begin_layout Plain Layout
 DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
 \end_layout
 
 \end_inset
@@ -39032,20 +35147,42 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.0
+-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-?
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_sf_get_theta
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DB
 \end_layout
 
 \end_inset
@@ -39090,24 +35227,6 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -39128,45 +35247,27 @@ DB
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_show_forum
+pspm_spike_convert
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ
+DB
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39175,65 +35276,7 @@ TZ
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_show_help_doc
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39259,25 +35302,7 @@ pspm_split_sessions
 \begin_inset Text
 
 \begin_layout Plain Layout
-LR & TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
+LR
 \end_layout
 
 \end_inset
@@ -39286,7 +35311,7 @@ LR & TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -39295,25 +35320,25 @@ LR & TZ
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_struct2vec
+pspm_transfer_function
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39322,25 +35347,7 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39349,65 +35356,7 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_tam
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39433,25 +35382,7 @@ pspm_time2index
 \begin_inset Text
 
 \begin_layout Plain Layout
-TZ & DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
+TZ
 \end_layout
 
 \end_inset
@@ -39460,7 +35391,7 @@ TZ & DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -39469,65 +35400,7 @@ TZ & DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_transfer_function
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
+x
 \end_layout
 
 \end_inset
@@ -39554,29 +35427,11 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-?
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -39585,188 +35440,14 @@ DB
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_ui_app
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_ui
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TZ
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family typewriter
-pspm_update_channeltype
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DB
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39777,34 +35458,16 @@ pspm_version
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-DB
+TM
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -39813,11 +35476,51 @@ DB
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 -
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+pspm_write_channel
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TM
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
 \end_layout
 
 \end_inset
@@ -39830,7 +35533,7 @@ DB
 \begin_layout Plain Layout
 
 \family typewriter
-pspm_write_channel
+set_blinks_saccades_to_nan
 \end_layout
 
 \end_inset
@@ -39839,25 +35542,7 @@ pspm_write_channel
 \begin_inset Text
 
 \begin_layout Plain Layout
-TM
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7.0
+EY
 \end_layout
 
 \end_inset
@@ -39866,7 +35551,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+x
 \end_layout
 
 \end_inset
@@ -39875,7 +35560,7 @@ TM
 \begin_inset Text
 
 \begin_layout Plain Layout
-✔
+-
 \end_layout
 
 \end_inset
@@ -39894,10 +35579,6 @@ Contributors
 
 \begin_layout Description
 DB Dominik Bach
-\end_layout
-
-\begin_layout Description
-BA Bernhard Agoué von Raußendorf
 \end_layout
 
 \begin_layout Description

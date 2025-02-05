@@ -23,7 +23,12 @@ end
 M = [];
 % 3.1 Add title
 Title       = pspm_doc_get_title(func_name);
-M = [M, '# ', Title, newline];
+M = [M, '---', newline];
+M = [M, 'layout: post', newline];
+M = [M, 'title: ', func_name, newline];
+M = [M, 'permalink: /ref/', func_name, newline];
+M = [M, '---', newline];
+M = [M, ' ', newline];
 M = [M, '[Back to index](/PsPM/ref/)', newline];
 % 3.2 Add description
 if isfield(S, 'Description')
@@ -52,10 +57,15 @@ if isfield(S, 'References')
 end
 M = [M, '[Back to index](/PsPM/ref/)', newline];
 %% 4 Write to file
-if isfield(options, 'path')
-  writelines(M, [options.path, '/', Title,'.md']);
+if isfield(options, 'post') && options.post == 1
+  PrefTitle = ['2024-01-01-',Title];
 else
-  writelines(M, [Title,'.md']);
+  PrefTitle = Title;
+end
+if isfield(options, 'path')
+  writelines(M, [options.path, '/', PrefTitle,'.md']);
+else
+  writelines(M, [PrefTitle,'.md']);
 end
 sts = 1;
 end
@@ -125,6 +135,7 @@ for i_arg = 1:length(list_arg)
           Y = [Y, newline];
         end
       end
+      Y = [Y, newline];
   end
 end
 end

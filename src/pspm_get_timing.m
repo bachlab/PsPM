@@ -138,8 +138,8 @@ switch model
       for iFile = 1:nFiles
         % load regressor information from file if necessary --
         if ischar(intiming{iFile})
-          [sts, in] = pspm_get_timing('file', intiming{iFile});
-          if sts < 1, return; end
+          [lsts, in] = pspm_get_timing('file', intiming{iFile});
+          if lsts < 1, return; end
         elseif isstruct(intiming{iFile})
           in = intiming{iFile};
         else
@@ -422,13 +422,12 @@ switch model
   case 'epochs'
     % get epoch information from file or from input --
     if ischar(intiming)
-      [sts, in] = pspm_get_timing('file', intiming);
-      if sts < 1, return; end
+      [lsts, in] = pspm_get_timing('file', intiming);
+      if lsts < 1, return; end
       if isfield(in, 'epochs')
         outtiming = in.epochs;
       elseif isfield(in, 'onsets')
         onsets = in.onsets;
-        onsetsflag = 0;
         if numel(onsets) == 2
           if numel(onsets{1}) == numel(onsets{2})
             outtiming(:, 1) = onsets{1};
@@ -485,8 +484,8 @@ switch model
     % Missing epoch information for GLM and DCM
     % ------------------------------------------------------------------------
   case 'missing'
-    [sts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
-     if sts < 1, return; end
+    [lsts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
+     if lsts < 1, return; end
      % sort & merge missing epochs
     if size(missepochs, 1) > 0
       [~, sortindx] = sort(missepochs(:, 1));
@@ -508,8 +507,8 @@ switch model
   case('events')
     if ischar(intiming)
       % recursive call to retrieve file
-      [sts, in] = pspm_get_timing('file', intiming);
-      if sts == -1, return; end
+      [lsts, in] = pspm_get_timing('file', intiming);
+      if lsts == -1, return; end
       if isfield(in, 'events')
         intiming = in.events;
       else

@@ -203,16 +203,10 @@ warnings = {};
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
 
-% 2.2 check model
-model = pspm_check_model(model, 'dcm');
-if model.invalid
+% 2.2 check model and options
+[model, options] = pspm_check_model(model, options, 'dcm');
+if model.invalid || options.invalid
     return
-end
-
-% 2.3 check options
-options = pspm_options(options, 'dcm');
-if options.invalid
-  return
 end
 
 % all the below should be re-factored into pspm_options -------------------
