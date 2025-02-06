@@ -29263,7 +29263,7 @@ gh-pages
 \end_inset
 
  under the PsPM repository at github.com/bachlab/PsPM.
- Any update to the website will need to be made by upadting this branch.
+ Any update to the website will need to be made by updating this branch.
  The website is built up based on the website template Jekyll Gitbook:
  https://sighingnow.github.io/jekyll-gitbook/.
  Therefore,
