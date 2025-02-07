@@ -29574,6 +29574,52 @@ To insert a hyperlink to a website,
  please use the following sentence.
 \end_layout
 
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+[retrodictive validity](https://doi.org/10.1038/s41562-020-00976-8)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Table of content generation
+\end_layout
+
+\begin_layout Standard
+Please use the file 
+\begin_inset Quotes eld
+\end_inset
+
+toc-date.html
+\begin_inset Quotes erd
+\end_inset
+
+ to control the generation of table of content.
+ Currently,
+ please go to line 69–70,
+ where the list of items shown in the table of content is listed here.
+ Items will not be displayed unless they are specified here,
+ thus please always keep this file updated.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/teddy/Desktop/Screenshot 2025-02-07 at 03.32.35.png
+	width 95text%
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 List of Functions
 \end_layout
