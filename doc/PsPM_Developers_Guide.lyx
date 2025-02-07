@@ -29237,6 +29237,390 @@ Now the script should be running ok.
 \end_layout
 
 \begin_layout Section
+Website and function descriptions
+\end_layout
+
+\begin_layout Quote
+Contributed by Teddy Zhao in January 2025
+\end_layout
+
+\begin_layout Standard
+This chapter describes how to contribute to the PsPM website and generate documents of function description.
+\end_layout
+
+\begin_layout Subsection
+Website
+\end_layout
+
+\begin_layout Standard
+The official website of PsPM is located at bachlab.github.io/pspm,
+ and it is hosted on GitHub at the branch 
+\begin_inset Quotes eld
+\end_inset
+
+gh-pages
+\begin_inset Quotes erd
+\end_inset
+
+ under the PsPM repository at github.com/bachlab/PsPM.
+ Any update to the website will need to be made by updating this branch.
+ The website is built up based on the website template Jekyll Gitbook:
+ https://sighingnow.github.io/jekyll-gitbook/.
+ Therefore,
+ further website behaviour and action changes to the PsPM website may need to refer to the original jekyll-gitbook manual.
+ Instead of writing fixed-content websites,
+ the jekyll-gitbook website template uses markdown files for generating HTML files automatically.
+ In early 2025,
+ the jekyll-gitbook template was adopted for PsPM website and live for users.
+ The content of the website repository includes three folders and a few individual files,
+ which are introduced as following.
+\end_layout
+
+\begin_layout Subsection
+General structure
+\end_layout
+
+\begin_layout Standard
+The PsPM website includes a main page and a few subpages.
+ The main page is stored at README.md,
+ which means the updates to the main page should be addressed by modifying README.md.
+ This file is located in the root folder.
+ Please follow the previously updated formats,
+ such as hyperlinks and images,
+ for future content updates.
+ The subpages are stored in _posts,
+ whose main description can be found in the next section.
+\end_layout
+
+\begin_layout Subsection
+Folders
+\end_layout
+
+\begin_layout Subsubsection
+_includes
+\end_layout
+
+\begin_layout Standard
+This folder contains the required module and behaviour control files in html or json.tpl format.
+ Most of the files are not expected to be modified,
+ such as “mathjax.html”,
+ as they are just required for rendering the webpage components.
+ However,
+ a few files should be noticed when updating the webpage content in the future.
+ 
+\end_layout
+
+\begin_layout Standard
+To update the table of content for the website,
+ please go to the file 
+\begin_inset Quotes eld
+\end_inset
+
+toc-date.html
+\begin_inset Quotes erd
+\end_inset
+
+,
+ at around line 69 or 70,
+ there is a if-else clause explaining how the table of content will be generated.
+ Only the listed pages in this line of code will be displayed in the table of content.
+\end_layout
+
+\begin_layout Subsubsection
+_layouts
+\end_layout
+
+\begin_layout Standard
+This folder stores the html-based webpage templates.
+ There are two kinds of webpage templates,
+ which are “home” and “post”.
+ In PsPM website,
+ only the home page use “home” as the template,
+ and all other webpages should use “post”.
+ A markdown file is required for adding the corresponding content,
+ which is introduced as below.
+\end_layout
+
+\begin_layout Subsubsection
+_posts
+\end_layout
+
+\begin_layout Standard
+This folder stores the content for all the webpages on PsPM website except for the main page that is stored in README.md.
+ All the files in this folder need to be markdown files,
+ and the format of markdown file content can follow the currently available files.
+ Each file has its file name as “date-filename.md”.
+ The date needs to be written in the format of “YYYY-MM-DD” (American date style).
+ If every file has the same date,
+ they will be ranked alphabetically in the table of content,
+ otherwise it will be based on the date.
+ The table of content will not be automatically updated after adding new markdown files.
+ To update the table of content,
+ please check the _includes section.
+\end_layout
+
+\begin_layout Subsubsection
+asset
+\end_layout
+
+\begin_layout Standard
+This folder stores the required resources,
+ such as images,
+ for the website.
+ Images should be put at the location /assets/images,
+ and they need to be properly referred when being added to the webpages.
+\end_layout
+
+\begin_layout Subsection
+Basic File formats
+\end_layout
+
+\begin_layout Standard
+This section introduces how to write the markdown files for webpage contents.
+ This is given by using the README.md as an example.
+\end_layout
+
+\begin_layout Subsubsection
+Header
+\end_layout
+
+\begin_layout Standard
+In the line 1-5 of a markdown file,
+ the line 1 and line 5 should be 
+\begin_inset Quotes eld
+\end_inset
+
+---
+\begin_inset Quotes erd
+\end_inset
+
+ (three dashes).
+ This is the marks that show the content between them is header and can be read.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/teddy/Desktop/Screenshot 2025-02-06 at 14.51.44.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The first line is the layout that will be used for displaying this webpage.
+ It can be either 
+\begin_inset Quotes eld
+\end_inset
+
+home
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+post
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Home
+\begin_inset Quotes erd
+\end_inset
+
+ is used for the homepage,
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+post
+\begin_inset Quotes erd
+\end_inset
+
+ is used for any other webpage,
+ such as 
+\begin_inset Quotes eld
+\end_inset
+
+Course
+\begin_inset Quotes erd
+\end_inset
+
+ or a descriptive page for a PsPM function.
+\end_layout
+
+\begin_layout Standard
+The second line is the title of this webpage.
+ This is the displayed title of this webpage that can be used for referring to by other functions,
+ such as table of content generation content.
+ Please make sure this title is not shared by two different webpages for avoiding potential risks.
+ This head will be displayed as the header on the webpage,
+ as shown below.
+ For visual comfortableness,
+ please leave the title to be simple and relatively short for avoiding busying feeling unless required.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/teddy/Desktop/Screenshot 2025-02-06 at 15.14.02.png
+	width 90text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The third line is the permanent link of this webpage.
+ If it is left as just a 
+\begin_inset Quotes eld
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+,
+ it means this page is the default home page.
+ For PsPM,
+ a 
+\begin_inset Quotes eld
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+ means the link to this page is 
+\begin_inset Quotes eld
+\end_inset
+
+bachlab.github.com/pspm
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If it is a 
+\begin_inset Quotes eld
+\end_inset
+
+/ref
+\begin_inset Quotes erd
+\end_inset
+
+,
+ then the page would be 
+\begin_inset Quotes eld
+\end_inset
+
+bachlab.github.com/pspm/ref
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Captions and links
+\end_layout
+
+\begin_layout Standard
+To insert images for webpages,
+ please use the following sentence.
+ In this sentence,
+ the src should be the link of the image that is normally stored within the 
+\begin_inset Quotes eld
+\end_inset
+
+assets
+\begin_inset Quotes erd
+\end_inset
+
+ folder.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+alt
+\begin_inset Quotes erd
+\end_inset
+
+ is the caption of the image.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To insert a hyperlink to a website,
+ please use the following sentence.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+[retrodictive validity](https://doi.org/10.1038/s41562-020-00976-8)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Table of content generation
+\end_layout
+
+\begin_layout Standard
+Please use the file 
+\begin_inset Quotes eld
+\end_inset
+
+toc-date.html
+\begin_inset Quotes erd
+\end_inset
+
+ to control the generation of table of content.
+ Currently,
+ please go to line 69–70,
+ where the list of items shown in the table of content is listed here.
+ Items will not be displayed unless they are specified here,
+ thus please always keep this file updated.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/teddy/Desktop/Screenshot 2025-02-07 at 03.32.35.png
+	width 95text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 List of Functions
 \end_layout
 
