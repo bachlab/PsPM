@@ -20,9 +20,9 @@ destinationFolder = uigetdir('','Select parent directory for your PsPM installat
 if ismember(1, indx)
 
     % GitHub release URL for PsPM and the desired version
-    githubReleaseURL = 'https://github.com/bachlab/PsPM/releases/download'; % add the relase URL
-    version = 'v7.0';
-    packageName = 'PsPM_v7.0';
+    githubReleaseURL = 'https://github.com/bachlab/PsPM/releases/download'; 
+    version = 'v7.0.0';
+    packageName = 'PsPM_v7.0.0';
 
     % Create the destination folder if it does not exist
     if ~exist(destinationFolder, 'dir')
