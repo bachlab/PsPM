@@ -6,7 +6,7 @@ permalink: /
 
 # Psychophysiological Modelling with PsPM: precision psychophysiology made easy
 
-**Current version: PsPM 6.1.2, released on 25.01.2024**
+**Current version: PsPM 7.0.0, released on 12.02.2025**
 
 <img class="PsPM_Web" src="assets/images/PsPM_Website_Figure_1.jpg" type="image/jpg" alt="PsPM" >
 
