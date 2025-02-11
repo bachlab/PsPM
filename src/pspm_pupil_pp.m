@@ -1,14 +1,14 @@
-function varargout = pspm_pupil_pp (fn, options)
+function [sts, outchannel] = pspm_pupil_pp (fn, options)
 % ● Description
 %   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
-%   measurement. It performs the steps described in [1]. This function uses
+%   measurement, with a possibility of combining left/right pupil. 
+%   It performs the steps described in [1]. This function uses
 %   a modified version of [2]. The modified version with a list of changes
 %   from the original is shipped with PsPM under pupil-size directory.
-%   The steps performed are listed below:
-%   1.  Pupil preprocessing is performed in two main steps. In the first
-%       step, the “valid” samples are determined. The samples that are not
-%       valid are not used in the second step. Determining valid samples is
-%       done by
+%   Pupil preprocessing is performed in three main steps:
+%   1.  In the first step, the "valid" samples are determined. Samples that 
+%       are not valid are not used in the second step. Determining valid 
+%       samples is done by the following procedures:
 %       (a) Range filtering: Pupil size values outside a predefined range
 %           are considered invalid. This range is configurable.
 %       (b) Speed filtering: Speed is computed as the 1st difference of
@@ -35,81 +35,65 @@ function varargout = pspm_pupil_pp (fn, options)
 %       data is preprocessed, according to the option 'channel_action',
 %       it will either replace an existing preprocessed pupil channel or
 %       add it as new channel to the provided file.
+%   3. If combining is requested, then a new channel with combined signal
+%      will be created. Information about the underlying left and right
+%      pupil channels will be written into the data structure (field
+%      'header.valid_samples'). 
 % ● Format
-%   [sts, out_channel] = pspm_pupil_pp(fn)
-%   [sts, out_channel] = pspm_pupil_pp(fn, options)
+%   [sts, channel_index] = pspm_pupil_pp(fn)
+%   [sts, channel_index] = pspm_pupil_pp(fn, options)
 % ● Arguments
-%          fn:  [string]
-%               Path to the PsPM file which contains the pupil data.
-%   ┌──options: [struct]
-%   ├─.channel: [optional][numeric/string][Default: 'pupil']
-%   │           Channel ID to be preprocessed.
-%   │           ▶ ︎Preprocessing raw eye data:
-%   │           The best eye is processed when channel is 'pupil'. To
-%   │           process a specific eye, use 'pupil_l' or 'pupil_r'.
-%   │           To process the combined left and right eye, use 'pupil_c'.
-%   │           ▶ Preprocessing previously processed data:
-%   │           Pupil channels created from other preprocessing steps can
-%   │           be further processed by this function. To enable this, pass
-%   │           one of 'pupil_l_pp' or 'pupil_r_pp'. There is no best eye
-%   │           selection in this mode. Hence, the type of the channel must
-%   │           be given exactly. Finally, a channel can be specified by
-%   │           its index in the given PsPM data structure. It will be
-%   │           preprocessed as long as it is a valid pupil channel. If
-%   │           channel is specified as a string and there are multiple
-%   │           channels with the exact same type, only last one will be
-%   │           processed. This is normally not the case with raw data
-%   │           channels; however, there may be multiple channels with same
-%   │           type if 'add' channel_action was previously used. This
-%   │           feature can be combined with 'add' channel_action to create
-%   │           preprocessing histories where the result of each step is
-%   │           stored as a separate channel.
-%   ├────.data: field of the preprocessed channel contains the smoothed,
-%   │           upsampled signal that is the result of step 3 in [1].
-%   ├──.header: field of the preprocessed channel contains information
-%   │           regarding which samples in the input signal were considered
-%   │           valid in addition to the usual information of PsPM channels.
-%   │           This valid sample info is stored in .header.valid_samples
-%   │           field.
-%   ├─.channel_combine:
-%   │           [optional][numeric/string][Default: 'none']
-%   │           Channel ID to be used for computing the mean pupil signal.
-%   │           The input format is exactly the same as the .channel field.
-%   │           However, the eye specified in this channel must be different
-%   │           than the one specified in .channel field. By default, this
-%   │           channel is not used. Only specify it if you want to combine
-%   │           left and right pupil eye signals, and in this situation,
-%   │           the type of the output channel becomes 'pupil_pp_c'.
-%   ├─.channel_action:
-%   │           [optional][string][Accepts: 'add'/'replace'][Default: 'add']
-%   │           Defines whether corrected data should be added or the
-%   │           corresponding preprocessed channel should be replaced. Note
-%   │           that 'replace' mode does not replace the raw data channel,
-%   │           but a previously stored preprocessed channel with a '_pp'
-%   │           suffix at the end of its type.
-%   ├─.custom_settings:
-%   │           [optional][Default: See pspm_pupil_pp_options above]
-%   │           Settings structure to modify the preprocessing steps. If
-%   │           not specified, the default settings structure obtained from
-%   │           <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>
-%   │           will be used. To modify certain fields of this structure,
-%   │           you only need to specify those fields in custom_settings.
-%   │           For example, to modify settings.raw.PupilMin, you need to
-%   │           create a struct with a field .raw.PupilMin.
-%   ├─.segments:  [cell array of structures]
-%   │           Statistics about user defined segments can be calculated.
-%   │           When specified, segments will be stored in .header.segments
-%   │           field. Each structure must have the the following fields:
-%   ├─.start:   [decimal][Unit: second]
-%   │           Starting time of the segment.
-%   ├─.end:     [decimal][Unit: second]
-%   │           Ending time of the segment.
-%   ├─.name:    [string]
-%   │           Name of the segment. Segment will be stored by this name.
-%   ├─.plot_data:
-%   │           [Boolean][Default: false or 0]
-%   │           Plot the preprocessing steps if true.
-%   └.out_chan: Channel ID of the preprocessed output.
+%   *       fn : [string]
+%                Path to the PsPM file which contains the pupil data.
+%   ┌──options
+%   ├─.channel : [optional][numeric/string] [Default: 'pupil']
+%   │            Channel ID to be preprocessed.
+%   │            To process a specific eye, use 'pupil_l' or 'pupil_r'.
+%   │            To process the combined left and right eye, use 'pupil_c'.
+%   │            To combine both eyes, specify one eye here and the other
+%   │            under option 'channel_combine'. The identifier 'pupil' will
+%   │            use the first existing option out of the following:
+%   │            (1) L-R-combined pupil, (2) non-lateralised pupil, (3) best
+%   │            eye pupil, (4) any pupil channel. If there are multiple
+%   │            channels of the specified type, only last one will be
+%   │            processed. You can also specify the number of a channel.
+%   ├─.channel_combine :
+%   │            [optional][numeric/string][Default: 'none']
+%   │            Channel to be used for computing the mean pupil signal.
+%   │            The input format is exactly the same as the .channel field.
+%   │            However, the eye specified in this channel must be different
+%   │            from the one specified in .channel field. The output channel
+%   │            will then be of type 'pupil_c'.
+%   ├─.channel_action :
+%   │            [optional][string][Accepts: 'add'/'replace'][Default: 'add']
+%   │            Defines whether corrected data should be added or the
+%   │            corresponding preprocessed channel should be replaced.
+%   ├─.custom_settings :
+%   │            [optional][Default: See pspm_pupil_pp_options]
+%   │            Settings structure to modify the preprocessing steps. If
+%   │            not specified, the default settings structure obtained from
+%   │            <a href="matlab:help pspm_pupil_pp_options">pspm_pupil_pp_options</a>
+%   │            will be used. To modify certain fields of this structure,
+%   │            you only need to specify those fields in custom_settings.
+%   │            For example, to modify settings.raw.PupilMin, you need to
+%   │            create a struct with a field .raw.PupilMin.
+%   ├.segments : [cell array of structures]
+%   │            Statistics about user defined segments can be calculated.
+%   │            When specified, segments will be stored in .header.segments
+%   │            field. Each structure must have the the following fields:
+%   ├───.start : [decimal][Unit: second] Starting time of the segment.
+%   ├─────.end : [decimal][Unit: second] Ending time of the segment.
+%   ├────.name : [string] Name of the segment. Segment will be stored by this name.
+%   ├.plot_data: [Boolean][Default: false or 0] Plot the preprocessing steps.
+%   ├─.chan_valid_cutoff : [optional][Default: 0.2]
+%   │            A cut-off value for checking whether there are too many missing values
+%   │            in a data channel for combination. If the difference in 
+%   │            missing data percentage between the two channels exceeds 
+%   │            this cutoff, then combining will be skipped, and both 
+%   │            channels will be processed separately.
+%   └.out_chan : Channel ID of the preprocessed output.
+% ● Outputs
+%   * channel_index: index of channel containing the processed data.
 % ● References
 %   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
 %       data: Guidelines and code." Behavior research methods (2018): 1-7.
@@ -117,8 +101,8 @@ function varargout = pspm_pupil_pp (fn, options)
 % ● History
 %   Introduced in PsPM version ?
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%              2021 by Teddy Chao (UCL)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%              2021 by Teddy
+%   Updated in 2024 by Dominik R Bach (Uni Bonn)
 
 %% 1 Initialise
 global settings
@@ -126,40 +110,34 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-varargout{1} = sts;
-smooth_signal = [];
-model = [];
-switch nargout
-  case 2
-    varargout{2} = smooth_signal;
-  case 3
-    varargout{2} = smooth_signal;
-    varargout{3} = model;
-end
+outchannel = [];
+
 %% 2 Create default arguments
 if nargin == 1
   options = struct();
 end
+
+
 options = pspm_options(options, 'pupil_pp');
 if options.invalid
   return
 end
-[lsts, default_settings] = pspm_pupil_pp_options();
+
+% when batch editor has default settings
+if ~isfield(options,'custom_settings')
+    [lsts, default_settings] = pspm_pupil_pp_options(); % so no warnings are displayed
+else
+    [lsts, default_settings] = pspm_pupil_pp_options(options.custom_settings);
+end
+
+
 if lsts ~= 1
   return
 end
-if isfield(options, 'custom_settings')
- default_settings = pspm_assign_fields_recursively(...
-   default_settings, options.custom_settings);
-end
+
 options.custom_settings = default_settings;
 
 %% 3 Input checks
-if ~ismember(options.channel_action, {'add', 'replace'})
-  warning('ID:invalid_input', ...
-    'Option channel_action must be either ''add'' or ''replace''');
-  return
-end
 for seg = options.segments
   if ~isfield(seg{1}, 'start') || ~isfield(seg{1}, 'end') || ~isfield(seg{1}, 'name')
     warning('ID:invalid_input', ...
@@ -169,40 +147,65 @@ for seg = options.segments
 end
 %% 4 Load
 action_combine = ~strcmp(options.channel_combine, 'none');
-addpath(pspm_path('backroom'));
-[lsts, data] = pspm_load_single_chan(fn, options.channel, 'last', 'pupil');
-if lsts ~= 1
-  return
-end
+alldata = struct();
+[sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
+if sts_load < 1, return, end
+[sts_load, data,infos, pos_of_channel(1)] = pspm_load_channel(alldata, options.channel, 'pupil');
+if sts_load ~= 1, return, end
+
 if action_combine
-  [lsts, data_combine] = pspm_load_single_chan(fn, options.channel_combine, 'last', 'pupil');
-  if lsts ~= 1
-    return
-  end
-  if strcmp(pspm_get_eye(data{1}.header.chantype), pspm_get_eye(data_combine{1}.header.chantype))
-    warning('ID:invalid_input', 'options.channel and options.channel_combine must specify different eyes');
-    return;
-  end
-  if data{1}.header.sr ~= data_combine{1}.header.sr
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different sampling rate');
-    return;
-  end
-  if ~strcmp(data{1}.header.units, data_combine{1}.header.units)
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different units');
-    return;
-  end
-  if numel(data{1}.data) ~= numel(data_combine{1}.data)
-    warning('ID:invalid_input', 'options.channel and options.channel_combine data have different lengths');
-    return;
-  end
-  old_channeltype = sprintf('%s and %s', ...
-    data{1}.header.chantype, data_combine{1}.header.chantype);
+    [sts_load, data_combine, infos, pos_of_channel(2)] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
+    if sts_load ~= 1
+        return
+    end
+    [sts1, eye1] = pspm_find_eye(data.header.chantype);
+    [sts2, eye2] = pspm_find_eye(data_combine.header.chantype);
+    if (sts1 < 1 || sts2 < 1), return, end
+    if sum(strcmp([eye1, eye2], {'lr', 'rl'})) < 1
+        warning('ID:invalid_input', ...
+            'options.channel and options.channel_combine must specify left and right eyes.');
+        return;
+    elseif data.header.sr ~= data_combine.header.sr
+        warning('ID:invalid_input', ...
+            'options.channel and options.channel_combine data have different sampling rate.');
+        return;
+    elseif ~strcmp(data.header.units, data_combine.header.units)
+        warning('ID:invalid_input', ...
+            'options.channel and options.channel_combine data have different units.');
+        return;
+    elseif numel(data.data) ~= numel(data_combine.data)
+        warning('ID:invalid_input', ...
+            'options.channel and options.channel_combine data have different lengths.');
+        return;
+    end
+
+    % decide on combination
+    valid_data    = sum(isnan(data.data))/length(data.data);
+    valid_combine = sum(isnan(data_combine.data))/length(data_combine.data);
+    if abs(valid_data - valid_combine) > options.chan_valid_cutoff
+        warning('ID:invalid_input', ...
+            ['Number of missing data points in the two channels (%02.0f%% and %02.0f%%) exceeds the cutoff value. ', ...
+            'Channels will be preprocessed separately and no combination will be performed.'], ...
+            100 * valid_data, 100 * valid_combine);
+        flag_valid_combine = 0;
+        newoptions = rmfield(options, 'channel_combine');
+        newoptions.channel = options.channel_combine;
+        data_combine.data = [];
+        old_channeltype = data.header.chantype;
+    else
+        flag_valid_combine = 1;
+        old_channeltype = sprintf('%s and %s', ...
+            data.header.chantype, data_combine.header.chantype);
+    end
 else
-  data_combine{1}.data = [];
-  old_channeltype = data{1}.header.chantype;
+    flag_valid_combine = 1;
+    data_combine.data = [];
+    fprintf('No data to combine provided - only one channel will be used.\n');
+    old_channeltype = data.header.chantype;
 end
+
 %% 5 preprocess
-[lsts, smooth_signal, model] = pspm_preprocess(data, data_combine, ...
+[lsts, smooth_signal] = pspm_preprocess_pupil(data, data_combine, ...
   options.segments, options.custom_settings, options.plot_data);
 if lsts ~= 1
   return
@@ -214,40 +217,39 @@ o.msg.prefix = sprintf(...
   channel_str, ...
   old_channeltype, ...
   smooth_signal.header.chantype);
-[lsts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
-if ~lsts
-  return
+% if no new channel type is created, pass channel number to
+% pspm_write_channel
+if ~strcmpi(smooth_signal.header.chantype, 'pupil_c')
+    o.channel = pos_of_channel(1);
 end
-out_chan = out_id.channel;
-sts = 1;
-varargout{1} = sts;
-switch nargout
-  case 2
-    varargout{2} = out_chan;
-  case 3
-    varargout{2} = out_chan;
-    varargout{3} = model;
+[sts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
+outchannel = out_id.channel;
+
+%%  7 run second pass if required
+if ~flag_valid_combine
+    [sts, out_id] = pspm_pupil_pp(fn, newoptions);
+    outchannel = [outchannel, out_id];
 end
+
 return
 
-function varargout  = pspm_preprocess(data, data_combine, segments, custom_settings, plot_data)
+function [sts, smooth_signal]  = pspm_preprocess_pupil(data, data_combine, segments, custom_settings, plot_data)
+
 global settings
-if isempty(settings)
-  pspm_init;
-end
 sts = -1;
 % 1 definitions
-combining = ~isempty(data_combine{1}.data);
-data_is_left = strcmpi(pspm_get_eye(data{1}.header.chantype), 'l');
-n_samples = numel(data{1}.data);
-sr = data{1}.header.sr;
+combining = ~isempty(data_combine.data);
+[sts, which_eye] = pspm_find_eye(data.header.chantype);
+data_is_left = strcmpi(which_eye, 'l');
+n_samples = numel(data.data);
+sr = data.header.sr;
 diameter.t_ms = transpose(linspace(0, 1000 * (n_samples-1) / sr, n_samples));
 if data_is_left
-  diameter.L = data{1}.data;
-  diameter.R = data_combine{1}.data;
+  diameter.L = data.data;
+  diameter.R = data_combine.data;
 else
-  diameter.L = data_combine{1}.data;
-  diameter.R = data{1}.data;
+  diameter.L = data_combine.data;
+  diameter.R = data.data;
 end
 if size(diameter.L, 1) == 1
   diameter.L = transpose(diameter.L);
@@ -261,20 +263,20 @@ segmentName = transpose(cellfun(@(x) x.name, segments, 'uni', false));
 segmentTable = table(segmentStart, segmentEnd, segmentName);
 new_sr = custom_settings.valid.interp_upsamplingFreq;
 upsampling_factor = new_sr / sr;
-desired_output_samples = round(upsampling_factor * numel(data{1}.data));
+desired_output_samples = round(upsampling_factor * numel(data.data));
 % 2 load lib
 libbase_path = pspm_path('ext',['pupil', '-size'], 'code');
 libpath = {fullfile(libbase_path, 'dataModels'), fullfile(libbase_path, 'helperFunctions')};
 addpath(libpath{:});
 % 3 filtering
-model = PupilDataModel(data{1}.header.units, diameter, segmentTable, 0, custom_settings);
+model = PupilDataModel(data.header.units, diameter, segmentTable, 0, custom_settings);
 model.filterRawData();
 if combining
-  smooth_signal.header.chantype = pspm_update_channeltype(data{1}.header.chantype, settings.lateral.char.c);
+  smooth_signal.header.chantype = pspm_update_channeltype(data.header.chantype, settings.lateral.char.c);
 else
-  smooth_signal.header.chantype = data{1}.header.chantype;
+  smooth_signal.header.chantype = data.header.chantype;
 end
-smooth_signal.header.units = data{1}.header.units;
+smooth_signal.header.units = data.header.units;
 smooth_signal.header.sr = new_sr;
 smooth_signal.header.segments = segments;
 % 4 store signal and valid samples
@@ -326,14 +328,7 @@ catch err
 end
 rmpath(libpath{:});
 sts = 1;
-varargout{1} = sts;
-switch nargout
-  case 2
-    varargout{2} = smooth_signal;
-  case 3
-    varargout{2} = smooth_signal;
-    varargout{3} = model;
-end
+
 function data = pspm_complete_with_nans(data, t_beg, sr, output_samples)
 % Complete the given data that possibly has missing samples at the
 % beginning and at the end. The amount of missing samples is determined
@@ -363,46 +358,4 @@ for eyestr = seg_eyes
       segments{i}.(eyecolstr) = col(i);
     end
   end
-end
-function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
-% Definition
-% pspm_assign_fields_recursively assign all fields of in_struct to
-% out_struct recursively, overwriting when necessary.
-fnames = fieldnames(in_struct);
-for i = 1:numel(fnames)
-  name = fnames{i};
-  if isstruct(in_struct.(name)) && isfield(out_struct, name)
-    out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
-  else
-    out_struct.(name) = in_struct.(name);
-  end
-end
-function eye = pspm_get_eye(channeltype)
-% Definition
-% pspm_get_eye detect the eye location from an input channel type
-%  FORMAT
-%  eye = pspm_get_eye(channeltype)
-% ARGUMENTS
-%   Input
-%     channeltype  a string that contains the eye location
-%   Output
-%     eye        a character
-% PsPM (version 5.1.2)
-% (C) 2021 Teddy Chao (UCL)
-global settings
-if isempty(settings)
-  pspm_init;
-end
-sts = -1;
-eye = 'unknown';
-for eye_attempt = [settings.lateral.char.l, settings.lateral.char.r, settings.lateral.char.c]
-  if contains(channeltype, ['_', eye_attempt, '_'])
-    eye = eye_attempt;
-  elseif channeltype(length(channeltype)-1:length(channeltype)) == ['_', eye_attempt]
-    eye = eye_attempt;
-  end
-end
-if strcmp(eye, 'unknown')
-  warning('ID:invalid_input', 'channeltype does not contain a valid eye');
-  return
 end

@@ -7,7 +7,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
   properties (TestParameter)
     shiftbf = {0, 5};
     norm = {0, 1};
-    cutoff = {0, .5, .95};
+    cutoff = {0, .1, .5, .95};
     nan_percent = {0,.25,.5,.75,.95};
   end
   methods (Test)
@@ -104,8 +104,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -174,8 +174,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -253,8 +253,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -293,9 +293,9 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10+ shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile{1} = 'testdatafile897654.mat';
-      model.datafile{2} = 'testdatafile897655.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile{1} = 'GLMTestDataFile.mat';
+      model.datafile{2} = 'GLMTestDataFile2.mat';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
         'down', sr, ...
@@ -312,6 +312,12 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       % correct out shiftbf
       model.timing{1}.onsets{1} = model.timing{1}.onsets{1} + shiftbf;
       model.timing{2}.onsets{1} = model.timing{2}.onsets{1} + shiftbf;
+      for i_file = 1:2
+          [sts, newdata.infos, newdata.data] = pspm_load_data(model.datafile{i_file});
+          newdata.data{2}.data = newdata.data{2}.data + shiftbf;
+          newdata.options.overwrite = 1;
+          sts = pspm_load_data(model.datafile{i_file}, newdata);
+      end
       %test 1
       model.timeunits = 'seconds';
       expected = [cond1 offset1 offset2]';
@@ -355,8 +361,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 10 + shiftbf;
       model.norm = norm;
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile = 'testdatafile897654.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile = 'GLMTestDataFile.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 'none', 'lporder', 1,  ...
         'hpfreq', 'none', 'hporder', 1, ...
@@ -393,11 +399,11 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       delete(model.modelfile);
     end
     function glm = test6(this)
-      model.modelfile = 'testdatafile987654.mat';
-      model.datafile{1} = 'testdatafile897654.mat';
-      model.datafile{2} = 'testdatafile897655.mat';
-      model.timing{1} = 'testdatafile8597657.mat';
-      model.timing{2} = 'testdatafile8597658.mat';
+      model.modelfile = 'GLMTestModelFile.mat';
+      model.datafile{1} = 'GLMTestDataFile.mat';
+      model.datafile{2} = 'GLMTestDataFile2.mat';
+      model.timing{1} = 'GLMTestTimingFile.mat';
+      model.timing{2} = 'GLMTestTimingFile2.mat';
       model.timeunits = 'seconds';
       model.filter = struct('lpfreq', 50, 'lporder', 1,  ...
         'hpfreq', 10, 'hporder', 1, ...
@@ -431,7 +437,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       pspm_glm_test.save_datafile(Y1, 200, 10, model.datafile{1});
       Y2 = rand(200*10,1);
       pspm_glm_test.save_datafile(Y2, 200, 10, model.datafile{2});
-      glm = pspm_glm(model, struct());
+      [sts, glm] = pspm_glm(model, struct());
       %tests
       exptected_number_of_stats = 16;
       this.verifyEqual(length(glm.stats),exptected_number_of_stats, sprintf('test6: glm.stats does not have the expected number (%i) of elements', exptected_number_of_stats));
@@ -443,6 +449,75 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       delete(model.timing{1});
       delete(model.timing{2});
     end
+    function test_eye(this, cutoff)
+      bf1 = 1;
+      offset = 0;
+      sr = 100;
+      duration = 200;
+      segment_length = 10-1/sr;
+      model.modelfile = 'TestGLMEyeModel.mat';
+      model.datafile = 'TestGLMEyeData.mat';
+      model.timeunits = 'seconds';
+      model.filter = struct(...
+        'lpfreq', 'none', 'lporder', 1,  ...
+        'hpfreq', 'none', 'hporder', 1, ...
+        'down', sr,'direction', 'uni');
+      model.bf.fhandle = @(td) pspm_glm_test.kron_delta(td,duration,[0 1],0,0);
+      model.timing.names{1} = 'cond_a';
+      model.timing.onsets{1} = [10 40 70 100]';
+      model.timing.names{2} = 'cond_b';
+      model.timing.onsets{2} = [20 50 80 110]';
+      model.timing.names{3} = 'cond_c';
+      model.timing.onsets{3} = [30 60 90 120]';
+      Y1 = pspm_glm_test.testdata_gen(model.timing.onsets{1}, bf1, offset, 0,  sr, duration);
+      Y2 = pspm_glm_test.testdata_gen(model.timing.onsets{2}, bf1, offset, 0,  sr, duration);
+      Y3 = pspm_glm_test.testdata_gen(model.timing.onsets{3}, bf1, offset, 0,  sr, duration);
+      Y = Y1 + Y2 +Y3;
+      pspm_glm_test.save_datafile_sps(Y, sr, duration, model.datafile);
+      options = struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff),...
+        'overwrite',1);
+      % test left eye
+      model.channel = 'sps_l';
+      model.modelspec = 'sps';
+      model.modality = 'sps';
+      this.verifyWarningFree(@() pspm_glm(model, options));
+      % test right eye
+      model.channel = 'sps_r';
+      this.verifyWarningFree(@() pspm_glm(model, options));
+      % test best eye
+      model.channel = 'sps';
+      this.verifyWarningFree(@() pspm_glm(model, options));
+      % clean up
+      delete(model.datafile);
+      delete(model.modelfile);
+    end
+    function test_pmod(this)
+        % this checks github issue 191: a pmod is defined on a condition
+        % that is not present in the first session
+        bf1 = 1; offset = 0; sr = 100; duration = 120;
+        model.modelfile = 'Test_GLM_pmod_model.mat';
+        model.datafile = {'Test_GLM_pmod_data_1.mat', 'Test_GLM_pmod_data_2.mat'};
+        model.timeunits = 'seconds';
+        model.timing{1}.names{1} = 'cond_a';
+        model.timing{1}.onsets{1} = [10 40 70 100]';
+        model.timing{2}.names{1} = 'cond_b';
+        model.timing{2}.onsets{1} = [20 50 80 110]';
+        model.timing{2}.pmod(1).param = {[1, 2, 3, 4]; [1, 3, 3, 1]};
+        model.timing{2}.pmod(1).name = {'pmod1', 'pmod2'};
+        Y1 = pspm_glm_test.testdata_gen(model.timing{1}.onsets{1}, bf1, offset, 0,  sr, duration);
+        Y2 = pspm_glm_test.testdata_gen(model.timing{2}.onsets{1}, bf1, offset, 0,  sr, duration);
+        pspm_glm_test.save_datafile(Y1, sr, duration, model.datafile{1});
+        pspm_glm_test.save_datafile(Y2, sr, duration, model.datafile{2});
+        model.channel = 'scr';
+        model.modelspec = 'scr';
+        model.modality = 'scr';
+        [sts, glm] = this.verifyWarningFree(@() pspm_glm(model));
+        this.verifyEqual(glm.names, ...
+            {'cond_a, bf 1', 'cond_a, bf 2', 'cond_b, bf 1', 'cond_b, bf 2', ...
+            'cond_b x pmod1^1, bf 1', 'cond_b x pmod1^1, bf 2', 'cond_b x pmod2^1, bf 1', ...
+            'cond_b x pmod2^1, bf 2', 'Constant 1', 'Constant 2'}');
+        delete(model.modelfile);
+    end
   end
   methods(Test, ParameterCombination='exhaustive')
     function glm = test_extract_missing(this, cutoff, nan_percent)
@@ -451,8 +526,8 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       sr = 100;
       duration = 200;
       segment_length = 10-1/sr;
-      model.modelfile = 'test_extract_missing_model.mat';
-      model.datafile = 'test_extract_missing_data.mat';
+      model.modelfile = 'GLMTestExtraMissingModel.mat';
+      model.datafile = 'GLMTestExtraMissingData.mat';
       model.timeunits = 'seconds';
       model.filter = struct(...
         'lpfreq', 'none', 'lporder', 1,  ...
@@ -478,16 +553,25 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       else
         new_nan_percent = nan_percent * 100;
       end
-      %t
       pspm_glm_test.save_datafile(Y, sr, duration, model.datafile);
-      % test
-      glm = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff',cutoff)));
+      % find conditions to exclude
+      for i_cond = 1:3
+        onsets = pspm_time2index(model.timing.onsets{i_cond}, sr);
+        duration = pspm_time2index(segment_length, sr, inf, 1);
+        [sts, segments] = pspm_extract_segments_core({Y}, {onsets}, duration);
+        nan_ratio = sum(isnan(segments(:)))/numel(segments);
+        exclude_cond(i_cond) = nan_ratio > cutoff;
+      end
+      % test (caution: here we specify cutoff as proportion but pspm_glm
+      % expects and returns percentage)
+      [sts, glm] = pspm_glm(model, struct('exclude_missing', struct('segment_length',segment_length,'cutoff', 100 * cutoff)));
       exptected_number_of_conditions = 3;
       this.verifyEqual(length(glm.stats_missing),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_missing does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyEqual(length(glm.stats_exclude),exptected_number_of_conditions, sprintf('test_extract_missing: glm.stats_exclude does not have the expected number (%i) of elements', exptected_number_of_conditions));
       this.verifyTrue((abs(mean(glm.stats_missing)-new_nan_percent) < 1), sprintf('test_extract_missing: mean of glm.stats_missing (%i) does not correspond to expected nan_percentage (%i)', mean(glm.stats_missing), new_nan_percent));
-      check_values = glm.stats_missing > cutoff;
+      check_values = glm.stats_missing > 100 * cutoff;
       this.verifyTrue(all(glm.stats_exclude == check_values), sprintf('test_extract_missing: glm.stats_exclude does not exclude the right conditions'));
+      this.verifyTrue(all(glm.stats_exclude == exclude_cond), sprintf('test_extract_missing: glm.stats_exclude does not exclude the right conditions'));
       % clean up
       delete(model.datafile);
       delete(model.modelfile);
@@ -500,7 +584,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       rehash;
       %call pspm_glm
       options = struct('marker_chan_num', 'marker');
-      glm = pspm_glm(model, options);
+      [sts, glm] = pspm_glm(model, options);
       %check if output is equal the timing
       actual = glm.stats;
       this.verifyEqual(length(actual),length(expected_stats), sprintf('%s: glm.stats does not have the expected number (%i) of elements', test_name, length(expected_stats)));
@@ -548,7 +632,7 @@ classdef pspm_glm_test < matlab.unittest.TestCase
       end
       signal = zeros(sr*duration,1);
       for i = 1:length(onsets)
-        signal(floor(onsets(i)*sr):floor((onsets(i)+onsets_duration(i))*sr)) = scal(i);
+        signal(round(onsets(i)*sr+1):round((onsets(i)+onsets_duration(i))*sr+1)) = scal(i);
       end
       signal = signal + offset;
     end
@@ -564,6 +648,29 @@ classdef pspm_glm_test < matlab.unittest.TestCase
         data{2}.header.sr = 1;
         data{2}.header.chantype = 'marker';
         data{2}.header.units = 'events';
+      end
+      save(fn, 'data', 'infos');
+    end
+    function save_datafile_sps(Y, sr, duration, fn, onsets)
+      infos.duration = duration;
+      infos.source = [];
+      data{1}.data = Y;
+      data{1}.header.sr = sr;
+      data{1}.header.chantype = 'sps';
+      data{1}.header.units = 'unknown';
+      data{2}.data = Y;
+      data{2}.header.sr = sr;
+      data{2}.header.chantype = 'sps_l';
+      data{2}.header.units = 'unknown';
+      data{3}.data = Y;
+      data{3}.header.sr = sr;
+      data{3}.header.chantype = 'sps_r';
+      data{3}.header.units = 'unknown';
+      if nargin > 4
+        data{4}.data = onsets;
+        data{4}.header.sr = 1;
+        data{4}.header.chantype = 'marker';
+        data{4}.header.units = 'events';
       end
       save(fn, 'data', 'infos');
     end

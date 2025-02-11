@@ -1,18 +1,18 @@
 function [sts, data] = pspm_get_saccade_l(import)
 % ● Description
-%   pspm_get_saccade_l is a common function for importing eyelink data
-%   (saccade_l data)
+%   pspm_get_saccade_l is a common function for importing left saccade
+%   (saccade_l) data
 % ● Format
 %   [sts, data] = pspm_get_saccade_l(import)
 % ● Arguments
-%    import:
-%     .data: column vector of waveform data
-%       .sr: sample rate
-%    .units:
+%   ┌import
+%   ├─.data : column vector of left saccade data
+%   ├.units : unit of left saccade data
+%   └───.sr : sample rate
 % ● History
 %   Introduced in PsPM 4.0.2
 %   Written in 2018 by Laure Ciernik
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings

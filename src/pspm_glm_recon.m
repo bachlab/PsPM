@@ -1,19 +1,18 @@
-function varargout = pspm_glm_recon(modelfile)
+function [sts, glm] = pspm_glm_recon(modelfile)
 % ● Description
 %   pspm_glm_recon reconstructs the estimated responses and measures its peak.
 %   Reconstructed responses are written into the field glm.resp, and
 %   reconstructed response peaks into the field glm.recon in original GLM file.
 % ● Format
-%   glm = pspm_glm_recon(glmfile) or [sts, glm] = pspm_glm_recon(glmfile)
+%   glm = pspm_glm_recon(modelfile) or [sts, glm] = pspm_glm_recon(modelfile)
 % ● Arguments
-%   glmfile:
+%   * modelfile : the GLM file
 % ● Outputs
-%   sts:
-%   glm:
+%   *       glm : calculated GLM struct
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Written    in 2008-2018 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings
@@ -22,13 +21,6 @@ if isempty(settings)
 end
 sts = -1;
 glm = [];
-switch nargout
-  case 1
-    varargout{1} = glm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = glm;
-end
 
 % get GLM & basis functions
 % -------------------------------------------------------------------------
@@ -43,7 +35,7 @@ bfdur = size(bs, 1);
 
 % for ra_fc with bf.arg == 1 take regressor difference
 % -------------------------------------------------------------------------
-if strcmpi('ra_fc', glm.modelspec) && glm.bf.args == 1
+if strcmpi('ra_fc', glm.modelspec) && ~isempty(glm.bf.args) && glm.bf.args == 1
   regdiff = 1;
 else
   regdiff = 0;
@@ -82,11 +74,4 @@ glm.resp  = resp;
 glm.reconnames = condname(:);
 save(modelfile, 'glm');
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = glm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = glm;
-end
-return
+

@@ -1,24 +1,38 @@
 function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % ● Description
-%   pspm_get_eyelink is the main function for import of SR Research Eyelink 1000
-%   files.
+%   pspm_get_eyelink imports asc-exported SR Research Eyelink 1000 files.
+%   Original eyelink output files (with extension *.edf) must first be 
+%   converted to ASCII format (extension *.asc). This is done with the 
+%   utility edf2asc.exe (normally included in the Eyelink software in 
+%   <Path to Program Files>\SR Research\EyeLink\EDF_Access_API\). Otherwise 
+%   there is a Data viewer, available at http://www.sr-research.com/dv.html 
+%   (registration needed), which installs a utility called 
+%   'Visual EDF2ASC'. This also supports the conversion and does not 
+%   require a license.  
+%   The sequence of channels depends on the acquisition settings, please check
+%   in the ASCII file using text editor. Available channels are Pupil L, 
+%   Pupil R, x L, y L, x R, y R, Blink L, Blink R, Saccade L, Saccade R. The 
+%   channels will be imported according to a known data structure, therefore 
+%   channel ids passed to the import function will be ignored. In the PsPM 
+%   file, channels that were not available in the data file, will be filled 
+%   with NaN values. Additionally, periods of blinks and saccades will be 
+%   set to NaN during the import.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import);
 % ● Arguments
-%   ┌────────────import:  import job structure with
-%   │ [mandatory fields]
-%   ├───────────────.sr:
-%   ├─────────────.data:  except for custom channels, the field .channel will
-%   │                     be ignored. The id will be determined according to
-%   │                     the channel type.
-%   │ [optional fields]
-%   ├.eyelink_trackdist:  A numeric value representing the distance between
-%   │                     camera and recorded eye. Disabled if 0 or negative.
-%   │                     If it is a positive numeric value, causes the
-%   │                     conversion from arbitrary units to distance unit
-%   │                     according to the set distance.
-%   └────.distance_unit:  The unit to which the data should be converted and
-%                         in which eyelink_trackdist is given.
+%   ┌────────────import
+%   ├───────────────.sr :  sampling rate
+%   ├─────────────.data :  except for custom channels, the field .channel
+%   │                      will be ignored. The id will be determined
+%   │                      according to the channel type.
+%   ├.eyelink_trackdist :  [optional] A numeric value representing the
+%   │                      distance between camera and recorded eye.
+%   │                      Disabled if 0 or negative.
+%   │                      If it is a positive numeric value, causes the
+%   │                      conversion from arbitrary units to distance unit
+%   │                      according to the set distance.
+%   └────.distance_unit :  [optional] The unit to which the data should be
+%                          converted and in which eyelink_trackdist is given.
 % ● Developer's Notes
 %   In this function, channels related to eyes will not produce an error, if
 %   they do not exist. Instead they will produce an empty channel (a channel
@@ -26,7 +40,7 @@ function [sts, import, sourceinfo] = pspm_get_eyelink(datafile, import)
 % ● History
 %   Introduced in PsPM 3.0 and updated in PsPM 5.1.2
 %   Written in 2008-2017 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -50,7 +64,6 @@ data = import_eyelink(datafile);
 % expand blink/saccade channels with offset
 % set data channels with blinks/saccades to NaN
 % -------------------------------------------------------------------------
-addpath(pspm_path('backroom'));
 for i = 1:numel(data)-1
   if strcmpi(data{i}.eyesObserved, settings.eye.char.l)
     mask_chans = {'blink_l', 'saccade_l'};
@@ -61,25 +74,22 @@ for i = 1:numel(data)-1
   else
     warning('ID:invalid_input', ['No valid eye marker is detected, please check input channels.']);
   end
-  expand_factor = 0;
 
-  data{i}.channels = blink_saccade_filtering(...
+  data{i}.channels = set_blinks_saccades_to_nan(...
     data{i}.channels, ...
     data{i}.channel_header, ...
-    mask_chans, ...
-    expand_factor * data{i}.sampleRate ...
+    mask_chans ...
     );
 end
-rmpath(pspm_path('backroom'));
 
 % iterate through data and fill up channel list as long as there is no
 % marker channel. if there is any marker channel, the settings accordingly
-% markerinfos, markers and marker type.
+% markerinfo, markers and marker type.
 % -------------------------------------------------------------------------
 
 % ensure sessions have the same samplerate
-%separate marker_data from real data
-all_markers = data{numel(data)};
+% separate marker_data from real data
+all_markers = data{end};
 data = data(1:numel(data)-1);
 sr = cell2mat(cellfun(@(d) d.sampleRate, data, 'UniformOutput', false));
 eyesObs = cellfun(@(d) d.eyesObserved, data, 'UniformOutput', false);
@@ -92,9 +102,9 @@ if numel(data) > 1 && (any(diff(sr)) || any(~strcmp(eyesObs,eyesObs{1})))
   % samplerate
   sampleRate = data{1}.sampleRate;
   % markers
-  markers = data{1}.markers;
-  % markerinfos
-  markerinfos = data{1}.markerinfos;
+  markers = (data{1}.markers-data{1}.raw(1,1))/sampleRate;
+  % markerinfo
+  markerinfo = data{1}.markerinfo;
   % units
   units = data{1}.units;
 else
@@ -103,10 +113,6 @@ else
   last_time = data{1}.raw(1,1);
 
   channels = [];
-  markers = [];
-
-  mi_value = [];
-  mi_name = {};
 
   n_cols = size(data{1}.channels, 2);
   counter = 1;
@@ -126,25 +132,8 @@ else
     n_diff = round((start_time - last_time)*sr/1000);
     if n_diff > 0
 
-      % channels and markers
+      % channels
       channels(counter:(counter+n_diff-1),1:n_cols) = NaN(n_diff, n_cols);
-      markers(counter:(counter+n_diff-1), 1) = zeros(n_diff,1);
-
-      % markerinfos
-      mi_value(end + 1 : end + n_diff, 1) = zeros(n_diff,1);
-      mi_name( end + 1 : end + n_diff, 1) = {'0'};
-
-      % find if there are markers in the breaks
-      break_markers_idx = all_markers.times>=last_time & all_markers.times<=start_time;
-      tmp_times = all_markers.times(break_markers_idx);
-      tmp_vals  = all_markers.vals(break_markers_idx);
-      tmp_names = all_markers.names(break_markers_idx);
-
-      % calculate, weher to insert missing markers
-      tmp_marker_idx = round((tmp_times- last_time)*sr/1000)-1 + counter;
-      markers(tmp_marker_idx,1) = 1;
-      mi_value(tmp_marker_idx,1) = tmp_vals;
-      mi_name(tmp_marker_idx,1) = tmp_names;
       counter = counter + n_diff;
     end
 
@@ -152,25 +141,23 @@ else
 
     % channels and markers
     channels(counter:(counter+n_data-1),1:n_cols) = data{c}.channels;
-    markers(counter:(counter+n_data-1),1) = data{c}.markers;
-
-    % markerinfos
-    n_markers = numel(data{c}.markerinfos.value);
-    mi_value(end + 1 : end + n_markers, 1) = data{c}.markerinfos.value;
-    mi_name( end + 1 : end + n_markers, 1) = data{c}.markerinfos.name;
 
     counter = counter + n_data;
     last_time = end_time;
   end
 
-  markerinfos.name = mi_name;
-  markerinfos.value = mi_value;
-
-  % units (they should be for all channels the same)
+  % units (they should be the same for all sessions)
   units = data{1}.units;
 
   % samplerate
   sampleRate = sr;
+
+  % markers (time stamps are in ms; convert to seconds)
+  markers = (all_markers.markers-data{1}.raw(1,1))/1000;
+
+  % markerinfo
+  markerinfo = all_markers.markerinfo;
+
 end
 
 
@@ -204,17 +191,10 @@ for k = 1:numel(import)
   end
 
   if strcmpi(import{k}.type, 'marker')
-    import{k}.marker = 'continuous';
-    import{k}.sr     = sampleRate;
+    import{k}.marker = 'timestamps';
+    import{k}.sr     = 1;
     import{k}.data   = markers;
-    % marker info is read and set (in this instance) but
-    % imported data cannot be read at the moment (in later instances)
-    import{k}.markerinfo = markerinfos;
-
-    % by default use 'all' flank for translation from continuous to events
-    if ~isfield(import{k},'flank')
-      import{k}.flank = 'all';
-    end
+    import{k}.markerinfo = markerinfo;
   else
     % determine channel id from channeltype - eyelink specific
     % thats why channel ids will be ignored!

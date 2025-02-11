@@ -1,19 +1,10 @@
 function out = pspm_cfg_run_rename(job)
-% Executes pspm_ren
-
-% $Id$
-% $Rev$
-
-n = size(job.file,2);
-
-filename = cell(n,1);
-newfilename = cell(1,n);
-for i=1:n
-    filename{i} = job.file(i).filename{1};
-    newfilename{i} = job.file(i).newfilename;
-end
-out = pspm_ren(filename, newfilename);
-
+% Updated on 08-01-2024 by Teddy
+filename = job.datafile{1};
+newfilename = pspm_cfg_selector_outputfile('run', job);
+options = struct();
+options.overwrite = job.output.overwrite;
+[sts, out] = pspm_rename(filename, newfilename, options);
 if ~iscell(out)
-    out = {out};
+  out = {out};
 end

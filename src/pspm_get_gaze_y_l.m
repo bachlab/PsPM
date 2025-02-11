@@ -5,9 +5,11 @@ function [sts, data] = pspm_get_gaze_y_l(import)
 % ● Format
 %   [sts, data]= pspm_get_gaze_y_l(import)
 % ● Arguments
-%   import
-%     .data: column vector of waveform data
-%       .sr: sample rate
+%   ┌import
+%   ├─.data : column vector of left gaze y data
+%   ├─.units: measurement units 
+%   ├───.sr : sample rate
+%   └─.range: range of the gaze data 
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)

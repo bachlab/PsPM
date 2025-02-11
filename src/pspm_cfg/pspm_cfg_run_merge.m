@@ -1,23 +1,18 @@
 function [out] = pspm_cfg_run_merge(job)
-
-% $Id$
-% $Rev$
-
+% Updated on 08-01-2024 by Teddy
 % load input files
-infile1 = job.datafiles.first_file;
-infile2 = job.datafiles.second_file;
-
+infile1 = job.datafiles.first_file{1};
+infile2 = job.datafiles.second_file{1};
+options = struct();
 % set reference
-ref = job.reference;
-
+if isfield(job.reference, 'marker')
+    options.marker_chan_num = job.reference.marker.chan_nr;
+    ref = 'marker';
+else
+    ref = 'file';
+end
 % set options
-options.overwrite = job.options.overwrite;
-options.marker_chan_num = job.options.marker_chan;
+options = pspm_update_struct(options, job, 'overwrite');
 
 % run merge
-[out] = pspm_merge(infile1, infile2, ref, options);
-
-% ensure output is always a cell
-if ~iscell(out)
-    out = {out};
-end;
+[sts, out] = pspm_merge(infile1, infile2, ref, options);

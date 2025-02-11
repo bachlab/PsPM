@@ -1,34 +1,19 @@
-function pspm_cfg_run_export(job)
-% Executes pspm_exp
-
-% $Id$
-% $Rev$
-
-% datafile
-modelfile = job.modelfile;
-
-% target
+function out = pspm_cfg_run_export(job)
+% Updated on 19-12-2023 by Teddy
+options = struct();
+modelfile = job.datafile;
 if isfield(job.target, 'screen')
-    target = 'screen';
+  target = 'screen';
 else
-    target = job.target.filename;
+  target = pspm_cfg_selector_outputfile('run', job.target, 'tsv');
+  options.overwrite = job.target.output.overwrite;
 end
-
-% datatype
-datatype = job.datatype;
-
-% exclude conditions with too many NaN
-exclude_missing = job.exclude_missing;
-
-% delimiter
 delimfield = fieldnames(job.delim);
 delim = job.delim.(delimfield{1});
-
-% place all optional arguments in an option struct
-options = struct();
-options.target    = target;
-options.statstype = datatype;
 options.delim     = delim;
-options.exclude_missing = exclude_missing;
-
-pspm_exp(modelfile, options);
+options.target    = target;
+options.statstype = job.datatype;
+options = pspm_update_struct(options, job, 'exclude_missing');
+% exclude conditions with too many NaN
+pspm_export(modelfile, options);
+out = target;

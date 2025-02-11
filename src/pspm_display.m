@@ -1,13 +1,24 @@
 function varargout = pspm_display(varargin)
 % ● Description
-%   pspm_display is the code for the GUI that is used to display different data from scr
-%   datafiles.
+%   pspm_display opens a GUI for displaying data from PsPM files. A PsPM file
+%   to be displayed can be specified in the function call or in the GUI
+%   itself.
+% ● Format
+%   → Standard
+%     pspm_display
+%     pspm_display(filename)
+%     pspm_display(filepath)
+%   → Examples
+%     pspm_display('test.mat')
+%     pspm_display('~/Documents/test.mat')
 % ● Arguments
-%   Accepts input: 'filepath/filename'
+%   * filename: the name of a file to be displayed, which must ends with '.mat'.
+%   * filepath: the path of a file to be displayed, which must ends with '.mat'.
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2013 Philipp C Paulus (Technische Universitaet Dresden)
-%   Maintained in 2021 by Teddy Chao (UCL)
+%   Written    in 2013 Philipp C Paulus (Technische Universitaet Dresden)
+%   Maintained in 2021 by Teddy
+%   Bug fixed  in 2024 by Teddy
 
 %% Initialise
 global settings
@@ -29,7 +40,11 @@ gui_State = struct('gui_Name',       mfilename, ...
   'gui_LayoutFcn',  [], ...
   'gui_Callback',   []);
 if nargin && ischar(varargin{1})
-  gui_State.gui_Callback = str2func(varargin{1});
+  if nargin == 1 && length(varargin{1})>5 && strcmp(varargin{1}(end-3:end), '.mat')
+    gui_State.gui_Callback = varargin{1};
+  else
+    gui_State.gui_Callback = str2func(varargin{1});
+  end
 end
 
 if nargout
@@ -56,7 +71,6 @@ global settings;
 if isempty(settings)
   pspm_init;
 end
-
 % load channeltypes from settings variable
 
 j = 1 ; l = 1;
@@ -141,8 +155,11 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+handles.pspm_display.HandleVisibility = settings.handle;
+
 % UIWAIT makes pspm_display wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+%uiwait(handles.pspm_display);
+
 end
 
 
@@ -154,7 +171,7 @@ function varargout = pspm_display_OutputFcn(~, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+
 end
 
 
@@ -478,8 +495,6 @@ if not(sts == 0)
   set(handles.button_autoscale,'Value',0);
   set(handles.button_all,'Value',1);
 
-elseif numel(varargin)>1
-  warning('Too many input arguments. Inputs 2:end ignored. ');
 end
 
 % Update handles structure
@@ -510,7 +525,7 @@ saveas(q,savename);
 close(q)
 end
 % --------------------------------------------------------------------
-function exit_Callback(~, ~, ~)
+function exit_Callback(~, ~, handles)
 % hObject    handle to exit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -680,14 +695,8 @@ end
 %% pp_plot
 
 function pp_plot(handles)
-
-global settings;
-if isempty(settings)
-  pspm_init;
-end
-
 % ---header----------------------------------------------------------------
-
+global settings
 %      handles.name ... filename
 %      prop... struct with fields
 %              .wave (channel number)
@@ -854,24 +863,17 @@ else
   xlabel('Time [s]','Fontsize',settings.ui.FontSizeText);
   wv_chanid = handles.prop.wavechans(handles.prop.idwave);
   unit = deblank(handles.data{wv_chanid}.header.units);
-  Ylab = ['Unknown unit [',unit,']']; % default value
+  channeltypeindx = find(strcmpi(handles.data{wv_chanid}.header.chantype, ...
+      {settings.channeltypes.type}));
+  Ylab = [settings.channeltypes(channeltypeindx).description, ' [', unit,']']; % default value
   switch handles.prop.wave
-    case 'ecg'
-      Ylab = ['Amplitude [',unit,']'];
     case 'scr'
-      Ylab = ['Amplitude [',unit,']'];
-    case 'emg'
-      Ylab = ['Amplitude [',unit,']'];
-    case 'hp'
-      Ylab = 'Interpolated IBI [ms]';
-    case {'pupil','pupil_l','pupil_r',...
-        'pupil_pp','pupil_pp_l','pupil_pp_r'}
+      Ylab = ['Skin conductance [',unit,']'];
+    case {'pupil','pupil_l','pupil_r', 'pupil_c'}
       Ylab = ['Pupil size [',unit,']'];
-    case {'gaze_x','gaze_x_l','gaze_x_r',...
-        'gaze_x_pp','gaze_x_pp_l','gaze_x_pp_r'}
+      case {'gaze_x','gaze_x_l','gaze_x_r', 'gaze_x_c'}
       Ylab = ['Gaze x coordinate [',unit,']'];
-    case {'gaze_y','gaze_y_l','gaze_y_r',...
-        'gaze_y_pp','gaze_y_pp_l','gaze_y_pp_r'}
+      case {'gaze_y','gaze_y_l','gaze_y_r', 'gaze_y_c'}
       Ylab = ['Gaze y coordinate [',unit,']'];
   end
   ylabel(Ylab,'Fontsize',settings.ui.FontSizeText);
@@ -1055,46 +1057,19 @@ handles.tag_summary_recording_duration_content.String = ...
   [num2str(handles.info.duration), ' s'];
 handles.tag_summary_recording_duration_content.Value = ...
   handles.info.duration;
-[r_channels,c_channels] = size(handles.data);
-% array_channel_type = cell(r_channels,c_channels);
+n_channels = numel(handles.data);
 string_channel_list = [];
-if r_channels > 1 && c_channels > 1
-  for i_r_channel = 1:r_channels
-    for i_c_channels = 1:c_channels
-      % array_channel_type(r_channels,c_channels) = ...
-      %   handles.data{i_r_channel,i_c_channels}.header.chantype;
-      targeted_channel_reference = ...
-        handles.data{i_r_channel,i_c_channels}.header.chantype;
-      targeted_channel_display = ...
+for i_channel = 1:n_channels
+    targeted_channel_reference = ...
+        handles.data{i_channel}.header.chantype;
+    targeted_channel_display = ...
         channel_list_full(strcmp(targeted_channel_reference, ...
         {channel_type_reference_list.type}));
-      targeted_channel_display = ...
-        targeted_channel_display{1,1};
-      string_channel_list = [string_channel_list, ...
-        num2str(i_r_channel), ',', num2str(i_c_channels), ' ', ...
-        targeted_channel_display, newline];
-    end
-  end
-else
-  number_channel = max(r_channels, c_channels);
-  for i_channel = 1:number_channel
-    if r_channels == 1
-      i_r_channels = 1;
-      i_c_channels = i_channel;
-    else
-      i_c_channels = 1;
-      i_r_channels = i_channel;
-    end
-    targeted_channel_reference = ...
-      handles.data{i_r_channels,i_c_channels}.header.chantype;
-    targeted_channel_display = ...
-      channel_list_full(strcmp(targeted_channel_reference, ...
-      {channel_type_reference_list.type}));
     targeted_channel_display = targeted_channel_display{1,1};
     string_channel_list = [string_channel_list, ...
-      num2str(i_channel), ' ', ...
-      targeted_channel_display, newline];
-  end
+        num2str(i_channel), ' ', ...
+        targeted_channel_display, newline];
 end
+
 handles.tag_summary_channel_list_content.String = string_channel_list;
 end

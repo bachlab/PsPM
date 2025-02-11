@@ -423,9 +423,7 @@ function varargout = cfg_util(cmd, varargin)
 % Copyright (C) 2007 Freiburg Brain Imaging
 
 % Volkmar Glauche
-% $Id: cfg_util.m 380 2016-11-08 07:47:23Z tmoser $
 
-rev = '$Rev: 380 $';
 
 %% Initialisation of cfg variables
 % load persistent configuration data, initialise if necessary
@@ -996,7 +994,9 @@ switch lower(cmd),
                         cfg_message('matlabbatch:fopen', 'Failed to open ''%s'' for writing:\n%s', jobfile, msg);
                     end
                     fprintf(fid, '%%-----------------------------------------------------------------------\n');
-                    fprintf(fid, '%% Job saved on %s by %s (rev %s)\n', datestr(now), mfilename, rev);
+                    if exist('rev','var')
+                        fprintf(fid, '%% Job saved on %s by %s (rev %s)\n', datestr(now), mfilename, rev);
+                    end
                     versions = cfg_get_defaults('versions');
                     vtags    = fieldnames(versions);
                     for k = 1:numel(vtags)

@@ -36,8 +36,8 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       epochs = zeros(1,2);
       epochs(1,1)=3;
       epochs(1,2)=4;
-      save([this.fn_missing,'.mat'],"epochs")
-      newdatafile = pspm_split_sessions(fn, 3, options);
+      save([this.fn_missing,'.mat'], 'epochs')
+      [sts, newdatafile]  = pspm_split_sessions(fn, options);
       this.verifyTrue(isfile(newdatafile{1}));
       this.verifyTrue(isfile(newdatafile{2}));
       this.verifyTrue(isfile(newdatafile{3}));
@@ -69,7 +69,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       pspm_load_data(fn, datastruct); %save datafile
       %datafile.data{3}.data = [0 1]';
       %save(fn, '-struct', 'datafile');
-      newdatafile = pspm_split_sessions(fn, 0, struct());
+      [sts, newdatafile]  = pspm_split_sessions(fn, struct());
       this.verifyTrue(numel(newdatafile) == this.expected_number_of_files, ...
         sprintf('the testdatafile %s has been split into %i files and not like expected into %i files', ...
         fn, numel(newdatafile), this.expected_number_of_files));
@@ -92,7 +92,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       channels{3}.variance = 0.05;
       % 6 minutes data
       pspm_testdata_gen(channels, 60*6, fn);
-      newdatafile = pspm_split_sessions(fn, 3, struct());
+      [sts, newdatafile]  = pspm_split_sessions(fn, struct());
       % check number of sessions
       this.verifyEqual(numel(newdatafile), nsessions);
       % check that all sessions (with the exception of the first) start at the marker onset  
@@ -120,7 +120,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
       % 6 minutes data
       data = pspm_testdata_gen(channels, 60*6, fn);
       options = struct('prefix', prefix, 'suffix', suffix);
-      newdatafile = pspm_split_sessions(fn, 3, options);
+      [sts, newdatafile]  = pspm_split_sessions(fn, options);
       this.verifyEqual(numel(newdatafile),10);
       for i = 1:numel(newdatafile)
         if exist(newdatafile{i}, 'file')
@@ -168,7 +168,7 @@ classdef pspm_split_sessions_test < matlab.unittest.TestCase
         sess_dur(end) = dur - split_times(end);
       end
       options.splitpoints = splitpoints;
-      newdatafile = pspm_split_sessions(fn, 3, options);
+      [sts, newdatafile] = pspm_split_sessions(fn, options);
       if ~isempty(splitpoints)
         n_sess_exp = numel(splitpoints)+1;
       else

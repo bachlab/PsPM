@@ -5,14 +5,14 @@ function [sts, data] = pspm_get_pupil_l(import)
 % ● Format
 %   [sts, data]= pspm_get_pupil_l(import)
 % ● Arguments
-%   import: [struct]
-%    .data: column vector of waveform data
-%      .sr: sample rate
-%   .units:
+%   ┌import
+%   ├─.data : column vector of left pupil data
+%   ├───.sr : sample rate
+%   └.units : unit of pupil data
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

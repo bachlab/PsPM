@@ -13,9 +13,6 @@ if isempty(settings), pspm_init; end;
 vars = struct();
 vars.modality = 'RAR';
 vars.modspec = 'ra_fc';
-vars.glmref = {['Castegnetti, Tzovara, Staib, Gerster, & Bach (2016) ', ...
-    'Psychophysiology  (Development of the GLM for fear-conditioned RAR)']};
-vars.glmhelp = '';
 
 % load default settings
 glm_ra_fc = pspm_cfg_glm(vars);
@@ -37,7 +34,7 @@ for i=1:2
     rarf_fc{i}.val    = {i};
 end
 rarf_fc{1}.help   = {'RARF_FC early and late response (default).'};
-rarf_fc{2}.help   = {'RARF_FC early response with derivative.'};
+rarf_fc{2}.help   = {'RARF_FC early response with derivative (recommended for longer SOAs).'};
 
 
 bf        = cfg_choice;

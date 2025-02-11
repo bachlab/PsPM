@@ -11,15 +11,8 @@ if isempty(settings), pspm_init; end
 % set variables
 
 vars = struct();
-vars.modality = 'PSR';
+vars.modality = 'pupil';
 vars.modspec = 'ps_fc';
-vars.glmref = { ...
-        ['Korn, Staib, Tzovara, Castegnetti & Bach (2016) Psychophysiology ', ...
-        '(Development of the GLM for fear-conditioned PSR)'] ...
-    };
-vars.glmhelp = ['Pupil size models were developed with pupil size data ', ...
-    'recorded in diameter values. Therefore pupil size data analyzed ', ...
-    'using these models should also be in diameter.'];
 
 % load default settings
 glm_ps_fc = pspm_cfg_glm(vars);
@@ -40,8 +33,8 @@ for i=1:4
     psrf_fc{i}.tag    = ['psrf_fc' num2str(i-1)];
     psrf_fc{i}.val    = {i-1};
 end
-psrf_fc{1}.help   = {'PSRF_FC: CS-evoked response only and without derivatives.'};
-psrf_fc{2}.help   = {'PSRF_FC: CS-evoked response and time derivative (default).'};
+psrf_fc{1}.help   = {'PSRF_FC: CS-evoked response only and without derivatives (default).'};
+psrf_fc{2}.help   = {'PSRF_FC: CS-evoked response and time derivative.'};
 psrf_fc{3}.help    = {['PSRF_FC: CS- and US-evoked response (3.5 s SOA) without derivatives. ', ... 
     'For other SOAs, specify the basis function outside the GUI.']};
 psrf_fc{4}.help    = {['PSRF_FC: US-evoked response only (3.5 s SOA) and without derivatives. ', ...
@@ -60,41 +53,15 @@ psrf_fc{5}.help = {['PSRF_ERL use a Erlang response funcation according to', ...
 bf        = cfg_choice;
 bf.name   = 'Basis Function';
 bf.tag    = 'bf';
-bf.val    = {psrf_fc{2}};
+bf.val    = {psrf_fc{1}};
 bf.values = {psrf_fc{:}};
 bf.help   = {['Basis functions. Standard is to use a canonical pupil size response function ' ...
-    'for fear conditioning (PSRF_FC) with time derivative for later reconstruction of the response peak. ', ...
-    'For help on the options, click on the basis function in the window above.']};
+    'for fear conditioning (PSRF_FC) without time derivative. ', ...
+    'For help on the options, click on the basis function in the window above. NOTE: These basis functions were developed with pupil size data ', ...
+    'recorded in diameter values. Therefore pupil size data analyzed ', ...
+    'using these models should also be in diameter.']};
 
 % look for bf and replace
 b = cellfun(@(f) strcmpi(f.tag, 'bf'), glm_ps_fc.val);
 glm_ps_fc.val{b} = bf;
 
-% specific channel
-chan_def_left         = cfg_const;
-chan_def_left.name    = 'First left eye';
-chan_def_left.tag     = 'chan_def_left';
-chan_def_left.val     = {'pupil_l'};
-chan_def_left.help    = {'Use first left eye channel.'};
-
-chan_def_right         = cfg_const;
-chan_def_right.name    = 'First right eye';
-chan_def_right.tag     = 'chan_def_right';
-chan_def_right.val     = {'pupil_r'};
-chan_def_right.help    = {'Use first right eye channel.'};
-
-best_eye                = cfg_const;
-best_eye.name           = 'Best eye';
-best_eye.tag            = 'best_eye';
-best_eye.val            = {'pupil'};
-best_eye.help           = {['Use eye with the fewest NaN values.']};
-
-chan_def                = cfg_choice;
-chan_def.name           = 'Default';
-chan_def.tag            = 'chan_def';
-chan_def.val            = {best_eye};
-chan_def.values         = {best_eye, chan_def_left, chan_def_right};
-
-a = cellfun(@(f) strcmpi(f.tag, 'chan'), glm_ps_fc.val);
-glm_ps_fc.val{a}.values{1} = chan_def;
-glm_ps_fc.val{a}.val{1} = chan_def;

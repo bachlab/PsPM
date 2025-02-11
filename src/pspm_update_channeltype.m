@@ -1,19 +1,16 @@
 function [channeltype_new] = pspm_update_channeltype (channeltype_og, keyword)
 % ● Description
-%   pspm_update_channeltype update the keywords of channel type
+%   pspm_update_channeltype update the keywords of channel type.
 % ● Arguments
-%   channeltype_og:  [string] the name of the original channel type
-%          keyword:  the keyword to update to
-%                    accepted values, 'c', 'pp', or {'c','pp'}
-%                    'c': update the lateral keyword 'l' or 'r' to 'c'
-%                    'pp': update the channel type to be preprocessed
-%                    {'c','pp'}: update the channel type to be both bilateral
-%                    and preprocessed.
+%   *  channeltype_og : [string] the name of the original channel type
+%   *         keyword : the keyword to update to accepted values, 'c', 'pp'.
+%                       (1) 'c': update the lateral keyword 'l' or 'r' to 'c'.
+%                       (2)'pp': update the channel type to be preprocessed.
 % ● Output
-%   channeltype_new: the new channel type with the updated keyword
+%   * channeltype_new : the new channel type with the updated keyword
 % ● History
 %   Introduced in PsPM 6.0.
-%   Written in 2022 by Teddy Chao (UCL)
+%   Written in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -34,15 +31,6 @@ switch class(keyword)
         if ~strcmp(channeltype_og_struct,'pp')
           channeltype_new_struct = {channeltype_og_struct{1}, 'pp', channeltype_og_struct{2:end}};
         end
-    end
-  otherwise
-    % if keyword is {'c','pp'}
-    if isempty(setdiff(keyword, {settings.lateral.char.c,'pp'})) || isempty(setdiff(keyword, {'pp',settings.lateral.char.c}))
-      loc = strcmp(channeltype_og_struct,settings.lateral.char.l) + strcmp(channeltype_og_struct,settings.lateral.char.r);
-      channeltype_new_struct{logical(loc)} = settings.lateral.char.c;
-      if ~strcmp(channeltype_og_struct,'pp')
-        channeltype_new_struct = {channeltype_new_struct{1}, 'pp', channeltype_new_struct{2:end}};
-      end
     end
 end
 channeltype_new = join(channeltype_new_struct,'_');

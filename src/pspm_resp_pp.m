@@ -1,26 +1,47 @@
-function sts = pspm_resp_pp(fn, sr, channel, options)
+function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 % ● Description
-%   pspm_resp_pp preprocesses raw respiration traces. The function detects
-%   respiration cycles for bellows and cushion systems, computes respiration
-%   period, amplitude and RFR, assigns these measures to the start of each
-%   cycle and linearly interpolates these (expect rs = respiration time
-%   stamps). Results are written to new channels in the same file
+%   pspm_resp_pp preprocesses raw respiration traces. The function detects respiration
+%   cycles for bellows and cushion systems and creates respiration time 
+%   stamps (rs), computes respiration period (rp), amplitude (ra) and
+%   respiratory flow rate (rfr), assigns these measures to the start of 
+%   each cycle and linearly interpolates these. The output data type can be
+%   restricted in options; otherwise all four outputs are created.
 % ● Format
-%   sts = pspm_resp_pp(fn, sr, channel, options)
+%   [sts, channel_index] = pspm_resp_pp(fn, sr, options)
 % ● Arguments
-%                 fn: data file name
-%                 sr: sample rate for new interpolated channel
-%            channel: number of respiration channel (optional, default: first
-%                     respiration channel)
-%   ┌────────options:
-%   ├────.systemtype: ['bellows'(default) /'cushion']
+%   *             fn: data file name
+%   *             sr: sample rate for new interpolated channel. This will
+%   be ignored if the chosen output is only respiration time stamps.
+%   ┌─────── options
+%   ├───────.channel: [optional, numeric/string, default: 'resp', i.e. last
+%   │                 respiration channel in the file]
+%   │                 Channel type or channel ID to be preprocessed.
+%   │                 Channel can be specified by its index (numeric) in the
+%   │                 file, or by channel type (string).
+%   │                 If there are multiple channels with this type, only
+%   │                 the last one will be processed. If you want to
+%   │                 preprocess several respiration in a PsPM file,
+%   │                 call this function multiple times with the index of
+%   │                 each channel.  In this case, set the option
+%   │                 'channel_action' to 'add',  to store each
+%   │                 resulting channel separately.
+%   ├────.systemtype: ['bellows'(default) /'cushion'] Bellows system
+%   │                 (increased air flow upon inspiration) or cushion 
+%   │                 system (increased air pressure upon inspiration).
 %   ├──────.datatype: a cell array with any of 'rp', 'ra', 'rfr',
-%   │                   'rs', 'all' (default)
-%   ├───.diagnostics:
-%   ├──────────.plot: 1 creates a respiratory cycle detection plot
+%   │                   'rs', 'all' (default).
+%   ├──────────.plot: [0/1] Create a respiratory cycle detection plot
 %   └.channel_action: ['add'(default) /'replace']
 %                     Defines whether the new channels should be added or the
 %                     corresponding channel should be replaced.
+% ● Output
+%   *  channel_index: index of channel containing the processed data
+%
+% ● References
+%   [1] Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model
+%       for event-related respiration responses. Journal of Neuroscience
+%       Methods, 270, 174-155.
+%
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -31,54 +52,37 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-%% check input
+outchannel = [];
+
+% check input
+% -------------------------------------------------------------------------
 if nargin < 1
-  warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
-elseif ~ischar(fn)
-  warning('ID:invalid_input', 'Need file name string as first input.'); return;
+  warning('ID:invalid_input','No input. Don''t know what to do.'); return;
 elseif nargin < 2
-  warning('ID:invalid_input', 'No sample rate given.'); return;
+  warning('ID:invalid_input','No sample rate given.'); return;
 elseif ~isnumeric(sr)
-  warning('ID:invalid_input', 'Sample rate needs to be numeric.'); return;
-elseif nargin < 3 || isempty(channel) || (channel == 0)
-  channel = 'resp';
-elseif ~isnumeric(channel)
-  warning('ID:invalid_input', 'Channel number must be numeric'); return;
+  warning('ID:invalid_input','Sample rate needs to be numeric.'); return;
+elseif nargin < 3
+    options = struct();
 end
-if ~exist('options', 'var')
-  options = struct();
-end
+
 options = pspm_options(options, 'resp_pp');
 if options.invalid
   return
 end
-try options.datatype; catch, options.datatype = {'rp', 'ra', 'rfr', 'rs'}; end
-if ~iscell(options.datatype)
-  warning('ID:invalid_input', 'Unknown data type.'); return;
-else
-  datatypes = {'rp', 'ra', 'rfr', 'rs', 'all'};
-  datatype = zeros(5, 1);
-  for k = 1:numel(options.datatype)
-    datatype(strcmpi(options.datatype{k}, datatypes)) = 1;
-  end
-  if datatype(end), datatype(1:end) = 1; end
-end
+
+datatype = ismember({'rp', 'ra', 'rfr', 'rs', 'all'}, options.datatype);
+if datatype(end), datatype(1:end) = 1; end
+
 %% get data
-[nsts, infos, data] = pspm_load_data(fn, channel);
-old_channeltype = data{1}.header.chantype;
-if nsts == -1
-  warning('ID:invalid_input', 'Could not load data properly.');
-  return;
-end
-if numel(data) > 1
-  fprintf(['There is more than one respiration channel in the data file. ',...
-    'Only the first of these will be analysed.']);
-  data = data(1);
-end
-resp = data{1}.data;
+[nsts, data, infos] = pspm_load_channel(fn, options.channel, 'resp');
+if nsts < 1, return; end
+old_channeltype = data.header.chantype;
+
+resp = data.data;
 %% filter mean-centred data
 % Butterworth filter
-filt.sr        = data{1}.header.sr;
+filt.sr        = data.header.sr;
 filt.lpfreq    = 0.6;
 filt.lporder   = 1;
 filt.hpfreq    = .01;
@@ -118,7 +122,7 @@ if strcmp(options.channel_action, 'replace') && numel(find(datatype == 1)) > 1
   options.channel_action = 'add';
 end
 %% compute data values, interpolate and write
-for iType = 1:(numel(datatypes) - 1)
+for iType = 1:(numel(datatype) - 1)
   respdata = [];
   if datatype(iType)
     clear newdata
@@ -133,7 +137,7 @@ for iType = 1:(numel(datatypes) - 1)
       case 2
         %ra
         for k = 1:(numel(respstamp) - 1)
-          win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
+          win = ceil(respstamp(k) * data.header.sr):ceil(respstamp(k + 1) * data.header.sr);
           respdata(k) = range(resp(win));
         end
         newdata.header.chantype = 'ra';
@@ -143,7 +147,7 @@ for iType = 1:(numel(datatypes) - 1)
         %rfr
         ibi = diff(respstamp);
         for k = 1:(numel(respstamp) - 1)
-          win = ceil(respstamp(k) * data{1}.header.sr):ceil(respstamp(k + 1) * data{1}.header.sr);
+          win = ceil(respstamp(k) * data.header.sr):ceil(respstamp(k + 1) * data.header.sr);
           respdata(k) = range(resp(win))/ibi(k);
         end
         newdata.header.chantype = 'rfr';
@@ -155,7 +159,7 @@ for iType = 1:(numel(datatypes) - 1)
         action_msg = 'Respiration converted to respiration time stamps';
         newdata.header.units = 'events';
     end
-    channel_str = num2str(channel);
+    channel_str = num2str(options.channel);
     o.msg.prefix = sprintf(...
       'Respiration preprocessing :: Input channel: %s -- Input channeltype: %s -- Output channel: %s -- Action: %s --', ...
       channel_str, ...
@@ -168,9 +172,11 @@ for iType = 1:(numel(datatypes) - 1)
         newt = (1/sr):(1/sr):infos.duration;
         if ~isempty(respdata)
           % assign rp/ra/RFR to following zero crossing
-          writedata = interp1(respstamp(2:end), respdata, newt, 'linear' ,'extrap');
-          % 'extrap' option may introduce falsely negative values
-          writedata(writedata < 0) = 0;
+          writedata = interp1(respstamp(2:end), respdata, newt, 'linear');
+          nanindx = isnan(writedata);
+          if any(nanindx)
+            writedata(nanindx) = interp1(find(~nanindx),writedata(~nanindx),find(nanindx), 'nearest', 'extrap'); % avoid out-of-range values at the edges by nearest neighbour extrapolation
+          end
         else
           writedata = NaN(length(newt), 1);
         end
@@ -181,15 +187,16 @@ for iType = 1:(numel(datatypes) - 1)
     end
     % write
     newdata.data = writedata(:);
-    [nsts, ~] = pspm_write_channel(fn, newdata, options.channel_action, o);
+    [nsts, out] = pspm_write_channel(fn, newdata, options.channel_action, o);
     if nsts == -1, return; end
+    outchannel(iType) = out.channel;
   end
 end
 %% create diagnostic plot for detection/interpolation
 if options.plot
   figure('Position', [50, 50, 1000, 500]);
   axes; hold on;
-  oldsr = data{1}.header.sr;
+  oldsr = data.header.sr;
   oldt = (1/oldsr):(1/oldsr):infos.duration;
   newt = (1/newsr):(1/newsr):infos.duration;
   % normal breathing is 12-20 per minute, i. e. 3 - 5 s per breath. prd.
@@ -202,4 +209,5 @@ if options.plot
   stem(respstamp, ones(size(respstamp)), 'Marker', 'o', 'Color', 'b');
 end
 sts = 1;
+outchannel = outchannel(datatype(1:(end-1)));
 return

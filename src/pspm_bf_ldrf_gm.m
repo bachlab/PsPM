@@ -5,24 +5,23 @@ function [bs, x] = pspm_bf_ldrf_gm(varargin)
 %   diameter values. Therefore pupil size data analyzed using these models
 %   should also be in diameter.
 % ● Format
-%   [bs, x] = pspm_bf_ldrf_gm(td, n, offset, a, b, A)
-%   [bs, x] = pspm_bf_ldrf_gm([td, n, offset, a, b, A])
+%   [bs, x]  = pspm_bf_ldrf_gm(td, n, offset, a, b, A)
+%   [bs, x]  = pspm_bf_ldrf_gm([td, n, offset, a, b, A])
 % ● Arguments
-%       td: time resolution in s
-%        n: duration of the function in s [20s]
-%   offset: offset in s. tells the function where to start with
-%           the response function [0.2s]
-%        a: shape of the function
-%        b: scale of the function
-%        A: quantifier or amplitude of the function
+%   *     td : Time resolution in second.
+%   *      n : Duration of the function in second. Default as 20 s.
+%   * offset : Offset of the response (in s).
+%   *      a : Shape of the function.
+%   *      b : Scale of the function.
+%   *      A : Quantifier or amplitude of the function.
 % ● Reference
 %   Korn, C. W., & Bach, D. R. (2016). A solid frame for the window on
 %   cognition: Modeling event-related pupil responses. Journal of Vision,
 %   16(3), 28. https://doi.org/10.1167/16.3.28
 % ● History
 %   Introduced in PsPM 3.1
-%   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Written    in 2015 by Tobias Moser (University of Zurich)
+%   Maintained in 2022 by Teddy
 
 %% initialise
 global settings

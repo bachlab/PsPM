@@ -1,43 +1,50 @@
-function varargout = pspm_sf_mp(model, options)
+function [sts, out] = pspm_sf_mp(model, options)
 % ● Description
-%   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using
-%   a matching pursuit algorithm, and f_SF for the forward model
-%   the input data is assumed to be in mcS, and sampling rate in Hz
+%   pspm_sf_mp does the inversion of a DCM for SF of the skin conductance, using a
+%   matching pursuit algorithm, and f_SF for the forward model the input data is assumed
+%   to be in mcS, and sampling rate in Hz.
 % ● Format
-%   function out = pspm_sf_mp(scr, sr, options)
-% ● Output
-%        out: output
-%         .n: number of responses above threshold
-%         .f: frequency of responses above threshold in Hz
-%        .ma: mean amplitude of responses above threshold
-%         .t: timing of responses
-%         .a: amplitude of responses (re-estimated)
-%      .rawa: amplitude of responses (initial estimate)
-%     .theta: parameters used for f_SF
-% .threshold: threshold
-%      .yhat: fitted time series (reestimated amplitudes)
-%   .yhatraw: fitted time series (original amplitudes)
-%         .S: inversion settings
-%         .D: inversion dictionary
+%   [sts, out] = pspm_sf_mp(model, options)
 % ● Arguments
-%        scr: skin conductance epoch (maximum size depends on computing
-%             power, a sensible size is 60 s at 10 Hz)
-%         sr: sampling rate in Hz
-%    options: options structure
-% .threshold: threshold for SN detection (default 0.1 mcS)
-%     .theta: a (1 x 5) vector of theta values for f_SF
-%             (default: read from pspm_sf_theta)
-%     .fresp: maximum frequency of modelled responses (default 0.5 Hz)
-%   .dispwin: display result window (default 1)
-%   .diagnostics:
-%             add further diagnostics to the output. Is disabled if set to
-%             false. If set to true this will add a further field 'D' to the
-%             output struct. Default is false.
+%   ┌─model
+%   ├─────scr : skin conductance epoch (maximum size depends on computing power, a
+%   │           sensible size is 60 s at 10 Hz)
+%   └──────sr : sampling rate in Hz
+%   ┌─options
+%   ├─.threshold: threshold for SN detection (default 0.1 mcS)
+%   ├──.theta : a (1 x 5) vector of theta values for f_SF (default: read from pspm_sf_theta)
+%   ├──.fresp : maximum frequency of modelled responses (default 0.5 Hz).
+%   ├.dispwin : display result window (default 1).
+%   └.diagnostics:
+%               Add further diagnostics to the output. Is disabled if set to be false.
+%               If set to true this will add a further field 'D' to the output struct.
+%               Default is false.
+% ● Output
+%   ┌─────out
+%   ├──────.n : number of responses above threshold
+%   ├──────.f : frequency of responses above threshold in Hz
+%   ├─────.ma : mean amplitude of responses above threshold
+%   ├──────.t : timing of responses (adjusted for conduction delay)
+%   ├──────.a : amplitude of responses (re-estimated via ML)
+%   ├───.rawa : amplitude of responses (initial greedy estimate)
+%   ├──.theta : parameters used for f_SF
+%   ├─.threshold : threshold applied for response detection
+%   ├───.yhat : fitted time series (using reestimated amplitudes)
+%   ├.yhatraw : fitted time series (using initial amplitudes)
+%   ├──────.ind : indices of selected dictionary atoms in D.D
+%   ├──.sortind : sorted indices of selected atoms (after pruning)
+%   ├───────.y : preprocessed input data (baseline-centered scr)
+%   ├───.time : total execution time in seconds
+%   ├──────.S : inversion settings (struct with algorithm parameters)
+%   └──────.D : inversion dictionary (struct with atoms and metadata)
 % ● References
+%   [1] Bach DR, Staib M (2015). A matching pursuit algorithm for inferring tonic
+%       sympathetic arousal from spontaneous skin conductance fluctuations.
+%       Psychophysiology, 52, 1106-12.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (UZH, WTCN) last edited 18.08.2014
-%   Maintained in 2022 by Teddy Chao
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -47,13 +54,6 @@ end
 sts = -1;
 tstart = tic;
 out = [];
-switch nargout
-  case 1
-    varargout{1} = out;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = out;
-end
 
 try model.scr; catch, warning('Input data is not defined.'); return; end
 try model.sr; catch, warning('Sample rate is not defined.'); return; end
@@ -266,13 +266,3 @@ if options.dispwin
   plot(D.D(ind, :)', 'b');
   plot(Yhat, 'r');
 end;
-
-sts = 1;
-switch nargout
-  case 1
-    varargout{1} = out;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = out;
-end
-return

@@ -1,34 +1,34 @@
-function varargout = pspm_data_editor(varargin)
+function [sts, out] = pspm_data_editor(varargin)
 % ● Description
 %   pspm_data_editor MATLAB code for pspm_data_editor.fig
 % ● Format
-%   [varargout] = pspm_data_editor(varargin)
 %   [sts, out]  = pspm_data_editor(indata, options)
 % ● Arguments
-%          indata:  Can be multiple kinds of data types. In order to use
-%                   pspm_data_editor() to edit acquisition data, the actual
-%                   data vector has to be passed via the varargin
-%                   argmument. The data should be 1xn or nx1 double vector.
-%   ┌─────options:  [struct]
-%   ├.output_file:  Use output_file to specify a file the changed data
-%   │               is saved to when clicking 'save' or 'apply'. Only
-%   │               works in 'file' mode.
-%   ├─.epoch_file:  Use epoch_file to specify a .mat file to import epoch data
-%   │               .mat file must be a struct with an 'epoch' field
-%   │               and a e x 2 matrix of epoch on- and offsets
-%   │               (n: number of epochs)
+%   *      indata:  a file name. 
+%   ┌─────options 
+%   ├.output_file:  When this is specified, marked epochs will be saved
+%   │               to a missing epochs file when clicking 'save' or 'apply'.
+%   │               It is also possible to specificy this file from within 
+%   │               the interactive data editor.
+%   ├─.epoch_file:  When this is specified, epochs will be imported from 
+%   │               this file and can be changed further. This file must 
+%   │               contain a variable 'epochs' which is an n x 2 matrix 
+%   │               of epoch on- and offsets (n: number of epochs). It is 
+%   │               also possible to specificy this file from within the
+%   │               interactive data editor.
 %   └──.overwrite:  [logical] (0 or 1)
-%                   Define whether to overwrite existing output files or not.
-%                   Default value: not to overwrite.
+%                   Define whether to overwrite existing output file or not.
+%                   Default: 0.
 % ● Outputs
-%             out:  The output depends on the actual output type chosen in
+%   *         out:  The output depends on the actual output type chosen in
 %                   the graphical interface. At the moment either the
 %                   interpolated data or epochs only can be chosen as
 %                   output of the function.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2021 by Teddy Chao (UCL)
+%   Maintained in 2021 by Teddy
+%   Updated in 2024 by Teddy for UI controller display
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -45,7 +45,7 @@ if nargin && ischar(varargin{1}) && ...
 end
 
 if nargout
-  [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+  [sts, out] = gui_mainfcn(gui_State, varargin{:});
 else
   gui_mainfcn(gui_State, varargin{:});
 end
@@ -89,22 +89,21 @@ handles.data = {};
 handles.input_mode = '';
 handles.input_file = '';
 handles.output_file = '';
-set(handles.fgDataEditor, 'WindowButtonDownFcn', @buttonDown_Callback);
-set(handles.fgDataEditor, 'WindowButtonUpFcn', @buttonUp_Callback);
-set(handles.fgDataEditor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
+set(handles.pspm_data_editor, 'WindowButtonDownFcn', @buttonDown_Callback);
+set(handles.pspm_data_editor, 'WindowButtonUpFcn', @buttonUp_Callback);
+set(handles.pspm_data_editor, 'WindowButtonMotionFcn', @buttonMotion_Callback);
 if numel(varargin) > 1 && isstruct(varargin{2}) % load options
   handles.options = varargin{2};
   handles.options = pspm_options(handles.options, 'data_editor');
   if handles.options.invalid
     return
   end
-  if isfield(handles.options, 'output_file') && ... % check if options are valid and assign accordingly
-      ischar(handles.options.output_file)
+  if isfield(handles.options, 'output_file') && ischar(handles.options.output_file)
+    % check if options are valid and assign accordingly
     handles.output_file = handles.options.output_file;
     set(handles.edOutputFile, 'String', handles.output_file);
   end
-  if isfield(handles.options, 'epoch_file') && ...
-      ischar(handles.options.epoch_file)
+  if isfield(handles.options, 'epoch_file') && ischar(handles.options.epoch_file)
     handles.epoch_file = handles.options.epoch_file;
     set(handles.edOpenMissingEpochFilePath, 'String', handles.epoch_file);
   end
@@ -128,18 +127,19 @@ if numel(varargin) > 0
   handles = guidata(hObject);
   guidata(hObject, handles);
   PlotData(hObject);
-  if isfield(handles, 'options') && isfield(handles.options, 'output_file')
-    set(handles.pnlOutput, 'Visible', 'off');
-  end
-  if isfield(handles, 'options') && ~isfield(handles.options, 'epoch_file')
-    set(handles.pnlEpoch, 'Visible', 'off');
-  end
+  % % enable the following code if output file module wants to be enabled
+  % if isfield(handles, 'options') && isfield(handles.options, 'output_file')
+  %   set(handles.pnlOutput, 'Visible', 'off');
+  % end
+  % if isfield(handles, 'options') && ~isfield(handles.options, 'epoch_file')
+  %   set(handles.pnlEpoch, 'Visible', 'off');
+  % end
   if isfield(handles, 'options') && isfield(handles.options, 'epoch_file')
     handles.epoch_file = handles.options.epoch_file;
     Add_Epochs(hObject, handles)
   end
 end
-uiwait(handles.fgDataEditor);
+uiwait(handles.pspm_data_editor);
 
 function [sts] = CreateOutput(hObject)
 handles = guidata(hObject);
@@ -179,7 +179,7 @@ else
           end
         end
         if write_file
-          newd.options.overwrite = pspm_overwrite(out_file, options);
+          newd.options.overwrite = pspm_overwrite(out_file, 1);
           [write_success, ~, ~] = pspm_load_data(out_file, newd);
           if disp_success
             if write_success
@@ -199,7 +199,7 @@ else
       ep = cellfun(@(x) x.range', handles.epochs, 'UniformOutput', 0);
       epochs = cell2mat(ep)';
       if strcmpi(handles.input_mode, 'file')
-        ow = pspm_overwrite(out_file);
+        ow = pspm_overwrite(out_file, 1);
         if ow
           save(out_file, 'epochs');
         end
@@ -230,7 +230,7 @@ end
 [~, infos, data] = pspm_load_data(file); % load file
 channels = cellfun(@(x) {x.header.chantype,x.header.units}, data, 'UniformOutput', 0);
 set(handles.edOpenFilePath, 'String', file);
-corder = get(handles.fgDataEditor, 'defaultAxesColorOrder'); % format channels
+corder = get(handles.pspm_data_editor, 'defaultAxesColorOrder'); % format channels
 cl = length(corder)-2;
 disp_names = cell(numel(channels), 1);
 for i = 1:numel(channels)
@@ -255,6 +255,7 @@ guidata(hObject, handles);
 PlotData(hObject);
 
 function PlotData(hObject)
+global settings
 handles = guidata(hObject);
 channel = {};
 switch handles.input_mode % load data
@@ -279,19 +280,21 @@ if ~isempty(channel)
   action = 'replace';
   for i=1:numel(channel)
     AddPlot(hObject, channel(i), action);
+    % Update y-axis label based on selected channel
     action = 'add';
   end
   set(handles.axData, 'NextPlot', np);
 end
 
 function AddPlot(hObject, chan_id, action)
+global settings
 handles = guidata(hObject);
 if isempty(action)
   action = 'replace';
 end
 np = get(handles.axData, 'NextPlot');
 set(handles.axData, 'NextPlot', action);
-corder = get(handles.fgDataEditor, 'defaultAxesColorOrder');
+corder = get(handles.pspm_data_editor, 'defaultAxesColorOrder');
 cl = length(corder)-2;
 m = floor((chan_id-0.1)/cl);
 color = corder(chan_id - m*cl, :);
@@ -314,7 +317,7 @@ end
 handles.axData = gca;
 p = plot(xdata,ydata, 'Color', color);
 xlabel('time -- second');
-ylabel([handles.data{1,1}.header.chantype, ' -- ', handles.data{1,1}.header.units]);
+ylabel([handles.data{chan_id}.header.chantype, ' -- ', handles.data{chan_id}.header.units]);
 handles.axData.FontSize = 14;
 set(handles.axData, 'NextPlot', 'add');
 NaN_data = NaN(numel(xdata),1);
@@ -338,6 +341,7 @@ set(handles.axData, 'NextPlot', np);
 guidata(hObject, handles);
 
 function RemovePlot(hObject, chan_id)
+global settings
 handles = guidata(hObject);
 if numel(handles.plots) >= chan_id
   for i = 1:numel(handles.epochs) % remove response plots
@@ -356,9 +360,6 @@ end
 guidata(hObject, handles);
 
 function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
-% Comments
-%   It used to be function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
-%   Where the varargout seems not modified?
 % Feature
 %   Outputs from this function are returned to the command line.
 % Varargout
@@ -369,7 +370,6 @@ function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % UIWAIT makes pspm_data_editor wait for user response (see UIRESUME)
 % handles.lbEpochsvarargout{1} = handles.output;
-varargout{1} = handles.output;
 delete(hObject);
 
 function lbEpochs_Callback(hObject, ~, ~)
@@ -499,11 +499,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
   set(hObject,'BackgroundColor','white');
 end
 
-function fgDataEditor_CreateFcn(~, ~, ~)
+function pspm_data_editor_CreateFcn(~, ~, ~)
 % Feature
 %   Executes during object creation, after setting all properties.
 % Variables
-%   hObject    handle to fgDataEditor (see GCBO)
+%   hObject    handle to pspm_data_editor (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    empty - handles not created until after all CreateFcns called
 
@@ -920,7 +920,7 @@ function pbApply_Callback(hObject, ~, handles)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 if CreateOutput(hObject) == 1
-  uiresume(handles.fgDataEditor);
+  uiresume(handles.pspm_data_editor);
 end
 
 function pbCancel_Callback(hObject, ~, handles)
@@ -932,8 +932,8 @@ function pbCancel_Callback(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 handles.output = {};
 guidata(hObject, handles);
-if isfield(handles, 'fgDataEditor')
-  uiresume(handles.fgDataEditor);
+if isfield(handles, 'pspm_data_editor')
+  uiresume(handles.pspm_data_editor);
 end
 
 function cbInterpolate_Callback(hObject, ~, ~)
@@ -961,18 +961,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
   set(hObject,'BackgroundColor','white');
 end
 
-function fgDataEditor_CloseRequestFcn(hObject, ~, handles)
+function pspm_data_editor_CloseRequestFcn(hObject, ~, handles)
 % Feature
-%   Executes when user attempts to close fgDataEditor.
+%   Executes when user attempts to close pspm_data_editor.
 % Variables
-%   hObject    handle to fgDataEditor (see GCBO)
+%   hObject    handle to pspm_data_editor (see GCBO)
 %   eventdata  reserved - to be defined in a future version of MATLAB
 %   handles    structure with handles and user data (see GUIDATA)
 % Hint
 %   delete(hObject) closes the figure
 handles.output = {};
-if isfield(handles, 'fgDataEditor')
-  uiresume(handles.fgDataEditor);
+if isfield(handles, 'pspm_data_editor')
+  uiresume(handles.pspm_data_editor);
 end
 delete(hObject);
 
@@ -1042,7 +1042,7 @@ function rbInterpolate_Callback(hObject, eventdata, handles)
 % selection changed callback
 bgOutputFormat_SelectionChangedFcn(hObject, eventdata, handles);
 
-function pbOpenInputFile_Callback(hObject, ~, handles)
+function pbOpenInputFile_Callback(hObject, ~, handles, varargin)
 % Feature
 %   Executes on button press in pbOpenInputFile.
 % Variables

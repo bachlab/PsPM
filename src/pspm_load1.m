@@ -1,41 +1,39 @@
-function varargout = pspm_load1(fn, action, savedata, options)
+function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % ● Format
 %   [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 % ● Arguments
-%         fn: filename
-%     action: (default 'none'):
-%             'none':   check whether file is valid at all
-%             'stats':  retrieve stats struct with fields .stats
-%                       and .names
-%             'cond':   for GLM - retrieve stats struct using only
+%   *     fn : filename, or model structure
+%   * action : (default 'none'):
+%              'none' : check whether file is valid at all
+%              'stats': retrieve stats struct with fields .stats and .names
+%              'cond' : for GLM - retrieve stats struct using only
 %                       first regressor/basis function for each condition
 %                       for models with 2D stats structure - retrieve
 %                       mean parameter values per condition, based on
 %                       unique trial names
-%             'recon':  (for GLM) retrieve stats struct using
+%              'recon' :  (for GLM) retrieve stats struct using
 %                       reconstructed responses (which are at the same
 %                       time written into the glm struct as glm.recon)
-%               'con':  retrieve full con structure
-%               'all':  retrieve the full first level structure
-%           'savecon':  add contrasts to file, use an additional
+%              'con':  retrieve full con structure
+%              'all':  retrieve the full first level structure
+%              'savecon':  add contrasts to file, use an additional
 %                       input argument data that contains the contrasts
 %              'save':  check and save first levle model, use an additional
 %                       input argument data that contains the model struct
-%   savedata: for 'save' option - a struct containing the model as only field
-%             for 'savecon' option - contains the con structure
-%    options: .zscored. zscore data - substract the mean and divide
-%                         by the standard deviation.
-%             .overwrite for 'save'
-%                        [logical] (0 or 1)
-%                        Define whether to overwrite existing output files or not.
-%                        Default value: determined by pspm_overwrite.
+%  * savedata : for 'save' option - a struct containing the model as only field
+%               for 'savecon' option - contains the con structure
+%   ┌─options
+%   ├.zscored : zscore data - substract the mean and divide by the standard deviation.
+%   └.overwrite : [for 'save'] [logical] (0 or 1) Define whether to overwrite existing
+%                 output files or not. Default value: determined by pspm_overwrite.
 % ● Output
-%       data:   depending on option
+%  *     data : depending on option
 %             - none (for 'none', 'savecon', 'save')
 %             - data.stats, data.names, (and data.trlnames if existing) (for
 %                        'stats', 'recon', 'cond')
 %                        - con structure (for 'con')
 %                        - full first level structure (for 'all')
+%  *  mdltype : model type e.g. 'glm', 'sf', 'dcm', 'tam'
 % ● Developer's Notes
 %   General structure of PsPM 1st level model files
 %   Each file contains one struct variable with the model
@@ -52,7 +50,7 @@ function varargout = pspm_load1(fn, action, savedata, options)
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (WTCN, UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -74,14 +72,18 @@ elseif any(strcmpi(action, {'save', 'savecon'})) && nargin < 3
   warning('ID:missing_data', 'Save failed, no data provided'); return;
 end
 
-errmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
 
 % canonicalise file name
-[pth, filename, ext] = fileparts(fn);
-if isempty(ext)
-  ext = '.mat';
+if ischar(fn)
+    [pth, filename, ext] = fileparts(fn);
+    if isempty(ext)
+      ext = '.mat';
+    end
+    fn = fullfile(pth, [filename, ext]);
+    errmsg = sprintf('Data file %s is not a valid PsPM file:\n', fn);
+else
+    errmsg = sprintf('Input must be a valid PsPM file:\n');
 end
-fn = fullfile(pth, [filename, ext]);
 
 %  set default zscored
 if nargin <= 3
@@ -93,14 +95,14 @@ if options.invalid
 end
 writefile = 1;
 % check whether file exists --
-if exist(fn, 'file')
+if ischar(fn) && exist(fn, 'file')
   if strcmpi(action, 'save')
     writefile = pspm_overwrite(fn, options);
     if ~writefile
       warning('ID:not_saving_data', 'Not saving data.\n');
     end
   end
-elseif ~strcmpi(action, 'save')
+elseif ~isstruct(fn) && ~strcmpi(action, 'save')
   warning('ID:invalid_input', '1st level file (%s) doesn''t exist', fn);
 end
 
@@ -108,13 +110,17 @@ end
 
 % check whether file is a matlab file --
 if ~strcmpi(action, 'save')
-  try
-    indata = load(fn);
-  catch
-    errmsg = [errmsg, 'Not a matlab data file.']; warning('ID:invalid_input', errmsg); return;
-  end
+    if ischar(fn)
+        try
+            indata = load(fn);
+        catch
+            errmsg = [errmsg, 'Not a matlab data file.']; warning('ID:invalid_input', errmsg); return;
+        end
+    else
+        indata.(fn.modeltype) = fn;
+    end
 else
-  indata = savedata;
+    indata = savedata;
 end
 
 % check for SCRalyze 1.x files --
@@ -284,6 +290,7 @@ switch action
       end
     else
       warning('ID:invalid_input', '%s. ''recon'' option only defined for GLM files', errmsg);
+      return;
     end
   case 'con'
     if conflag
@@ -305,17 +312,5 @@ switch action
   otherwise
     warning('ID:unknown_action', 'Unknown action. Just checking file. File is valid.'); return;
 end
-
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = data;
-  case 2
-    varargout{1} = data;
-    varargout{2} = mdltype;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = data;
-    varargout{3} = mdltype;
-end
 return

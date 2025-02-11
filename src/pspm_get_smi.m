@@ -1,11 +1,10 @@
 function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 % ● Description
-%   pspm_get_smi is the main function for import of SensoMotoric Instruments
-%   iView X EyeTracker files.
+%   pspm_get_smi imports SensoMotoric Instruments iView X EyeTracker files.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_smi(datafile, import);
 % ● Arguments
-%       datafile: String or cell array of strings. The size of the cell
+%   *  datafile : String or cell array of strings. The size of the cell
 %                 array can be 1 or 2. If datafile is string, it must be the
 %                 path to the sample file containing eye measuremnts. The file
 %                 must be stored in ASCII format. If datafile is a cell array,
@@ -13,59 +12,58 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 %                 above. The optional second string in the cell array can be
 %                 the event file containing blink/saccade events.
 %                 The file must be stored in ASCII format.
-%  ┌──────import: [struct] import job structure
-%  │              [mandatory fields]
-%  ├───────.type: Type of the channel. Must be one of pupil_l, pupil_r,
-%  │              gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
-%  │              saccade_l, saccade_r, marker, custom. If the given
-%  │              channel type does not exist in the given datafile, it
-%  │              will be filled with NaNs and a warning will be emitted.
-%  │              Specified custom channels must correspond to some form of
-%  │              pupil/gaze channels. In addition, when the channel type
-%  │              is custom, no postprocessing/conversion is performed by
-%  │              pspm_get_smi and the channel is returned directly as it
-%  │              is in the given datafile.
-%  │              The gaze values returned are in the given target_unit.
-%  │              (x, y) = (0, 0) coordinate represents the top left corner
-%  │              of the calibration area. x coordinates grow towards right
-%  │              and y coordinates grow towards bottom. The gaze
-%  │              coordinates can be negative or larger than calibration
-%  │              area axis length. These correspond to gaze positions
-%  │              outside the calibration area.
-%  │              Since there are multiple ways to specify pupil size in
-%  │              SMI files, pspm_get_smi selects the channel according to
-%  │              the following precendence order (earlier items have
-%  │              precedence):
-%  │              1. Mapped Diameter (mm)
-%  │              2. Dia X (mm)
-%  │              3. Dia (mm2)
-%  │              4. Dia X (pixel)
-%  │              5. Dia (pixel2)
-%  │              If a pixel/pixel2 channels is chosen, it is NOT converted
-%  │              to a mm/mm2 channel. It is returned as it is. In
-%  │              mm2/pixel2 case, the pupil is assumed to be a circle.
-%  │              Therefore, diameter d from area a is calculated as
-%  │              2*sqrt(a/pi).
-%  │              [optional fields]
-%  ├────.channel: If .type is custom, the index of the channel to import
-%  │              must be specified using this option.
-%  ├.stimulus_resolution:
-%  │              An array of length 2 storing the screen resolution of
-%  │              the whole stimulus window in pixels. This resolution is
-%  │              required in order to perform pixel to mm conversions. If
-%  │              not given, no manual conversion is performed by get_smi
-%  │              and all the values are returned as they are in the datafile.
-%  ├.target_unit: the unit to which the gaze data should be converted. Used
-%  │              only if stimulus_resolution is specified. (Default: mm)
-%  │              [Each import structure will get the following output fields]
-%  ├───────.data: Data channel corresponding to the input channel type or
-%  │              custom channel id.
-%  ├──────.units: Units of the channel.
-%  ├─────────.sr: Sampling rate.
-%  └────.chan_id: Channel index of the imported channel in the raw data columns.
+%   ┌────import
+%   ├─────.type : Type of the channel. Must be one of pupil_l, pupil_r,
+%   │             gaze_x_l, gaze_y_l, gaze_x_r, gaze_y_r, blink_l, blink_r,
+%   │             saccade_l, saccade_r, marker, custom. If the given
+%   │             channel type does not exist in the given datafile, it
+%   │             will be filled with NaNs and a warning will be emitted.
+%   │             Specified custom channels must correspond to some form of
+%   │             pupil/gaze channels. In addition, when the channel type
+%   │             is custom, no postprocessing/conversion is performed by
+%   │             pspm_get_smi and the channel is returned directly as it
+%   │             is in the given datafile.
+%   │             The gaze values returned are in the given target_unit.
+%   │             (x, y) = (0, 0) coordinate represents the top left corner
+%   │             of the calibration area. x coordinates grow towards right
+%   │             and y coordinates grow towards bottom. The gaze
+%   │             coordinates can be negative or larger than calibration
+%   │             area axis length. These correspond to gaze positions
+%   │             outside the calibration area.
+%   │             Since there are multiple ways to specify pupil size in
+%   │             SMI files, pspm_get_smi selects the channel according to
+%   │             the following precendence order (earlier items have
+%   │             precedence):
+%   │             1. Mapped Diameter (mm)
+%   │             2. Dia X (mm)
+%   │             3. Dia (mm2)
+%   │             4. Dia X (pixel)
+%   │             5. Dia (pixel2)
+%   │             If a pixel/pixel2 channels is chosen, it is NOT converted
+%   │             to a mm/mm2 channel. It is returned as it is. In
+%   │             mm2/pixel2 case, the pupil is assumed to be a circle.
+%   │             Therefore, diameter d from area a is calculated as
+%   │             2*sqrt(a/pi).
+%   ├──.channel : [optional] If .type is custom, the index of the channel to import
+%   │             must be specified using this option.
+%   ├.stimulus_resolution :
+%   │             [optional] An array of length 2 storing the screen resolution of
+%   │             the whole stimulus window in pixels. This resolution is
+%   │             required in order to perform pixel to mm conversions. If
+%   │             not given, no manual conversion is performed by get_smi
+%   │             and all the values are returned as they are in the datafile.
+%   ├.target_unit :
+%   │             [optional] the unit to which the gaze data should be converted. Used
+%   │             only if stimulus_resolution is specified. (Default: mm)
+%   │             [Each import structure will get the following output fields]
+%   ├─────.data : [optional] Data channel corresponding to the input channel type or
+%   │             custom channel id.
+%   ├────.units : [optional] Units of the channel.
+%   ├───────.sr : [optional] Sampling rate.
+%   └──.chan_id : [optional] Channel index of the imported channel in the raw data columns.
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -119,7 +117,7 @@ if numel(data) > 1
   if ~assert_sessions_are_one_after_another(data); return; end
 end
 [data_concat, markers, mi_values, mi_names] = concat_sessions(data);
-addpath(pspm_path('backroom'));
+addpath(pspm_path('Import','eyelink'));
 chan_struct = data{1}.channel_columns;
 eyes_observed = lower(data{1}.eyesObserved);
 if strcmpi(eyes_observed, settings.lateral.char.l)
@@ -134,7 +132,7 @@ data_concat = set_blinks_saccades_to_nan(...
   chan_struct,...
   mask_chans,...
   @(x) contains(x, 'L '));
-rmpath(pspm_path('backroom'));
+rmpath(pspm_path('Import','eyelink'));
 sampling_rate = data{1}.sampleRate;
 units = data{1}.units;
 raw_columns = data{1}.raw_columns;

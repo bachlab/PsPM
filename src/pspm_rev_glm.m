@@ -1,26 +1,27 @@
-function varargout = pspm_rev_glm(modelfile, glm, plotNr)
+function [sts, fig] = pspm_rev_glm(modelfile, plotNr)
 % ● Description
 %   pspm_rev_glm is a tool for reviewing a first level GLM designs. It is
 %   meant to be called by pspm_review only.
 % ● Format
-%   fig = pspm_rev_glm(modelfile, glm, plotNr, fig)
+%   [sts, fig] = pspm_rev_glm(modelfile, plotNr)
 % ● Arguments
-%   modelfile:  filename and path of modelfile
-%         glm:  loaded model
-%      plotNr:  defines which figure shall be plotted
-%               (several plots can be defined by a vector)
-%               1 - design matrix, SPM style
-%               2 - design orthogonality, SPM style
-%               3 - predicted & observed
-%               4 - print regressor names
-%               5 - reconstructed responses
+%   * modelfile : filename and path of modelfile
+%   *    plotNr : defines which figure shall be plotted
+%                 (several plots can be defined by a vector)
+%                 1 - design matrix, SPM style
+%                 2 - design orthogonality, SPM style
+%                 3 - predicted & observed
+%                 4 - print regressor names
+%                 5 - reconstructed responses
+%                 6 - plot mean responses of all segments 
 % ● Outputs
-%         sts:  status variable indicating whether the function run successfully
-%         fig:  returns the figure handles
+%   *       sts : status variable indicating whether the function run successfully
+%   *       fig : returns the figure handles
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
 
 % initialise
 global settings
@@ -29,13 +30,6 @@ if isempty(settings)
 end
 sts = -1;
 fig = struct();
-switch nargout
-  case 1
-    varargout{1} = fig;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = fig;
-end
 
 % check input
 % ------------------------------------------------------------------------
@@ -234,16 +228,12 @@ for i=1:length(plotNr)
         XLim = cellfun(@(x){num2str(x)}, XLim);
         set(fig(5).ax(1).h, 'XTickLabel',XLim);
         set(fig(5).title, 'String', sprintf('Estimated responses per condition: %s', filename), 'FontWeight', 'Bold', 'FontSize', 14, 'Interpreter', 'none');
+      case 6
 
-    end
+        options = struct('plot', 1);
+        [ssts, segments] = pspm_extract_segments('model', glm, options);
+     end
   end
 end
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = fig;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = fig;
-end
 return

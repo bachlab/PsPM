@@ -1,8 +1,17 @@
 function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 % ● Description
-%   pspm_get_physlog loads data from physlog files using the
-%   import_physlog() function. It maps the output of the called function
-%   according to the settings passed in the 'import' parameter.
+%   pspm_get_physlog imports Philips Scanphyslog data, generated from the 
+%   monitoring equipment of Philips MRI scanners. The physlog ascii file 
+%   contains 6 channels with physiological measurements (Channel id 1-6): 
+%   ECG1, ECG2, ECG3, ECG4, Pulse oxymeter, Respiration. Depending on the 
+%   scanner settings, there are 10 marker channels of which channel 6 marks 
+%   time t of the last slice recording. In order to align the data to start
+%   and end of EPI sequences, a time window from t minus (#volumes )*
+%   (repetition time) seconds until t should be used for trimming. 
+%   Available marker channels are (Channel id 1-10): ECG marker, PPG marker, 
+%   respiration marker, Measurement (?slice onset?), Start of scan sequence, 
+%   End of scan sequence, Trigger external, Calibration, Manual start, 
+%   Reference ECG Trigger.
 % ● Developer's Notes
 %   Special about this function is that channel numbers for event/marker
 %   channels correspond to the different event types scanphyslog files.
@@ -28,16 +37,16 @@ function [sts, import, sourceinfo] = pspm_get_physlog(datafile, import)
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_physlog(datafile, import);
 % ● Arguments
-%     datafile:
-%       import:
+%   *   datafile : datafile to be imported.
+%   *     import : import settings.
 % ● Outputs
-%          sts:
-%       import:
-%   sourceinfo:
+%   *        sts : status.
+%   *     import : the updated import structure.
+%   * sourceinfo : the source information structure.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2008-2015 by Tobias Moser (University of Zurich)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings

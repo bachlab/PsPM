@@ -1,8 +1,12 @@
-function varargout = pspm_dcm(model, options)
+function [sts, dcm] = pspm_dcm(model, options)
 % ● Description
-%   pspm_dcm sets up a DCM for skin conductance, prepares and normalises the
+%   pspm_dcm sets up a non-linear SCR model, prepares and normalises the
 %   data, passes it over to the model inversion routine, and saves both the
 %   forward model and its inversion.
+%   Non-linear SCR models are required if response timing is not known and 
+%   has to be estimated from data. A typical example are anticipatory SCR 
+%   in fear conditioning. These occur at some point between CS and US, but
+%   this time point is not known. 
 %   Both flexible-latency (within a response window) and fixed-latency
 %   (evoked after a specified event) responses can be modelled.
 %   For fixed responses, delay and dispersion are assumed to be constant
@@ -10,11 +14,22 @@ function varargout = pspm_dcm(model, options)
 %   responses, both are estimated for each individual trial.
 %   Flexible responses can for example be anticipatory, decision-related,
 %   or evoked with unknown onset.
+%   PsPM implements an iterative trial-by-trial algorithm. Different from 
+%   GLM, response parameters are always estimated per trial, and the 
+%   algorithm is not informed about the condition.
+%   For each session, experimental timing is defined by providing a 1-column 
+%   vector of event onsets in seconds for each fixed event, and a 2-column  
+%   matrix for each flexible event. Each event must occur in each trial of 
+%   a session, i.e. all these vectors and matrices must have the same
+%   number of rows. (For example, in fear conditioning where the US occurs
+%   only on a subset of trials, each trial includes an event "US onset"
+%   even if it does not occur, to avoid bias). A timing file should contain
+%   a variable 'events' which is a cell array; each cell should contain
+%   either a one-column vector or a 2-column matrix.
 % ● Format
-%   dcm = pspm_dcm(model, options)
+%   [sts, dcm] = pspm_dcm(model, options)
 % ● Arguments
-%   ┌──────model:
-%   │ ▶︎ Mandatory
+%   ┌──────model
 %   ├─.modelfile: [string/cell array]
 %   │             The name of the model output file.
 %   ├──.datafile: [string/cell array]
@@ -26,90 +41,103 @@ function varargout = pspm_dcm(model, options)
 %   │             Each cell should contain either one column (fixed response)
 %   │             or two columns (flexible response).
 %   │             All matrices in the array need to have the same number of
-%   │             rows, i.e. the event structure must be the same for every
-%   │             trial. If this is not the case, include `dummy` events with
-%   │             negative onsets.
-%   │ ▶︎ Optional
-%   ├───.missing: Allows to specify missing (e.g. artefact) epochs in the
+%   │             rows, i.e. the event structure should be the same for every
+%   │             trial. For trials that are not going to be analysed later,
+%   │             it is possible to include `dummy` events with negative 
+%   │             onsets.
+%   │             All event timings must be specified in SECONDS.
+%   ├───.missing: [optional] Allows to specify missing (e.g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition; specify
 %   │             a cell array for multiple input files. This must always be
 %   │             specified in SECONDS.
 %   │             Default: no missing values
 %   ├─.lasttrialcutoff:
-%   │             If there fewer data after the end of then last trial in a
+%   │             [optional] If there fewer data after the end of the last trial in a
 %   │             session than this cutoff value (in s), then estimated
 %   │             parameters from this trial will be assumed inestimable
-%   │             and set to NaN after the
-%   │             inversion. This value can be set as inf to always retain
-%   │             parameters from the last trial.
-%   │             Default: 7 s
-%   ├─.substhresh:Minimum duration (in seconds) of NaN periods to cause
-%   │             splitting up into subsessions which get evaluated
-%   │             independently (excluding NaN values).
-%   │             Default: 2.
-%   ├────.filter: Filter settings.
+%   │             and set to NaN after the inversion. 
+%   │             This value can be set as inf to always retain parameters
+%   │             from the last trial.
+%   │             Default: 7 s, corresponding to the time at which the 
+%   │             canonical SCRF has decayed to around 80% of its peak value.
+%   ├─.substhresh:[optional] Maximum duration (in seconds) of missing data periods 
+%   │             allowed within a session (these data points will be ignored). 
+%   │             For missing data periods longer than this threshold, the 
+%   │             algorithm will split up the data into subsessions which 
+%   │             are evaluated independently (excluding NaN values).
+%   │             Default: 2 s.
+%   ├────.filter: [optional] Filter settings.
 %   │             Modality specific default.
-%   ├───.channel: Channel number.
+%   ├───.channel: [optional] Channel number.
 %   │             Default: last SCR channel
-%   ├──────.norm: Normalise data.
+%   ├──────.norm: [optional] Normalise data.
 %   │             i.e. Data are normalised during inversion but results
 %   │             transformed back into raw data units.
 %   │             Default: 0.
-%   └─.constrained: Constrained model for flexible responses which have fixed
-%                 dispersion (0.3 s SD) but flexible latency.
-%   ┌────options:
-%   │ ▶︎ Response function
-%   ├─.crfupdate: Update CRF priors to observed SCRF, or use pre-estimated
-%   │             priors (default). Default as 0, optional as 1.
-%   ├─────.indrf: Estimate the response function from the data.
+%   └─.constrained: [optional] Constrained model for flexible responses
+%                 which have fixed dispersion (0.3 s SD) but flexible latency.
+%   ┌────options
+%   ├─.crfupdate: [0/1] Re-estimate RF parameters from canonical SCRF, 
+%   │             or use pre-estimated RF parameters. This can be used when
+%   │             f_SCR has been changed.   
+%   ├─────.indrf: Estimate the response function from the data. This is
+%   │             only recommended for long inter-trial-intervals and 
+%   │             should be used with caution. In reference 2, this option 
+%   │             lead to worse quality of the trial-by-trial amplitude 
+%   │             estimation (potenetially due to overfitting the data 
+%   │             available to estimate the response function).
 %   │             Default: 0.
-%   ├─────.getrf: Only estimate RF, do not do trial-wise DCM
+%   ├─────.getrf: Only estimate response function, do not do trial-wise DCM.
 %   ├────────.rf: Call an external file to provide response function
-%   │             (for use when this is previously estimated by pspm_get_rf)
-%   │ ▶︎ Inversion
-%   ├─────.depth: No of trials to invert at the same time.
-%   │             Default: 2.
-%   ├─────.sfpre: sf-free window before first event.
-%   │             Default: 2s.
-%   ├────.sfpost: sf-free window after last event.
-%   │             Default: 5s.
-%   ├────.sffreq: maximum frequency of SF in ITIs.
+%   │             (for use when this is previously estimated by
+%   │             pspm_get_rf).
+%   ├─────.depth: Number of trials to invert at the same time. The iterative estimation will
+%   │             progress trial-by-trial and consider this number of 
+%   │             trials into the future, until the last trial of a session. 
+%   │             If this parameter is larger than the number of trials in 
+%   │             a session, the entire sessin will be inverted at 
+%   │             the same time. In reference 2, this parameter (set to 2
+%   │             or 3) had no impact on the quality of the estimation. 
+%   │             Unpublished data suggest that if a session with 24 trials 
+%   │             and two events per trial is estimated in one go, then
+%   │             the quality of the estimation suffers (potentially 
+%   │             because in the larger parameter landscape, it is more 
+%   │             difficult to find the global minimum). Default: 2.
+%   ├─────.sfpre: SF-free interval before first event of a trial.
+%   │             Default: 2 s.
+%   ├────.sfpost: SF-free interval after last event of a trial.
+%   │             Default: 5 s.
+%   ├────.sffreq: Maximum frequency of SF in ITIs.
 %   │             Default: 0.5/s.
-%   ├────.sclpre: scl-change-free window before first event.
-%   │             Default: 2s.
-%   ├───.sclpost: scl-change-free window after last event.
-%   │             Default: 5s.
+%   ├────.sclpre: SCR-change-free interval before first event of a trial.
+%   │             Default: 2 s.
+%   ├───.sclpost: SCR-change-free interval after last event of a trial.
+%   │             Default: 5 s.
 %   ├.aSCR_sigma_offset:
 %   │             Minimum dispersion (standard deviation) for flexible
-%   │             responses.
-%   │             Default: 0.1s.
-%   │ Display
-%   ├─.dispwin    Display progress window.
-%   │             Default: 1.
-%   ├─.dispsmallwin
-%   │             display intermediate windows.
-%   │             Default: 0.
-%   │ ▶︎ Output
+%   │             responses, in seconds. Default: 0.1 s.
+%   ├─.dispwin:   [0/1] Display progress plot. Default: display.
+%   ├─.dispsmallwin: [0/1]
+%   │             Display intermediate progress plots.
+%   │             Default: no display.
 %   ├────.nosave: Don't save dcm structure (e.g. used by pspm_get_rf)
-%   ├─.overwrite: [logical] (0 or 1)
+%   ├─.overwrite: [0/1]
 %   │             Define whether to overwrite existing output files or not.
 %   │             Default value: determined by pspm_overwrite.
-%   │ ▶︎ Naming
-%   ├──.trlnames: Cell array of names for individual trials,
-%   │             is used for contrast manager only (e.g. condition
-%   │             descriptions)
+%   ├──.trlnames: Cell array of names for individual trials. This is only
+%   │             for housekeeping (e.g. condition descriptions), not 
+%   │             for model estimation. Default: no trial names.
 %   └.eventnames: Cell array of names for individual events,
 %                 in the order they are specified in the model.timing array -
 %                 to be used for display and export only
 % ● Output
-%   fn:   Name of the model file.
-%   dcm: Model struct.
-%
-%   Output units: all timeunits are in seconds; eSCR and aSCR amplitude are
-%   in SN units such that an eSCR SN pulse with 1 unit amplitude causes an
-%   eSCR with 1 mcS amplitude
+%   * fn        : Name of the model file.
+%   * dcm       : Model struct. Output units: all timeunits are in seconds;
+%                 eSCR and aSCR amplitude are in SN units such that an
+%                 eSCR SN pulse with 1 unit amplitude causes an eSCR with
+%                 1 mcS amplitude.
 % ● Developer's Notes
-%   pspm_dcm can handle NaN values in data channels. Either by specifying
+%   1. pspm_dcm can handle NaN values in data channels. Either by specifying
 %   missing epochs manually using model.missing, or by detecting NaN epochs
 %   in the data. Missing epochs shorter than model.substhresh will be ignored
 %   in the inversion; otherwise the data will be split into subsessions that
@@ -117,7 +145,7 @@ function varargout = pspm_dcm(model, options)
 %   within missing epochs will simply be set to NaN.  NaN periods shorter than
 %   model.substhresh are interpolated for averages and principal response
 %   components.
-%   pspm_dcm calculates the inter-trial intervals as the duration between the
+%   2. pspm_dcm calculates the inter-trial intervals as the duration between the
 %   end of a trial and the start of the next one.
 %   ITI value for the last trial in a session is calculated as the duration
 %   between the end of the last trial and the end of the whole session.
@@ -143,16 +171,19 @@ function varargout = pspm_dcm(model, options)
 %   the trials use much less than available amount of samples in both case
 %   (1) and (2). Instead, we aim to use as much data as possible in (1), and
 %   perform (2) only if this edge case is not present.
+%
 % ● References
-%   1.Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010).
-%     Dynamic causal modelling of anticipatory skin conductance changes.
-%     Biological Psychology, 85(1), 163-70
-%   2.Staib, M., Castegnetti, G., & Bach, D. R. (2015).
-%     Optimising a model-based approach to inferring fear learning from
-%     skin conductance responses.
-%     Journal of Neuroscience Methods, 255, 131-138.
+%   [1] Model development:
+%       Bach DR, Daunizeau J, Friston KJ, Dolan RJ (2010). Dynamic causal
+%       modelling of anticipatory skin conductance changes. Biological
+%       Psychology, 85(1), 163-70
+%   [2] Model validation and improvement:
+%       Staib, M., Castegnetti, G., & Bach, D. R. (2015). Optimising a
+%       model-based approach to inferring fear learning from skin
+%       conductance responses. Journal of Neuroscience Methods, 255,
+%       131-138.
 % ● History
-%   Introduced in PsPM 5.1.0
+%   Introduced in PsPM 3.0
 %   Written in 2010-2021 by Dominik R Bach (Wellcome Centre for Human Neuroimaging, UCL)
 
 %% 1 Initialise
@@ -162,32 +193,20 @@ if isempty(settings)
 end
 sts = -1;
 dcm = [];
-switch nargout
-  case 1
-    varargout{1} = dcm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = dcm;
-end % assign varargout to avoid errors if the function returns in the middle
+
 % cell array which saves all the warnings which are not followed
 % by a `return` function
 warnings = {};
 
-%% 2 Check input 
+%% 2 Check input
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
 
-% 2.2 check model
-model = pspm_check_model(model, 'dcm');
-if model.invalid
+% 2.2 check model and options
+[model, options] = pspm_check_model(model, options, 'dcm');
+if model.invalid || options.invalid
     return
-end
-
-% 2.3 check options 
-options = pspm_options(options, 'dcm');
-if options.invalid
-  return
 end
 
 % all the below should be re-factored into pspm_options -------------------
@@ -238,17 +257,14 @@ data = cell(numel(model.datafile), 1);
 missing = cell(numel(model.datafile), 1);
 for iSn = 1:numel(model.datafile)
   % check & load data
-  [sts, ~, data{iSn}] = pspm_load_data(model.datafile{iSn}, model.channel);
-  if sts == -1 || isempty(data{iSn})
-    warning('ID:invalid_input', 'No SCR data contained in file %s', ...
-      model.datafile{iSn});
+  [sts, data] = pspm_load_channel(model.datafile{iSn}, model.channel, 'scr');
+  if sts < 1
     return;
+  else
+     y{iSn} = data.data;
+     sr{iSn} = data.header.sr;
+     model.filter.sr = sr{iSn};
   end
-
-  % use the last data channel, consistent with sf and glm
-  y{iSn} = data{iSn}{end}.data;
-  sr{iSn} = data{iSn}{end}.header.sr;
-  model.filter.sr = sr{iSn};
 
   % load and check existing missing data (if defined)
   if ~isempty(model.missing{iSn})
@@ -257,7 +273,7 @@ for iSn = 1:numel(model.datafile)
   else
     missing{iSn} = [];
   end
- 
+
   % try to find missing epochs according to subsession threshold
   n_data = size(y{iSn},1);
 
@@ -272,15 +288,20 @@ for iSn = 1:numel(model.datafile)
           y{iSn}(flanks(1):flanks(2)) = NaN;
       end
   end
- 
+
   % find NaN in data, which might originate in previous step or exist in
   % the data already. This will update the previous miss_epochs definition.
   nan_epochs = isnan(y{iSn});
 
-  if ~isempty(nan_epochs)
-      d_nan_ep = transpose(diff(nan_epochs));
-      nan_ep_start = find(d_nan_ep == 1);
-      nan_ep_stop = find(d_nan_ep == -1);
+  if any(nan_epochs)
+      if all(nan_epochs)
+          nan_ep_start = 1;
+          nan_ep_stop = numel(nan_epochs);
+      else
+          d_nan_ep = transpose(diff(nan_epochs));
+          nan_ep_start = find(d_nan_ep == 1);
+          nan_ep_stop = find(d_nan_ep == -1);
+      end
 
       if numel(nan_ep_start) > 0 || numel(nan_ep_stop) > 0
           % check for blunt ends and fix
@@ -298,12 +319,14 @@ for iSn = 1:numel(model.datafile)
           end
       end
 
-    % put missing epochs together
-    miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
-  end
+      % put missing epochs together
+      miss_epochs = [nan_ep_start(:), nan_ep_stop(:)];
 
-  % epoch should be ignored if duration > threshold
-  ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+      % epoch should be ignored if duration > threshold
+      ignore_epochs = diff(miss_epochs, 1, 2)/sr{iSn} > model.substhresh;
+  else
+      ignore_epochs = [];
+  end
 
   if any(ignore_epochs)
     i_e = find(ignore_epochs);
@@ -361,8 +384,7 @@ foo = {};
 for vs = 1:numel(valid_subsessions)
   isbSn = valid_subsessions(vs);
   sbSn = subsessions(isbSn, :);
-  flanks = pspm_time2index(sbSn(2:3), sr{sbSn(1)});
-  sbSn_data = y{sbSn(1)}(flanks(1):flanks(2));
+  sbSn_data = y{sbSn(1)}((pspm_epochs2logical(sbSn(2:3), length(y{sbSn(1)}), sr{sbSn(1)})==1));
   sbs_miss = isnan(sbSn_data);
 
   if any(sbs_miss)
@@ -373,8 +395,12 @@ for vs = 1:numel(valid_subsessions)
   end
   [sts, sbs_data{isbSn, 1}, model.sr] = pspm_prepdata(sbSn_data, model.filter);
   % define missing epochs for inversion in final sampling rate
-  sbs_missing{isbSn, 1} = downsample(sbs_miss, model.filter.sr/model.sr);
-  if sts == -1, return; end
+  [stsl, tempvec, ~] = pspm_downsample(double(sbs_miss), model.sr, model.filter.sr);
+  if sts == -1||stsl == -1  
+      return; 
+  end
+  sbs_missing{isbSn, 1} = logical(tempvec);
+  clear tempvec
   foo{vs, 1} = (sbs_data{isbSn}(:) - mean(sbs_data{isbSn}));
 end
 
@@ -594,23 +620,14 @@ if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
     || (max(model.fixevents > max(model.flexevents(:, 2), [], 2))))
   [~, lastfix] = max(model.fixevents);
   % extract data
-  winsize = floor(model.sr * min([proc_miniti 10]));
-  D = [];
-  c = 1;
-  valid_newevents = sbs_newevents{2}(proc_subsessions);
-  for isbSn = 1:numel(model.scr)
-    scr_sess = model.scr{isbSn};
-    foo = valid_newevents{isbSn}(:, lastfix);
-    foo(foo < 0) = [];
-    for n = 1:size(foo, 1)
-      win = ceil(model.sr * foo(n) + (1:winsize));
-      [row, warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
-        scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
-      D(c, 1:numel(row)) = row;
-      c = c + 1;
-    end
-  end
-  clear c k n
+  segment_length = floor(model.sr * min([proc_miniti 10]));
+  valid_newevents = cellfun(@(x, y) pspm_time2index(x(:, lastfix), model.sr , length(y)), ...
+      sbs_newevents{2}(proc_subsessions), ...
+      model.scr', ...
+      'UniformOutput', false);
+  [sts, D] = pspm_extract_segments_core(model.scr, valid_newevents, segment_length);
+  if sts < 1, return; end
+
   if isempty(find(isnan(D(:))))
     mD = D - repmat(mean(D, 2), 1, size(D, 2)); % mean centre
     % PCA
@@ -647,7 +664,6 @@ if (options.indrf || options.getrf) && (isempty(model.flexevents) ...
 end
 
 % 5.4 extract data from all trials
-winsize = floor(model.sr * min([proc_miniti 10]));
 % check maximum trial duration
 maxtrial = NaN(numel(model.scr), 1);
 numtrials = NaN(numel(model.scr), 1);
@@ -656,23 +672,15 @@ for isbSn = 1:numel(model.scr)
     maxtrialduration(isbSn) = max(trialduration(:));
     numtrials(isbSn) = numel(trialduration);
 end
-% initialise data matrix
-D = NaN(sum(numtrials), ceil(max(maxtrialduration) * model.sr) + winsize); 
-c = 1;
-for isbSn = 1:numel(model.scr)
-  scr_sess = model.scr{isbSn};
-  for n = 1:numel(model.trlstart{isbSn})
-    win = ceil(((model.sr * model.trlstart{isbSn}(n)):...
-      (model.sr * model.trlstop{isbSn}(n) + winsize)));
-    % correct rounding errors
-    win(win == 0) = [];
-    [row,warnings] = get_data_after_trial_filling_with_nans_when_necessary(...
-      scr_sess, win, n, isbSn, model.iti, proc_miniti, warnings);
-    D(c, 1:numel(row)) = row;
-    c = c + 1;
-  end
-end
-clear c n
+segment_length = floor(model.sr * (max(maxtrialduration) + min([proc_miniti 10])));
+
+valid_newevents = cellfun(@(x, y) pspm_time2index(x, model.sr , length(y)), ...
+    model.trlstart, ...
+    model.scr', ...
+    'UniformOutput', false);
+
+[sts, D] = pspm_extract_segments_core(model.scr, valid_newevents, segment_length);
+if sts < 1, return; end
 
 % 5.5 do PCA if required
 if (options.indrf || options.getrf) && ~isempty(model.flexevents)
@@ -696,7 +704,7 @@ if (options.indrf || options.getrf) && ~isempty(model.flexevents)
     model.aSCR = aSCR;
   else
     warning('ID:invalid_input', ...
-      'Due to NaNs after some trial endings, PCA could not be computed');
+      'Due to NaNs in the data, PCA could not be computed');
     [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
   end
 end
@@ -705,7 +713,10 @@ end
 model.meanSCR = transpose(mean(D,'omitnan') );
 
 %% 6 Invert DCM
-dcm = pspm_dcm_inv(model, options);
+[sts, dcm] = pspm_dcm_inv(model, options);
+if sts < 1
+    return
+end
 
 %% 7 Assemble stats & names
 dcm.stats = [];
@@ -774,37 +785,9 @@ if ~options.nosave
   save(model.modelfile, 'dcm');
 end
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = dcm;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = dcm;
-end
+
 return
 
-function [datacol, warnings] = ...
-  get_data_after_trial_filling_with_nans_when_necessary(...
-  scr_sess, win, n, isbSn, sbs_iti, proc_miniti, warnings)
-% Try to get all the data elements after the end of the trial n in session
-% isbSn. Indices of the elements to return are sto
-% red in win. In case these indices are larger than size of scr_sess{isbSn}, then fill the
-% rest of the data with NaN values.
-datacol = NaN(1, numel(win));
-num_indices_outside_scr = win(end) - numel(scr_sess);
-if num_indices_outside_scr > 0
-  warning('ID:too_short_ITI',...
-    ['Trial %d in session %d has ITI %f; but for mean response we use %f seconds',...
-    ' after each trial. Filling the rest with NaNs'],...
-    n, isbSn, sbs_iti{isbSn}(n), proc_miniti(isbSn)...
-    );
-  [warnings{end+1,2},warnings{end+1,1}] = lastwarn;
-  win(end - num_indices_outside_scr + 1 : end) = [];
-  datacol(1:numel(win)) = scr_sess(win);
-  datacol(numel(win) + 1 : end) = NaN;
-else
-  datacol(1:numel(win)) = scr_sess(win);
-end
 
 function [sts] = pspm_dcm_check_options(type, check_opt, fields)
 % pspm_dcm_check_options is a helper function for other functions which should

@@ -1,12 +1,19 @@
-function glm = pspm_glm(model, options)
+    function [sts, glm] = pspm_glm(model, options)
 % ● Description
-%   pspm_glm specifies a within subject general linear convolution model of
-%   predicted signals and calculates amplitude estimates for these responses.
+%   pspm_glm specifies a within-subject general linear convolution model 
+%   (GLM) of predicted signals and calculates amplitude estimates for these 
+%   responses.
+%   GLMs can be used for analysing evoked responses that follow an event 
+%   with (approximately) fixed latency. This is similar to standard 
+%   analysis of fMRI data. 
+%   The user specifies events for different conditions. These are used to 
+%   estimate the mean response amplitude per condition. These mean 
+%   amplitudes can later be expored for statistical analysis, using 
+%   pspm_export.
 % ● Format
-%   glm = pspm_glm(model, options)
+%   [sts, glm] = pspm_glm(model, options)
 % ● Arguments
-%   ┌─────model:  [struct]
-%   │ ▶︎ mandatory
+%   ┌─────model
 %   ├.modelfile:  a file name for the model output
 %   ├─.datafile:  a file name (single session) OR
 %   │             a cell array of file names
@@ -14,32 +21,26 @@ function glm = pspm_glm(model, options)
 %   │             a cell array of multiple condition file names OR
 %   │             a struct (single session) with fields .names, .onsets,
 %   │             and (optional) .durations and .pmod  OR
-%   │             a cell array of struct OR
-%   │             a struct with fields 'markervalues' and 'names' (when model.timeunits
+%   │             a cell array of struct OR a struct with fields 
+%   │             'markervalues' and 'names' (when model.timeunits
 %   │             is set to be 'markervalues')
 %   │             OR a cell array of struct
 %   ├.timeunits:  one of 'seconds', 'samples', 'markers', 'markervalues'
-%   ├───.window:  only required if model.latency equals 'free' and ignored
-%   │             otherwise. A scalar or 2-element vector in seconds that 
-%   │             specifies over which time window (relative to the event
-%   │             onsets specified in model.timing) the model should be 
-%   │             evaluated. 
-%   │ ▶︎ optional
-%   ├.modelspec:  'scr' (default); specify the model to be used.
+%   ├.modelspec:  [optional] 'scr' (default); specify the model to be used.
 %   │             See pspm_init, defaults.glm() which modelspecs are possible
 %   │             with glm.
-%   ├─.modality:  specify the data modality to be processed.
+%   ├─.modality:  [optional] specify the data modality to be processed.
 %   │             When model.modality is set to be sps, the model.channel
 %   │             should be set among sps_l, sps_r, or defaultly sps. By
 %   │             default, this is determined automatically from "modelspec"
-%   ├───────.bf:  basis function/basis set; modality specific default
+%   ├───────.bf:  [optional] basis function/basis set; modality specific default
 %   │             with subfields .fhandle (function handle or string) and
 %   │             .args (arguments, first argument sampling interval will
 %   │             be added by pspm_glm). The optional subfield .shiftbf = n
 %   │             indicates that the onset of the basis function precedes
 %   │             event onsets by n seconds (default: 0: used for
 %   │             interpolated data channels)
-%   ├──.channel:  channel number or channel type. if a channel type is
+%   ├──.channel:  [optional] channel number or channel type. if a channel type is
 %   │             specified the LAST channel matching the given type will
 %   │             be used. The rationale for this is that, in general channels
 %   │             later in the channel list are preprocessed/filtered versions
@@ -55,45 +56,113 @@ function glm = pspm_glm(model, options)
 %   │             accepts only 'sps_l', 'sps_r', or 'sps'.
 %   │             DEFAULT: last channel of the specified modality
 %   │             (for PSR this is 'pupil')
-%   ├─────.norm:  normalise data; default 0
-%   ├───.filter:  filter settings; modality specific default
-%   ├──.missing:  allows to specify missing (e. g. artefact) epochs in the
+%   ├─────.norm:  [optional] normalise data; default 0
+%   ├───.filter:  [optional] filter settings; modality specific default
+%   ├──.missing:  [optional] allows to specify missing (e. g. artefact) epochs in the
 %   │             data file. See pspm_get_timing for epoch definition;
 %   │             specify a cell array for multiple input files. This
 %   │             must always be specified in SECONDS.
 %   │             Default: no missing values
-%   ├─.nuisance:  allows to specify nuisance regressors. Must be a file
+%   ├─.nuisance:  [optional] Allows to specify nuisance regressors. Must be a file
 %   │             name; the file is either a .txt file containing the
 %   │             regressors in columns, or a .mat file containing the
 %   │             regressors in a matrix variable called R. There must be
 %   │             as many values for each column of R as there are data
 %   │             values. SCRalyze will call these regressors R1, R2, ...
-%   ├──.latency:  allows to specify whether latency should be 'fixed'
-%   │             (default) or should be 'free'. In 'free' models an
+%   ├──.latency:  [optional] Specify whether latency should be 'fixed'
+%   │             (default) or 'free'. In 'free' models an
 %   │             additional dictionary matching algorithm will try to
 %   │             estimate the best latency. Latencies will then be added
-%   │             at the end of the output. In 'free' models the fiel
+%   │             at the end of the output. In 'free' models the field
 %   │             model.window is MANDATORY and single basis functions
 %   │             are allowed only.
-%   └.centering:  if set to 0 the function would not perform the
+%   ├───.window:  Only required if model.latency equals 'free' and ignored
+%   │             otherwise. A scalar or 2-element vector in seconds that
+%   │             specifies over which time window (relative to the event
+%   │             onsets specified in model.timing) the model should be
+%   │             evaluated. Positive values mean that the response 
+%   │             function is shifted to later time points, negative values│             
+%   │             that it is shifted to earlier time points.
+%   └.centering:  [optional] If set to 0 the function would not perform the
 %                 mean centering of the convolved X data. For example, to
 %                 invert SPS model, set centering to 0. Default: 1
-%   ┌───options:
-%   │ ▶︎ optional
-%   ├──.overwrite:  [logical] (0 or 1)
+%   ┌───options
+%   ├──.overwrite:
+%   │             [optional] logical, 0 or 1.
 %   │             Define whether to overwrite existing output files or not.
 %   │             Default value: determined by pspm_overwrite.
 %   ├──.marker_chan_num:
-%   │             marker channel number; default first marker channel.
+%   │             [optional] marker channel number; default first marker channel.
 %   └──.exclude_missing:
-%                 marks trials during which NaN percentage exceeds
+%                 [optional] marks trials during which NaN percentage exceeds
 %                 a cutoff value. Requires two subfields:
 %                 'segment_length' (in s after onset) and 'cutoff'
 %                 (in % NaN per segment). Results are written into
 %                 model structure as fields .stats_missing and
 %                 .stats_exclude but not used further.
 % ● Outputs
-%           glm:  a structure 'glm' which is also written to file
+%   *       glm:  a structure 'glm' which is also written to file
+% ● References
+%   * Skin conductance response analysis
+%   [1] GLM for SCR:
+%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
+%       rapid event-related skin conductance responses. Journal of Neuroscience
+%       Methods, 184, 224-234.
+%   [2] Canonical skin conductance response function, and GLM assumptions:
+%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
+%       skin conductance responses. International Journal of Psychophysiology,
+%       75, 349-356.
+%   [3] Validating GLM assumptions with intraneural recordings:
+%       Gerster S, Namer B, Elam M, Bach DR (2018). Testing a linear time
+%       invariant model for skin conductance responses by intraneural
+%       recording and stimulation. Psychophysiology, 55, e12986.
+%   [4] Fine-tuning of SCR CLM:
+%       Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
+%       model-based analysis of evoked skin conductance responses. Biological
+%       Psychology, 94, 490-497.
+%   [5] SCR GLM validation and comparison with Ledalab:
+%       Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
+%       model-based methods for skin conductance analysis. Biological Psychology,
+%       103, 63-88.
+%   * Pupil size analysis
+%   [6] GLM for fear-conditioned pupil dilation:
+%       Korn CK, Staib M, Tzovara A, Castegnetti G, Bach DR (2017).
+%       A pupil size response model to assess fear learning.
+%       Psychophysiology, 54, 330-343.
+%   * Heart rate/period analysis
+%   [7] GLM for evoked heart period responses:
+%       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related
+%       heart period responses. Psychophysiology, 53, 837-846.
+%   [8] GLM for fear-conditioned bradycardia:
+%       Castegnetti G, Tzovara A, Staib M, Paulus PC, Hofer N, & Bach DR
+%       (2016). Modelling fear-conditioned bradycardia in humans.
+%       Psychophysiology, 53, 930-939.
+%   [9] GLM for reward-conditioned bradycardia:
+%       Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (under review). Measuring
+%       human Pavlovian appetitive conditioning and memory retention.
+%   * Respiration analysis
+%  [10] GLM for evoked respiratory responses:
+%       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model
+%       for event-related respiration responses. Journal of Neuroscience
+%       Methods, 270, 174-155.
+%  [11] GLM for fear-conditioned respiration amplitude responses:
+%       Castegnetti G, Tzovara A, Staib M, Gerster S, Bach DR (2017).
+%       Assessing fear learning via conditioned respiratory amplitude
+%       responses. Psychophysiology, 54, 215-223.
+%   * Startle eye-blink analysis
+%  [12] GLM for startle eye-blink responses:
+%       Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
+%       Modeling Startle Eyeblink Electromyogram to Assess
+%       Fear Learning. Psychophysiology
+%   * Eye gaze analysis
+%  [13] GLM for saccadic scanpath speed:
+%       Xia Y, Melinščak F, Bach DR (2020). Saccadic scanpath length: an
+%       index for human threat conditioning. Behavior Research Methods, 53,
+%       1426-1439.
+% ● History
+%   Introduced in PsPM 3.1
+%   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Maintained in 2022 by Teddy
 % ● Developer's Notes
 %   TIMING - multiple condition file(s) or struct variable(s):
 %   The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
@@ -121,30 +190,6 @@ function glm = pspm_glm(model, options)
 %     names = {'condition a', 'condition b'};
 %     onsets = {[1 2 3], [4 5 6]};
 %     save('testfile', 'names', 'onsets');
-% ● References
-%   [1] GLM for SCR:
-%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2009). Time-series analysis for
-%       rapid event-related skin conductance responses. Journal of Neuroscience
-%       Methods, 184, 224-234.
-%   [2] SCR: Canonical response function, and GLM assumptions:
-%       Bach DR, Flandin G, Friston KJ, Dolan RJ (2010). Modelling event-related
-%       skin conductance responses. International Journal of Psychophysiology,
-%       75, 349-356.
-%   [3] Fine-tuning of SCR CLM:
-%       Bach DR, Friston KJ, Dolan RJ (2013). An improved algorithm for
-%       model-based analysis of evoked skin conductance responses. Biological
-%       Psychology, 94, 490-497.
-%   [4] SCR GLM validation and comparison with Ledalab:
-%       Bach DR (2014).  A head-to-head comparison of SCRalyze and Ledalab, two
-%       model-based methods for skin conductance analysis. Biological Psychology,
-%       103, 63-88.
-%   [5] SEBR GLM: Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
-%       Modeling Startle Eyeblink Electromyogram to Assess
-%       Fear Learning. Psychophysiology
-% ● History
-%   Introduced in PsPM 3.1
-%   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
 
 %% 1 Initialise
 global settings
@@ -155,28 +200,15 @@ sts = -1;
 glm = struct([]); % output model structure
 tmp = struct([]); % temporary model structure
 
-%% 2 Check input 
+%% 2 Check input
 % 2.1 check missing input --
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
 
-% 2.2 check model
-model = pspm_check_model(model, 'glm');
-if model.invalid
+% 2.2 check model and options
+[model, options] = pspm_check_model(model, options, 'glm');
+if model.invalid || options.invalid
     return
-end
-
-% 2.3 check options 
-options = pspm_options(options, 'glm');
-if options.invalid
-  return
-end
-
-% 2.4 check files
-% stop the script if files are not allowed to overwrite
-if ~pspm_overwrite(model.modelfile, options)
-  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
-  return
 end
 
 %% 3 Check & get data
@@ -184,29 +216,33 @@ fprintf('Computing GLM: %s ...\n', model.modelfile);
 fprintf('Getting data ...');
 nFile = numel(model.datafile);
 for iFile = 1:nFile
-  % 3.3 get and filter data
-  [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, model.channel);
-  if sts_load_data == -1, return; end
-  y{iFile} = data{end}.data(:);
-  sr(iFile) = data{end}.header.sr;
-  fprintf('.');
-  if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
-    [sts_load_data, ~, data] = pspm_load_data(model.datafile{iFile}, options.marker_chan_num);
-    if sts_load_data == -1
-      warning('ID:invalid_input', 'Could not load the specified markerchannel');
-      return
+    % 3.3 get and filter data
+    [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
+    if sts == -1, return; end
+    y{iFile} = data.data(:);
+    sr(iFile) = data.header.sr;
+    fprintf('.');
+    if any(strcmp(model.timeunits, {'marker', 'markers','markervalues'}))
+        [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan_num, 'marker');
+        if sts == -1
+            warning('ID:invalid_input', 'Could not load the specified markerchannel');
+            return
+        end
+        % here, data.header.sr correponds to the time resolution of the
+        % time stamps which should always be 1, but this will convert any
+        % potentially deviating time stamp resolution to seconds
+        events{iFile} = data.data(:) / data.header.sr;
+        if strcmp(model.timeunits,'markervalues')
+            model.timing{iFile}.markerinfo = data.markerinfo;
+        end
+    else
+        events{iFile} = [];
     end
-    % first marker_channel is used
-    events{iFile} = data{1}.data(:) * data{1}.header.sr;
-    if strcmp(model.timeunits,'markervalues')
-      model.timing{iFile}.markerinfo = data{1}.markerinfo;
-    end
-  end
 end
 if nFile > 1 && any(diff(sr) > 0)
-  fprintf('\nSample rate differs between sessions.\n')
+    fprintf('\nSample rate differs between sessions.\n')
 else
-  fprintf('\n');
+    fprintf('\n');
 end
 
 
@@ -227,7 +263,7 @@ try
       'functions are not allowed.']); return;
   end
 catch
-  warning('ID:invalid_fhandle', 'Specified basis function %s is faulty', model.bf.fhandle); return;
+  warning('ID:invalid_fhandle', 'Specified basis function is faulty.'); return;
 end
 % 5.1 set shiftbf
 if bf_x(1) < 0
@@ -256,11 +292,11 @@ end
 
 %% 8 check & get missing values
 for iSn = 1:nFile
-if isempty(model.missing{iSn})
-  sts = 1; missing{iSn} = [];
-else
-  [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
-end
+    if isempty(model.missing{iSn})
+      sts = 1; missing{iSn} = [];
+    else
+      [sts, missing{iSn}] = pspm_get_timing('missing', model.missing{iSn}, 'seconds');
+    end
 end
 
 %% 9 check and get nuisance regressors
@@ -371,66 +407,43 @@ for iSn = 1:nFile
   M = [M; ones(newsr * model.bf.shiftbf, 1); newmissing];
   % convert regressor information to samples
   if ~isempty(multi)
-    for n = 1:numel(multi(iSn).names)
-      % look for index
-      name_idx = find(strcmpi(names, multi(iSn).names(n)));
-      if numel(name_idx) > 1
-        warning(['Name was found multiple times, ', ...
-          'will take first occurence.']);
-        name_idx = name_idx(1);
-      elseif numel(name_idx) == 0
-        % append
-        name_idx = numel(names) + 1;
+      if strcmpi(model.timeunits, 'samples')
+          sn_sr = newsr/sr(iSn);
+      else
+          sn_sr = newsr;
       end
-      % convert onsets to samples
-      switch model.timeunits
-        case 'samples'
-          newonsets    = round(multi(iSn).onsets{n} * newsr/sr(iSn));
-          newdurations = round(multi(iSn).durations{n} * newsr/sr(iSn));
-        case 'seconds'
-          newonsets    = round(multi(iSn).onsets{n} * newsr);
-          newdurations = round(multi(iSn).durations{n} * newsr);
-        case 'markers'
-          try
-            % markers are timestamps in seconds
-            newonsets = round(events{iSn}(multi(iSn).onsets{n}) ...
-              * newsr);
-          catch
-            warning(['\nSome events in condition %01.0f were ', ...
-              'not found in the data file %s'], n, ...
-              model.datafile{iSn}); return;
+      [msts, newonsets, newdurations] = pspm_multi2index(model.timeunits, ...
+          multi(iSn), sn_sr, tmp.snduration(iSn), events(iSn));
+      if msts < 1, return; end
+      for n = 1:numel(multi(iSn).names)
+           if iSn == 1
+              names{n} = multi(1).names{n};
+              onsets{n} = newonsets{n}{1}(:);
+              durations{n} = newdurations{n}{1}(:);
+              if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+                  for p = 1:numel(multi(iSn).pmod(n).param)
+                      pmod(n).param{p} = multi(iSn).pmod(n).param{p}(:);
+                  end
+                  pmod(n).name = multi(1).pmod(n).name;
+              end
+          else
+               % shift conditions for sessions not being the first
+               % (tmp.snduration is in samples)
+              newonsets{n}{1}(:) = newonsets{n}{1}(:) + sum(tmp.snduration(1:(iSn - 1)));
+              % then insert
+              onsets{n} = [onsets{n}; newonsets{n}{1}(:)];
+              durations{n} = [durations{n}; newdurations{n}{1}(:)];
+              if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
+                  for p = 1:numel(multi(iSn).pmod(n).param)
+                      pmod(n).param{p} = [pmod(n).param{p}; multi(iSn).pmod(n).param{p}(:)];
+                  end
+              end
           end
-          newdurations = multi(iSn).durations{n};
       end
-      % get the first multiple condition definition --
-      if numel(names) < name_idx
-        names{name_idx} = multi(iSn).names{n};
-        onsets{name_idx} = [];
-        durations{name_idx} = [];
-        if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-          for p = 1:numel(multi(iSn).pmod(n).param)
-            pmod(name_idx).param{p} = [];
-          end
-          pmod(name_idx).name = multi(iSn).pmod(n).name;
-        end
-      end
-      % shift conditions for sessions not being the first
-      if iSn > 1
-        newonsets = newonsets + sum(tmp.snduration(1:(iSn - 1)));
-      end
-      onsets{name_idx} = [onsets{name_idx}; newonsets(:)];
-      durations{name_idx} = [durations{name_idx}; newdurations(:)];
-      if isfield(multi, 'pmod') && (numel(multi(iSn).pmod) >= n)
-        for p = 1:numel(multi(iSn).pmod(n).param)
-          pmod(name_idx).param{p} = [pmod(name_idx).param{p}; ...
-            multi(iSn).pmod(n).param{p}(:)];
-        end
-      end
-    end
   else
-    names = {};
-    onsets = {};
-    durations = {};
+      names = {};
+      onsets = {};
+      durations = {};
   end
 end
 % 11.1 normalise if desired --
@@ -468,6 +481,7 @@ end
 %% 12 collect data & regressors for output model
 glm.input.data    = y;
 glm.input.sr      = sr;
+glm.input.events  = events;
 glm.Y             = Y;
 glm.M             = M; % set to 1 if data is missing, otherwise set to 0
 glm.infos.sr      = newsr;
@@ -491,7 +505,8 @@ for iCond = 1:numel(names)
   tmp.regscale{iCond} = 1;
   % first process event onset, then pmod
   if strcmpi(model.latency, 'free')
-      offset = model.window(1);
+      offset = round(model.window(1) * glm.infos.sr);
+      model.infos.offset = offset;
   else
       offset = 0;
   end
@@ -583,7 +598,7 @@ for iCond = 1:numel(names)
 
   % orthogonalize after convolution if there is more than one column per
   % condition
-  if size(tmp.XC{iCond}, 2) > 1
+  if size(tmp.XC{iCond}, 2) > 1 && ~(all(tmp.XC{iCond}(:)==0))
     foo=spm_orth(tmp.XC{iCond});
     % catch zero matrices (unclear yet why this happens, 01-Apr-2012)
     if ~(all(foo(:) == 0))
@@ -638,7 +653,9 @@ end
 glm.interceptno = iSn;
 glm.regscale((end+1):(end+iSn)) = 1;
 % 14.7 delete missing epochs and prepare output --
-perc_missing = sum(glm.M)/length(glm.M);
+% user output on missing values (not accounting for those introduced by
+% shiftbf parameter)
+perc_missing = (sum(glm.M)  - newsr * model.bf.shiftbf)/length(glm.M);
 if perc_missing >= 0.1
   if sr == Xfilter.sr
     warning('ID:invalid_input', ...
@@ -678,7 +695,7 @@ if strcmpi(model.latency, 'free')
     % obtain inner product and select max
     a = D * glm.YM;
     [~, ind] = max(a);
-    lat(iCol) = ind/glm.infos.sr;
+    lat(iCol) = (ind+model.infos.offset)/glm.infos.sr;
     XMnew(:, iCol) = D(ind, :);
     % create names
     glm.names{iCol + ncol} = [glm.names{iCol}, ' Latency'];
@@ -715,7 +732,7 @@ end
 
 if isfield(options,'exclude_missing')
   if options.exclude_missing.segment_length > 0
-    [sts,segments] = pspm_extract_segments('auto', glm, ...
+    [sts,segments] = pspm_extract_segments('model', glm, ...
       struct('length', options.exclude_missing.segment_length));
     if sts == -1
       warning('ID:invalid_input', 'call of pspm_extract_segments failed');
@@ -733,13 +750,7 @@ end
 
 %% 17 save data
 % 17.1 overwrite is determined in load1 --
+glm.datetime = datetime;
 savedata = struct('glm', glm);
-[sts_load1, data_load1, mdltype_load1] = pspm_load1(model.modelfile, 'save', savedata, options);
-if ~sts_load1
-  warning('ID:invalid_input', 'call of pspm_load1 failed');
-  return
-end
+[sts, data_load1, mdltype_load1] = pspm_load1(model.modelfile, 'save', savedata, options);
 
-%% 18 User output
-fprintf(' done. \n');
-return

@@ -4,12 +4,13 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %   different formats and align with a number of files. Time units (seconds,
 %   samples, markers) are not changed.
 % ● Format
-%   [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
-%   [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
-%   [sts, events] = pspm_get_timing('events', events)
-%   [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
-%   for recursive calls also:
-%   [sts, epochs] = pspm_get_timing('file', filename)
+%   → Standard
+%     [sts, multi]  = pspm_get_timing('onsets', intiming, timeunits)
+%     [sts, epochs] = pspm_get_timing('epochs', epochs, timeunits)
+%     [sts, events] = pspm_get_timing('events', events)
+%     [sts, epochs] = pspm_get_timing('missing', epochs, timeunits)
+%   → For recursive calls also:
+%     [sts, epochs] = pspm_get_timing('file', filename)
 % ● Arguments
 %   onsets and timeunits are 'seconds', 'samples' or 'markers':
 %      for defining event onsets for multiple conditions (e. g. GLM)
@@ -59,8 +60,8 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %       for 'param'
 % ● History
 %   Introduced in PsPM 3.0
-%   Written in 2009-2015 by Dominik R Bach (WTCN, UZH)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Written    in 2009-2015 by Dominik R Bach (WTCN, UZH)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -133,11 +134,12 @@ switch model
       end
 
       nFiles = numel(intiming);
+      allnames = {};
       for iFile = 1:nFiles
         % load regressor information from file if necessary --
         if ischar(intiming{iFile})
-          [sts, in] = pspm_get_timing('file', intiming{iFile});
-          if sts < 1, return; end
+          [lsts, in] = pspm_get_timing('file', intiming{iFile});
+          if lsts < 1, return; end
         elseif isstruct(intiming{iFile})
           in = intiming{iFile};
         else
@@ -179,57 +181,65 @@ switch model
 
         % check number of events and non-allowed values per condition:
         for iCond = 1:numel(in.names)
-          if ~((isvector(in.onsets{iCond}) && ...
-              isnumeric(in.onsets{iCond})) || ...
-              (isempty(in.onsets{iCond}) && ...
-              ~strcmp('', in.onsets{iCond})))
-            warning('ID:no_numeric_vector', ...
-              ['%sCondition `%s` - onsets{%i} must be a ', ...
-              'numeric vector or empty.'], errmsg, ...
-              in.names{iCond}, iCond); return;
-          end
+            if ~((isvector(in.onsets{iCond}) && ...
+                    isnumeric(in.onsets{iCond})) || ...
+                    (isempty(in.onsets{iCond}) && ...
+                    ~strcmp('', in.onsets{iCond})))
+                warning('ID:no_numeric_vector', ...
+                    ['%sCondition `%s` - onsets{%i} must be a ', ...
+                    'numeric vector or empty.'], errmsg, ...
+                    in.names{iCond}, iCond); return;
+            end
 
-          if numel(in.durations{iCond}) == 1
-            in.durations{iCond} = repmat(in.durations{iCond}, ...
-              numel(in.onsets{iCond}), 1);
-          elseif (numel(in.onsets{iCond}) ~= numel(in.durations{iCond}))
-            warning('ID:number_of_elements_dont_match',['%sCondition `%s` - Number of event onsets ', ...
-              '(%d) does not match the number of durations (%d).'],...
-              errmsg, in.names{iCond}, numel(in.onsets{iCond}),...
-              numel(in.durations{iCond}));
-            return;
-          end
-          if any(in.onsets{iCond}<0)
-            warning('ID:invalid_input',['%sCondition `%s` contains onset values ', ...
-              'smaller than zero'], errmsg, in.names{iCond});
-            return;
-          end
-          if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
-              any(in.onsets{iCond} ~= ceil(in.onsets{iCond}))
-            warning('ID:invalid_input',['%sCondition `%s` contains non-integer ', ...
-              'onset values but is defined in %s'], ...
-              errmsg, in.names{iCond}, timeunits);
-            return;
-          end
-          if strcmpi(timeunits, 'markers') && any(in.durations{iCond} ~= 0)
-            warning('ID:invalid_input',['%sCondition `%s` contains non-zero ', ...
-              'durations - this is not allowed for marker time ', ...
-              'units. Please use ''samples'' or ', ...
-              '''seconds'' instead.'], errmsg, in.names{iCond});
-            return;
-          end
-          if any(in.durations{iCond} < 0)
-            warning('ID:invalid_input',['%sConditions `%s% contains ', ...
-              'negative durations.'], errmsg, in.names{iCond});
-            return;
-          end
+            if numel(in.durations{iCond}) == 1
+                in.durations{iCond} = repmat(in.durations{iCond}, ...
+                    numel(in.onsets{iCond}), 1);
+            elseif (numel(in.onsets{iCond}) ~= numel(in.durations{iCond}))
+                warning('ID:number_of_elements_dont_match',['%sCondition `%s` - Number of event onsets ', ...
+                    '(%d) does not match the number of durations (%d).'],...
+                    errmsg, in.names{iCond}, numel(in.onsets{iCond}),...
+                    numel(in.durations{iCond}));
+                return;
+            end
+            if any(in.onsets{iCond}<0)
+                warning('ID:invalid_input',['%sCondition `%s` contains onset values ', ...
+                    'smaller than zero'], errmsg, in.names{iCond});
+                return;
+            end
+            if any(strcmpi(timeunits, {'samples', 'markers'})) && ...
+                    any(in.onsets{iCond} ~= ceil(in.onsets{iCond}))
+                warning('ID:invalid_input',['%sCondition `%s` contains non-integer ', ...
+                    'onset values but is defined in %s'], ...
+                    errmsg, in.names{iCond}, timeunits);
+                return;
+            end
+            if strcmpi(timeunits, 'markers') && any(in.durations{iCond} ~= 0)
+                warning('ID:invalid_input',['%sCondition `%s` contains non-zero ', ...
+                    'durations - this is not allowed for marker time ', ...
+                    'units. Please use ''samples'' or ', ...
+                    '''seconds'' instead.'], errmsg, in.names{iCond});
+                return;
+            end
+            if any(in.durations{iCond} < 0)
+                warning('ID:invalid_input',['%sConditions `%s% contains ', ...
+                    'negative durations.'], errmsg, in.names{iCond});
+                return;
+            end
+            % collect all names from all sessions for later re-sorting
+            name_idx = find(strcmpi(allnames, in.names{iCond}));
+            if numel(name_idx) == 0
+                if isempty(allnames)
+                    allnames = in.names(iCond);
+                else
+                    allnames = [allnames, in.names(iCond)];
+                end
+            end
         end
         % check pmods:
         if isfield(in, 'pmod')
           % check consistency and add field
           if ~isstruct(in.pmod)
             warning('%sPmod must be a struct variable.', errmsg);
-
             return;
           elseif numel(in.pmod) > numel(in.names)
             warning(['%sNumber of parametric modulators (%d) ', ...
@@ -277,12 +287,70 @@ switch model
             end
           end
         end
-        outtiming(iFile).names     = in.names;
-        outtiming(iFile).onsets    = in.onsets;
-        outtiming(iFile).durations = in.durations;
+        temptiming(iFile).names     = in.names;
+        temptiming(iFile).onsets    = in.onsets;
+        temptiming(iFile).durations = in.durations;
         if isfield(in, 'pmod')
-          outtiming(iFile).pmod  = in.pmodnew;
+          temptiming(iFile).pmod  = in.pmodnew;
         end
+      end
+      % ensure same names exist for all sessions and re-sort if
+      % necesssary; collect number and names of all pmods
+      outtiming = struct('names', {}, 'onsets', {}, 'durations', {});
+      pmodname = {};
+      try
+          for iFile = 1:nFiles
+              for iCond = 1:numel(allnames)
+                  name_idx = find(strcmpi(temptiming(iFile).names, allnames{iCond}));
+                  if numel(name_idx) > 1
+                      warning('Names must be unique within each session.');
+                      return;
+                  elseif numel(name_idx) == 1
+                      outtiming(iFile).onsets{iCond}    = temptiming(iFile).onsets{name_idx};
+                      outtiming(iFile).durations{iCond}  = temptiming(iFile).durations{name_idx};
+                      % assign pmods
+                      if isfield(temptiming, 'pmod') && ...
+                          ~isempty(temptiming(iFile).pmod) && ...
+                           numel(temptiming(iFile).pmod) >= name_idx
+                              outtiming(iFile).pmod(iCond)  = temptiming(iFile).pmod(name_idx);
+                              % store pmod number and name for later use
+                              pmodno(iFile, iCond) = numel(temptiming(iFile).pmod(name_idx).param);
+                              % get pmodname from first session
+                              if isempty(pmodname) || ...
+                                      numel(pmodname) < iCond || ...
+                                      isempty(pmodname{iCond})
+                                    pmodname{iCond} = temptiming(iFile).pmod(name_idx).name;
+                              end
+                      else
+                          pmodno(iFile, iCond) = 0;
+                      end
+                  elseif numel(name_idx) == 0
+                      outtiming(iFile).onsets{iCond}    = [];
+                      outtiming(iFile).durations{iCond}  = [];
+                      pmodno(iFile, iCond) = 0;
+                  end
+                  outtiming(iFile).names{iCond}  = allnames{iCond};
+              end
+          end
+          if nFiles > 1
+              pmodno = max(pmodno);
+          end
+          % initialise pmods
+          for iFile = 1:nFiles
+              for iCond = 1:numel(allnames)
+                  % insert pmods if they exist in other sessions
+                  if pmodno(iCond) > 0 && ...
+                          (numel(outtiming(iFile).pmod) < iCond || ...
+                          isempty(outtiming(iFile).pmod(iCond).param))
+                      for i_pmod = 1:pmodno(iCond)
+                          outtiming(iFile).pmod(iCond).param{i_pmod} = [];
+                          outtiming(iFile).pmod(iCond).name{i_pmod} = pmodname{iCond}{i_pmod};
+                      end
+                  end
+              end
+          end
+      catch
+          keyboard
       end
 
       % clear local variables
@@ -298,7 +366,7 @@ switch model
       end
 
       nMarkers = numel(intiming);
-      for iMarker = 1: nMarkers
+      for iMarker = 1:nMarkers
         % check whether all fields are present and in correct format:
         if isstruct(intiming{iMarker})
           in = intiming{iMarker};
@@ -354,13 +422,12 @@ switch model
   case 'epochs'
     % get epoch information from file or from input --
     if ischar(intiming)
-      [sts, in] = pspm_get_timing('file', intiming);
-      if sts < 1, return; end;
+      [lsts, in] = pspm_get_timing('file', intiming);
+      if lsts < 1, return; end
       if isfield(in, 'epochs')
         outtiming = in.epochs;
       elseif isfield(in, 'onsets')
         onsets = in.onsets;
-        onsetsflag = 0;
         if numel(onsets) == 2
           if numel(onsets{1}) == numel(onsets{2})
             outtiming(:, 1) = onsets{1};
@@ -397,8 +464,14 @@ switch model
       else
         warning('Unknown epoch definition format.');  return;
       end
-    else
-       return;
+    end
+
+    % remove negative values
+    if any(outtiming(:) < 0)
+        indx = outtiming(:,2) < 0;
+        outtiming(indx,:) = [];
+        indx = outtiming(:,1) < 0;
+        outtiming(indx,1) = 0;
     end
 
     % check time units --
@@ -411,8 +484,8 @@ switch model
     % Missing epoch information for GLM and DCM
     % ------------------------------------------------------------------------
   case 'missing'
-    [sts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
-     if sts < 1, return; end
+    [lsts, missepochs] = pspm_get_timing('epochs', intiming, timeunits);
+     if lsts < 1, return; end
      % sort & merge missing epochs
     if size(missepochs, 1) > 0
       [~, sortindx] = sort(missepochs(:, 1));
@@ -434,8 +507,8 @@ switch model
   case('events')
     if ischar(intiming)
       % recursive call to retrieve file
-      [sts, in] = pspm_get_timing('file', intiming);
-      if sts == -1, return; end
+      [lsts, in] = pspm_get_timing('file', intiming);
+      if lsts == -1, return; end
       if isfield(in, 'events')
         intiming = in.events;
       else

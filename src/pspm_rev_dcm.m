@@ -8,23 +8,27 @@ function sts = pspm_rev_dcm(dcm, job, sn, trl)
 % ● Format
 %   pspm_rev_dcm(dcm, job, sn, trl)
 % ● Arguments
-%   dcm:
-%   job:  [char], accepts 'inv', 'sf', 'sum', 'scrf', or 'names'.
-%           'inv' show inversion results, input argument session & trial number
-%            'sf' same for SF, input argument episode number
-%           'sum' show trial-by-trial summary, input argument session
-%                 number, optional argument figure name (saves the figure)
-%                 (can also be called as ...(dcm, 'sum', figname) for
-%                 on-the-fly display and saving of figure)
-%          'scrf' show peripheral skin conductance response function as used
-%                 for trial-by-trial estimation of sympathetic input
-%         'names' show trial and condition names in command window
-%    sn:
-%   trl:
+%   * dcm :  dcm struct or modelfile
+%   * job :  [char], accepts 'inv', 'sf', 'sum', 'scrf', or 'names'.
+%            'inv'   show inversion results, input argument session & trial number
+%            'sf'    same for SF, input argument episode number
+%            'sum'   show trial-by-trial summary, input argument session
+%                    number, optional argument figure name (saves the figure)
+%                    (can also be called as ...(dcm, 'sum', figname) for
+%                    on-the-fly display and saving of figure)
+%            'scrf'  show peripheral skin conductance response function as used
+%                    for trial-by-trial estimation of sympathetic input
+%            'names' show trial and condition names in command window
+%            'seg'   show the mean responses of all segments identified in 
+%                    the DCM model. ('pspm_extract_segments')
+%   *  sn: session.
+%   * trl: trial.
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
+%   Maintained in 2024 by Bernhard Agoué von Raußendorf
+
 
 %% Initialise
 global settings
@@ -34,6 +38,10 @@ end
 sts = -1;
 
 try, sn; catch, sn = 1; end;
+
+if ischar(dcm)
+    [~, dcm, ~] = pspm_load1(dcm, 'all');
+end
 
 % check input
 % ------------------------------------------------------------------------
@@ -119,6 +127,11 @@ switch job
       fprintf('Condition %d: %s\n',n,dcm.condnames{n});
     end;
     fprintf('---------------------------------------\n');
+  case 'seg'
+         
+    options = struct('plot', 1);
+    [ssts, segments] = pspm_extract_segments('model', dcm, options);
+
 end;
 
 sts = 1;

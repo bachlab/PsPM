@@ -1,19 +1,20 @@
 function [sts, data] = pspm_get_scr(import)
 % ● Description
-%   pspm_get_scr is a common function for importing scr data
+%   pspm_get_scr is a common function for importing scr data. 
 % ● Format
 %   [sts, data] = pspm_get_scr(import)
 % ● Arguments
-%     import:  import job structure with mandatory fields
-%         .sr:
-%       .data:
-%   .transfer:  transfer parameters, either a struct with fields .Rs, .c,
-%               .offset, .recsys, or a file containing variables 'Rs' 'c',
-%               'offset', 'recsys'.
+%   ┌───import
+%   ├────.data : column vector of SCR data
+%   ├──────.sr : sampling rate
+%   └.transfer : transfer parameters, either a struct with fields .Rs, .c,
+%                .offset, .recsys, or a file containing variables 'Rs' 'c',
+%                'offset', 'recsys'. See pspm_transfer_function for more
+%                details.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 % initialise
 global settings
@@ -74,7 +75,8 @@ end;
 
 % convert data
 inputdata = double(import.data);
-data.data = pspm_transfer_function(inputdata, c, Rs, offset, recsys);
+[tsts, data.data] = pspm_transfer_function(inputdata, c, Rs, offset, recsys);
+if tsts < 1, return, end
 data.data = data.data(:);
 
 % add header

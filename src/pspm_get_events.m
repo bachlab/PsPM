@@ -4,18 +4,25 @@ function [sts, import] = pspm_get_events(import)
 % ● Format
 %   [sts, data] = pspm_get_events(import)
 % ● Arguments
-%      import:  import job structure with mandatory fields
-%       .data:  mandatory
-%     .marker:  mandatory, accepts 'timestamps' and 'continuous'.
-%         .sr:  timestamps: timeunits in seconds, continuous: sample rate in
-%               1/seconds)
-%      .flank:  optional for continuous channels; default: both; accepts
-%               'ascending', 'descending', 'both', 'all'.
+%   ┌────import
+%   ├─────.data : mandatory
+%   ├───.marker : mandatory, accepts 'timestamps' and 'continuous'.
+%   ├───────.sr : timestamps: timeunits in seconds, continuous: sample rate
+%   │             in 1/seconds)
+%   ├────.flank : [optional, string] Only used for importing continuous
+%   │             event channels. This specifies which flank of the event 
+%   │             marker to use. 'both' (default, specifies the event at 
+%   │             the middle between the ascending and descending flank), 
+%   │             'ascending', 'descending',  'all' (imports ascending and 
+%   │             descending flank as separate events).
+%   └──.denoise : for continuous marker channels: only retains markers of
+%                 duration longer than the value given here (in seconds).
 % ● Output
-%       import: returns event timestamps in seconds in import.data
+%   *    import : returns event timestamps in seconds in import.data
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2013-2015 by Dominik R Bach & Tobias Moser (University of Zurich)
+%   Updated in 2024      by Dominik R Bach (Uni Bonn)
 
 %% Initialise
 global settings
@@ -78,6 +85,28 @@ elseif strcmpi(import.marker, 'continuous')
   lo2hi = temp(1+find(d(temp(2:end-1)-2) > 0))-3;
   hi2lo = temp(1+find(d(temp(2:end-1)-2) < 0))-4;
 
+  % denoise
+  if isfield(import, 'denoise') && isnumeric(import.denoise) && import.denoise > 0
+     initial_level = lo2hi(1) > hi2lo(1);
+     last_level    = lo2hi(end) > hi2lo(end);
+     if initial_level
+         lo2hi = [1; lo2hi];
+     end
+     if last_level
+         hi2lo = [hi2lo; numel(import.data)];
+     end
+     pulse_duration = diff([lo2hi(:), hi2lo(:)], [], 2)/import.sr;
+     pulse_index = find(pulse_duration > import.denoise);
+     lo2hi = lo2hi(pulse_index);
+     hi2lo = hi2lo(pulse_index);
+     if initial_level && lo2hi(1) == 1 % if initial level not already removed
+         lo2hi = lo2hi(2:end);
+     end
+     if last_level && hi2lo(end) == numel(import.data) % if last level not already removed
+         hi2lo = hi2lo(1:(end-1));
+     end
+  end
+
   if isempty(lo2hi) && isempty(hi2lo)
     fprintf('\n');
     warning('No markers, or problem with TTL channel.');
@@ -103,7 +132,7 @@ elseif strcmpi(import.marker, 'continuous')
     warning('Different number of hi2lo and lo2hi transitions in marker channel - please choose ascending or descending flank.');
     import.data = [];
     return;
-  end;
+  end
 
   % check if markerinfo should be set and if there are any data points
   if ~isfield(import, 'markerinfo') && ~isempty(import.data)
@@ -147,7 +176,7 @@ elseif strcmpi(import.marker, 'timestamp') || strcmpi(import.marker, 'timestamps
   import.data = import.data(:) .* import.sr;
 else
   warning('ID:invalid_field_content', 'The value of ''marker'' must either be ''continuous'' or ''timestamps'''); return;
-end;
+end
 
 % set status
 % -------------------------------------------------------------------------

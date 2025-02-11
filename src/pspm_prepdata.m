@@ -1,4 +1,4 @@
-function varargout = pspm_prepdata(varargin)
+function [sts, data, newsr] = pspm_prepdata(varargin)
 % ● Description
 %   pspm_prepdata is a shared PsPM function for twofold butterworth filting and
 %   downsampling raw data `on the fly`. This data is usually stored in results
@@ -8,8 +8,8 @@ function varargout = pspm_prepdata(varargin)
 %   [sts, data, newsr] = pspm_prepdata(data, filt)
 %   [sts, data, newsr] = pspm_prepdata(data, filt, options)
 % ● Arguments
-%          data:  a column vector of data
-%   ┌──────filt:  a struct with fields:
+%   *      data:  a column vector of data
+%   ┌──────filt
 %   ├───────.sr:  current sample rate in Hz
 %   ├───.lpfreq:  low pass filt frequency or 'none'
 %   ├──.lporder:  low pass filt order
@@ -17,7 +17,7 @@ function varargout = pspm_prepdata(varargin)
 %   ├───.hpfreq:  high pass filt frequency or 'none'
 %   ├.direction:  filt direction
 %   └─────.down:  sample rate in Hz after downsampling or 'none'
-%   ┌───options:  a struct with fields
+%   ┌───options
 %   └──.fillnan:  0/1 specify whether to fill nan if there is. Default: 1
 % ● Developer's Notes
 %   Note that the order for bandpass and bandstop filters is equal to
@@ -28,7 +28,7 @@ function varargout = pspm_prepdata(varargin)
 % ● History
 %   Introduced In PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
-%   Maintained in 2022 by Teddy Chao (UCL)
+%   Maintained in 2022 by Teddy
 
 %% Initialise
 global settings
@@ -47,17 +47,6 @@ switch nargin
 end
 outdata = data;
 newsr = 0;
-switch nargout
-  case 1
-    varargout{1} = outdata;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = outdata;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = outdata;
-    varargout{3} = newsr;
-end
 
 %% Check input
 options = pspm_options(options, 'prepdata');
@@ -128,7 +117,7 @@ if lowpass_filt
       data = filter(filt.b, filt.a, data);
       data = filter(filt.b, filt.a, data);
     else
-      data = pspm_filtfilt(filt.b, filt.a, data);
+      [~, data] = pspm_filtfilt(filt.b, filt.a, data);
     end
   end
 end
@@ -143,7 +132,7 @@ if ~ischar(filt.hpfreq) && ~isnan(filt.hpfreq)
     data = filter(filt.b, filt.a, data);
     data = filter(filt.b, filt.a, data);
   else
-    data = pspm_filtfilt(filt.b, filt.a, data);
+    [~, data] = pspm_filtfilt(filt.b, filt.a, data);
   end
 end
 % if uni, remove dummy data
@@ -162,33 +151,8 @@ if ~ischar(filt.down) && filt.sr > filt.down
     warning('ID:freq_change', ...
       'Sampling rate was changed to %01.2f Hz to prevent aliasing', filt.down)
   end
-  freqratio = filt.sr/filt.down;
-  if freqratio == ceil(freqratio) % NB isinteger might not work for some values
-    % to avoid toolbox use, but only works for integer sr ratios
-    [lsts, data] = pspm_downsample(data, freqratio);
-    if lsts == -1, errmsg = 'for an unknown reason in pspm_downsample.'; end
-    newsr = filt.down;
-  elseif settings.signal
-    % this filts the data on the way, which does not really matter
-    % for us anyway, but allows real sr ratios
-    if filt.sr == floor(filt.sr) && filt.down == floor(filt.down)
-      data = resample(data, filt.down, filt.sr);
-      newsr = filt.down;
-    else
-      % use a crude but very general way of getting to integer
-      % numbers
-      altsr = floor(filt.sr);
-      altdownsr = floor(filt.down);
-      data = resample(data, altdownsr, altsr);
-      newsr = filt.sr * altdownsr/altsr;
-      warning('ID:nonint_sr', 'Note that the new sampling rate is a non-integer number.');
-    end
-  else
-    lsts = -1;
-    errmsg = 'because signal processing toolbox is not installed and downsampling ratio is non-integer.';
-  end
-  if ~lsts
-    warning('ID:downsampling_failed', ['\nDownsampling failed %s', errmsg]);
+  [lsts, data, newsr] = pspm_downsample(data, filt.sr, filt.down);
+  if lsts == -1
     return
   end
 else
@@ -197,15 +161,4 @@ end
 %% Prepare the final data
 outdata = data;
 sts = 1;
-switch nargout
-  case 1
-    varargout{1} = outdata;
-  case 2
-    varargout{1} = sts;
-    varargout{2} = outdata;
-  case 3
-    varargout{1} = sts;
-    varargout{2} = outdata;
-    varargout{3} = newsr;
-end
 return

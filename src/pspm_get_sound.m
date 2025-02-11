@@ -2,10 +2,12 @@ function [sts, data] = pspm_get_sound(import)
 % ● Description
 %   pspm_get_sound is a common function for importing sound data.
 % ● Format
-%   [sts, data]=pspm_get_sound(import)
+%   [sts, data] = pspm_get_sound(import)
 % ● Arguments
-%   import.data: column vector of waveform data
-%     import.sr: sample rate
+%   ┌─import
+%   ├──.data : column vector of waveform data.
+%   ├─.units : units of data.
+%   └────.sr : sample rate.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2015 by Tobias Moser (University of Zurich)

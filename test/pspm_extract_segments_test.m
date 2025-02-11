@@ -8,7 +8,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
     testfile_prefix = 'datafile';
     nan_output_prefix = 'nan_output';
     outputfile_prefix = 'segments'
-    options = struct('length', 0)
+    options = struct('length', 5)
   end
   properties(TestParameter)
     % different NaN ratios
@@ -43,13 +43,13 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       % figure, plot(x,bs);
       signal_len = length(x);
       % change onsets values from seconds to sample idx
-      onsets_idx = onsets .* sr;
+      onsets_idx = round(onsets .* sr);
       % generate trial matrix
       trial_mat = zeros(nr_trials,length_sec*sr);
       % fill matrix with signal shifted over time
       for i=1:nr_trials
-        start = onsets_idx(i);
-        stop = onsets_idx(i)+signal_len-1;
+        start = onsets_idx(i) + 1;
+        stop = onsets_idx(i)+signal_len;
         if stop <=length_sec*sr
           trial_mat(i,start:stop) = bs';
         else
@@ -99,10 +99,10 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         cond_trial_data{i} = zeros(samples_per_trial,numel(idx));
         cond_durations{i} = 3.5* ones(numel(idx),1);
         for k=1:numel(idx)
-          cond_trial_data{i}(:,k) = y(cond_consets_idx{i}(k):min(length_sec*sr,(cond_consets_idx{i}(k)+samples_per_trial-1)));
+          cond_trial_data{i}(:,k) = y((cond_consets_idx{i}(k)+1):min(length_sec*sr,(cond_consets_idx{i}(k)+samples_per_trial)));
         end
-        cond_trial_mean{i} = nanmean(cond_trial_data{i},2);
-        cond_trial_std{i}  = nanstd(cond_trial_data{i},0,2);
+        cond_trial_mean{i} = nanmean(cond_trial_data{i}, 2);
+        cond_trial_std{i}  = nanstd(cond_trial_data{i}, [], 2);
         cond_nan_trial{i}  = mean(isnan(cond_trial_data{i}),1);
         cond_nan_total{i}  = mean(cond_nan_trial{i});
       end
@@ -111,11 +111,11 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       timing{1}.durations = cond_durations;
       for i = 1:nr_val_cond
         control_data{i}.trial_idx         = cond_idx{val_idx(i)};
-        control_data{i}.trial_data        = cond_trial_data{i};
+        control_data{i}.trial_data        = cond_trial_data{i}';
         control_data{i}.cond_name         = cond_names{i};
-        control_data{i}.mean              = cond_trial_mean{i};
-        control_data{i}.std               = cond_trial_std{i};
-        control_data{i}.trial_nan_percent = cond_nan_trial{i}*100;
+        control_data{i}.mean              = cond_trial_mean{i}';
+        control_data{i}.std               = cond_trial_std{i}';
+        control_data{i}.trial_nan_percent = cond_nan_trial{i}'*100;
         control_data{i}.total_nan_percent = cond_nan_total{i}*100;
       end
     end
@@ -141,12 +141,12 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       nr_t = 9;
       [~,timing] = generate_segment_data_manual(this, fn,nr_t,0);
       % not enough input elements
-      this.verifyWarning(@() pspm_extract_segments('manual',fn,0), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',fn,0), 'ID:invalid_input');
       % wrong input elements
-      this.verifyWarning(@() pspm_extract_segments('manual',struct('a',10),0,timing), 'ID:invalid_input');
-      this.verifyWarning(@() pspm_extract_segments('manual',[1,3],logical(32),timing), 'ID:invalid_input');
-      this.verifyWarning(@() pspm_extract_segments('manual',fn,'a',timing), 'ID:invalid_input');
-      this.verifyWarning(@() pspm_extract_segments('manual',fn,{'a'},timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',struct('a',10),0,timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',[1,3],logical(32),timing), 'ID:invalid_input');
+      this.verifyWarning(@() pspm_extract_segments('file',fn,'a',timing), 'ID:invalid_chantype');
+      this.verifyWarning(@() pspm_extract_segments('file',fn,{'a'},timing), 'ID:invalid_input');
       % test invalid auto input
       this.verifyWarning(@() pspm_extract_segments('auto',{1}), 'ID:invalid_input');
       this.verifyWarning(@() pspm_extract_segments('auto','some'), 'ID:invalid_input');
@@ -157,8 +157,13 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       [control_data,timing] = generate_segment_data_manual(this, fn,nr_trial,nan_ratio);
       % do the actual test with options length all other option field
       % are set to default
+      [sts,~] = this.verifyWarningFree(@() ...
+        pspm_extract_segments('file', fn, 1, timing,struct('length',3.5)));
+      this.verifyEqual(sts, 1);
+      % add testing 'screen' for nan_output
       [sts,out] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('manual', fn,0, timing,struct('length',3.5)));
+        pspm_extract_segments('file', fn, 1, timing,...
+        struct('length',3.5,'nan_output','screen')));
       this.verifyEqual(sts, 1);
       % check contains segments
       this.verifyTrue(isfield(out,'segments'));
@@ -168,7 +173,7 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       for i = 1:numel(control_data)
         control = control_data{i};
         seg = out.segments{i};
-        this.verifyEqual(seg.trial_idx,control.trial_idx);
+        % this.verifyEqual(seg.trial_idx,control.trial_idx);
         this.verifyTrue(isequaln(seg.data,control.trial_data));
         this.verifyEqual(seg.name,control.cond_name);
         this.verifyEqual(seg.mean,control.mean);
@@ -177,37 +182,11 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
         this.verifyTrue(abs(seg.total_nan_percent-control.total_nan_percent)<1e-12);
       end
     end
-    function test_manual_duration(this,nr_trial,nan_ratio)
-      % generate data
-      fn = pspm_find_free_fn(this.testfile_prefix, '.mat');
-      [control_data,timing] = generate_segment_data_manual(this, fn,nr_trial,nan_ratio);
-      % do the actual test with durations all other option field
-      % are set to default
-      [sts,out] = this.verifyWarningFree(@() ...
-        pspm_extract_segments('manual', fn,0, timing, this.options));
-      this.verifyEqual(sts, 1);
-      % check contains segments
-      this.verifyTrue(isfield(out,'segments'));
-      % out recieve same nr.of segments
-      this.verifyEqual(numel(out.segments),numel(control_data));
-      %for each segment check if function result is correct
-      for i=1:numel(control_data)
-        control = control_data{i};
-        seg = out.segments{i};
-        this.verifyEqual(seg.trial_idx,control.trial_idx);
-        this.verifyEqual(seg.data,control.trial_data);
-        this.verifyEqual(seg.name,control.cond_name);
-        this.verifyEqual(seg.mean,control.mean);
-        this.verifyEqual(seg.std,control.std);
-        this.verifyTrue(all(abs(seg.trial_nan_percent-control.trial_nan_percent)<1e-12));
-        this.verifyTrue(abs(seg.total_nan_percent-control.total_nan_percent)<1e-12);
-      end
-    end
-    function test_auto_mode_glm_with_markers(this)
+ function test_auto_mode_glm_with_markers(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_marker.mat'], 'glm');
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
+      load(fullfile('ImportTestData',  'fitted_models', 'glm_scr_cond_marker.mat'), 'glm');
+      load(fullfile('ImportTestData',  'fitted_models', 'glm_orig_data.mat'), 'data');
       if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
         glm.input.channel = glm.input.chan;
         glm.input = rmfield(glm.input,'chan'); % rename the field channel to chan
@@ -226,38 +205,35 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       for i = 1:numel(glm.timing.multi.durations)
         glm.timing.multi.durations{i} = 5*i*ones(1, numel(glm.timing.multi.durations{i}));
       end
-      [sts, out] = pspm_extract_segments('auto', glm, this.options);
+      [sts, out] = pspm_extract_segments('model', glm, this.options);
       this.verifyEqual(sts, 1);
       seg = out.segments;
       this.verifyEqual(numel(seg), 3);
-      this.verifyTrue(all(size(seg{1}.data) == [5 * 1 * sr, 30]));
-      this.verifyTrue(all(size(seg{2}.data) == [5 * 2 * sr, 15]));
-      this.verifyTrue(all(size(seg{3}.data) == [5 * 3 * sr, 15]));
-      % onset ordering indices
-      this.verifyTrue(all(seg{1}.trial_idx' == glm.input.timing{1}.onsets{1}));
-      this.verifyTrue(all(seg{2}.trial_idx' == glm.input.timing{1}.onsets{2}));
-      this.verifyTrue(all(seg{3}.trial_idx' == glm.input.timing{1}.onsets{3}));
-      % consistency of returned data
-      this.verifyThat(nanmean(seg{1}.data, 2), IsEqualTo(seg{1}.mean, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanstd(seg{1}.data, 0, 2), IsEqualTo(seg{1}.std, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanmean(seg{2}.data, 2), IsEqualTo(seg{2}.mean, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanstd(seg{2}.data, 0, 2), IsEqualTo(seg{2}.std, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanmean(seg{3}.data, 2), IsEqualTo(seg{3}.mean, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanstd(seg{3}.data, 0, 2), IsEqualTo(seg{3}.std, 'Within', RelativeTolerance(1e-10)));
+      this.verifyTrue(all(size(seg{1}.data) == [30, this.options.length * sr]));
+      this.verifyTrue(all(size(seg{2}.data) == [15, this.options.length * sr]));
+      this.verifyTrue(all(size(seg{3}.data) == [15, this.options.length * sr]));
+       % consistency of returned data
+      this.verifyThat(nanmean(seg{1}.data, 1), IsEqualTo(seg{1}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanstd(seg{1}.data, 0, 1), IsEqualTo(seg{1}.std, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanmean(seg{2}.data, 1), IsEqualTo(seg{2}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanstd(seg{2}.data, 0, 1), IsEqualTo(seg{2}.std, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanmean(seg{3}.data, 1), IsEqualTo(seg{3}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanstd(seg{3}.data, 0, 1), IsEqualTo(seg{3}.std, 'Within', RelativeTolerance(1e-10)));
       % compute statistics from scratch
-      for i = 1:numel(glm.timing.multi.durations)
+      for i = 1:numel(glm.timing.multi.onsets)
         all_vecs = [];
-        seg_len = glm.timing.multi.durations{i} * sr;
-        onset_i = glm.timing.multi.onsets{i};
-        for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr);
-          all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
+        seg_len = this.options.length * sr;
+        onsets_i = pspm_time2index(marker(glm.timing.multi.onsets{i}), sr);
+        for j = 1:numel(onsets_i)
+            onset = onsets_i(j);
+            all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
-        expected_mean = nanmean(all_vecs, 2);
-        expected_std = nanstd(all_vecs, 0, 2);
-        expected_sem = expected_std ./ sqrt(size(all_vecs, 2));
+        all_vecs = all_vecs';
+        expected_mean = nanmean(all_vecs, 1);
+        expected_std = nanstd(all_vecs, 0, 1);
+        expected_sem = expected_std ./ sqrt(size(all_vecs, 1));
         nan_mat = isnan(all_vecs);
-        expected_nan_perc = sum(nan_mat, 1) / size(all_vecs, 1);
+        expected_nan_perc = sum(nan_mat, 2) / size(all_vecs, 2);
         expected_total_nan_perc = sum(nan_mat(:)) / prod(size(all_vecs));
         this.verifyThat(expected_mean, IsEqualTo(seg{i}.mean, 'Within', RelativeTolerance(1e-10)));
         this.verifyThat(expected_std, IsEqualTo(seg{i}.std, 'Within', RelativeTolerance(1e-10)));
@@ -284,43 +260,35 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       for i = 1:numel(glm.timing.multi.durations)
         glm.timing.multi.durations{i} = 5*i*ones(1, numel(glm.timing.multi.durations{i}));
       end
-      [sts, out] = pspm_extract_segments('auto', glm, this.options);
+      [sts, out] = pspm_extract_segments('model', glm, this.options);
       this.verifyEqual(sts, 1);
       seg = out.segments;
       this.verifyEqual(numel(seg), 3);
-      this.verifyTrue(all(size(seg{1}.data) == [5 * 1 * sr, 30]));
-      this.verifyTrue(all(size(seg{2}.data) == [5 * 2 * sr, 15]));
-      this.verifyTrue(all(size(seg{3}.data) == [5 * 3 * sr, 15]));
-      % onset ordering indices
-      combined = [glm.input.timing{1}.onsets{1} ; glm.input.timing{1}.onsets{2} ; glm.input.timing{1}.onsets{3}];
-      combined = sort(combined);
-      [~, idx] = intersect(combined, glm.input.timing{1}.onsets{1});
-      this.verifyTrue(all(seg{1}.trial_idx == idx));
-      [~, idx] = intersect(combined, glm.input.timing{1}.onsets{2});
-      this.verifyTrue(all(seg{2}.trial_idx == idx));
-      [~, idx] = intersect(combined, glm.input.timing{1}.onsets{3});
-      this.verifyTrue(all(seg{3}.trial_idx == idx));
+      this.verifyTrue(all(size(seg{1}.data) == [30, this.options.length * sr]));
+      this.verifyTrue(all(size(seg{2}.data) == [15, this.options.length * sr]));
+      this.verifyTrue(all(size(seg{3}.data) == [15, this.options.length * sr]));
       % consistency of returned data
-      this.verifyThat(nanmean(seg{1}.data, 2), IsEqualTo(seg{1}.mean, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanstd(seg{1}.data, 0, 2), IsEqualTo(seg{1}.std, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanmean(seg{2}.data, 2), IsEqualTo(seg{2}.mean, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanstd(seg{2}.data, 0, 2), IsEqualTo(seg{2}.std, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanmean(seg{3}.data, 2), IsEqualTo(seg{3}.mean, 'Within', RelativeTolerance(1e-10)));
-      this.verifyThat(nanstd(seg{3}.data, 0, 2), IsEqualTo(seg{3}.std, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanmean(seg{1}.data, 1), IsEqualTo(seg{1}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanstd(seg{1}.data, 0, 1), IsEqualTo(seg{1}.std, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanmean(seg{2}.data, 1), IsEqualTo(seg{2}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanstd(seg{2}.data, 0, 1), IsEqualTo(seg{2}.std, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanmean(seg{3}.data, 1), IsEqualTo(seg{3}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanstd(seg{3}.data, 0, 1), IsEqualTo(seg{3}.std, 'Within', RelativeTolerance(1e-10)));
       % compute statistics from scratch
       for i = 1:numel(glm.timing.multi.durations)
         all_vecs = [];
-        seg_len = glm.timing.multi.durations{i} * sr;
+        seg_len = this.options.length * sr;
         onset_i = glm.timing.multi.onsets{i};
         for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr);
+          onset = round(onset_i(j) * sr) + 1;
           all_vecs = [all_vecs, input_data(onset : onset + seg_len - 1)];
         end
-        expected_mean = nanmean(all_vecs, 2);
-        expected_std = nanstd(all_vecs, 0, 2);
-        expected_sem = expected_std ./ sqrt(size(all_vecs, 2));
+        all_vecs = all_vecs';
+        expected_mean = nanmean(all_vecs, 1);
+        expected_std = nanstd(all_vecs, 0, 1);
+        expected_sem = expected_std ./ sqrt(size(all_vecs, 1));
         nan_mat = isnan(all_vecs);
-        expected_nan_perc = sum(nan_mat, 1) / size(all_vecs, 1);
+        expected_nan_perc = sum(nan_mat, 2) / size(all_vecs, 2);
         expected_total_nan_perc = sum(nan_mat(:)) / prod(size(all_vecs));
         this.verifyThat(expected_mean, IsEqualTo(seg{i}.mean, 'Within', RelativeTolerance(1e-10)));
         this.verifyThat(expected_std, IsEqualTo(seg{i}.std, 'Within', RelativeTolerance(1e-10)));
@@ -336,83 +304,37 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
       input_data = dcm.input.scr;
       sr = dcm.input.sr;
       trial_sizes = cumsum([60, 60, 38, 21]);
-      n_cond = 8;
-      cond_indices = {1:30, 31:60, 61:90, 91:120, 121:135, 136:158, 159:169, 170:179};
-      cond_to_trial = [];
-      for i = 1:n_cond
-        end_idx = cond_indices{i};
-        end_idx = end_idx(end);
-        idx = find(end_idx <= trial_sizes);
-        idx = idx(1);
-        cond_to_trial(end + 1) = idx;
-      end
-      durations = zeros(179, 1);
-      for i = 1:179
-        trial_idx = find(i <= trial_sizes);
-        trial_idx = trial_idx(1);
-        seg_len = min(dcm.input.iti{trial_idx}) + min(dcm.input.trlstop{trial_idx} - dcm.input.trlstart{trial_idx});
-        durations(i) = round(seg_len * sr);
-      end
-      trlstart_combined = vertcat(dcm.input.trlstart{:});
-      onsets = {};
-      for i = 1:n_cond
-        onsets{end + 1} = trlstart_combined(cond_indices{i});
-      end
-      expected_lengths = {};
-      for i = 1:n_cond
-        expected_lengths{end + 1} = max(durations(cond_indices{i}));
-      end
-      dcm.trlnames = cell(179, 1);
-      for i = 1:n_cond
-        indices_i = cond_indices{i};
-        for j = 1:numel(indices_i)
-          dcm.trlnames{indices_i(j)} = sprintf('Trial %d', i);
-        end
-      end
-      [sts, out] = pspm_extract_segments('auto', dcm, this.options);
+      [sts, out] = pspm_extract_segments('model', dcm, this.options);
       this.verifyEqual(sts, 1);
       seg = out.segments;
-      this.verifyEqual(numel(seg), 8);
-      for i = 1:n_cond
-        this.verifyEqual(expected_lengths{i}, size(seg{i}.data, 1));
-      end
-      % onset ordering indices
-      % DCM trials happen one after another. Hence, indices must return sorted and exactly as given.
-      for i = 1:n_cond
-        this.verifyTrue(all(seg{i}.trial_idx' == cond_indices{i}));
-      end
+      this.verifyEqual(numel(seg), 1);
+      this.verifyEqual(sr * this.options.length, size(seg{1}.data, 2));
       % % consistency of returned data
-      for i = 1:n_cond
-        this.verifyThat(nanmean(seg{i}.data, 2), IsEqualTo(seg{i}.mean, 'Within', RelativeTolerance(1e-10)));
-        this.verifyThat(nanstd(seg{i}.data, 0, 2), IsEqualTo(seg{i}.std, 'Within', RelativeTolerance(1e-10)));
-      end
-      % % compute statistics from scratch
-      for i = 1 : n_cond
-        duration = expected_lengths{i};
-        all_vecs = [];
-        onset_i = onsets{i};
-        data = input_data{cond_to_trial(i)};
-        for j = 1:numel(onset_i)
-          onset = round(onset_i(j) * sr);
-          stop = min(numel(data), onset + duration - 1);
-          new_vec = data(onset : stop);
-          if stop < onset + duration - 1
-            new_vec = [new_vec ; NaN(onset + duration - 1 - stop, 1)];
+      this.verifyThat(nanmean(seg{1}.data, 1), IsEqualTo(seg{1}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(nanstd(seg{1}.data, 0, 1), IsEqualTo(seg{1}.std, 'Within', RelativeTolerance(1e-10)));
+      % compute statistics from scratch
+      seg_len = this.options.length * sr;
+      all_vecs = [];
+      for i = 1:numel(input_data)
+          onset_i = dcm.input.trlstart{i};
+          for j = 1:numel(onset_i)
+              onset = round(onset_i(j) * sr) + 1;
+              all_vecs = [all_vecs, input_data{i}(onset : onset + seg_len - 1)];
           end
-          all_vecs = [all_vecs, new_vec];
-        end
-        expected_mean = nanmean(all_vecs, 2);
-        expected_std = nanstd(all_vecs, 0, 2);
-        expected_sem = expected_std ./ sqrt(size(all_vecs, 2));
-        nan_mat = isnan(all_vecs);
-        expected_nan_perc = sum(nan_mat, 1) / size(all_vecs, 1);
-        expected_total_nan_perc = sum(nan_mat(:)) / prod(size(all_vecs));
-        this.verifyThat(expected_mean, IsEqualTo(seg{i}.mean, 'Within', RelativeTolerance(1e-10)));
-        this.verifyThat(expected_std, IsEqualTo(seg{i}.std, 'Within', RelativeTolerance(1e-10)));
-        this.verifyThat(expected_sem, IsEqualTo(seg{i}.sem, 'Within', RelativeTolerance(1e-10)));
-        this.verifyThat(expected_nan_perc, IsEqualTo(seg{i}.trial_nan_percent, 'Within', RelativeTolerance(1e-10)));
-        this.verifyThat(expected_total_nan_perc, IsEqualTo(seg{i}.total_nan_percent, 'Within', RelativeTolerance(1e-10)));
       end
+      all_vecs = all_vecs';
+      expected_mean = nanmean(all_vecs, 1);
+      expected_std = nanstd(all_vecs, 0, 1);
+      expected_sem = expected_std ./ sqrt(size(all_vecs, 1));
+      nan_mat = isnan(all_vecs);
+      expected_nan_perc = sum(nan_mat, 2) / size(all_vecs, 2);
+      expected_total_nan_perc = sum(nan_mat(:)) / prod(size(all_vecs));
+      i = 1;
+      this.verifyThat(expected_mean, IsEqualTo(seg{i}.mean, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(expected_std, IsEqualTo(seg{i}.std, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(expected_sem, IsEqualTo(seg{i}.sem, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(expected_nan_perc, IsEqualTo(seg{i}.trial_nan_percent, 'Within', RelativeTolerance(1e-10)));
+      this.verifyThat(expected_total_nan_perc, IsEqualTo(seg{i}.total_nan_percent, 'Within', RelativeTolerance(1e-10)));
     end
   end
 end
