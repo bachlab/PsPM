@@ -2,7 +2,7 @@ function Y = pspm_eye(X, feature)
 % ● Description
 %   pspm_eye converts legacy use of eye markers into the current version
 % ● Format
-%   Y = pspm_eye(X)
+%   Y = pspm_eye(X,feature)
 % ● Arguments
 %   * X: The input eye marker.
 %   * feature: The feature used for converting eye marker. Accepted values

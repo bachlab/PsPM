@@ -85,7 +85,7 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %   ├─────.end : [decimal][Unit: second] Ending time of the segment.
 %   ├────.name : [string] Name of the segment. Segment will be stored by this name.
 %   ├.plot_data: [Boolean][Default: false or 0] Plot the preprocessing steps.
-%   ├─.chan_valid_cutoff : [optional][Default: 0.01]
+%   ├─.chan_valid_cutoff : [optional][Default: 0.2]
 %   │            A cut-off value for checking whether there are too many missing values
 %   │            in a data channel for combination. If the difference in 
 %   │            missing data percentage between the two channels exceeds 
@@ -116,18 +116,25 @@ outchannel = [];
 if nargin == 1
   options = struct();
 end
+
+
 options = pspm_options(options, 'pupil_pp');
 if options.invalid
   return
 end
-[lsts, default_settings] = pspm_pupil_pp_options();
+
+% when batch editor has default settings
+if ~isfield(options,'custom_settings')
+    [lsts, default_settings] = pspm_pupil_pp_options(); % so no warnings are displayed
+else
+    [lsts, default_settings] = pspm_pupil_pp_options(options.custom_settings);
+end
+
+
 if lsts ~= 1
   return
 end
-if isfield(options, 'custom_settings')
- default_settings = pspm_assign_fields_recursively(...
-   default_settings, options.custom_settings);
-end
+
 options.custom_settings = default_settings;
 
 %% 3 Input checks
@@ -350,18 +357,5 @@ for eyestr = seg_eyes
     for i = 1:numel(segments)
       segments{i}.(eyecolstr) = col(i);
     end
-  end
-end
-function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
-% Definition
-% pspm_assign_fields_recursively assign all fields of in_struct to
-% out_struct recursively, overwriting when necessary.
-fnames = fieldnames(in_struct);
-for i = 1:numel(fnames)
-  name = fnames{i};
-  if isstruct(in_struct.(name)) && isfield(out_struct, name)
-    out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
-  else
-    out_struct.(name) = in_struct.(name);
   end
 end

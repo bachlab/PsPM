@@ -101,7 +101,8 @@
 %                 model structure as fields .stats_missing and
 %                 .stats_exclude but not used further.
 % ● Outputs
-%   *       glm:  a structure 'glm' which is also written to file
+%   *       sts: status flag (-1 or 1)
+%   *       glm: a structure 'glm' which is also written to file
 % ● References
 %   * Skin conductance response analysis
 %   [1] GLM for SCR:
@@ -163,7 +164,7 @@
 %   Introduced in PsPM 3.1
 %   Written in 2008-2016 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
 %   Maintained in 2022 by Teddy
-% ● Developer's Notes
+% ● Developer
 %   TIMING - multiple condition file(s) or struct variable(s):
 %   The structure is equivalent to SPM2/5/8/12 (www.fil.ion.ucl.ac.uk/spm),
 %   such that SPM files can be used.
@@ -205,24 +206,10 @@ tmp = struct([]); % temporary model structure
 if nargin < 1; errmsg = 'Nothing to do.'; warning('ID:invalid_input', errmsg); return
 elseif nargin < 2; options = struct(); end
 
-% 2.2 check model
-model = pspm_check_model(model, 'glm');
-if model.invalid
+% 2.2 check model and options
+[model, options] = pspm_check_model(model, options, 'glm');
+if model.invalid || options.invalid
     return
-end
-
-% 2.3 check options
-options = pspm_options(options, 'glm');
-if options.invalid
-  return
-end
-
-% 2.4 check files
-% stop the script if files are not allowed to overwrite
-options.overwrite = pspm_overwrite(model.modelfile, options);
-if ~options.overwrite
-  warning('ID:invalid_input', 'Model file exists, and overwriting not allowed by user.');
-  return
 end
 
 %% 3 Check & get data
