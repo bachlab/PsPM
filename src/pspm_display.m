@@ -1066,6 +1066,14 @@ for i_channel = 1:n_channels
         channel_list_full(strcmp(targeted_channel_reference, ...
         {channel_type_reference_list.type}));
     targeted_channel_display = targeted_channel_display{1,1};
+      
+    splitArray = strsplit(targeted_channel_display, ' ');
+    if numel(splitArray) > 3 && length(targeted_channel_display) > 23
+        splitArray{end-1} = [splitArray{end-1}, newline, splitArray{end}];
+        splitArray(end) = []; 
+        targeted_channel_display = strjoin(splitArray, ' ');
+    end
+    
     string_channel_list = [string_channel_list, ...
         num2str(i_channel), ' ', ...
         targeted_channel_display, newline];
