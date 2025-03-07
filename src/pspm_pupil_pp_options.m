@@ -15,10 +15,10 @@ function [sts, default_settings] = pspm_pupil_pp_options(custom_settings)
 %   │ 
 %   │ // Allowable values criteria
 %   │ 
-%   ├─PupilDiameter_Min:  Minimum allowable pupil size. Pupil values less than 
-%   │                     this value will be marked as invalid. (Default: 1.5)
-%   ├─PupilDiameter_Max:  Maximum allowable pupil size. Pupil values greater than 
-%   │                     thin value will be marked as invalid. (Default: 9.0)
+%   ├─PupilDiameter_Min:  Minimum allowable pupil size in mm. Pupil values less than 
+%   │                     this value will be marked as invalid. (Default: 1.5 mm)
+%   ├─PupilDiameter_Max:  Maximum allowable pupil size in mm. Pupil values greater than 
+%   │                     thin value will be marked as invalid. (Default: 9.0 mm)
 %   │ 
 %   │ // Isolated sample filter criteria
 %   │ // 'Sample-islands' are clusters of samples that are temporally separated
