@@ -26,14 +26,15 @@ function [sts, data, mdltype] = pspm_load1(fn, action, savedata, options)
 %   ├.zscored : zscore data - substract the mean and divide by the standard deviation.
 %   └.overwrite : [for 'save'] [logical] (0 or 1) Define whether to overwrite existing
 %                 output files or not. Default value: determined by pspm_overwrite.
-% ● Output
+% ● Outputs
 %  *     data : depending on option
 %             - none (for 'none', 'savecon', 'save')
 %             - data.stats, data.names, (and data.trlnames if existing) (for
 %                        'stats', 'recon', 'cond')
 %                        - con structure (for 'con')
 %                        - full first level structure (for 'all')
-% ● Developer's Notes
+%  *  mdltype : model type e.g. 'glm', 'sf', 'dcm', 'tam'
+% ● Developer
 %   General structure of PsPM 1st level model files
 %   Each file contains one struct variable with the model
 %   allowed model names are specified in pspm_init
@@ -289,6 +290,7 @@ switch action
       end
     else
       warning('ID:invalid_input', '%s. ''recon'' option only defined for GLM files', errmsg);
+      return;
     end
   case 'con'
     if conflag

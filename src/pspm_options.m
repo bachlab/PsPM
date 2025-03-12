@@ -1,10 +1,12 @@
 function options = pspm_options(options, FunName)
-% ● Definition
+% ● Description
 %   pspm_options automatically determine the fields of options for the
 %   corresponding function.
 % ● Arguments
-%   options:  a struct to be filled by the function
-%   FunName:  a string, the name of the function where option is used
+%   * options:  a struct to be filled by the function
+%   * FunName:  a string, the name of the function where option is used
+% ● Outputs
+%   * options:   a struct containing the options for the specified function.
 % ● History
 %   Introduced in PsPM 6.1
 %   Written in 2022 by Teddy
@@ -217,7 +219,7 @@ switch FunName
     % 2.23 pspm_find_sounds --
     options = autofill_channel_action(options,            'add',     {'replace'} );
     options = autofill(options, 'channel_output',         'all',      'corrected'       );
-    options = autofill(options, 'diagnostics',            1,          0                 );
+    options = autofill(options, 'diagnostics',            0,          1                 );
     options = autofill(options, 'expectedSoundCount',     0,          '*Int'            );
     options = autofill(options, 'maxdelay',               3,          '>=',  0          );
     options = autofill(options, 'mindelay',               0,          '>=',  0          );

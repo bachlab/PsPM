@@ -26,15 +26,13 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %   perpendicular to the vector from the eye to the fixation point (which
 %   is approximately correct for large enough screen distance).
 % ● Format
-%   [sts, channel_index] = pspm_find_valid_fixations(fn, bitmap, options)
-%   [sts, channel_index] = pspm_find_valid_fixations(fn, circle_degree, distance, unit, options)
+%   [sts, channel_index, fn] = pspm_find_valid_fixations(fn, bitmap, options)
+%   [sts, channel_index, fn] = pspm_find_valid_fixations(fn, circle_degree, distance, unit, options)
 % ● Arguments
 %   *             fn : The actual data file containing the eyelink recording with gaze
 %                      data converted to cm.
-%   *         bitmap : A nxm matrix representing the display window and holding for each
-%                      poisition a one, where a gaze value is valid. If there exists
-%                      gaze data at a point with a zero value in the bitmap the
-%                      corresponding data is set to NaN. IMPORTANT: the bitmap has to
+%   *         bitmap : A nxm matrix of the same size as the display, with 1 
+%                      for valid and 0 for invalid gaze points. IMPORTANT: the bitmap has to
 %                      be defined in terms of the eyetracker coordinate system, i.e.
 %                      bitmap(1,1) must correpond to the origin of the eyetracker
 %                      coordinate system, and must be of the same size as
@@ -47,13 +45,13 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %   │                  to the given resolution, and in the eyetracker coordinate system).
 %   │                  n should equal either 1 (constant fixation point) or the length
 %   │                  of the actual data. If resolution is not defined the values are
-%   │                  given in percent. Therefore [0.5 0.5] would correspond to the
-%   │                  middle of the screen. Default is [0.5 0.5]. Only taken into account
+%   │                  given in percent. Therefore (0.5 0.5) would correspond to the
+%   │                  middle of the screen. Default is (0.5 0.5). Only taken into account
 %   │                  if there is no bitmap.
 %   ├────.resolution : Resolution with which the fixation point is defined (Maximum value
 %   │                  of the x and y coordinates). This can be the screen resolution in
-%   │                  pixels (e.g. [1280 1024]) or the width and height of the screen
-%   │                  in cm (e.g. [50 30]). Default is [1 1]. Only taken into account
+%   │                  pixels (e.g. (1280 1024)) or the width and height of the screen
+%   │                  in cm (e.g. (50 30)). Default is (1 1). Only taken into account
 %   │                  if there is no bitmap.
 %   ├.plot_gaze_coords: Define whether to plot the gaze coordinates for visual
 %   │                 inspection of the validation process. Default is false.
@@ -76,10 +74,15 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %                     mode "fixation" and distance or pixel units for mode
 %                     "bitmap".
 %                     Default is 'pupil'.
+% ● Outputs
+%   *             sts: Status flag: 1 = success, -1 = error
+%   *  pos_of_channel: Index/indices of modified or newly added channels
+%   *             fn : Unchanged if called with a filename (data is saved);
+%                      updated data structure if called with a data structure
 % ● References
 %   [1]  Korn CW & Bach DR (2016). A solid frame for the window on cognition:
 %        Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.
-% ● Developer note
+% ● Developer
 %   Additional i/o options for recursive calls are not included in the help.
 %   (1) fn can be a data structure as permitted by pspm_load_data,
 %   (2) the output argument pos_of_channels is an index of the channel(s)
@@ -258,7 +261,7 @@ if ~strcmpi(options.channel, 'both')
 
             % check plotting
             if options.plot_gaze_coords
-              fg = figure;
+              fg = figure('Name', 'Fixation plot');
               ax = axes('NextPlot', 'add');
               set(ax, 'Parent', handle(fg));
 

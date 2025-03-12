@@ -1,6 +1,6 @@
 function [sts, data] = pspm_get_scr(import)
 % ● Description
-%   pspm_get_scr is a common function for importing scr data
+%   pspm_get_scr is a common function for importing scr data. 
 % ● Format
 %   [sts, data] = pspm_get_scr(import)
 % ● Arguments
@@ -9,7 +9,8 @@ function [sts, data] = pspm_get_scr(import)
 %   ├──────.sr : sampling rate
 %   └.transfer : transfer parameters, either a struct with fields .Rs, .c,
 %                .offset, .recsys, or a file containing variables 'Rs' 'c',
-%                'offset', 'recsys'.
+%                'offset', 'recsys'. See pspm_transfer_function for more
+%                details.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
@@ -27,7 +28,7 @@ if isfield(import, 'transfer')
   transferparams = import.transfer;
 else
   transferparams = 'none';
-end;
+end
 clear c Rs offset recsys
 if isfield(import, 'units')
   dataunits = import.units;
@@ -39,38 +40,38 @@ if isstruct(transferparams)
     c=transferparams.c;
   catch
     warning('ID:no_conversion_constant', '/nNo conversion constant given'); return;
-  end;
+  end
   try
     Rs=transferparams.Rs;
   catch
-    Rs=0; end;
+    Rs=0; end
   try
     offset=transferparams.offset;
   catch
     offset=0;
-  end;
+  end
   try
     recsys=transferparams.recsys;
   catch
     recsys='conductance';
-  end;
+  end
   dataunits = 'uS';
 elseif ischar(transferparams)
   if strcmp(transferparams, 'none')
     c=1; Rs=0; offset=0; recsys='conductance';
   elseif exist(transferparams)==2
     load(transferparams);
-    if ~exist('c'), warning('ID:no_conversion_constant', '/nNo conversion constant given'); return; end;
-    if ~exist('Rs'), Rs=0; end;
-    if ~exist('offset'), offset=0; end;
-    if ~exist('recsys'), recsys='conductance'; end;
+    if ~exist('c'), warning('ID:no_conversion_constant', '/nNo conversion constant given'); return; end
+    if ~exist('Rs'), Rs=0; end
+    if ~exist('offset'), offset=0; end
+    if ~exist('recsys'), recsys='conductance'; end
     dataunits = 'uS';
   else
     warning('ID:nonexistent_file', '/nTransfer file doesn''t exist'); return;
-  end;
+  end
 else
   warning('/nWrong format for transfer parameters'); return;
-end;
+end
 
 % convert data
 inputdata = double(import.data);

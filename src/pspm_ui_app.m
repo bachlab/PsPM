@@ -1,5 +1,5 @@
 function app = pspm_ui_app (app)
-% ● Descrition
+% ● Description
 %   pspm_ui_app handles the ui controlling elements for app designer based GUI files.
 %   Details of font styles can be found in the developer's guide.
 % ● History
@@ -58,7 +58,7 @@ update_app_struct(app, pspm_layout_component_list_panels, 'BorderColor', [1 1 1]
 %% Window specific settings
 switch app.layout.Name
   case 'pspm'
-    attribution_disp_text = ['Build 03-06-2024 with MATLAB 2024a, ',...
+    attribution_disp_text = ['Build 12-02-2025 with MATLAB 2024a, ',...
       'The PsPM Team'];
     app.text_attribution.Text{1,1} = 'Version 7.0';
     app.text_attribution.Text{2,1} = attribution_disp_text;

@@ -1,15 +1,16 @@
 function [sts, outchannel] = pspm_pupil_pp (fn, options)
 % ● Description
-%   pspm_pupil_pp preprocesses pupil diameter signals given in any unit of
-%   measurement, with a possibility of combining left/right pupil. 
-%   It performs the steps described in [1]. This function uses
-%   a modified version of [2]. The modified version with a list of changes
-%   from the original is shipped with PsPM under pupil-size directory.
-%   The steps performed are listed below:
-%   1.  Pupil preprocessing is performed in two main steps. In the first
-%       step, the “valid” samples are determined. The samples that are not
-%       valid are not used in the second step. Determining valid samples is
-%       done by the following procedures.
+%   pspm_pupil_pp preprocesses pupil diameter signals provided in
+%   millimeters (mm), with the option to combine left and right pupil data.
+%   If the measurement unit is not 'mm' but one of the supported units
+%   ('cm', 'dm', 'm', 'km', 'in', 'inches'), it will be automatically
+%   converted to mm. It performs the steps described in [1]. This function
+%   uses a modified version of [2]. The modified version with a list of
+%   changes from the original is shipped with PsPM under pupil-size directory.
+%   Pupil preprocessing is performed in three main steps:
+%   1.  In the first step, the "valid" samples are determined. Samples that 
+%       are not valid are not used in the second step. Determining valid 
+%       samples is done by the following procedures:
 %       (a) Range filtering: Pupil size values outside a predefined range
 %           are considered invalid. This range is configurable.
 %       (b) Speed filtering: Speed is computed as the 1st difference of
@@ -86,7 +87,7 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 %   ├─────.end : [decimal][Unit: second] Ending time of the segment.
 %   ├────.name : [string] Name of the segment. Segment will be stored by this name.
 %   ├.plot_data: [Boolean][Default: false or 0] Plot the preprocessing steps.
-%   ├─.chan_valid_cutoff : [optional][Default: 0.01]
+%   ├─.chan_valid_cutoff : [optional][Default: 0.2]
 %   │            A cut-off value for checking whether there are too many missing values
 %   │            in a data channel for combination. If the difference in 
 %   │            missing data percentage between the two channels exceeds 
@@ -117,18 +118,25 @@ outchannel = [];
 if nargin == 1
   options = struct();
 end
+
+
 options = pspm_options(options, 'pupil_pp');
 if options.invalid
   return
 end
-[lsts, default_settings] = pspm_pupil_pp_options();
+
+% when batch editor has default settings
+if ~isfield(options,'custom_settings')
+    [lsts, default_settings] = pspm_pupil_pp_options(); % so no warnings are displayed
+else
+    [lsts, default_settings] = pspm_pupil_pp_options(options.custom_settings);
+end
+
+
 if lsts ~= 1
   return
 end
-if isfield(options, 'custom_settings')
- default_settings = pspm_assign_fields_recursively(...
-   default_settings, options.custom_settings);
-end
+
 options.custom_settings = default_settings;
 
 %% 3 Input checks
@@ -147,11 +155,29 @@ if sts_load < 1, return, end
 [sts_load, data,infos, pos_of_channel(1)] = pspm_load_channel(alldata, options.channel, 'pupil');
 if sts_load ~= 1, return, end
 
+% Check for invalid pupil data units in options.channel
+con_flag = 0;
+[stc1,data] = pspm_check_units(data);
+if stc1 < 1
+    warning('ID:invalid_unit', 'Unsupported pupil data unit: "%s" in "options.channel".', data.header.units);
+    return;
+elseif stc1 == 2, con_flag = 1 ; end
+
 if action_combine
     [sts_load, data_combine, infos, pos_of_channel(2)] = pspm_load_channel(alldata, options.channel_combine, 'pupil');
     if sts_load ~= 1
         return
     end
+    % Check for invalid pupil data units in options.channel
+    [stc2,data_combine] = pspm_check_units(data_combine);
+    if stc2 < 1
+        warning('ID:invalid_unit', 'Unsupported pupil data unit: "%s" in "options.channel".', data.header.units);
+        return
+    elseif stc2 == 2, con_flag = 1 ; end
+
+
+
+
     [sts1, eye1] = pspm_find_eye(data.header.chantype);
     [sts2, eye2] = pspm_find_eye(data_combine.header.chantype);
     if (sts1 < 1 || sts2 < 1), return, end
@@ -218,6 +244,8 @@ if ~strcmpi(smooth_signal.header.chantype, 'pupil_c')
 end
 [sts, out_id] = pspm_write_channel(fn, smooth_signal, options.channel_action, o);
 outchannel = out_id.channel;
+
+if con_flag == 1 , warning('At least one channel was converted to "mm". See details above.'); end
 
 %%  7 run second pass if required
 if ~flag_valid_combine
@@ -353,16 +381,31 @@ for eyestr = seg_eyes
     end
   end
 end
-function out_struct = pspm_assign_fields_recursively(out_struct, in_struct)
-% Definition
-% pspm_assign_fields_recursively assign all fields of in_struct to
-% out_struct recursively, overwriting when necessary.
-fnames = fieldnames(in_struct);
-for i = 1:numel(fnames)
-  name = fnames{i};
-  if isstruct(in_struct.(name)) && isfield(out_struct, name)
-    out_struct.(name) = pspm_assign_fields_recursively(out_struct.(name), in_struct.(name));
-  else
-    out_struct.(name) = in_struct.(name);
-  end
-end
+
+function [sts,data] = pspm_check_units(data)
+% sts will return 1 when units are "mm" and 2 when the data was converted
+% and -1 in all other cases
+sts = -1;
+convertable_units = { 'cm', 'dm', 'm', 'km', 'in', 'inches'};
+
+    if ~strcmp(data.header.units,'mm')
+        if ~ismember(data.header.units, convertable_units)
+            return;
+        else
+        % convert to 'mm'
+        [stc, converted] = pspm_convert_unit(data.data, data.header.units,'mm');
+            if stc == 1
+               % [~ , eye, new_chantype] = pspm_find_eye(data.header.chantype); % maybe?
+                warning(' "%s" channel data was converted from "%s" to "mm".',  data.header.chantype, data.header.units);
+                data.data = converted;
+                data.header.units = 'mm';
+                sts = 2;
+                return;
+            else
+                return;
+            end
+        end
+
+    end
+sts = 1;
+return
