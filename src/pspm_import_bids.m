@@ -63,11 +63,12 @@ for i = 1:length(dataset_dir)
     subject_contents = dir(sub_path);
     session_dirs = subject_contents(arrayfun(@(x) x.isdir && startsWith(x.name, 'ses-'), subject_contents));
 
-    % Process each session
+    %% Process each session
     for j = 1:length(session_dirs)
         session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02'
         
         % Map session ID to task name based on CALINET specification
+        % May needs to be 
         switch session_id
             case '01'
                 task_name = 'FearAcquisition';
@@ -79,54 +80,22 @@ for i = 1:length(dataset_dir)
         
         fprintf('  Processing session %s with task %s...\n', session_dirs(j).name, task_name);
         ses_path = fullfile(sub_path, session_dirs(j).name);
-        beh_path = fullfile(sub_path, session_dirs(j).name, 'beh');
 
-
-        % Build expected filenames based on CALINET naming conventions
-        filenames = cell(1, 3);
-
-        
-        events_tsv_filename = sprintf('%s_%s_task-%s_events.tsv', subject_full_id, session_dirs(j).name, task_name);
-        events_json_filename = sprintf('%s_%s_task-%s_events.json', subject_full_id, session_dirs(j).name, task_name);
-        filenames{1} = events_tsv_filename;
-        filenames{2} = events_json_filename;
-        
-        beh_json_filename = sprintf('%s_%s_task-%s_beh.json', subject_full_id, session_dirs(j).name, task_name);
-        filenames{3} = beh_json_filename;
-        
-        % Check if any required file is missing in the session directory
-        if checkFileMiss(beh_path, filenames)
-            warning('Missing files in %s. Skipping session.', beh_path);
-            continue
-        end
-        
-        % --- Handle Data for Session ---
-        % Read event data --> event_data_struct
-        events_tsv_filepath = fullfile(beh_path, events_tsv_filename);
-        [event_data, event_data_headings] = read_event_data(events_tsv_filepath);
-        event_data_struct = struct();
-        for event_heading_ind = 1:numel(event_data_headings)
-            field = event_data_headings{event_heading_ind};
-            event_data_struct.(field) = event_data{event_heading_ind};
-        end
-
-        % --- Get event infos (json) --- 
-   
-        events_json_filepath = fullfile(beh_path, events_json_filename);
-        event_info_struct = jsondecode(fileread(events_json_filepath));  % change name
-        
-        % WHAT IS WITH '*_beh.*'
-
-        % --- Get data from physio   ---
-        
+        % --- get physio data ---
         physio_path = fullfile(ses_path,'physio');
+
+
         libpath = pspm_path('bids_importer','lib'); % move 
         addpath(libpath); % move 
 
-        [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
+        [physio_data_cell] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
+      
+
+
         rmpath(libpath); % move 
 
+        % ---
 
         
 
@@ -261,6 +230,7 @@ function marker_channel = build_marker_channel(event_data_struct)
 end
 
 function saveCogent(participantData, cogent_filepath)
+    % here the right structure will be build for saving
     subject = participantData;
     save(cogent_filepath, 'subject');
     fprintf('Saved cogent file to %s\n', cogent_filepath);
