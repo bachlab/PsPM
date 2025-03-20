@@ -100,6 +100,20 @@ set(handles.textStatus,'String','Loading model. Please wait...');
 drawnow
 for iFile = 1:size(modelfileArray, 1)
   modelfile = spm_file(modelfileArray(iFile, :));
+
+    % --- New Check: Prevent duplicate model loading ---
+    if isfield(handles, 'modelData') && ~isempty(handles.modelData)
+        modelFiles = cellfun(@(x) x.modelfile, handles.modelData, 'UniformOutput', false); % modelFiles in the Panel
+        if any(strcmp(modelfile, modelFiles))
+            uiwait(msgbox(sprintf('Model "%s" is already loaded.', modelfile), 'Warning'));
+            set(handles.textStatus, 'String', 'Duplicate model detected. Load a different model.');
+            drawnow;
+            continue;  
+        end
+    end
+
+
+
   [sts, model, modeltype] = pspm_load1(modelfile, 'all', 'any');
   if sts == -1 || ~any(strcmp(modeltype,{'glm','dcm','sf'}))
     set(handles.textStatus,'String','No supported modeltype detected');
