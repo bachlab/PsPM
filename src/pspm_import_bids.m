@@ -89,14 +89,23 @@ for i = 1:length(dataset_dir)
         addpath(libpath); % move 
 
         [physio_data_cell] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
+         
+
         
       
 
+        % --- Get beh data ---
 
-        rmpath(libpath); % move 
+        beh_path = fullfile(ses_path,'beh');
 
-        % ---
+        [ beh_sidecar,events_info,evnets_data]  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
+        
+        event_
+        marker_channel = build_marker_channel(event_data_struct);
 
+        % --- Build the channels ---
+        % Build event channel
+        
         
 
     
@@ -108,7 +117,7 @@ for i = 1:length(dataset_dir)
     saveCogent(participant, cogent_filepath);
     outfile{end+1} = cogent_file_name;
 end
-
+rmpath(libpath); % move 
 sts = 1;
 end
 
@@ -146,11 +155,6 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     format_spec = repmat('%s', 1, num_columns);
     participants_data = textscan(fileID, format_spec, 'Delimiter', '\t');
     fclose(fileID);
-end
-
-function eyetrack_data = read_eyetrack_data(eyetrack_tsv_filepath)
-    % Reads TSV data (assumes numeric data without header line)
-    eyetrack_data = readmatrix(eyetrack_tsv_filepath, 'FileType', 'text', 'Delimiter', '\t');
 end
 
 function sts = save_eyetrack_data(eyetrack_data, eyetrack_json, event_data_struct, pupil_filepath)
@@ -198,16 +202,6 @@ function sts = save_eyetrack_data(eyetrack_data, eyetrack_json, event_data_struc
     sts = 1;
 end
 
-function [event_data, event_data_headings] = read_event_data(event_tsv_filepath)
-    fileID = fopen(event_tsv_filepath, 'r');
-    header_line = fgetl(fileID);
-    event_data_headings = strsplit(header_line, '\t');
-    num_columns = numel(event_data_headings);
-    format_spec = repmat('%s', 1, num_columns);
-    event_data = textscan(fileID, format_spec, 'Delimiter', '\t');
-    fclose(fileID);
-end
-
 function marker_channel = build_marker_channel(event_data_struct)
     marker_channel = struct();
     time_delta = 3.0;  % TODO: update time delta if needed
@@ -235,3 +229,35 @@ function saveCogent(participantData, cogent_filepath)
     save(cogent_filepath, 'subject');
     fprintf('Saved cogent file to %s\n', cogent_filepath);
 end
+
+% maybe external function
+function [beh_sidecar,events_info,evnets_data] = get_beh_data(subject_id, session_id, task_name, beh_path)
+% Construct expected filenames
+beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
+events_json_filename = sprintf('%s_ses-%s_task-%s_events.json', subject_id, session_id, task_name);
+events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_id, session_id, task_name);
+
+% Full file paths
+beh_json_filepath    = fullfile(beh_path, beh_json_filename);
+events_json_filepath = fullfile(beh_path, events_json_filename);
+events_tsv_filepath  = fullfile(beh_path, events_tsv_filename);
+
+% Check file existence
+if ~isfile(beh_json_filepath);    error('Behavior sidecar JSON file not found: %s', beh_json_filepath); end
+if ~isfile(events_json_filepath); error('Events JSON file not found: %s', events_json_filepath); end
+if ~isfile(events_tsv_filepath);  error('Events TSV file not found: %s', events_tsv_filepath); end
+
+% Read behavioral sidecar JSON file
+beh_sidecar = extract_json_as_struct(beh_json_filepath);
+
+% Read events JSON metadata
+events_info = extract_json_as_struct(events_json_filepath);
+
+% Read events TSV data
+
+has_headings = true;
+col_types = {'double', 'double', 'char', 'char', 'char'};  
+evnets_data = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
+
+end
+b

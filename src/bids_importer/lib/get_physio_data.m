@@ -1,8 +1,9 @@
 function [physio_data_cell] = get_physio_data(subject_id, session_id, task_name, physio_path)
 % Returns a 4x1 cell array where each cell contains a struct with fields header and data (and markerinfo for events)
 % Also returns physio_info_data needed to create 'info' struct
+% UPDATE HELPTEXT
 
-% Initialize the physio data cell array
+%% Initialize the physio data cell array
 physio_signals = { 'ecg','ppg', 'scr', 'event'}; 
 num_signals = length(physio_signals);
 physio_data_cell = cell(num_signals, 1);  % Preallocate cell array
@@ -17,7 +18,7 @@ file_paths = cell(num_signals, 1);
 cell_index = 1;
 
 
-% Process each physio signal
+%% Process each physio signal
 for i = 1:num_signals - 1  % Exclude 'events' for now !
     signal = physio_signals{i};
     cell_index = i;  % Wo anders?
@@ -75,6 +76,14 @@ events_json.Columns = events_table;
 physio_data_cell{cell_index} =   events_json;
 
 %% Process eye data
+
+
+[eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path);
+physio_data_cell = {physio_data_cell,eye_data_cell};
+
+
+
+
 
 end
 
