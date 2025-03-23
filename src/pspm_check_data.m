@@ -76,6 +76,11 @@ for k = 1:numel(data)
                 data{k}.data = data{k}.data(:);
                 warning('ID:invalid_data_structure', ...
                     'Channel %i seems to have the wrong orientation. Trying to transpose...', k);
+           elseif ~isa(data{k}.data, 'double')  
+               warning('ID:conversion_warning', ...
+                    'Data in channel %d is not double precision. Converting to double.', k);
+               % Convert data to double 
+               data{k}.data = double(data{k}.data);
             end
             if ~flag_infos && ~vflag(k)
                 if strcmpi(data{k}.header.units, 'events')
