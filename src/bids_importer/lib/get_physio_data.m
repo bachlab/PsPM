@@ -1,4 +1,4 @@
-function [physio_data_cell] = get_physio_data(subject_id, session_id, task_name, physio_path)
+function [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_id, session_id, task_name, physio_path)
 % Returns a 4x1 cell array where each cell contains a struct with fields header and data (and markerinfo for events)
 % Also returns physio_info_data needed to create 'info' struct
 % UPDATE HELPTEXT
@@ -21,7 +21,7 @@ cell_index = 1;
 %% Process each physio signal
 for i = 1:num_signals - 1  % Exclude 'events' for now !
     signal = physio_signals{i};
-    cell_index = i;  % Wo anders?
+    
     % Construct filenames
     physio_json_filename = sprintf('%s_ses-%s_recording-%s_physio.json', subject_id, session_id, signal);
     physio_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', subject_id, session_id, signal);
@@ -44,18 +44,45 @@ for i = 1:num_signals - 1  % Exclude 'events' for now !
     col_types = repmat({'double'}, 1, length(headings));
     physio_data_table = read_data_from_tsv(physio_tsv_filepath, false, headings.', col_types);
     
-    % not like it should whats with multiple columns
-    physio_json.Columns = physio_data_table;
-    
-    physio_data_cell{cell_index} = physio_json;
 
+ 
+    % Create channel struct
+    chaninfo = physio_json; % add the json to the info field
+    chaninfo = rmfield(chaninfo,'Columns'); % removes Columns field
+    chan = struct();
+    % header chantype, sr, StartTime and units
+    chan.header = struct();
+    chan.header.chantype = signal;
+    chan.header.sr = physio_json.SamplingFrequency;
+    chan.header.StartTime = physio_json.StartTime;  % OKay?? If data starts not at 0
+
+    % Access Units field inside the signal-specific structure
+    if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units') ; chan.header.units = physio_json.(signal).Units;
+    else; chan.header.units = 'unknown'; warning('Units not specified in JSON file for %s. Setting units to "unknown".', signal); 
+    end 
+
+    % Assign data
+    chan.data = physio_data_table.(headings{1});
+
+    % Add to physio data cell array 
+    physio_data_cell{cell_index}.data = chan;
+    physio_data_cell{cell_index}.info = chaninfo;
+
+    % Collect channel names for info
+    chan_names{cell_index} = signal;
+
+
+    
+  %  disp(physio_json.StartTime)% where an how is the duration
+
+    cell_index = cell_index +1; 
 end
 
 %% Process event data
-cell_index = cell_index +1;
+
+
 events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
 events_tsv_filename  = sprintf('%s_ses-%s_task-%s_physioevents.tsv', subject_id, session_id, task_name);
-
 events_json_filepath = fullfile(physio_path, events_json_filename);
 events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 
@@ -63,6 +90,8 @@ events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 if ~isfile(events_json_filepath); error('File not found: %s', events_json_filepath); end
 if ~isfile(events_tsv_filepath);  error('File not found: %s', events_tsv_filepath);  end
 
+% Append the file paths
+file_paths{cell_index} = events_tsv_filepath;
 
 % Read JSON metadata
 events_json = extract_json_as_struct(events_json_filepath);
@@ -72,24 +101,300 @@ has_headings = true;
 col_types = {'double', 'double', 'char', 'char', 'char'};
 events_table = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
 
-events_json.Columns = events_table;
-physio_data_cell{cell_index} =   events_json;
+
+
+% time_delta = 3.0;  % TODO: update time delta if needed
+% num_events = numel(event_data_struct.onset);
+% marker_data = cell(num_events, 1);
+% for i = 1:num_events
+%     marker_data{i} = str2double(event_data_struct.onset{i}) + time_delta;
+% end
+
+
+% Create marker data struct
+marker_chan = struct();
+marker_chan.data = events_table.onset; % event data onsets
+
+% Is the rest of the events tabel not important?
+
+% Create markerinfo struct
+marker_chan.markerinfo = struct();
+marker_chan.markerinfo.duration = 1; % ? event_data_struct.duration;
+marker_chan.markerinfo.value = 1;  % ? event_data_struct.trial_type
+marker_chan.markerinfo.name = 1;   % ? event_data_struct.identifier
+
+% Create header  (needed?)
+% marker_data.header = struct();
+% marker_data.header.chantype = 'marker';
+% marker_data.header.units = 'events';
+% marker_data.header.sr = 1; % check it  
+
+% Add to physio data cell array
+physio_data_cell{cell_index}.data = marker_chan;
+physio_data_cell{cell_index}.info = events_json;
+
+
+% Collect channel name for events
+chan_names{cell_index} = 'events';
+
+% Get duration: last value of event time info
+duration = events_table.onset(end) - events_table.onset(1); %  duration of the EVENTS (onset)
+
+
+% Assume recording duration is the length of the SCR data divided by its
+% sampling rate minus the StartTime and all measurments are of the same
+
+
+% Checks that all the data has the same length 
+refLength = length(physio_data_cell{1}.data.data);
+for i = 1:3 %length(physio_data_cell)
+    currentLength = length(physio_data_cell{i}.data.data);
+    if currentLength ~= refLength; fprintf('Cell %d has a different length (%d) than the reference length (%d).\n', i, currentLength, refLength);
+    else; fprintf('Cell %d matches the reference length (%d).\n', i, refLength);
+    end
+end
+
+recording_duration = length(physio_data_cell{1}.data.data) / physio_data_cell{1}.data.header.sr - str2num(physio_data_cell{1}.info.StartTime);
+
 
 %% Process eye data
 
 
 [eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path);
-physio_data_cell = {physio_data_cell,eye_data_cell};
 
 
+% --- Add the eye data to the channels --- 
+switch length(eye_data_cell)
+    case 0; warning('No eye data available.');        
+    case 1
+        % Only one eye recorded; assign based on the eye type and warn the user.
+        eyeSide = lower(eye_data_cell{1}.RecordedEye);
+        if strcmp(eyeSide, 'right')
+            pupil_r  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            gaze_x_r = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            gaze_y_r = eye_data_cell{1}.Columns{:,'y_coordinate'};
 
+            data{1}.data  = pupil_r;
+            data{1}.header.chantype  = 'pupil_r';
+            data{end+1}.data  = gaze_x_r;
+            data{end+1}.header.chantype  = 'gaze_x_r';
+            data{end+1}.data  = gaze_y_r;
+            data{end+1}.header.chantype  = 'gaze_y_r';
+    
 
+            warning('Only right eye data available.');
+        elseif strcmp(eyeSide, 'left')
+            %  
+            pupil_l  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            gaze_x_l = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            gaze_y_l = eye_data_cell{1}.Columns{:,'y_coordinate'};
+      
+            data{1}.data  = pupil_l;
+            data{1}.header.chantype  = 'pupil_l';
+            data{end+1}.data  = gaze_x_l;
+            data{end+1}.header.chantype  = 'gaze_x_l';
+            data{end+1}.data  = gaze_y_l;
+            data{end+1}.header.chantype  = 'gaze_y_l';
 
+            warning('Only left eye data available.');
+        else; error('Unknown RecordedEye value in the only data cell.'); end % !!!!!!      
+    case 2
+        eyes = lower({eye_data_cell{1}.RecordedEye, eye_data_cell{2}.RecordedEye}); % lower really needed?
+        if strcmp(eyes{1}, eyes{2})
+            warning('Both recorded eyes are %s.', eyes{1});
+            % % How to choose best eye?
+            % Optionally assign the first cell to that eye.
+            % if strcmp(eyes{1}, 'right')
+            %     pupil_r  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            %     gaze_x_r = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            %     gaze_y_r = eye_data_cell{1}.Columns{:,'y_coordinate'};
+            % elseif strcmp(eyes{1}, 'left')
+            %     pupil_l  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            %     gaze_x_l = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            %     gaze_y_l = eye_data_cell{1}.Columns{:,'y_coordinate'};
+            % end
+        else
+            % Correctly assign each cell to the corresponding eye.
+            idxRight = find(strcmp(eyes, 'right'), 1);
+            idxLeft  = find(strcmp(eyes, 'left'),  1);
+            
+            if isempty(idxRight) || isempty(idxLeft); warning('...');end % !!!!!!
+
+            pupil_r  = eye_data_cell{idxRight}.Columns{:,'pupil_size'};
+            gaze_x_r = eye_data_cell{idxRight}.Columns{:,'x_coordinate'};
+            gaze_y_r = eye_data_cell{idxRight}.Columns{:,'y_coordinate'};
+            
+            pupil_l  = eye_data_cell{idxLeft}.Columns{:,'pupil_size'};
+            gaze_x_l = eye_data_cell{idxLeft}.Columns{:,'x_coordinate'};
+            gaze_y_l = eye_data_cell{idxLeft}.Columns{:,'y_coordinate'};
+            
+            % right eye channels
+            data{1}.header.chantype  = 'pupil_r';
+            data{1}.data  = pupil_r;
+
+            data{2}.header.chantype  = 'gaze_x_r';
+            data{2}.data  = gaze_x_r;
+
+            data{3}.header.chantype  = 'gaze_y_r';
+            data{3}.data  = gaze_y_r;
+
+            % left eye channels
+            data{4}.header.chantype  = 'pupil_l';
+            data{4}.data  = pupil_l;
+            
+            data{5}.header.chantype  = 'gaze_x_l';
+            data{5}.data  = gaze_x_l;
+
+            data{6}.header.chantype  = 'gaze_y_l';
+            data{6}.data  = gaze_y_l;
+         
+
+        end
+        
+    otherwise; error('Unexpected number of eye data cells.'); 
+end
+
+data = data';
+% Add header data for pupil and gaze
+for i = 1:length(data)
+
+    if strcmp(data{i}.header.chantype(1:end-1) , 'pupil_')
+        if strcmp(data{i}.header.chantype(end:end) , 'r')
+            data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description;
+            data{i}.header.Unit =    eye_data_cell{idxRight}.pupil_size.Units;
+            data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+
+        elseif strcmp(data{i}.header.chantype(end:end) , 'l')
+            data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description;
+            data{i}.header.Unit =    eye_data_cell{idxLeft}.pupil_size.Units;
+            data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
+            
+        else; warning('Something went wrong no pupil channel!')  % !!!!!
+        end
+
+    elseif strcmp(data{i}.header.chantype(1:end-4) , 'gaze')
+        if strcmp(data{i}.header.chantype(6) , 'x')
+           if strcmp(data{i}.header.chantype(8) , 'r')
+               % gaze_x_r
+               data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
+               data{i}.header.Unit =    eye_data_cell{idxRight}.SampleCoordinateUnits;
+               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+               data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
+           elseif strcmp(data{i}.header.chantype(8) , 'l')
+              % gaze_x_l
+               data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; % 
+               data{i}.header.Unit =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
+               data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]
+               
+           else; warning('Something went worng with gaze  y channels')
+           end
+
+        elseif strcmp(data{i}.header.chantype(6) , 'y')
+           if strcmp(data{i}.header.chantype(8) , 'r')
+               % gaze_y_r
+               data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
+               data{i}.header.Unit =    eye_data_cell{idxRight}.SampleCoordinateUnits;
+               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+               data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
+           
+           elseif strcmp(data{i}.header.chantype(8) , 'l')
+               % gaze_y_l
+               data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; %
+               data{i}.header.Unit =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
+               data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
+                      
+           else ; warning('Something went worng with gaze  y channels')
+           end
+        end
+     end
 end
 
 
-function json_tsv = add_data2struct(json,tvs) % the name must change!
 
-    %
+
+% --- Make the infos struct --
+
+% Check that all fields are the same except of ->
+eye1_struct = eye_data_cell{1};
+eye2_struct = eye_data_cell{2};
+
+% Define the fields to ignore 
+% Assumtion this are all the fields that could be different
+ignoreFields = {'MaximalCalibrationError', 'MaximalCalibrationError','Columns'};
+
+% Remove these fields from both structs
+eye1Reduced = rmfield(eye1_struct, ignoreFields);
+eye2Reduced = rmfield(eye2_struct, ignoreFields);
+
+% Compare the remaining fields
+if isequal(eye1Reduced, eye2Reduced);    disp('The structures are equal except for the ignored fields.'); %
+else;    disp('The structures differ in some non-ignored fields.'); % maybe show diff. fields
+end
+
+
+% --- Build the infosstruct ----
+
+infos = struct();
+infos.importdate =  datestr(date, 'dd-mmm-yyyy');
+infos.duration = eye_data_cell{1}.RecordingDuration;
+infos.durationinfo = 'Recording duration in seconds'; % where in eye_data_cell???
+
+
+
+% --- infos.source ---
+infos.source.channel = {};% {'Column 02'} {'Column 01'} ????
+
+%
+infos.source.chan_stats = cell(length(data), 1); % use size??
+for i = 1:length(data)
+    n_data = size(data{i}.data, 1);
+    n_inv = sum(isnan(data{i}.data));
+    infos.source.chan_stats{i,1} = struct();
+    infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
+end
+
+
+infos.source.date = '01.01.1900'; % no information in jsons
+infos.source.time = '00:00:00'; % no information in jsons
+
+if ~isequal(eye_data_cell{idxRight}.GazeRange,eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal") % already checked???
+end
+
+infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
+infos.source.elcl_proc = eye_data_cell{idxRight}.ElclProc ; % why not eye_data_cell{idxRight}.ELCL_PROC
+infos.source.eyesObserved = 'lr';
+infos.source.best_eye = 'l' ;
+
+% infos.source.elcl_proc = eye_data_cell{idxRight}.
+infos.source.type = 'Bids (jason/tsv)' ; % exact name??
+infos.source.file = [eye_data_cell{idxRight}.source.file, eye_data_cell{idxRight}.source.file] ;% different orientation?
+
+
+% infos.importfile =  'ImportTestData/eyelink/pspm_S114_s2.mat' % late the end the file that will be produced look in the manual
+infos.history = {' Output channel ID: #08 -- added on 06-Mar-20'}; % what sould be here??
+
+% Maybe put in different order
+infos.source.SampleCoordinateSystem = eye_data_cell{idxRight}.SampleCoordinateSystem;
+infos.source.EnvironmentCoordinates = eye_data_cell{idxRight}.EnvironmentCoordinates;
+infos.source.Manufacturer = eye_data_cell{idxRight}.EnvironmentCoordinates;
+infos.source.ManufacturersModelName = eye_data_cell{idxRight}.ManufacturersModelName;
+infos.source.SoftwareVersion = eye_data_cell{idxRight}.ManufacturersModelName;
+infos.source.MaximalCalibrationError = eye_data_cell{idxRight}.MaximalCalibrationError;
+infos.source.AverageCalibrationError = eye_data_cell{idxRight}.AverageCalibrationError;
+infos.source.EyeTrackerDistance = eye_data_cell{idxRight}.EyeTrackerDistance;
+
+chan_names{end+1} = 'eye'; % should it have a different name?
+file_paths{end+1} = infos.source.file;
+
+physio_data_cell{end+1}.data = data;
+physio_data_cell{end+1}.info = infos;
+
+%% Prepare physio_info_data ??
+physio_info_data = struct();
+physio_info_data.chan_names = chan_names;
+physio_info_data.file_paths = file_paths;
+physio_info_data.duration   = duration; 
 
 end

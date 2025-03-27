@@ -64,6 +64,7 @@ for i = 1:length(dataset_dir)
     session_dirs = subject_contents(arrayfun(@(x) x.isdir && startsWith(x.name, 'ses-'), subject_contents));
 
     %% Process each session
+    subject = {};
     for j = 1:length(session_dirs)
         session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02'
         
@@ -88,25 +89,25 @@ for i = 1:length(dataset_dir)
         libpath = pspm_path('bids_importer','lib'); % move 
         addpath(libpath); % move 
 
-        [physio_data_cell] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
-         
-
+        [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
-      
 
         % --- Get beh data ---
 
         beh_path = fullfile(ses_path,'beh');
 
-        [ beh_sidecar,events_info,evnets_data]  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
+        [infos]  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
         
-        event_
-        marker_channel = build_marker_channel(event_data_struct);
+        
 
         % --- Build the channels ---
         % Build event channel
         
-        
+        subject{1} = infos;
+        subject{1} = physio_data_cell;
+
+        % subject.(session_dirs(j).name).infos = infos;
+        % subject.(session_dirs(j).name) = physio_data_cell;
 
     
     end
@@ -122,15 +123,21 @@ sts = 1;
 end
 
 %% 4. Subfunctions ---------------------------------------------------------
+function dataset_description = read_dataset_description(dataset_path)
+    dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
+    dataset_description = jsondecode(fileread(dataset_description_filepath));
+end
 
 function fileFound = isFileInDirectory(folderPath, fileName)
     items = dir(folderPath);
     fileFound = any(strcmp({items.name}, fileName));
 end
 
-function dataset_description = read_dataset_description(dataset_path)
-    dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
-    dataset_description = jsondecode(fileread(dataset_description_filepath));
+function saveCogent(participantData, cogent_filepath)
+    % here the right structure will be build for saving
+    subject = participantData;
+    save(cogent_filepath, 'subject');
+    fprintf('Saved cogent file to %s\n', cogent_filepath);
 end
 
 function files_missing = checkFileMiss(folderPath, filenames)
@@ -157,81 +164,9 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     fclose(fileID);
 end
 
-function sts = save_eyetrack_data(eyetrack_data, eyetrack_json, event_data_struct, pupil_filepath)
-    sts = -1;
-    data_columns = eyetrack_json.data.Columns;
-    num_channels = length(data_columns) + 1;
-    pdata = cell(num_channels, 1);
-    
-    % Loop over each eyetracking channel defined in the JSON
-    for i = 1:length(data_columns)
-        chan = struct();
-        chan.header = struct();
-        chan.header.chan_type = data_columns{i};
-        % Note: if the JSON uses "SamplingFrequency" (per CALINET recommendations),
-        % adjust the field name accordingly.
-        if isfield(eyetrack_json.data.(data_columns{i}), 'SamplingRate')
-            chan.header.sr = eyetrack_json.data.(data_columns{i}).SamplingRate;
-        elseif isfield(eyetrack_json.data.(data_columns{i}), 'SamplingFrequency')
-            chan.header.sr = eyetrack_json.data.(data_columns{i}).SamplingFrequency;
-        else
-            chan.header.sr = NaN;
-        end
-        chan.header.units = eyetrack_json.data.(data_columns{i}).Units;
-        chan.data = eyetrack_data(:, i);
-        pdata{i+1} = chan;
-    end
-    
-    % Build marker channel from event data
-    pdata{1} = build_marker_channel(event_data_struct);
-    
-    data = pdata;
-    infos = struct();
-    infos.duration = 800;  % TODO: update with actual duration if available
-    infos.durationInfo = 'Duration in seconds'; % true?
-    infos.source = struct();
-    infos.source.elcl_proc = eyetrack_json.ElclProc;
-    infos.source.best_eye = eyetrack_json.BestEye;
-    infos.source.eyesObservered = eyetrack_json.RecordedEye;
-    infos.eyetrackingGeometry = struct();
-    infos.eyetrackingGeometry.measurements = eyetrack_json.EyetrackingGeometry.distances;
-    infos.eyetrackingGeometry.units = eyetrack_json.EyetrackingGeometry.distanceUnits;
-    
-    save(pupil_filepath, 'data', 'infos');
-    fprintf('Saved processed pupil data to %s\n', pupil_filepath);
-    sts = 1;
-end
-
-function marker_channel = build_marker_channel(event_data_struct)
-    marker_channel = struct();
-    time_delta = 3.0;  % TODO: update time delta if needed
-    num_events = numel(event_data_struct.onset);
-    marker_data = cell(num_events, 1);
-    for i = 1:num_events
-        marker_data{i} = str2double(event_data_struct.onset{i}) + time_delta;
-    end
-    marker_channel.data = marker_data;
-    
-    marker_channel.markerinfo = struct();
-    marker_channel.markerinfo.duration = event_data_struct.duration;
-    marker_channel.markerinfo.value = event_data_struct.trial_type;
-    marker_channel.markerinfo.name = event_data_struct.identifier;
-    
-    marker_channel.header = struct();
-    marker_channel.header.chantype = 'marker';
-    marker_channel.header.sr = 1;
-    marker_channel.header.units = 'events';
-end
-
-function saveCogent(participantData, cogent_filepath)
-    % here the right structure will be build for saving
-    subject = participantData;
-    save(cogent_filepath, 'subject');
-    fprintf('Saved cogent file to %s\n', cogent_filepath);
-end
 
 % maybe external function
-function [beh_sidecar,events_info,evnets_data] = get_beh_data(subject_id, session_id, task_name, beh_path)
+function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path)
 % Construct expected filenames
 beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
 events_json_filename = sprintf('%s_ses-%s_task-%s_events.json', subject_id, session_id, task_name);
@@ -251,7 +186,7 @@ if ~isfile(events_tsv_filepath);  error('Events TSV file not found: %s', events_
 beh_sidecar = extract_json_as_struct(beh_json_filepath);
 
 % Read events JSON metadata
-events_info = extract_json_as_struct(events_json_filepath);
+events_infos = extract_json_as_struct(events_json_filepath);
 
 % Read events TSV data
 
@@ -259,5 +194,9 @@ has_headings = true;
 col_types = {'double', 'double', 'char', 'char', 'char'};  
 evnets_data = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
 
+infos.beh_sidecar = beh_sidecar;
+infos.events.events_infos = events_infos;
+infos.events.events_data = evnets_data;
+
+
 end
-b
