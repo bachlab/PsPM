@@ -2,7 +2,7 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
 
     has_headings = true;
     headings = [];
-    col_types = {'double', 'double', 'char', 'char'};
+    col_types = {'double', 'double', 'char', 'char', 'char'};
 
     maker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings.', col_types );
 
@@ -24,9 +24,11 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     % --------- marker info ---------
     marker_data.markerinfo = struct();
     marker_data.markerinfo.duration = maker_tsv_data_table.duration;
-    marker_data.markerinfo.value = maker_tsv_data_table.trial_type;
+    marker_data.markerinfo.value = maker_tsv_data_table.event_type;
     marker_data.markerinfo.name = maker_tsv_data_table.stimulus_name;
+    marker_data.markerinfo.name = maker_tsv_data_table.task_name; % 
     
+
     % --------- marker header ---------
     marker_data.header = struct();
     marker_data.header.chantype = 'marker';

@@ -26,6 +26,10 @@ if ~exist(save_path, 'dir')
     mkdir(save_path);
 end
 
+% Adds lib to the path
+libpath = pspm_path('bids_importer','lib'); % move 
+addpath(libpath); 
+
 %% 2. Read meta information ------------------------------------------------
 dataset_description = read_dataset_description(dataset_path);
 [participants_data, participant_data_headings] = read_participants_data(dataset_path);
@@ -86,8 +90,6 @@ for i = 1:length(dataset_dir)
         physio_path = fullfile(ses_path,'physio');
 
 
-        libpath = pspm_path('bids_importer','lib'); % move 
-        addpath(libpath); % move 
 
         [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
@@ -96,18 +98,25 @@ for i = 1:length(dataset_dir)
 
         beh_path = fullfile(ses_path,'beh');
 
-        [infos]  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
-        
+        events_json_filename = sprintf('%s_ses-%s_task-%s_events.json', subject_full_id, session_id, task_name);
+        events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_full_id, session_id, task_name);
+        events_json_filepath = fullfile(beh_path, events_json_filename);
+        events_tsv_filepath  = fullfile(beh_path, events_tsv_filename);
+        if ~isfile(events_json_filepath); error('File not found: %s', events_json_filepath); end
+        if ~isfile(events_tsv_filepath);  error('File not found: %s', events_tsv_filepath);  end
+
+        marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath);
+
+        infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
         
 
-        % --- Build the channels ---
+        % --- Build the file structure  ---
         % Build event channel
-        
-        subject{1} = infos;
-        subject{1} = physio_data_cell;
 
-        % subject.(session_dirs(j).name).infos = infos;
-        % subject.(session_dirs(j).name) = physio_data_cell;
+        subject.infos = participant; % 
+        subject.(['session_',session_id]){1, 1} = infos;
+        subject.(['session_',session_id]){end +1, 1} = marker_chan;
+        subject.(['session_',session_id]) = [subject.(['session_',session_id]) ; physio_data_cell];
 
     
     end
@@ -115,42 +124,26 @@ for i = 1:length(dataset_dir)
     % Save participant (cogent) file once per subject
     cogent_file_name = sprintf('%s_cogent.mat', subject_full_id);
     cogent_filepath = fullfile(save_path, cogent_file_name);
-    saveCogent(participant, cogent_filepath);
+    saveCogent(subject, cogent_filepath);
     outfile{end+1} = cogent_file_name;
 end
-rmpath(libpath); % move 
+rmpath(libpath); % move ?
 sts = 1;
 end
 
 %% 4. Subfunctions ---------------------------------------------------------
-function dataset_description = read_dataset_description(dataset_path)
-    dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
-    dataset_description = jsondecode(fileread(dataset_description_filepath));
-end
-
-function fileFound = isFileInDirectory(folderPath, fileName)
-    items = dir(folderPath);
-    fileFound = any(strcmp({items.name}, fileName));
-end
 
 function saveCogent(participantData, cogent_filepath)
     % here the right structure will be build for saving
     subject = participantData;
+    % add overwrite
     save(cogent_filepath, 'subject');
     fprintf('Saved cogent file to %s\n', cogent_filepath);
 end
 
-function files_missing = checkFileMiss(folderPath, filenames)
-    files_missing = false;
-    for i = 1:numel(filenames)
-        if ~isFileInDirectory(folderPath, filenames{i})
-            fprintf('%s not found in %s\n', filenames{i}, folderPath);
-            files_missing = true;
-        end
-    end
-    if ~files_missing
-        disp('All required files found in the session directory.')
-    end
+function dataset_description = read_dataset_description(dataset_path)
+    dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
+    dataset_description = jsondecode(fileread(dataset_description_filepath));
 end
 
 function [participants_data, column_headings] = read_participants_data(dataset_path)
@@ -164,39 +157,11 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     fclose(fileID);
 end
 
-
-% maybe external function
 function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path)
-% Construct expected filenames
 beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
-events_json_filename = sprintf('%s_ses-%s_task-%s_events.json', subject_id, session_id, task_name);
-events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_id, session_id, task_name);
-
-% Full file paths
 beh_json_filepath    = fullfile(beh_path, beh_json_filename);
-events_json_filepath = fullfile(beh_path, events_json_filename);
-events_tsv_filepath  = fullfile(beh_path, events_tsv_filename);
-
-% Check file existence
 if ~isfile(beh_json_filepath);    error('Behavior sidecar JSON file not found: %s', beh_json_filepath); end
-if ~isfile(events_json_filepath); error('Events JSON file not found: %s', events_json_filepath); end
-if ~isfile(events_tsv_filepath);  error('Events TSV file not found: %s', events_tsv_filepath); end
 
-% Read behavioral sidecar JSON file
 beh_sidecar = extract_json_as_struct(beh_json_filepath);
-
-% Read events JSON metadata
-events_infos = extract_json_as_struct(events_json_filepath);
-
-% Read events TSV data
-
-has_headings = true;
-col_types = {'double', 'double', 'char', 'char', 'char'};  
-evnets_data = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
-
-infos.beh_sidecar = beh_sidecar;
-infos.events.events_infos = events_infos;
-infos.events.events_data = evnets_data;
-
-
+infos = beh_sidecar;
 end

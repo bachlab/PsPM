@@ -19,7 +19,7 @@ cell_index = 1;
 
 
 %% Process each physio signal
-for i = 1:num_signals - 1  % Exclude 'events' for now !
+for i = 1:num_signals - 1  % Exclude 'events' for now 
     signal = physio_signals{i};
     
     % Construct filenames
@@ -73,12 +73,11 @@ for i = 1:num_signals - 1  % Exclude 'events' for now !
 
 
     
-  %  disp(physio_json.StartTime)% where an how is the duration
 
     cell_index = cell_index +1; 
 end
 
-%% Process event data
+%% Process physio event data 
 
 
 events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
@@ -86,7 +85,7 @@ events_tsv_filename  = sprintf('%s_ses-%s_task-%s_physioevents.tsv', subject_id,
 events_json_filepath = fullfile(physio_path, events_json_filename);
 events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 
-% check if files exist
+% Checks if files exist
 if ~isfile(events_json_filepath); error('File not found: %s', events_json_filepath); end
 if ~isfile(events_tsv_filepath);  error('File not found: %s', events_tsv_filepath);  end
 
@@ -103,31 +102,33 @@ events_table = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_typ
 
 
 
-% time_delta = 3.0;  % TODO: update time delta if needed
-% num_events = numel(event_data_struct.onset);
-% marker_data = cell(num_events, 1);
-% for i = 1:num_events
-%     marker_data{i} = str2double(event_data_struct.onset{i}) + time_delta;
-% end
-
-
 % Create marker data struct
 marker_chan = struct();
-marker_chan.data = events_table.onset; % event data onsets
+marker_chan.data = table2cell(events_table);
 
 % Is the rest of the events tabel not important?
 
+
+% physio_json.StartTime 
+
 % Create markerinfo struct
 marker_chan.markerinfo = struct();
-marker_chan.markerinfo.duration = 1; % ? event_data_struct.duration;
-marker_chan.markerinfo.value = 1;  % ? event_data_struct.trial_type
-marker_chan.markerinfo.name = 1;   % ? event_data_struct.identifier
+marker_chan.markerinfo.duration = 1; 
+marker_chan.markerinfo.value = 1;   
+marker_chan.markerinfo.name = 1;  
 
-% Create header  (needed?)
-% marker_data.header = struct();
-% marker_data.header.chantype = 'marker';
-% marker_data.header.units = 'events';
-% marker_data.header.sr = 1; % check it  
+
+
+
+
+% Check if 'trial_type' exists in the table columns 
+events_json.Columns = regexprep(events_json.Columns,'^trial_type$','event_type');
+headings = events_json.Columns;  
+
+for i = 1:length(headings)
+    marker_chan.data{i} = events_table.(headings{i});
+end
+
 
 % Add to physio data cell array
 physio_data_cell{cell_index}.data = marker_chan;
@@ -139,13 +140,13 @@ chan_names{cell_index} = 'events';
 
 % Get duration: last value of event time info
 duration = events_table.onset(end) - events_table.onset(1); %  duration of the EVENTS (onset)
+marker_chan.markerinfo.duration = duration;
 
 
 % Assume recording duration is the length of the SCR data divided by its
 % sampling rate minus the StartTime and all measurments are of the same
 
-
-% Checks that all the data has the same length 
+% Checks that all the data has the same length excluding event
 refLength = length(physio_data_cell{1}.data.data);
 for i = 1:3 %length(physio_data_cell)
     currentLength = length(physio_data_cell{i}.data.data);
@@ -311,9 +312,6 @@ for i = 1:length(data)
      end
 end
 
-
-
-
 % --- Make the infos struct --
 
 % Check that all fields are the same except of ->
@@ -339,9 +337,7 @@ end
 infos = struct();
 infos.importdate =  datestr(date, 'dd-mmm-yyyy');
 infos.duration = eye_data_cell{1}.RecordingDuration;
-infos.durationinfo = 'Recording duration in seconds'; % where in eye_data_cell???
-
-
+infos.durationinfo = 'Recording duration in seconds'; % where in eye_data_cell ???
 
 % --- infos.source ---
 infos.source.channel = {};% {'Column 02'} {'Column 01'} ????
