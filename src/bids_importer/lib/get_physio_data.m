@@ -4,13 +4,13 @@ function [physio_data_cell, recording_duration, physio_info_data] = get_physio_d
 % UPDATE HELPTEXT
 
 %% Initialize the physio data cell array
-physio_signals = { 'ecg','ppg', 'scr', 'event'}; 
+physio_signals = { 'ecg','ppg', 'scr'}; %  'event'
 num_signals = length(physio_signals);
 physio_data_cell = cell(num_signals, 1);  % Preallocate cell array
 pyhsio_main_struct = struct();
 
 
-% Initialize variables for info
+% Initialize variables for infos
 chan_names = cell(num_signals, 1);
 file_paths = cell(num_signals, 1);
 
@@ -19,7 +19,7 @@ cell_index = 1;
 
 
 %% Process each physio signal
-for i = 1:num_signals - 1  % Exclude 'events' for now 
+for i = 1:num_signals   
     signal = physio_signals{i};
     
     % Construct filenames
@@ -29,7 +29,7 @@ for i = 1:num_signals - 1  % Exclude 'events' for now
     physio_json_filepath = fullfile(physio_path, physio_json_filename);
     physio_tsv_filepath = fullfile(physio_path, physio_tsv_filename);
 
-    % Collect file paths for info
+    % Collect file paths for infos
     file_paths{cell_index} = physio_tsv_filepath;
 
     % Check if files exist
@@ -47,14 +47,14 @@ for i = 1:num_signals - 1  % Exclude 'events' for now
 
  
     % Create channel struct
-    chaninfo = physio_json; % add the json to the info field
+    chaninfo = physio_json; % add the json to the infos field
     chaninfo = rmfield(chaninfo,'Columns'); % removes Columns field
     chan = struct();
     % header chantype, sr, StartTime and units
     chan.header = struct();
     chan.header.chantype = signal;
-    chan.header.sr = physio_json.SamplingFrequency;
-    chan.header.StartTime = physio_json.StartTime;  % OKay?? If data starts not at 0
+    chan.header.sr = physio_json.SamplingFrequency; 
+    chan.header.StartTime = physio_json.StartTime; 
 
     % Access Units field inside the signal-specific structure
     if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units') ; chan.header.units = physio_json.(signal).Units;
@@ -65,8 +65,7 @@ for i = 1:num_signals - 1  % Exclude 'events' for now
     chan.data = physio_data_table.(headings{1});
 
     % Add to physio data cell array 
-    physio_data_cell{cell_index}.data = chan;
-    physio_data_cell{cell_index}.info = chaninfo;
+    physio_data_cell{cell_index} = chan;
 
     % Collect channel names for info
     chan_names{cell_index} = signal;
@@ -77,7 +76,7 @@ for i = 1:num_signals - 1  % Exclude 'events' for now
     cell_index = cell_index +1; 
 end
 
-%% Process physio event data 
+%% Process physio event data -> header eyedata maybe somewhere else?
 
 
 events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
@@ -100,62 +99,23 @@ has_headings = true;
 col_types = {'double', 'double', 'char', 'char', 'char'};
 events_table = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
 
-
-
-% Create marker data struct
-marker_chan = struct();
-marker_chan.data = table2cell(events_table);
-
-% Is the rest of the events tabel not important?
-
-
-% physio_json.StartTime 
-
-% Create markerinfo struct
-marker_chan.markerinfo = struct();
-marker_chan.markerinfo.duration = 1; 
-marker_chan.markerinfo.value = 1;   
-marker_chan.markerinfo.name = 1;  
-
-
-
-
-
 % Check if 'trial_type' exists in the table columns 
-events_json.Columns = regexprep(events_json.Columns,'^trial_type$','event_type');
+events_json.Columns = regexprep(events_json.Columns,'^trial_type$','event_type');% can be take out with the new data !!
 headings = events_json.Columns;  
+events_json.Columns = struct();
 
+% Add the tsv tabel to  evnents_json
 for i = 1:length(headings)
-    marker_chan.data{i} = events_table.(headings{i});
+    events_json.Columns.(headings{i}) = events_table.(headings{i});
 end
-
-
-% Add to physio data cell array
-physio_data_cell{cell_index}.data = marker_chan;
-physio_data_cell{cell_index}.info = events_json;
-
-
-% Collect channel name for events
-chan_names{cell_index} = 'events';
 
 % Get duration: last value of event time info
 duration = events_table.onset(end) - events_table.onset(1); %  duration of the EVENTS (onset)
-marker_chan.markerinfo.duration = duration;
+events_json.duration = duration;
+
+% events_json will be added to physio_info_data at the end of the funciton
 
 
-% Assume recording duration is the length of the SCR data divided by its
-% sampling rate minus the StartTime and all measurments are of the same
-
-% Checks that all the data has the same length excluding event
-refLength = length(physio_data_cell{1}.data.data);
-for i = 1:3 %length(physio_data_cell)
-    currentLength = length(physio_data_cell{i}.data.data);
-    if currentLength ~= refLength; fprintf('Cell %d has a different length (%d) than the reference length (%d).\n', i, currentLength, refLength);
-    else; fprintf('Cell %d matches the reference length (%d).\n', i, refLength);
-    end
-end
-
-recording_duration = length(physio_data_cell{1}.data.data) / physio_data_cell{1}.data.header.sr - str2num(physio_data_cell{1}.info.StartTime);
 
 
 %% Process eye data
@@ -262,13 +222,13 @@ for i = 1:length(data)
     if strcmp(data{i}.header.chantype(1:end-1) , 'pupil_')
         if strcmp(data{i}.header.chantype(end:end) , 'r')
             data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description;
-            data{i}.header.Unit =    eye_data_cell{idxRight}.pupil_size.Units;
-            data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+            data{i}.header.units =    eye_data_cell{idxRight}.pupil_size.Units;
+            data{i}.header.sr   =    str2num(eye_data_cell{idxRight}.SamplingRate);
 
         elseif strcmp(data{i}.header.chantype(end:end) , 'l')
             data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description;
-            data{i}.header.Unit =    eye_data_cell{idxLeft}.pupil_size.Units;
-            data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
+            data{i}.header.units =    eye_data_cell{idxLeft}.pupil_size.Units;
+            data{i}.header.sr   =    str2num(eye_data_cell{idxLeft}.SamplingRate);
             
         else; warning('Something went wrong no pupil channel!')  % !!!!!
         end
@@ -278,14 +238,14 @@ for i = 1:length(data)
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_x_r
                data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
-               data{i}.header.Unit =    eye_data_cell{idxRight}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+               data{i}.header.units =    eye_data_cell{idxRight}.SampleCoordinateUnits;
+               data{i}.header.sr   =    str2num(eye_data_cell{idxRight}.SamplingRate);
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
                data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; % 
-               data{i}.header.Unit =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
+               data{i}.header.units =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.sr   =    str2num(eye_data_cell{idxLeft}.SamplingRate);
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]
                
            else; warning('Something went worng with gaze  y channels')
@@ -295,15 +255,15 @@ for i = 1:length(data)
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_y_r
                data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
-               data{i}.header.Unit =    eye_data_cell{idxRight}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+               data{i}.header.units =    eye_data_cell{idxRight}.SampleCoordinateUnits;
+               data{i}.header.sr   =    str2num(eye_data_cell{idxRight}.SamplingRate);
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
                data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; %
-               data{i}.header.Unit =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
+               data{i}.header.units =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.sr   =    str2num(eye_data_cell{idxLeft}.SamplingRate); % delelt with the new data
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       
            else ; warning('Something went worng with gaze  y channels')
@@ -384,13 +344,53 @@ infos.source.EyeTrackerDistance = eye_data_cell{idxRight}.EyeTrackerDistance;
 chan_names{end+1} = 'eye'; % should it have a different name?
 file_paths{end+1} = infos.source.file;
 
-physio_data_cell{end+1}.data = data;
-physio_data_cell{end+1}.info = infos;
+physio_data_cell = [physio_data_cell; data];
 
 %% Prepare physio_info_data ??
-physio_info_data = struct();
-physio_info_data.chan_names = chan_names;
-physio_info_data.file_paths = file_paths;
+
+% Add the eye channel names
+for i = 1:length(data)
+    chan_names{cell_index+i} = data{i}.header.chantype;
+end
+
+physio_info_data = infos;
+physio_info_data.chan_names = chan_names; % add the name of all eye channels!!
+physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation
 physio_info_data.duration   = duration; 
+physio_info_data.events_infos = events_json;
+
+
+%%
+
+% Assume recording duration is the length of the SCR data divided by its
+% sampling rate minus the StartTime and all measurments are of the same
+
+% Checks that all the data has the same length excluding event
+% (überarbeiten!!)
+%% Pad eye channels with NaNs to match the reference recording duration
+% Compute the recording duration (in seconds) from the reference physiologic channel.
+ref_duration_sec = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr;
+for i = num_signals+1:length(physio_data_cell)
+    % Get the sampling rate for the current eye channel.
+    eye_sr = physio_data_cell{i}.header.sr;
+    % Compute the expected number of samples based on the reference duration.
+    expected_samples = round(ref_duration_sec * eye_sr);
+    current_length = length(physio_data_cell{i}.data);
+    if current_length < expected_samples
+         pad_length = expected_samples - current_length;
+         physio_data_cell{i}.data = [nan(pad_length, 1); physio_data_cell{i}.data];
+    end
+end
+% test lenghts
+ref_duration_ = length(physio_data_cell{1}.data)/ physio_data_cell{1}.header.sr; 
+for i = 1:length(physio_data_cell)
+    currentLength = length(physio_data_cell{i}.data)/physio_data_cell{i}.header.sr;
+
+    if currentLength ~= ref_duration_; fprintf('Cell %d has a different length (%d) than the reference length (%d).\n', i, currentLength, ref_duration_);
+    else; fprintf('Cell %d matches the reference length (%d).\n', i, ref_duration_);
+    end
+end
+
+recording_duration = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr; %- str2num(physio_data_cell{1}.header.StartTime);  
 
 end

@@ -108,24 +108,44 @@ for i = 1:length(dataset_dir)
         marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath);
 
         infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
-        
+        infos.physio =  physio_info_data ; % maybe wrong needs better structure
+        infos.duration = recording_duration;
 
         % --- Build the file structure  ---
         % Build event channel
 
-        subject.infos = participant; % 
-        subject.(['session_',session_id]){1, 1} = infos;
-        subject.(['session_',session_id]){end +1, 1} = marker_chan;
-        subject.(['session_',session_id]) = [subject.(['session_',session_id]) ; physio_data_cell];
+        % subject.infos = participant; % 
+        % subject.(['session_',session_id]){1, 1} = infos;
+        % subject.(['session_',session_id]){end +1, 1} = marker_chan;
+        % subject.(['session_',session_id]) = [subject.(['session_',session_id]) ; physio_data_cell];
+      
+        
+        % --- save per ses 
+        %session.infos = infos;
+        session.data = {};
+        session.data{end+1} = marker_chan;
+        session.data = [session.data ; physio_data_cell];
 
+        % Save session (cogent) file once per subject
+        cogent_ses_file_name = sprintf('%s_ses-%s_cogent.mat', subject_full_id,session_id);
+        cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
+        outfile{end+1} = cogent_ses_filepath;
     
+
+        % add overwrite ?
+        data = session.data;
+        save(cogent_ses_filepath,'infos', 'data');
+        fprintf('Saved cogent file to %s\n', cogent_ses_filepath);
+
     end
     
-    % Save participant (cogent) file once per subject
-    cogent_file_name = sprintf('%s_cogent.mat', subject_full_id);
-    cogent_filepath = fullfile(save_path, cogent_file_name);
-    saveCogent(subject, cogent_filepath);
-    outfile{end+1} = cogent_file_name;
+
+
+    % % Save participant (cogent) file once per subject
+    % cogent_file_name = sprintf('%s_cogent.mat', subject_full_id);
+    % cogent_filepath = fullfile(save_path, cogent_file_name);
+    % saveCogent(subject, cogent_filepath);
+    % outfile{end+1} = cogent_file_name;
 end
 rmpath(libpath); % move ?
 sts = 1;
@@ -133,13 +153,7 @@ end
 
 %% 4. Subfunctions ---------------------------------------------------------
 
-function saveCogent(participantData, cogent_filepath)
-    % here the right structure will be build for saving
-    subject = participantData;
-    % add overwrite
-    save(cogent_filepath, 'subject');
-    fprintf('Saved cogent file to %s\n', cogent_filepath);
-end
+
 
 function dataset_description = read_dataset_description(dataset_path)
     dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
