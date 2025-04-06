@@ -56,6 +56,8 @@ for i = 1:num_signals
     chan.header.sr = physio_json.SamplingFrequency; 
     chan.header.StartTime = physio_json.StartTime; 
 
+
+
     % Access Units field inside the signal-specific structure
     if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units') ; chan.header.units = physio_json.(signal).Units;
     else; chan.header.units = 'unknown'; warning('Units not specified in JSON file for %s. Setting units to "unknown".', signal); 
@@ -70,8 +72,6 @@ for i = 1:num_signals
     % Collect channel names for info
     chan_names{cell_index} = signal;
 
-
-    
 
     cell_index = cell_index +1; 
 end
@@ -223,12 +223,12 @@ for i = 1:length(data)
         if strcmp(data{i}.header.chantype(end:end) , 'r')
             data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description;
             data{i}.header.units =    eye_data_cell{idxRight}.pupil_size.Units;
-            data{i}.header.sr   =    str2num(eye_data_cell{idxRight}.SamplingRate);
+            data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
 
         elseif strcmp(data{i}.header.chantype(end:end) , 'l')
             data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description;
             data{i}.header.units =    eye_data_cell{idxLeft}.pupil_size.Units;
-            data{i}.header.sr   =    str2num(eye_data_cell{idxLeft}.SamplingRate);
+            data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
             
         else; warning('Something went wrong no pupil channel!')  % !!!!!
         end
@@ -239,13 +239,13 @@ for i = 1:length(data)
                % gaze_x_r
                data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
                data{i}.header.units =    eye_data_cell{idxRight}.SampleCoordinateUnits;
-               data{i}.header.sr   =    str2num(eye_data_cell{idxRight}.SamplingRate);
+               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
                data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; % 
                data{i}.header.units =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.sr   =    str2num(eye_data_cell{idxLeft}.SamplingRate);
+               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]
                
            else; warning('Something went worng with gaze  y channels')
@@ -256,14 +256,14 @@ for i = 1:length(data)
                % gaze_y_r
                data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
                data{i}.header.units =    eye_data_cell{idxRight}.SampleCoordinateUnits;
-               data{i}.header.sr   =    str2num(eye_data_cell{idxRight}.SamplingRate);
+               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
                data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; %
                data{i}.header.units =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.sr   =    str2num(eye_data_cell{idxLeft}.SamplingRate); % delelt with the new data
+               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate; % delelt with the new data
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       
            else ; warning('Something went worng with gaze  y channels')
@@ -319,7 +319,7 @@ if ~isequal(eye_data_cell{idxRight}.GazeRange,eye_data_cell{idxLeft}.GazeRange);
 end
 
 infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
-infos.source.elcl_proc = eye_data_cell{idxRight}.ElclProc ; % why not eye_data_cell{idxRight}.ELCL_PROC
+infos.source.PupilFitMethod = eye_data_cell{idxRight}.PupilFitMethod ; % why not eye_data_cell{idxRight}.ELCL_PROC
 infos.source.eyesObserved = 'lr';
 infos.source.best_eye = 'l' ;
 
@@ -362,26 +362,29 @@ physio_info_data.events_infos = events_json;
 
 %%
 
-% Assume recording duration is the length of the SCR data divided by its
-% sampling rate minus the StartTime and all measurments are of the same
+% if start time is negative testen
+% Is that okay like this?
+for i = 1:length(physio_data_cell)  
+    if isfield(physio_data_cell{i}.header , 'StartTime')
+        if physio_data_cell{i}.header.StartTime < 0 % truncate the begining
+           physio_data_cell{i}.data = physio_data_cell{i}.data(round(physio_data_cell{i}.header.StartTime*data{i}.header.sr):end); % round?
+           waring('Channel', i, 'got truncated') % write better
+           
+        elseif physio_data_cell{i}.header.StartTime > 0 % padding at the begining
+           physio_data_cell{i}.data = [zeros(round(physio_data_cell{i}.header.StartTime*data{i}.header.sr), 1); physio_data_cell{i}.data]; % round?
+           waring('Channel', i, 'got padded') % write better
 
-% Checks that all the data has the same length excluding event
-% (überarbeiten!!)
-%% Pad eye channels with NaNs to match the reference recording duration
-% Compute the recording duration (in seconds) from the reference physiologic channel.
-ref_duration_sec = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr;
-for i = num_signals+1:length(physio_data_cell)
-    % Get the sampling rate for the current eye channel.
-    eye_sr = physio_data_cell{i}.header.sr;
-    % Compute the expected number of samples based on the reference duration.
-    expected_samples = round(ref_duration_sec * eye_sr);
-    current_length = length(physio_data_cell{i}.data);
-    if current_length < expected_samples
-         pad_length = expected_samples - current_length;
-         physio_data_cell{i}.data = [nan(pad_length, 1); physio_data_cell{i}.data];
-    end
+        end     
+    end    
 end
-% test lenghts
+% Align the channels 
+[sts, physio_data_cell, recording_duration] = pspm_align_channels(physio_data_cell);
+if sts ~= 1 % if all are the same size does it give en error?
+    error('Channel alignment failed.');
+end
+
+
+% Just temp
 ref_duration_ = length(physio_data_cell{1}.data)/ physio_data_cell{1}.header.sr; 
 for i = 1:length(physio_data_cell)
     currentLength = length(physio_data_cell{i}.data)/physio_data_cell{i}.header.sr;
@@ -391,6 +394,6 @@ for i = 1:length(physio_data_cell)
     end
 end
 
-recording_duration = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr; %- str2num(physio_data_cell{1}.header.StartTime);  
+recording_duration = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr;  
 
 end

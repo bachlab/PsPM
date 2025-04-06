@@ -3,10 +3,9 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     has_headings = true;
     headings = [];
     col_types = {'double', 'double', 'char', 'char', 'char'};
-
+    
+    
     maker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings.', col_types );
-
-    % marker_data = maker_tsv_data_table;
 
     marker_data = struct();
 
@@ -19,6 +18,17 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
         % Add the predefined offset to each element and store it in marker_data
         onsets(i) = maker_tsv_data_table.onset(i) + time_delta;
     end
+
+    % has to be delete if not the marker time is longer as infos.duration
+    if strcmpi(maker_tsv_data_table.event_type(end) , 'block_end') %  i or no i that is here the question
+        % should start block also be deleted ? 405.035	15.0	block_start	block_start	habituation 
+        % needs some change
+        onsets = onsets(1:end-1);
+        maker_tsv_data_table(end, :) = [];
+
+    end
+
+
     marker_data.data = onsets;
 
     % --------- marker info ---------

@@ -112,13 +112,7 @@ for i = 1:length(dataset_dir)
         infos.duration = recording_duration;
 
         % --- Build the file structure  ---
-        % Build event channel
 
-        % subject.infos = participant; % 
-        % subject.(['session_',session_id]){1, 1} = infos;
-        % subject.(['session_',session_id]){end +1, 1} = marker_chan;
-        % subject.(['session_',session_id]) = [subject.(['session_',session_id]) ; physio_data_cell];
-      
         
         % --- save per ses 
         %session.infos = infos;
@@ -131,8 +125,20 @@ for i = 1:length(dataset_dir)
         cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
         outfile{end+1} = cogent_ses_filepath;
     
+        % Check the pspm strucutre
 
-        % add overwrite ?
+        fn.infos = infos;
+        fn.data = session.data;
+
+        [sts, ~, ~, ~] = pspm_load_data(fn);
+        if sts < 1
+            warning('The file struture has a problem'); % better warning text
+            contiue; % check !
+        end
+
+
+
+        % add overwrite 
         data = session.data;
         save(cogent_ses_filepath,'infos', 'data');
         fprintf('Saved cogent file to %s\n', cogent_ses_filepath);
