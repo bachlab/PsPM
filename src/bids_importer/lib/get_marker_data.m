@@ -6,27 +6,27 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     
     
     maker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings.', col_types );
-
     marker_data = struct();
 
     % --------- onsets ---------
-    time_delta = 0.0;  % TODO: Get correct time_delta
+
     onsets = zeros(size(maker_tsv_data_table.onset));
 
     % Iterate through each element in the onsets cell array
     for i = 1:numel(maker_tsv_data_table.onset)
         % Add the predefined offset to each element and store it in marker_data
-        onsets(i) = maker_tsv_data_table.onset(i) + time_delta;
+        onsets(i) = maker_tsv_data_table.onset(i); 
     end
 
-    % has to be delete if not the marker time is longer as infos.duration
-    if strcmpi(maker_tsv_data_table.event_type(end) , 'block_end') %  i or no i that is here the question
-        % should start block also be deleted ? 405.035	15.0	block_start	block_start	habituation 
-        % needs some change
-        onsets = onsets(1:end-1);
-        maker_tsv_data_table(end, :) = [];
-
-    end
+    % % Removes start and end blocks
+    % if strcmpi(maker_tsv_data_table.event_type(end) , 'block_start')
+    %     onsets = onsets(1:end); 
+    %     maker_tsv_data_table(1, :) = [];
+    % end
+    % if strcmpi(maker_tsv_data_table.event_type(end) , 'block_end') 
+    %     onsets = onsets(1:end-1); 
+    %     maker_tsv_data_table(end, :) = [];
+    % end
 
 
     marker_data.data = onsets;
@@ -36,7 +36,7 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     marker_data.markerinfo.duration = maker_tsv_data_table.duration;
     marker_data.markerinfo.value = maker_tsv_data_table.event_type;
     marker_data.markerinfo.name = maker_tsv_data_table.stimulus_name;
-    marker_data.markerinfo.name = maker_tsv_data_table.task_name; % 
+    marker_data.markerinfo.name = maker_tsv_data_table.task_name; 
     
 
     % --------- marker header ---------
@@ -44,4 +44,5 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     marker_data.header.chantype = 'marker';
     marker_data.header.sr = 1;
     marker_data.header.units = 'events';
+
 end

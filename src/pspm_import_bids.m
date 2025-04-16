@@ -83,14 +83,11 @@ for i = 1:length(dataset_dir)
                 task_name = 'UnknownTask';
         end
         
-        fprintf('  Processing session %s with task %s...\n', session_dirs(j).name, task_name);
+        fprintf('  Processing session %s with task %s...\n\n', session_dirs(j).name, task_name);
         ses_path = fullfile(sub_path, session_dirs(j).name);
 
         % --- get physio data ---
         physio_path = fullfile(ses_path,'physio');
-
-
-
         [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
 
@@ -109,7 +106,7 @@ for i = 1:length(dataset_dir)
 
         infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
         infos.physio =  physio_info_data ; % maybe wrong needs better structure
-        infos.duration = recording_duration;
+        infos.duration = recording_duration; % will be updated by aligne_channels can go!
 
         % --- Build the file structure  ---
 
@@ -119,7 +116,10 @@ for i = 1:length(dataset_dir)
         session.data = {};
         session.data{end+1} = marker_chan;
         session.data = [session.data ; physio_data_cell];
-
+        
+        % aligne all channels
+        [session.data, infos.duration] = align_channels(session.data);
+        
         % Save session (cogent) file once per subject
         cogent_ses_file_name = sprintf('%s_ses-%s_cogent.mat', subject_full_id,session_id);
         cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
@@ -133,33 +133,22 @@ for i = 1:length(dataset_dir)
         [sts, ~, ~, ~] = pspm_load_data(fn);
         if sts < 1
             warning('The file struture has a problem'); % better warning text
-            contiue; % check !
+            contiue; 
         end
 
-
-
-        % add overwrite 
+        % add overwrite ?
         data = session.data;
         save(cogent_ses_filepath,'infos', 'data');
         fprintf('Saved cogent file to %s\n', cogent_ses_filepath);
 
     end
-    
 
-
-    % % Save participant (cogent) file once per subject
-    % cogent_file_name = sprintf('%s_cogent.mat', subject_full_id);
-    % cogent_filepath = fullfile(save_path, cogent_file_name);
-    % saveCogent(subject, cogent_filepath);
-    % outfile{end+1} = cogent_file_name;
 end
 rmpath(libpath); % move ?
 sts = 1;
 end
 
 %% 4. Subfunctions ---------------------------------------------------------
-
-
 
 function dataset_description = read_dataset_description(dataset_path)
     dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
@@ -177,11 +166,66 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     fclose(fileID);
 end
 
-function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path)
+function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path) % tassk_name  no lonager used
 beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
 beh_json_filepath    = fullfile(beh_path, beh_json_filename);
+
 if ~isfile(beh_json_filepath);    error('Behavior sidecar JSON file not found: %s', beh_json_filepath); end
 
 beh_sidecar = extract_json_as_struct(beh_json_filepath);
 infos = beh_sidecar;
 end
+
+function [data, new_duration] = align_channels(data)
+
+num_channels = length(data);
+startTimes = zeros(num_channels,1);
+
+% Determine start time for each channel (assume 0 if missing)
+for i = 1:num_channels
+    if isfield(data{i}.header, 'StartTime')
+        startTimes(i) = data{i}.header.StartTime;
+    else
+        startTimes(i) = 0;
+        data{i}.header.StartTime = 0; % sure? now everything has a StartTime if marker
+    end
+end
+
+global_min = min(startTimes);
+finalLengths = zeros(num_channels,1);
+
+for i = 1:num_channels        
+    shift_sec = data{i}.header.StartTime - global_min;
+    
+    % Check if this channel is an event channel.
+    if isfield(data{i}, 'markerinfo')
+        data{i}.data = data{i}.data + shift_sec;
+        rmfield(data{i}.header,'StartTime');
+    else
+        if ~isfield(data{i}.header, 'sr')
+            warning('Channel %d is missing sampling rate (sr) in its header.', i);
+        end
+        sr = data{i}.header.sr;
+        numPad = round(shift_sec * sr);
+        
+        % Prepend zeros to the data vector. Do not trim any original samples.
+        data{i}.data = [zeros(numPad, 1); data{i}.data];
+        
+        % Record the new length.
+        finalLengths(i) = length(data{i}.data);
+        data{i}.header.StartTime = 0;
+    end    
+end
+
+
+% Padding at the end
+[sts, data, new_duration] = pspm_align_channels(data); % can the fprint be turned off?
+% [~, data, new_duration, sts] = evalc('[sts, data, new_duration] = pspm_align_channels(data);'); % turns of fprint
+
+if sts ~= 1 % if all are the same size does it give en error?
+    error('Channel alignment failed.');
+end
+
+end
+
+

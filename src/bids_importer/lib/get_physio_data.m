@@ -362,37 +362,8 @@ physio_info_data.events_infos = events_json;
 
 %%
 
-% if start time is negative testen
-% Is that okay like this?
-for i = 1:length(physio_data_cell)  
-    if isfield(physio_data_cell{i}.header , 'StartTime')
-        if physio_data_cell{i}.header.StartTime < 0 % truncate the begining
-           physio_data_cell{i}.data = physio_data_cell{i}.data(round(physio_data_cell{i}.header.StartTime*data{i}.header.sr):end); % round?
-           waring('Channel', i, 'got truncated') % write better
-           
-        elseif physio_data_cell{i}.header.StartTime > 0 % padding at the begining
-           physio_data_cell{i}.data = [zeros(round(physio_data_cell{i}.header.StartTime*data{i}.header.sr), 1); physio_data_cell{i}.data]; % round?
-           waring('Channel', i, 'got padded') % write better
-
-        end     
-    end    
-end
-% Align the channels 
-[sts, physio_data_cell, recording_duration] = pspm_align_channels(physio_data_cell);
-if sts ~= 1 % if all are the same size does it give en error?
-    error('Channel alignment failed.');
-end
 
 
-% Just temp
-ref_duration_ = length(physio_data_cell{1}.data)/ physio_data_cell{1}.header.sr; 
-for i = 1:length(physio_data_cell)
-    currentLength = length(physio_data_cell{i}.data)/physio_data_cell{i}.header.sr;
-
-    if currentLength ~= ref_duration_; fprintf('Cell %d has a different length (%d) than the reference length (%d).\n', i, currentLength, ref_duration_);
-    else; fprintf('Cell %d matches the reference length (%d).\n', i, ref_duration_);
-    end
-end
 
 recording_duration = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr;  
 
