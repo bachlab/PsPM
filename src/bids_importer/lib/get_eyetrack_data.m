@@ -6,10 +6,6 @@ function [eye_data_cell] = get_eye_data(subject_id, session_id, task_name, physi
 %   - header: structure containing metadata (e.g., channel type, sampling rate, units)
 %   - Columns: numeric data read from the corresponding TSV file.
 %
-% Additionally, the function returns:
-%   - recording_duration: computed duration of the recording in seconds.
-%   - eye_info_data: a struct containing channel names, file paths, and overall duration.
-%
 % Expected file naming:
 %   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye1_physio.json
 %   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye1_physio.tsv
@@ -20,7 +16,10 @@ function [eye_data_cell] = get_eye_data(subject_id, session_id, task_name, physi
 %   [eye_data, dur, info] = get_eye_data('sub-CalinetWuerzburg01','01','FearAcquisition', '/path/to/physio');
 
 %% Initialize the cell array and info variables
-eye_signals = {'eye1', 'eye2'}; % eye list could be used here as a check
+
+
+eye_signals = get_eyes_list(physio_path);
+
 num_signals = length(eye_signals);
 eye_data_cell = cell(num_signals, 1);
 
@@ -61,7 +60,7 @@ for i = 1:num_signals
     % I the futrure some kind of check maybe?
     eye_json.Columns = eye_data_table;
     
-    % (Optional: If you need to rename fields, you can do so here.)
+    % SamplingFrequency -> SamplingRate
     if isfield(eye_json, 'SamplingFrequency')
         eye_json.SamplingRate = eye_json.SamplingFrequency;
         eye_json = rmfield(eye_json, 'SamplingFrequency');

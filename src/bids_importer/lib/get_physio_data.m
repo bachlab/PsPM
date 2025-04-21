@@ -158,33 +158,23 @@ switch length(eye_data_cell)
             data{end+1}.header.chantype  = 'gaze_y_l';
 
             warning('Only left eye data available.');
-        else; error('Unknown RecordedEye value in the only data cell.'); end % !!!!!!      
+        else; error('Unknown RecordedEye eye_data_cell.'); end % !!! maybe warning?     
     case 2
-        eyes = lower({eye_data_cell{1}.RecordedEye, eye_data_cell{2}.RecordedEye}); % lower really needed?
+        eyes = lower({eye_data_cell{1}.RecordedEye, eye_data_cell{2}.RecordedEye}); 
         if strcmp(eyes{1}, eyes{2})
             warning('Both recorded eyes are %s.', eyes{1});
-            % % How to choose best eye?
-            % Optionally assign the first cell to that eye.
-            % if strcmp(eyes{1}, 'right')
-            %     pupil_r  = eye_data_cell{1}.Columns{:,'pupil_size'};
-            %     gaze_x_r = eye_data_cell{1}.Columns{:,'x_coordinate'};
-            %     gaze_y_r = eye_data_cell{1}.Columns{:,'y_coordinate'};
-            % elseif strcmp(eyes{1}, 'left')
-            %     pupil_l  = eye_data_cell{1}.Columns{:,'pupil_size'};
-            %     gaze_x_l = eye_data_cell{1}.Columns{:,'x_coordinate'};
-            %     gaze_y_l = eye_data_cell{1}.Columns{:,'y_coordinate'};
-            % end
+            % Maybe choose the better eye?
         else
             % Correctly assign each cell to the corresponding eye.
             idxRight = find(strcmp(eyes, 'right'), 1);
             idxLeft  = find(strcmp(eyes, 'left'),  1);
             
-            if isempty(idxRight) || isempty(idxLeft); warning('...');end % !!!!!!
+            if isempty(idxRight) || isempty(idxLeft); warning('...');end 
 
             pupil_r  = eye_data_cell{idxRight}.Columns{:,'pupil_size'};
             gaze_x_r = eye_data_cell{idxRight}.Columns{:,'x_coordinate'};
             gaze_y_r = eye_data_cell{idxRight}.Columns{:,'y_coordinate'};
-            
+           
             pupil_l  = eye_data_cell{idxLeft}.Columns{:,'pupil_size'};
             gaze_x_l = eye_data_cell{idxLeft}.Columns{:,'x_coordinate'};
             gaze_y_l = eye_data_cell{idxLeft}.Columns{:,'y_coordinate'};
@@ -192,33 +182,28 @@ switch length(eye_data_cell)
             % right eye channels
             data{1}.header.chantype  = 'pupil_r';
             data{1}.data  = pupil_r;
-
+            
             data{2}.header.chantype  = 'gaze_x_r';
             data{2}.data  = gaze_x_r;
-
             data{3}.header.chantype  = 'gaze_y_r';
             data{3}.data  = gaze_y_r;
 
             % left eye channels
             data{4}.header.chantype  = 'pupil_l';
             data{4}.data  = pupil_l;
-            
             data{5}.header.chantype  = 'gaze_x_l';
             data{5}.data  = gaze_x_l;
-
             data{6}.header.chantype  = 'gaze_y_l';
             data{6}.data  = gaze_y_l;
-         
-
+        
         end
         
     otherwise; error('Unexpected number of eye data cells.'); 
 end
 
 data = data';
-% Add header data for pupil and gaze
+% Add header data for pupil and gaze data
 for i = 1:length(data)
-
     if strcmp(data{i}.header.chantype(1:end-1) , 'pupil_')
         if strcmp(data{i}.header.chantype(end:end) , 'r')
             data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description;
