@@ -1,4 +1,4 @@
-function [eye_data_cell] = get_eye_data(subject_id, session_id, task_name, physio_path)
+function [sts, eye_data_cell] = get_eye_data(subject_id, session_id, task_name, physio_path)
 % get_eye_data Extracts eye-tracking data for a given subject, session, and task.
 %
 % This function returns a 2x1 cell array where each cell contains a struct
@@ -17,8 +17,11 @@ function [eye_data_cell] = get_eye_data(subject_id, session_id, task_name, physi
 
 %% Initialize the cell array and info variables
 
-
+sts = -1;
 eye_signals = get_eyes_list(physio_path);
+if isempty(eye_signals); warning('No eye data found: %s', eye_json_filepath); sts = -1 ;end % ------ %
+
+
 
 num_signals = length(eye_signals);
 eye_data_cell = cell(num_signals, 1);
@@ -43,8 +46,8 @@ for i = 1:num_signals
     chan_names{i} = signal;
     
     % Check if files exist
-    if ~isfile(eye_json_filepath); error('File not found: %s', eye_json_filepath); end
-    if ~isfile(eye_tsv_filepath); error('File not found: %s', eye_tsv_filepath);  end
+    if ~isfile(eye_json_filepath); warning('File not found: %s', eye_json_filepath); sts = -1 ;end
+    if ~isfile(eye_tsv_filepath); warning('File not found: %s', eye_tsv_filepath); sts = -1 ; end
     
     % Read JSON metadata (assumed to be converted into a struct)
     eye_json = extract_json_as_struct(eye_json_filepath);
@@ -69,7 +72,7 @@ for i = 1:num_signals
     % Store the combined struct into the cell array
     eye_data_cell{i} = eye_json;
     eye_data_cell{i}.source.file = [{eye_json_filepath};{eye_tsv_filepath}];
-
+    
 end
-
+sts = 1;
 end

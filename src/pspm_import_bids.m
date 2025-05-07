@@ -26,69 +26,118 @@ if ~exist(save_path, 'dir')
     mkdir(save_path);
 end
 
+if ~exist(dataset_path, 'dir')
+    error('dataset_path has to be a folder')
+end
+
 % Adds lib to the path
-libpath = pspm_path('bids_importer','lib'); % move 
+libpath = pspm_path('bids_importer','lib');
 addpath(libpath); 
 
 %% 2. Read meta information ------------------------------------------------
-dataset_description = read_dataset_description(dataset_path);
-[participants_data, participant_data_headings] = read_participants_data(dataset_path);
 
-% Store participant information headings in dataset description
-dataset_description.ParticipantInformation = participant_data_headings;
 
-% Get list of subject directories (assumes names start with 'sub-')
-dataset_dir = dir(fullfile(dataset_path, 'sub-*'));
-dataset_dir = dataset_dir([dataset_dir.isdir]);
+[~, currentFolder] = fileparts(dataset_path); 
+disp(currentFolder);       
+
+
+if startsWith(currentFolder, 'sub-')
+    % subject mode
+    dataset_mode = false;
+else 
+    % dataset mode
+    dataset_mode = true;
+
+end
+
+
+% 
+if dataset_mode
+    dataset_description = read_dataset_description(dataset_path); % optional
+    [participants_data, participant_data_headings] = read_participants_data(dataset_path); % has to be there
+    
+    % Store participant information headings in dataset description
+    dataset_description.ParticipantInformation = participant_data_headings;
+    
+    % Get list of subject directories (assumes names start with 'sub-')
+    subject_list = dir(fullfile(dataset_path, 'sub-*'));
+    subject_list = subject_list([subject_list.isdir]);
+else
+    description_path = fileparts(dataset_path); % on  level above the subject folder
+    dataset_description = read_dataset_description(description_path); % optional!
+    [participants_data, participant_data_headings] = read_participants_data(description_path); % NOT optional
+    
+    % Store participant information headings in dataset description
+    dataset_description.ParticipantInformation = participant_data_headings; % maybe just the one that is imported??
+       
+    [~, subject_list(1).name] = fileparts(dataset_path);
+
+end
+
+
+
 
 %% 3. Loop over subjects ---------------------------------------------------
-for i = 1:length(dataset_dir)
-    subject_full_id = dataset_dir(i).name;  % e.g., 'sub-CalinetBonn01'
-    fprintf('Importing %s ... \n', subject_full_id);
-
-    sub_path = fullfile(dataset_path, subject_full_id);
+for i = 1:length(subject_list)
+    subject_full_id = subject_list(i).name;  % e.g., 'sub-CalinetBonn01'
     
-    % Find the corresponding row index in the participants TSV file.
-    % Assumes the first column of participants_data contains subject IDs.
-    subject_idx = find(strcmp(participants_data{1}, subject_full_id));
-    if isempty(subject_idx)
-        warning('Subject %s not found in participants file.', subject_full_id);
-        continue;
+    fprintf('\n------------------------------------------------------------');
+    fprintf('\n------------------------------------------------------------');
+    fprintf('\n\nImporting %s ... \n', subject_full_id);
+    
+    if dataset_mode
+        sub_path = fullfile(dataset_path, subject_full_id);
+    else
+        sub_path = dataset_path;
     end
 
-    % Build participant structure by mapping each field.
-    participant = struct();
-    for p_info_ind = 1:numel(participant_data_headings)
-        field_name = participant_data_headings{p_info_ind};
-        participant.(field_name) = participants_data{p_info_ind}{subject_idx};
-    end
 
-    % Get session directories (names starting with 'ses-')
-    subject_contents = dir(sub_path);
-    session_dirs = subject_contents(arrayfun(@(x) x.isdir && startsWith(x.name, 'ses-'), subject_contents));
+    % Get list of session directories  (ses-01, ses-02, …)
+    session_dirs = dir(fullfile(sub_path,'ses-*'));
+    session_dirs = session_dirs([session_dirs.isdir]);
+
+    if isempty(session_dirs); warning('Keine Session-Ordner (''ses-*'') gefunden in %s', sub_path); continue; end
+
+
+
 
     %% Process each session
-    subject = {};
+    
     for j = 1:length(session_dirs)
-        session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02'
+        session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02' (could there be more 100 sessions?)
         
-        % Map session ID to task name based on CALINET specification
-        % May needs to be 
-        switch session_id
-            case '01'
-                task_name = 'FearAcquisition';
-            case '02'
-                task_name = 'FearExtinction';
-            otherwise
-                task_name = 'UnknownTask';
+        ses_path = fullfile(sub_path ,session_dirs(j).name); 
+        beh_dir    = fullfile(ses_path, 'beh');
+        physio_dir = fullfile(ses_path, 'physio');
+
+
+        %% Extract task name
+
+        % Look for any event JSON
+        pattern = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id);
+        beh_files = dir(fullfile(beh_dir, pattern));        % If no beh JSON, look for physio files with task tag
+        physio_files = dir(fullfile(physio_dir, sprintf('%s_ses-%s_task-*_events.tsv', subject_full_id, session_id)));
+
+        if ~isempty(beh_files)
+            fname = beh_files(1).name;
+        elseif ~isempty(physio_files)
+            fname = physio_files(1).name;
+        else
+            warning('No BIDS event or physio files for %s session %s', subject_full_id, session_id);
+            continue;
         end
-        
-        fprintf('  Processing session %s with task %s...\n\n', session_dirs(j).name, task_name);
-        ses_path = fullfile(sub_path, session_dirs(j).name);
+        % Extract the token after 'task-' and before the next underscore
+        tk = regexp(fname, '_task-([^_]+)_', 'tokens', 'once');
+        task_name = tk{1};
+
+        %% Processing start
+
+        fprintf('\n------------------------------------------------------------');
+        fprintf('\n\n  Processing session %s with task %s ...\n\n', session_dirs(j).name, task_name);
 
         % --- get physio data ---
         physio_path = fullfile(ses_path,'physio');
-        [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
+        [physio_data_cell, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
 
         % --- Get beh data ---
@@ -106,7 +155,6 @@ for i = 1:length(dataset_dir)
 
         infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
         infos.physio =  physio_info_data ; % maybe wrong needs better structure
-        infos.duration = recording_duration; % will be updated by aligne_channels can go!
 
         % --- Build the file structure  ---
 
@@ -139,7 +187,7 @@ for i = 1:length(dataset_dir)
         % add overwrite ?
         data = session.data;
         save(cogent_ses_filepath,'infos', 'data');
-        fprintf('Saved cogent file to %s\n', cogent_ses_filepath);
+        fprintf('\n\nSaved cogent file to %s\n', cogent_ses_filepath);
 
     end
 
@@ -152,8 +200,23 @@ end
 
 function dataset_description = read_dataset_description(dataset_path)
     dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
-    dataset_description = jsondecode(fileread(dataset_description_filepath));
+
+    if ~exist(dataset_description_filepath, 'file')
+        warning('read_dataset_description:MissingFile', ...
+            'dataset_description.json is missing in the specified path: %s', dataset_path);
+        dataset_description = struct();
+        return;
+    end
+
+    % Read and decode the JSON file
+    try
+        dataset_description = jsondecode(fileread(dataset_description_filepath));
+    catch ME
+        error('read_dataset_description:ReadError', ...
+            'Failed to read or parse dataset_description.json: %s', ME.message);
+    end
 end
+
 
 function [participants_data, column_headings] = read_participants_data(dataset_path)
     participants_tsv_filepath = fullfile(dataset_path, 'participants.tsv');

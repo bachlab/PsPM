@@ -1,18 +1,17 @@
-function [physio_data_cell, recording_duration, physio_info_data] = get_physio_data(subject_id, session_id, task_name, physio_path)
-% Returns a 4x1 cell array where each cell contains a struct with fields header and data (and markerinfo for events)
+function [physio_data_cell, physio_info_data] = get_physio_data(subject_id, session_id, task_name, physio_path)
+% Returns a  cell array where each cell contains a struct with fields header and data (and markerinfo for events)
 % Also returns physio_info_data needed to create 'info' struct
 % UPDATE HELPTEXT
 
 %% Initialize the physio data cell array
-physio_signals = { 'ecg','ppg', 'scr'}; %  'event'
+physio_signals = { 'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
-physio_data_cell = cell(num_signals, 1);  % Preallocate cell array
-pyhsio_main_struct = struct();
+physio_data_cell = {}; % cell(num_signals, 1);  % Preallell array / needed?
 
 
 % Initialize variables for infos
-chan_names = cell(num_signals, 1);
-file_paths = cell(num_signals, 1);
+chan_names = {}; %cell(num_signals, 1);
+file_paths = {}; %cell(num_signals, 1);
 
 % Index to keep track of the cell array
 cell_index = 1;
@@ -27,14 +26,14 @@ for i = 1:num_signals
     physio_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', subject_id, session_id, signal);
 
     physio_json_filepath = fullfile(physio_path, physio_json_filename);
-    physio_tsv_filepath = fullfile(physio_path, physio_tsv_filename);
+    physio_tsv_filepath  = fullfile(physio_path, physio_tsv_filename);
 
     % Collect file paths for infos
-    file_paths{cell_index} = physio_tsv_filepath;
+    file_paths{cell_index,1} = physio_tsv_filepath;
 
     % Check if files exist
-    if ~isfile(physio_json_filepath); error('File not found: %s', physio_json_filepath); end
-    if ~isfile(physio_tsv_filepath);  error('File not found: %s', physio_tsv_filepath);  end
+    if ~isfile(physio_json_filepath); warning('File not found: %s', physio_json_filepath);continue; end
+    if ~isfile(physio_tsv_filepath);  warning('File not found: %s', physio_tsv_filepath); continue; end
 
     % Read JSON metadata
     physio_json = extract_json_as_struct(physio_json_filepath);
@@ -67,10 +66,10 @@ for i = 1:num_signals
     chan.data = physio_data_table.(headings{1});
 
     % Add to physio data cell array 
-    physio_data_cell{cell_index} = chan;
+    physio_data_cell{cell_index,1} = chan;
 
     % Collect channel names for info
-    chan_names{cell_index} = signal;
+    chan_names{cell_index,1} = signal;
 
 
     cell_index = cell_index +1; 
@@ -85,44 +84,41 @@ events_json_filepath = fullfile(physio_path, events_json_filename);
 events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 
 % Checks if files exist
-if ~isfile(events_json_filepath); error('File not found: %s', events_json_filepath); end
-if ~isfile(events_tsv_filepath);  error('File not found: %s', events_tsv_filepath);  end
-
-% Append the file paths
-file_paths{cell_index} = events_tsv_filepath;
-
-% Read JSON metadata
-events_json = extract_json_as_struct(events_json_filepath);
-
-% Read events TSV
-has_headings = true;
-col_types = {'double', 'double', 'char', 'char', 'char'};
-events_table = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
-
-% Check if 'trial_type' exists in the table columns 
-events_json.Columns = regexprep(events_json.Columns,'^trial_type$','event_type');% can be take out with the new data !!
-headings = events_json.Columns;  
-events_json.Columns = struct();
-
-% Add the tsv tabel to  evnents_json
-for i = 1:length(headings)
-    events_json.Columns.(headings{i}) = events_table.(headings{i});
+if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
+    warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change
+else
+    % Append the file paths
+    file_paths{cell_index,1} = events_tsv_filepath;
+    
+    % Read JSON metadata
+    events_json = extract_json_as_struct(events_json_filepath);
+    
+    % Read events TSV
+    has_headings = true;
+    col_types = {'double', 'double', 'char', 'char', 'char'};
+    events_table = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
+    
+    headings = events_json.Columns;  
+    events_json.Columns = struct();
+    
+    % Add the tsv tabel to events_json.Columns
+    for i = 1:length(headings)
+        events_json.Columns.(headings{i}) = events_table.(headings{i});
+    end
+    
+    % Get duration: last value of event time info
+    duration = events_table.onset(end) - events_table.onset(1); %  duration of the EVENTS (onset)
+    events_json.duration = duration;
+    
+    % events_json will be added to physio_info_data at the end of the funciton
 end
-
-% Get duration: last value of event time info
-duration = events_table.onset(end) - events_table.onset(1); %  duration of the EVENTS (onset)
-events_json.duration = duration;
-
-% events_json will be added to physio_info_data at the end of the funciton
-
-
 
 
 %% Process eye data
 
+[ests , eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path);
 
-[eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path);
-
+if ests == 1
 
 % --- Add the eye data to the channels --- 
 switch length(eye_data_cell)
@@ -223,13 +219,13 @@ for i = 1:length(data)
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_x_r
                data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
-               data{i}.header.units =    eye_data_cell{idxRight}.SampleCoordinateUnits;
+               data{i}.header.units = 'pixel';  % eye_data_cell{idxRight}.SampleCoordinateUnits;
                data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
                data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; % 
-               data{i}.header.units =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.units =   'pixel'; % eye_data_cell{idxLeft}.SampleCoordinateUnits;
                data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]
                
@@ -240,14 +236,14 @@ for i = 1:length(data)
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_y_r
                data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
-               data{i}.header.units =    eye_data_cell{idxRight}.SampleCoordinateUnits;
+               data{i}.header.units =  'pixel'; %  eye_data_cell{idxRight}.SampleCoordinateUnits;
                data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
                data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; %
-               data{i}.header.units =    eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.units =   'pixel'; % eye_data_cell{idxLeft}.SampleCoordinateUnits;
                data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate; % delelt with the new data
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       
@@ -259,25 +255,27 @@ end
 
 % --- Make the infos struct --
 
-% Check that all fields are the same except of ->
-eye1_struct = eye_data_cell{1};
-eye2_struct = eye_data_cell{2};
+% %% Check that all fields are the same except of ->
+% eye1_struct = eye_data_cell{1};
+% eye2_struct = eye_data_cell{2};
+% 
+% % Define the fields to ignore 
+% % Assumtion this are all the fields that could be different
+% ignoreFields = {'MaximalCalibrationError', 'MaximalCalibrationError','Columns','RecordedEye', 'AverageCalibrationError  '};
+% % maybe others also needed for the other ?
+% 
+% % Remove these fields from both structs
+% eye1Reduced = rmfield(eye1_struct, ignoreFields);
+% eye2Reduced = rmfield(eye2_struct, ignoreFields);
+% 
+% % Compare the remaining fields
+% if isequal(eye1Reduced, eye2Reduced);    disp('The structures are equal except for the ignored fields.'); %
+% else;    disp('The structures differ in some non-ignored fields.'); % maybe show diff. fields
+% end
 
-% Define the fields to ignore 
-% Assumtion this are all the fields that could be different
-ignoreFields = {'MaximalCalibrationError', 'MaximalCalibrationError','Columns'};
-
-% Remove these fields from both structs
-eye1Reduced = rmfield(eye1_struct, ignoreFields);
-eye2Reduced = rmfield(eye2_struct, ignoreFields);
-
-% Compare the remaining fields
-if isequal(eye1Reduced, eye2Reduced);    disp('The structures are equal except for the ignored fields.'); %
-else;    disp('The structures differ in some non-ignored fields.'); % maybe show diff. fields
-end
 
 
-% --- Build the infosstruct ----
+%% --- Build the eye infosstruct ----
 
 infos = struct();
 infos.importdate =  datestr(date, 'dd-mmm-yyyy');
@@ -287,7 +285,6 @@ infos.durationinfo = 'Recording duration in seconds'; % where in eye_data_cell ?
 % --- infos.source ---
 infos.source.channel = {};% {'Column 02'} {'Column 01'} ????
 
-%
 infos.source.chan_stats = cell(length(data), 1); % use size??
 for i = 1:length(data)
     n_data = size(data{i}.data, 1);
@@ -300,11 +297,12 @@ end
 infos.source.date = '01.01.1900'; % no information in jsons
 infos.source.time = '00:00:00'; % no information in jsons
 
-if ~isequal(eye_data_cell{idxRight}.GazeRange,eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal") % already checked???
+if ~isequal(eye_data_cell{idxRight}.GazeRange,eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal") % Realy needed?
 end
 
+% What if there is just a felt eye?
 infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
-infos.source.PupilFitMethod = eye_data_cell{idxRight}.PupilFitMethod ; % why not eye_data_cell{idxRight}.ELCL_PROC
+infos.source.PupilFitMethod = eye_data_cell{idxRight}.PupilFitMethod;
 infos.source.eyesObserved = 'lr';
 infos.source.best_eye = 'l' ;
 
@@ -318,38 +316,36 @@ infos.history = {' Output channel ID: #08 -- added on 06-Mar-20'}; % what sould 
 
 % Maybe put in different order
 infos.source.SampleCoordinateSystem = eye_data_cell{idxRight}.SampleCoordinateSystem;
-infos.source.EnvironmentCoordinates = eye_data_cell{idxRight}.EnvironmentCoordinates;
-infos.source.Manufacturer = eye_data_cell{idxRight}.EnvironmentCoordinates;
+% infos.source.EnvironmentCoordinates = eye_data_cell{idxRight}.EnvironmentCoordinates;
+% infos.source.Manufacturer = eye_data_cell{idxRight}.EnvironmentCoordinates;
 infos.source.ManufacturersModelName = eye_data_cell{idxRight}.ManufacturersModelName;
 infos.source.SoftwareVersion = eye_data_cell{idxRight}.ManufacturersModelName;
 infos.source.MaximalCalibrationError = eye_data_cell{idxRight}.MaximalCalibrationError;
 infos.source.AverageCalibrationError = eye_data_cell{idxRight}.AverageCalibrationError;
-infos.source.EyeTrackerDistance = eye_data_cell{idxRight}.EyeTrackerDistance;
+% infos.source.EyeTrackerDistance = eye_data_cell{idxRight}.EyeTrackerDistance;
 
 chan_names{end+1} = 'eye'; % should it have a different name?
 file_paths{end+1} = infos.source.file;
+end
 
-physio_data_cell = [physio_data_cell; data];
+physio_data_cell = [physio_data_cell; data]; %
 
-%% Prepare physio_info_data ??
+%% Prepare physio_info_data 
 
 % Add the eye channel names
 for i = 1:length(data)
-    chan_names{cell_index+i} = data{i}.header.chantype;
+    chan_names{cell_index+i,1} = data{i}.header.chantype;
 end
 
 physio_info_data = infos;
-physio_info_data.chan_names = chan_names; % add the name of all eye channels!!
-physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation
-physio_info_data.duration   = duration; 
-physio_info_data.events_infos = events_json;
-
-
-%%
+physio_info_data.chan_names = chan_names; % add the name of all eye channels!! if it is not there??
+physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation if it is not there??
 
 
 
+%% add temp duration
 
-recording_duration = length(physio_data_cell{1}.data) / physio_data_cell{1}.header.sr;  
+
+
 
 end
