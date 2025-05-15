@@ -22,13 +22,18 @@ end
 sts = -1;
 outfile = {};
 
-if ~exist(save_path, 'dir')
-    mkdir(save_path);
+% checks inputs
+if ~all(cellfun(@(x) isstr(x), varargin));  error('ID:invalid_input', 'All inputs to pspm_path must be string'); end
+if nargin < 2
+    parentDir = fileparts(dataset_path);
+    save_path = fullfile(parentDir, 'out'); % what if out allread exist 
+    if ~exist(save_path, 'dir'); mkdir(save_path); end
 end
+if nargin > 2;  warning('More than two inputs detected; ignoring additional inputs.' ); end   
 
-if ~exist(dataset_path, 'dir')
-    error('dataset_path has to be a folder')
-end
+%  checks if the paths exist
+if ~exist(save_path, 'dir');  mkdir(save_path); end % in case nargin < 2 alread created
+if ~exist(dataset_path, 'dir'); error('dataset_path has to be a folder'); end
 
 % Adds lib to the path
 libpath = pspm_path('bids_importer','lib');
@@ -38,20 +43,12 @@ addpath(libpath);
 
 
 [~, currentFolder] = fileparts(dataset_path); 
-disp(currentFolder);       
+
+% checks if dataset or subject are to be imported
+if startsWith(currentFolder, 'sub-');  dataset_mode = false; 
+else;  dataset_mode = true; end
 
 
-if startsWith(currentFolder, 'sub-')
-    % subject mode
-    dataset_mode = false;
-else 
-    % dataset mode
-    dataset_mode = true;
-
-end
-
-
-% 
 if dataset_mode
     dataset_description = read_dataset_description(dataset_path); % optional
     [participants_data, participant_data_headings] = read_participants_data(dataset_path); % has to be there
@@ -70,17 +67,31 @@ else
     % Store participant information headings in dataset description
     dataset_description.ParticipantInformation = participant_data_headings; % maybe just the one that is imported??
        
-    [~, subject_list(1).name] = fileparts(dataset_path);
-
+    [~, subject_list(1).name] = fileparts(dataset_path); % only one Subject
 end
+
+
 
 
 
 
 %% 3. Loop over subjects ---------------------------------------------------
 for i = 1:length(subject_list)
-    subject_full_id = subject_list(i).name;  % e.g., 'sub-CalinetBonn01'
+   
+    subject_full_id = subject_list(i).name;  % e.g., 'sub-CalinetBonn01
+    sub_idx_str = regexp(subject_full_id, '\d+$', 'match', 'once');
+    sub_idx = str2double(sub_idx_str); % e.g. '01' -> 1
     
+
+    % Build participant structure by mapping each field.
+    Participant = struct();
+    for p_info_ind = 1:numel(participant_data_headings)
+        field_name = participant_data_headings{p_info_ind};
+        Participant.(field_name) = participants_data{p_info_ind}{sub_idx};
+    end
+    
+
+
     fprintf('\n------------------------------------------------------------');
     fprintf('\n------------------------------------------------------------');
     fprintf('\n\nImporting %s ... \n', subject_full_id);
@@ -96,7 +107,7 @@ for i = 1:length(subject_list)
     session_dirs = dir(fullfile(sub_path,'ses-*'));
     session_dirs = session_dirs([session_dirs.isdir]);
 
-    if isempty(session_dirs); warning('Keine Session-Ordner (''ses-*'') gefunden in %s', sub_path); continue; end
+    if isempty(session_dirs); warning('Keine Session-Ordner (''ses-%s'') gefunden in %s', sub_idx_str ,sub_path); continue; end
 
 
 
@@ -140,10 +151,11 @@ for i = 1:length(subject_list)
         [physio_data_cell, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
 
-        % --- Get beh data ---
+        %% --- Get beh data ---
 
         beh_path = fullfile(ses_path,'beh');
-
+        
+        % Marker channel 
         events_json_filename = sprintf('%s_ses-%s_task-%s_events.json', subject_full_id, session_id, task_name);
         events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_full_id, session_id, task_name);
         events_json_filepath = fullfile(beh_path, events_json_filename);
@@ -153,11 +165,13 @@ for i = 1:length(subject_list)
 
         marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath);
 
+        %% --- Build the file structure  ---
+
+        % Build infos
         infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
-        infos.physio =  physio_info_data ; % maybe wrong needs better structure
-
-        % --- Build the file structure  ---
-
+        infos.PhysioInfos =  physio_info_data ; % maybe wrong needs better structure
+        infos.DatasetDescription = dataset_description;
+        infos.Participant = Participant;
         
         % --- save per ses 
         %session.infos = infos;
@@ -168,13 +182,15 @@ for i = 1:length(subject_list)
         % aligne all channels
         [session.data, infos.duration] = align_channels(session.data);
         
+        % update duration after alignment
+        infos.Physio.duration  = infos.duration;
+
         % Save session (cogent) file once per subject
-        cogent_ses_file_name = sprintf('%s_ses-%s_cogent.mat', subject_full_id,session_id);
+        cogent_ses_file_name = sprintf('pspm_%s_ses-%s_cogent.mat', subject_full_id,session_id);
         cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
         outfile{end+1} = cogent_ses_filepath;
     
         % Check the pspm strucutre
-
         fn.infos = infos;
         fn.data = session.data;
 
@@ -192,7 +208,7 @@ for i = 1:length(subject_list)
     end
 
 end
-rmpath(libpath); % move ?
+rmpath(libpath); % What if the function breaks at anothe parth
 sts = 1;
 end
 
@@ -217,7 +233,6 @@ function dataset_description = read_dataset_description(dataset_path)
     end
 end
 
-
 function [participants_data, column_headings] = read_participants_data(dataset_path)
     participants_tsv_filepath = fullfile(dataset_path, 'participants.tsv');
     fileID = fopen(participants_tsv_filepath, 'r');
@@ -229,7 +244,7 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     fclose(fileID);
 end
 
-function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path) % tassk_name  no lonager used
+function [infos] = get_beh_data(subject_id, session_id, beh_path) 
 beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
 beh_json_filepath    = fullfile(beh_path, beh_json_filename);
 
