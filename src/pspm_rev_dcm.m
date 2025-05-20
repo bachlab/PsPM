@@ -81,8 +81,8 @@ switch job
     y = dcm.sn{sn}.y(:);
     yhat = dcm.sn{sn}.yhat(:);
     f.h = figure('Position', [50 50 750 750], 'PaperPositionMode', 'auto', 'PaperOrientation', 'Portrait', 'InvertHardCopy', 'off', 'Color', 'w', 'Name', 'Session summary');
-    foo = ceil(sqrt(trlno+1)); % +1 for axis label plot
-    f.r = foo; f.c = ceil((trlno+1)/foo); % +1 for axis label plot
+    foo = ceil(sqrt(trlno+1)); % +1 for the dummy plot
+    f.r = foo; f.c = ceil((trlno+1)/foo); % +1 for the dummy plot
     sr = 10;
     for n = 1:trlno
       if n < trlno
