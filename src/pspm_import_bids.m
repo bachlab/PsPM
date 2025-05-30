@@ -22,17 +22,25 @@ end
 sts = -1;
 outfile = {};
 
+
 % checks inputs
-if ~all(cellfun(@(x) isstr(x), varargin));  error('ID:invalid_input', 'All inputs to pspm_path must be string'); end
-if nargin < 2
-    parentDir = fileparts(dataset_path);
-    save_path = fullfile(parentDir, 'out'); % what if out allread exist 
-    if ~exist(save_path, 'dir'); mkdir(save_path); end
+
+
+
+if ~(ischar(dataset_path) || isstring(dataset_path))
+    error('InvalidInput', 'dataset_path must be a string.');
 end
+if exist('save_path','var') && ~(ischar(save_path) || isstring(save_path)) || nargin < 2
+    warnign('pspm_import_bids:InvalidInput', 'save_path must be a character vector or string.');
+    parentDir = fileparts(dataset_path);
+    save_path = fullfile(parentDir, 'out');     
+end
+
 if nargin > 2;  warning('More than two inputs detected; ignoring additional inputs.' ); end   
 
 %  checks if the paths exist
 if ~exist(save_path, 'dir');  mkdir(save_path); end % in case nargin < 2 alread created
+fprintf('\nImported files will be saved to:  %s',save_path); % change the text ; maybe different order to display? maybe add that it was created vs 
 if ~exist(dataset_path, 'dir'); error('dataset_path has to be a folder'); end
 
 % Adds lib to the path
@@ -45,8 +53,11 @@ addpath(libpath);
 [~, currentFolder] = fileparts(dataset_path); 
 
 % checks if dataset or subject are to be imported
-if startsWith(currentFolder, 'sub-');  dataset_mode = false; 
-else;  dataset_mode = true; end
+
+dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); 
+ses_mode = startsWith(currentFolder, 'ses-');  
+
+if ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); dataset_mode = true; end
 
 
 if dataset_mode
@@ -60,14 +71,20 @@ if dataset_mode
     subject_list = dir(fullfile(dataset_path, 'sub-*'));
     subject_list = subject_list([subject_list.isdir]);
 else
-    description_path = fileparts(dataset_path); % on  level above the subject folder
+    if ses_mode
+        sub_path = fileparts(dataset_path); 
+    else
+        sub_path = dataset_path;
+    end
+
+    description_path = fileparts(sub_path); % on  level above the subject folder
     dataset_description = read_dataset_description(description_path); % optional!
     [participants_data, participant_data_headings] = read_participants_data(description_path); % NOT optional
-    
+   
     % Store participant information headings in dataset description
     dataset_description.ParticipantInformation = participant_data_headings; % maybe just the one that is imported??
        
-    [~, subject_list(1).name] = fileparts(dataset_path); % only one Subject
+    [~, subject_list(1).name] = fileparts(sub_path); % only one subject
 end
 
 
@@ -96,20 +113,19 @@ for i = 1:length(subject_list)
     fprintf('\n------------------------------------------------------------');
     fprintf('\n\nImporting %s ... \n', subject_full_id);
     
-    if dataset_mode
+
+    if dataset_mode 
         sub_path = fullfile(dataset_path, subject_full_id);
-    else
-        sub_path = dataset_path;
     end
 
-
-    % Get list of session directories  (ses-01, ses-02, …)
-    session_dirs = dir(fullfile(sub_path,'ses-*'));
-    session_dirs = session_dirs([session_dirs.isdir]);
-
-    if isempty(session_dirs); warning('Keine Session-Ordner (''ses-%s'') gefunden in %s', sub_idx_str ,sub_path); continue; end
-
-
+    if ses_mode  
+        [~, session_dirs(1).name] = fileparts(dataset_path);  
+    else 
+        session_dirs = dir(fullfile(sub_path,'ses-*'));
+        session_dirs = session_dirs([session_dirs.isdir]);    
+    end % if session mode !
+    % checks if there are Sessions
+    if isempty(session_dirs); warning('No session folder  (''ses-%s'') found in %s', sub_idx_str ,sub_path); continue; end
 
 
     %% Process each session
@@ -168,7 +184,7 @@ for i = 1:length(subject_list)
         %% --- Build the file structure  ---
 
         % Build infos
-        infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
+        infos  = get_beh_data(subject_full_id, session_id, beh_path);
         infos.PhysioInfos =  physio_info_data ; % maybe wrong needs better structure
         infos.DatasetDescription = dataset_description;
         infos.Participant = Participant;
@@ -212,7 +228,7 @@ rmpath(libpath); % What if the function breaks at anothe parth
 sts = 1;
 end
 
-%% 4. Subfunctions ---------------------------------------------------------
+%% 4. Sub-functions ---------------------------------------------------------
 
 function dataset_description = read_dataset_description(dataset_path)
     dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
