@@ -5,7 +5,7 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 % ● Format
 %   [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 % ● Arguments
-%    dataset_path:  path to the data set
+%    dataset_path:  path to the data set / subject / session  folder
 %       save_path:  path to save the PsPM files
 % ● Output
 %         outfile:  cell array of generated PsPM file names
@@ -24,9 +24,6 @@ outfile = {};
 
 
 % checks inputs
-
-
-
 if ~(ischar(dataset_path) || isstring(dataset_path))
     error('InvalidInput', 'dataset_path must be a string.');
 end
