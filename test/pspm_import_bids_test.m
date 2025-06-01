@@ -4,11 +4,13 @@ properties
     test_sub  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03'; % subject level
     test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03/ses-01' % session level
     temp_dir  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/tmp';
+    ref_path  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/';
+     
 end
 
 methods (TestClassSetup)
     function setup_paths(testCase)
-        
+        % check for reference files?
         mkdir(testCase.temp_dir);
     end
 end
@@ -76,6 +78,11 @@ function test_session_import(testCase)
 
 end
 
+function test_test_ss(testCase)
+    testCase.validate_pspm_file('/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/pspm_sub-CalinetWuerzburg02_ses-01_cogent.mat');
+    
+end
+
 %% Path validation tests
 % function test_invalid_path(testCase)
 %     % Test non-existent dataset path
@@ -97,73 +104,74 @@ end
 methods (Access = private)
 
 function validate_pspm_file(testCase, filepath)
-%     % Load current test output
-%     loaded = load(filepath);
-% 
-%     % Verify basic structure
-%     testCase.verifyTrue(isfield(loaded, 'infos'), 'Missing infos');
-%     testCase.verifyTrue(isfield(loaded, 'data'), 'Missing data');
-%     testCase.verifyTrue(isfield(loaded.infos, 'Participant'), 'Missing Participant');
-%     testCase.verifyTrue(isfield(loaded.infos, 'DatasetDescription'), 'Missing DatasetDescription');
-% 
-%     % Check channel consistency
-%     testCase.verifyGreaterThan(numel(loaded.data), 1, 'Insufficient channels');
-%     durations = cellfun(@(c) c.header.duration, loaded.data);
-%     testCase.verifyEqual(range(durations), 0, 'Channel duration mismatch');
-%     testCase.verifyEqual(loaded.infos.duration, durations(1), ...
-%         'Metadata/header duration mismatch');
-% 
-%     %% Compare against reference files
-%     % Extract filename and session ID
-%     [~, current_filename] = fileparts(filepath);
-%     ses_id = regexp(current_filename, 'ses-(\d+)', 'tokens', 'once');
-% 
-%     % Get reference directory (one level up from test_data_path)
-%     ref_dir = fileparts(testCase.test_data_path);
-%     ref_files = dir(fullfile(ref_dir, 'out', 'pspm_*.mat'));
-% 
-%     % Find matching reference file
-%     ref_match = '';
-%     for i = 1:numel(ref_files)
-%         if contains(ref_files(i).name, ses_id) && ...
-%            contains(ref_files(i).name, regexp(current_filename, 'sub-\w+', 'match', 'once'))
-%             ref_match = fullfile(ref_dir, 'out', ref_files(i).name);
-%             break;
-%         end
-%     end
-% 
-%     if isempty(ref_match)
-%         warning('Reference file not found for %s', current_filename);
-%         return;
-%     end
-% 
-%     % Load reference file
-%     ref = load(ref_match);
-% 
-%     %% Compare key metrics
-%     % 1. Compare channel counts
-%     testCase.verifyEqual(numel(loaded.data), numel(ref.data), ...
-%         'Channel count mismatch');
-% 
-%     % 2. Compare channel durations
-%     loaded_durations = cellfun(@(c) c.header.duration, loaded.data);
-%     ref_durations = cellfun(@(c) c.header.duration, ref.data);
-%     testCase.verifyEqual(loaded_durations, ref_durations, ...
-%         'Channel duration values mismatch', 'AbsTol', 0.001);
-% 
-%     % 3. Compare marker channel data
-%     for c = 1:numel(loaded.data)
-%         if isfield(loaded.data{c}, 'markerinfo')
-%             testCase.verifyEqual(loaded.data{c}.data, ref.data{c}.data, ...
-%                 'Marker data mismatch', 'AbsTol', 0.001);
-%             break;
-%         end
-%     end
-% 
-%     % 4. Compare metadata
-%     testCase.verifyEqual(loaded.infos.Participant.participant_id, ...
-%         ref.infos.Participant.participant_id, 'Participant ID mismatch');
-%     testCase.verifyEqual(loaded.infos.task, ref.infos.task, 'Task name mismatch');
+
+
+    % Verify pspm format & load imported file structure
+    [sts, ~, ~, filestruct] = pspm_load_data(filepath);
+    testCase.verifyEqual(sts,1,'Import failed')
+
+    % Load reference file
+    
+    [~, fn] = fileparts(filepath);
+    reffilepath = fullfile(testCase.ref_path,[fn,'.mat']);
+    [strf, ~, ~, filestruct_ref] = pspm_load_data(reffilepath);
+    testCase.verifyEqual(strf,1,'Import failed')
+
+    
+    % filestruct comparison(also values)
+    f1 = fieldnames(filestruct);
+    f2 = fieldnames(filestruct_ref);
+    % different fields
+    testCase.verifyEmpty( setdiff(f1,f2), 'Different fielstructs'); %%%
+    testCase.verifyEmpty( setdiff(f2,f1), 'Different fielstructs'); %%%
+    common     = intersect(f1, f2);
+    for k = 1:numel(common)
+        fld = common{k};
+        testCase.verifyEqual(filestruct.(fld), filestruct_ref.(fld),'The filestructure is different');  
+    end
+
+    %% Compare key metrics
+    
+    % load wave data the data / length of the channels compare to the  (careful
+ 
+    [~, infos, data, ~] = pspm_load_data(filepath,'wave');
+    [~, infos_ref, data_ref, ~] = pspm_load_data(reffilepath,'wave');
+
+    % Compare channel counts of the actual loaded channels
+    testCase.verifyEqual(numel(data), numel(data_ref), 'Channel count mismatch'); % maybe assert?
+
+    %  Compare channel duration
+    duration = infos.duration;
+    duration_ref = infos_ref.duration;
+    testCase.verifyEqual(duration,duration_ref)
+
+    for q = 1:numel(data)
+        testCase.verifyEqual( (length(data{q}.data) / data{q}.header.sr), duration_ref,'AbsTol', 0.001) ;% rigth tolerance?
+    end
+    
+    %% marker
+
+    [~, infos, data, ~] = pspm_load_data(filepath,'events');
+    [~, infos_ref, data_ref, ~] = pspm_load_data(reffilepath,'events');
+
+    % Compare channel counts of the actual loaded channels
+    testCase.verifyEqual(numel(data), numel(data_ref), 'Channel count mismatch'); % maybe assert?
+
+    %  Compare channel duration
+    duration = infos.duration;
+    duration_ref = infos_ref.duration;
+    testCase.verifyEqual(duration,duration_ref)
+
+    for q = 1:numel(data)
+        testCase.verifyEqual( length(data{q}.data) ,length(data_ref{q}.data) , duration_ref,'AbsTol', 0.001) ;% rigth tolerance?
+    end
+
+
+
+
+    % % 4. Compare metadata
+    % testCase.verifyEqual(loaded.infos.Participant.participant_id, ref.infos.Participant.participant_id, 'Participant ID mismatch');
+    % testCase.verifyEqual(loaded.infos.task, ref.infos.task, 'Task name mismatch');
 end
 end
 end
