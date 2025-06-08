@@ -6,7 +6,8 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %   [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 % ● Arguments
 %    dataset_path:  path to the data set / subject / session  folder
-%       save_path:  path to save the PsPM files
+%       save_path:  path to save the PsPM files / if non mention one level
+%                   above dataset_path in the folder out
 % ● Output
 %         outfile:  cell array of generated PsPM file names
 % ● History
@@ -22,25 +23,29 @@ end
 sts = -1;
 outfile = {};
 
-
 % checks inputs
 if ~(ischar(dataset_path) || isstring(dataset_path))
-    error('InvalidInput', 'dataset_path must be a string.');
+    error('PsPM:InvalidInput', 'dataset_path must be a string.');
 end
-if exist('save_path','var') && ~(ischar(save_path) || isstring(save_path)) || nargin < 2
-    warnign('pspm_import_bids:InvalidInput', 'save_path must be a character vector or string.');
+if nargin < 2
     parentDir = fileparts(dataset_path);
-    save_path = fullfile(parentDir, 'out');     
+    save_path = fullfile(parentDir, 'out'); 
+    warning('Only one input. The imported files will be saved to:');
+elseif ~(ischar(save_path) || isstring(save_path)) 
+    warning('InvalidInput', 'save_path must be a character vector or string.');
+    parentDir = fileparts(dataset_path);
+    save_path = fullfile(parentDir, 'out');
 end
 
 if nargin > 2;  warning('More than two inputs detected; ignoring additional inputs.' ); end   
 
-%  checks if the paths exist
-if ~exist(save_path, 'dir');  mkdir(save_path); end % in case nargin < 2 alread created
-fprintf('\nImported files will be saved to:  %s',save_path); % change the text ; maybe different order to display? maybe add that it was created vs 
-if ~exist(dataset_path, 'dir'); error('dataset_path has to be a folder'); end
+% checks if the paths exist
 
-% Adds lib to the path
+if ~exist(dataset_path, 'dir');  error( 'PsPM:InvalidPath','dataset_path has to be a folder'); end
+if ~exist(save_path, 'dir');  mkdir(save_path); end % in case nargin < 2 already created
+fprintf('\nImported files will be saved to:  %s',save_path); 
+
+% Adds libs to the path
 libpath = pspm_path('bids_importer','lib');
 addpath(libpath); 
 
@@ -49,14 +54,14 @@ addpath(libpath);
 
 [~, currentFolder] = fileparts(dataset_path); 
 
-% checks if dataset or subject are to be imported
+% checks if dataset, subject or session are to be imported
 
 dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); 
 ses_mode = startsWith(currentFolder, 'ses-');  
 
 if ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); dataset_mode = true; end
 
-
+% dataset mode
 if dataset_mode
     dataset_description = read_dataset_description(dataset_path); % optional
     [participants_data, participant_data_headings] = read_participants_data(dataset_path); % has to be there
@@ -68,10 +73,11 @@ if dataset_mode
     subject_list = dir(fullfile(dataset_path, 'sub-*'));
     subject_list = subject_list([subject_list.isdir]);
 else
+    % subject or session mode
     if ses_mode
-        sub_path = fileparts(dataset_path); 
+        sub_path = fileparts(dataset_path); % one level above ses-*
     else
-        sub_path = dataset_path;
+        sub_path = dataset_path; % subject path
     end
 
     description_path = fileparts(sub_path); % on  level above the subject folder
@@ -85,10 +91,6 @@ else
 end
 
 
-
-
-
-
 %% 3. Loop over subjects ---------------------------------------------------
 for i = 1:length(subject_list)
    
@@ -96,23 +98,21 @@ for i = 1:length(subject_list)
     sub_idx_str = regexp(subject_full_id, '\d+$', 'match', 'once');
     sub_idx = str2double(sub_idx_str); % e.g. '01' -> 1
     
-
     % Build participant structure by mapping each field.
     Participant = struct();
     for p_info_ind = 1:numel(participant_data_headings)
         field_name = participant_data_headings{p_info_ind};
         Participant.(field_name) = participants_data{p_info_ind}{sub_idx};
     end
-    
-
-
+   
+    % 
     fprintf('\n------------------------------------------------------------');
     fprintf('\n------------------------------------------------------------');
     fprintf('\n\nImporting %s ... \n', subject_full_id);
     
 
     if dataset_mode 
-        sub_path = fullfile(dataset_path, subject_full_id);
+        sub_path = fullfile(dataset_path, subject_full_id); 
     end
 
     if ses_mode  
@@ -120,13 +120,13 @@ for i = 1:length(subject_list)
     else 
         session_dirs = dir(fullfile(sub_path,'ses-*'));
         session_dirs = session_dirs([session_dirs.isdir]);    
-    end % if session mode !
-    % checks if there are Sessions
+    end % if session mode!
+
+    % checks if there are sessions
     if isempty(session_dirs); warning('No session folder  (''ses-%s'') found in %s', sub_idx_str ,sub_path); continue; end
 
 
-    %% Process each session
-    
+    %% Process each session    
     for j = 1:length(session_dirs)
         session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02' (could there be more 100 sessions?)
         
@@ -135,12 +135,12 @@ for i = 1:length(subject_list)
         physio_dir = fullfile(ses_path, 'physio');
 
 
-        %% Extract task name
-
+        % % Extract task name
         % Look for any event JSON
-        pattern = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id);
-        beh_files = dir(fullfile(beh_dir, pattern));        % If no beh JSON, look for physio files with task tag
-        physio_files = dir(fullfile(physio_dir, sprintf('%s_ses-%s_task-*_events.tsv', subject_full_id, session_id)));
+        pattern_beh = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id); % json and tsv
+        beh_files = dir(fullfile(beh_dir, pattern_beh));        
+        pattern_physio = sprintf('%s_ses-%s_task-*_events.tsv', subject_full_id, session_id);
+        physio_files = dir(fullfile(physio_dir, pattern_physio));
 
         if ~isempty(beh_files)
             fname = beh_files(1).name;
@@ -173,8 +173,8 @@ for i = 1:length(subject_list)
         events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_full_id, session_id, task_name);
         events_json_filepath = fullfile(beh_path, events_json_filename);
         events_tsv_filepath  = fullfile(beh_path, events_tsv_filename);
-        if ~isfile(events_json_filepath); error('File not found: %s', events_json_filepath); end
-        if ~isfile(events_tsv_filepath);  error('File not found: %s', events_tsv_filepath);  end
+        if ~isfile(events_json_filepath); error('PsPM:NoEvent','File not found: %s', events_json_filepath); end
+        if ~isfile(events_tsv_filepath);  error('PsPM:NoEvent','File not found: %s', events_tsv_filepath);  end
 
         marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath);
 
@@ -203,7 +203,7 @@ for i = 1:length(subject_list)
         cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
         outfile{end+1} = cogent_ses_filepath;
     
-        % Check the pspm strucutre
+        % Check the pspm structure
         fn.infos = infos;
         fn.data = session.data;
 

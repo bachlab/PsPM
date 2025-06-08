@@ -6,12 +6,12 @@ function [physio_data_cell, physio_info_data] = get_physio_data(subject_id, sess
 %% Initialize the physio data cell array
 physio_signals = { 'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
-physio_data_cell = {}; % cell(num_signals, 1);  % Preallell array / needed?
+physio_data_cell = {}; 
 
 
 % Initialize variables for infos
-chan_names = {}; %cell(num_signals, 1);
-file_paths = {}; %cell(num_signals, 1);
+chan_names = {}; 
+file_paths = {}; 
 
 % Index to keep track of the cell array
 cell_index = 1;

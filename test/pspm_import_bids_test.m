@@ -3,7 +3,8 @@ properties
     test_data_path = '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/'; % dataset level   
     test_sub  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03'; % subject level
     test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03/ses-01' % session level
-    temp_dir  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/tmp';
+    temp_dir  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/tmp';
+    temp_dir_out  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/tmp';
     ref_path  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/';
      
 end
@@ -11,13 +12,13 @@ end
 methods (TestClassSetup)
     function setup_paths(testCase)
         % check for reference files?
-        mkdir(testCase.temp_dir);
+        mkdir(testCase.temp_dir_out);
     end
 end
 
 methods (TestClassTeardown)
     function cleanup(testCase)
-            rmdir(testCase.temp_dir, 's');
+            rmdir(testCase.temp_dir_out, 's');
     end
 end
 
@@ -26,7 +27,7 @@ end
 methods (Test)
 %% Dataset-level test
 function test_dataset_import(testCase)
-    [sts, outfiles] = pspm_import_bids(testCase.test_data_path, testCase.temp_dir);
+    [sts, outfiles] = pspm_import_bids(testCase.test_data_path, testCase.temp_dir_out);
     
     % Verify success and file count (5 files)
     testCase.verifyEqual(sts, 1, 'Import failed');
@@ -43,7 +44,7 @@ end
 %% Subject-level test
 function test_subject_import(testCase)
     % sub-CalinetWuerzburg03->ses-01,ses-02
-    [sts, outfiles] = pspm_import_bids(testCase.test_sub, testCase.temp_dir);
+    [sts, outfiles] = pspm_import_bids(testCase.test_sub, testCase.temp_dir_out);
     
     % Verify success and file count 2 files
     testCase.verifyEqual(sts, 1);
@@ -62,13 +63,13 @@ end
 %% Session-level test
 function test_session_import(testCase)
     % sub-CalinetWuerzburg03->ses-01
-    [sts, outfiles] = pspm_import_bids(testCase.test_ses, testCase.temp_dir);
+    [sts, outfiles] = pspm_import_bids(testCase.test_ses, testCase.temp_dir_out);
     
     % Verify success and single output file
     testCase.verifyEqual(sts, 1);
     testCase.verifyNumElements(outfiles, 1);
     
-    expected_file = fullfile(testCase.temp_dir, 'pspm_sub-CalinetWuerzburg03_ses-01_cogent.mat');
+    expected_file = fullfile(testCase.temp_dir_out, 'pspm_sub-CalinetWuerzburg03_ses-01_cogent.mat');
     
     % Use exist() instead of verifyFileExists
     testCase.verifyEqual(outfiles{:},expected_file) % to check if it is at the right folder
@@ -83,20 +84,35 @@ function test_test_ss(testCase)
     
 end
 
-%% Path validation tests
-% function test_invalid_path(testCase)
-%     % Test non-existent dataset path
-%     testCase.verifyError(...
-%         @() pspm_import_bids('/invalid/path', testCase.temp_dir), ...
-%         'pspm_import_bids:dataset_path has to be a folder');
-% end
+% Path validation tests
+function test_invalid_dataset_path(testCase)
+    % Test non-existent dataset path
+    invalid_path = '/invalid/path';
+    testCase.verifyError(@() pspm_import_bids(invalid_path),'PsPM:InvalidPath');
+    testCase.verifyError(@() pspm_import_bids(123),'PsPM:InvalidInput');
 
-% function test_missing_savepath(testCase)
-%         % Test automatic output directory creation
-%         [~, outfiles] = pspm_import_bids(testCase.test_ses);
-%         testCase.verifyFileExists(outfiles{1});
-%     end
-% end
+    % no marker channel
+    event_json  = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.json';
+    % event_tsv = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.tsv';
+    event_path = fullfile(testCase.test_ses,event_json);
+    event_path_tmp = fullfile(testCase.test_ses,'physio/tmp.json');
+    
+    movefile(event_path,event_path_tmp)
+
+    testCase.verifyError(@() pspm_import_bids(testCase.test_ses),'PsPM:NoEvent');
+
+    movefile(event_path_tmp,event_path)
+
+end
+
+
+function test_invalid_save_path(testCase)
+    % Test invalid save path type
+    [sts, outfiles] = pspm_import_bids(testCase.test_ses, 123);
+    testCase.verifyEqual(sts, 1);
+    testCase.verifyNotEmpty(outfiles);
+end
+
 
 
 end
