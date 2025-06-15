@@ -351,7 +351,7 @@ for datatype_i=1:length(fileoptions)
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'txt'))
     datatype_item{datatype_i}.val = ...
-      [datatype_item{datatype_i}.val, {header_lines,channel_names_line,exclude_columns}];
+      [datatype_item{datatype_i}.val, {delimiter, header_lines,channel_names_line,exclude_columns}];
   end
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'csv'))
