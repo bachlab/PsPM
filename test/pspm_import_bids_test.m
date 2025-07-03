@@ -4,14 +4,14 @@ properties
     test_sub  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03'; % subject level
     test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03/ses-01' % session level
     temp_dir  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/tmp';
-    temp_dir_out  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/tmp';
-    ref_path  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/';
+    temp_dir_out  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/tmp'; % where the test imports the *.mat
+    ref_path  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/'; % *.mat already imported
      
 end
 
 methods (TestClassSetup)
     function setup_paths(testCase)
-        % check for reference files?
+        % check for reference files? (add)
         mkdir(testCase.temp_dir_out);
     end
 end
@@ -79,29 +79,29 @@ function test_session_import(testCase)
 
 end
 
-function test_test_ss(testCase)
-    testCase.validate_pspm_file('/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/pspm_sub-CalinetWuerzburg02_ses-01_cogent.mat');
-    
-end
+% function test_test_ss(testCase)
+%     testCase.validate_pspm_file('/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/pspm_sub-CalinetWuerzburg02_ses-01_cogent.mat');  
+% end
 
 % Path validation tests
 function test_invalid_dataset_path(testCase)
-    % Test non-existent dataset path
-    invalid_path = '/invalid/path';
-    testCase.verifyError(@() pspm_import_bids(invalid_path),'PsPM:InvalidPath');
-    testCase.verifyError(@() pspm_import_bids(123),'PsPM:InvalidInput');
 
-    % no marker channel
-    event_json  = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.json';
-    % event_tsv = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.tsv';
-    event_path = fullfile(testCase.test_ses,event_json);
-    event_path_tmp = fullfile(testCase.test_ses,'physio/tmp.json');
-    
-    movefile(event_path,event_path_tmp)
+% Test non-existent dataset path
+invalid_path = '/invalid/path';
+testCase.verifyError(@() pspm_import_bids(invalid_path),'PsPM:InvalidPath');
+testCase.verifyError(@() pspm_import_bids(123),'PsPM:InvalidInput');
 
-    testCase.verifyError(@() pspm_import_bids(testCase.test_ses),'PsPM:NoEvent');
+% no marker channel
+% test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03/ses-01' 
+event_json  = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.json';
+% event_tsv = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.tsv';
 
-    movefile(event_path_tmp,event_path)
+event_path = fullfile(testCase.test_ses,event_json);
+event_path_tmp = fullfile(testCase.test_ses,'physio/tmp.json');
+
+movefile(event_path,event_path_tmp)
+testCase.verifyWarning(@() pspm_import_bids(testCase.test_ses),'PsPM:NoEvent');
+movefile(event_path_tmp,event_path)
 
 end
 
@@ -126,8 +126,7 @@ function validate_pspm_file(testCase, filepath)
     [sts, ~, ~, filestruct] = pspm_load_data(filepath);
     testCase.verifyEqual(sts,1,'Import failed')
 
-    % Load reference file
-    
+    % Load reference file    
     [~, fn] = fileparts(filepath);
     reffilepath = fullfile(testCase.ref_path,[fn,'.mat']);
     [strf, ~, ~, filestruct_ref] = pspm_load_data(reffilepath);
@@ -147,8 +146,7 @@ function validate_pspm_file(testCase, filepath)
     end
 
     %% Compare key metrics
-    
-    % load wave data the data / length of the channels compare to the  (careful
+    % load wave data the data / length of the channels to compare
  
     [~, infos, data, ~] = pspm_load_data(filepath,'wave');
     [~, infos_ref, data_ref, ~] = pspm_load_data(reffilepath,'wave');
@@ -162,7 +160,7 @@ function validate_pspm_file(testCase, filepath)
     testCase.verifyEqual(duration,duration_ref)
 
     for q = 1:numel(data)
-        testCase.verifyEqual( (length(data{q}.data) / data{q}.header.sr), duration_ref,'AbsTol', 0.001) ;% rigth tolerance?
+        testCase.verifyEqual( (length(data{q}.data) / data{q}.header.sr), duration_ref,'AbsTol', 0.001) ;% right tolerance?
     end
     
     %% marker
@@ -182,12 +180,10 @@ function validate_pspm_file(testCase, filepath)
         testCase.verifyEqual( length(data{q}.data) ,length(data_ref{q}.data) , duration_ref,'AbsTol', 0.001) ;% rigth tolerance?
     end
 
-
-
-
     % % 4. Compare metadata
     % testCase.verifyEqual(loaded.infos.Participant.participant_id, ref.infos.Participant.participant_id, 'Participant ID mismatch');
     % testCase.verifyEqual(loaded.infos.task, ref.infos.task, 'Task name mismatch');
+
 end
 end
 end

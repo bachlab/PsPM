@@ -1,9 +1,10 @@
-function [physio_data_cell, physio_info_data] = get_physio_data(subject_id, session_id, task_name, physio_path)
+function [sts , physio_data_cell, physio_info_data] = get_physio_data(subject_id, session_id, task_name, physio_path)
 % Returns a  cell array where each cell contains a struct with fields header and data (and markerinfo for events)
 % Also returns physio_info_data needed to create 'info' struct
 % UPDATE HELPTEXT
 
 %% Initialize the physio data cell array
+sts = -1
 physio_signals = { 'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
 physio_data_cell = {}; 

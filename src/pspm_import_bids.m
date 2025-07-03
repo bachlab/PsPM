@@ -40,10 +40,10 @@ end
 if nargin > 2;  warning('More than two inputs detected; ignoring additional inputs.' ); end   
 
 % checks if the paths exist
-
 if ~exist(dataset_path, 'dir');  error( 'PsPM:InvalidPath','dataset_path has to be a folder'); end
 if ~exist(save_path, 'dir');  mkdir(save_path); end % in case nargin < 2 already created
 fprintf('\nImported files will be saved to:  %s',save_path); 
+
 
 % Adds libs to the path
 libpath = pspm_path('bids_importer','lib');
@@ -123,7 +123,7 @@ for i = 1:length(subject_list)
     end % if session mode!
 
     % checks if there are sessions
-    if isempty(session_dirs); warning('No session folder  (''ses-%s'') found in %s', sub_idx_str ,sub_path); continue; end
+    if isempty(session_dirs); warning('PsPM:NoSessions','No session folder  (''ses-%s'') found in %s', sub_idx_str ,sub_path); continue; end
 
 
     %% Process each session    
@@ -137,7 +137,7 @@ for i = 1:length(subject_list)
 
         % % Extract task name
         % Look for any event JSON
-        pattern_beh = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id); % json and tsv
+        pattern_beh = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id); % both json and tsv
         beh_files = dir(fullfile(beh_dir, pattern_beh));        
         pattern_physio = sprintf('%s_ses-%s_task-*_events.tsv', subject_full_id, session_id);
         physio_files = dir(fullfile(physio_dir, pattern_physio));
@@ -147,7 +147,7 @@ for i = 1:length(subject_list)
         elseif ~isempty(physio_files)
             fname = physio_files(1).name;
         else
-            warning('No BIDS event or physio files for %s session %s', subject_full_id, session_id);
+            warning('PsPM:NoFiles','No BIDS event or physio files for %s session %s', subject_full_id, session_id);
             continue;
         end
         % Extract the token after 'task-' and before the next underscore
@@ -173,6 +173,7 @@ for i = 1:length(subject_list)
         events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_full_id, session_id, task_name);
         events_json_filepath = fullfile(beh_path, events_json_filename);
         events_tsv_filepath  = fullfile(beh_path, events_tsv_filename);
+
         if ~isfile(events_json_filepath); error('PsPM:NoEvent','File not found: %s', events_json_filepath); end
         if ~isfile(events_tsv_filepath);  error('PsPM:NoEvent','File not found: %s', events_tsv_filepath);  end
 
