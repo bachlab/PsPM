@@ -20,7 +20,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
+sts = -1;  
 outfile = {};
 
 % checks inputs
@@ -30,9 +30,10 @@ end
 if nargin < 2
     parentDir = fileparts(dataset_path);
     save_path = fullfile(parentDir, 'out'); 
-    warning('Only one input. The imported files will be saved to:');
+    % warning(['Only one input. The imported files will be saved to:' newline save_path]); % not really needed it will be mention later
+ 
 elseif ~(ischar(save_path) || isstring(save_path)) 
-    warning('InvalidInput', 'save_path must be a character vector or string.');
+    warning('InvalidInput', 'save_path must be a character vector or string.'); %%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parentDir = fileparts(dataset_path);
     save_path = fullfile(parentDir, 'out');
 end
@@ -41,7 +42,7 @@ if nargin > 2;  warning('More than two inputs detected; ignoring additional inpu
 
 % checks if the paths exist
 if ~exist(dataset_path, 'dir');  error( 'PsPM:InvalidPath','dataset_path has to be a folder'); end
-if ~exist(save_path, 'dir');  mkdir(save_path); end % in case nargin < 2 already created
+if ~exist(save_path, 'dir');  mkdir(save_path); end
 fprintf('\nImported files will be saved to:  %s',save_path); 
 
 
@@ -54,12 +55,9 @@ addpath(libpath);
 
 [~, currentFolder] = fileparts(dataset_path); 
 
-% checks if dataset, subject or session are to be imported
-
-dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); 
-ses_mode = startsWith(currentFolder, 'ses-');  
-
-if ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); dataset_mode = true; end
+% checks if dataset is to be imported
+dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-'));  % if not sub or not ses -> dataset
+% if ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); dataset_mode = true; end % if not sub or not ses -> dataset
 
 % dataset mode
 if dataset_mode
@@ -72,15 +70,20 @@ if dataset_mode
     % Get list of subject directories (assumes names start with 'sub-')
     subject_list = dir(fullfile(dataset_path, 'sub-*'));
     subject_list = subject_list([subject_list.isdir]);
+
+% sub or ses to be imported 
 else
+    
+    ses_mode = startsWith(currentFolder, 'ses-');  
+    
     % subject or session mode
     if ses_mode
         sub_path = fileparts(dataset_path); % one level above ses-*
-    else
+    else % if not dataset and not ses -> sub
         sub_path = dataset_path; % subject path
     end
 
-    description_path = fileparts(sub_path); % on  level above the subject folder
+    description_path = fileparts(sub_path); % on  level above the subject folder -> dataset What if there is no dataset folder ??
     dataset_description = read_dataset_description(description_path); % optional!
     [participants_data, participant_data_headings] = read_participants_data(description_path); % NOT optional
    
@@ -128,14 +131,13 @@ for i = 1:length(subject_list)
 
     %% Process each session    
     for j = 1:length(session_dirs)
-        session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02' (could there be more 100 sessions?)
-        
+        session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02' (could there be more 100 sessions?)        
         ses_path = fullfile(sub_path ,session_dirs(j).name); 
         beh_dir    = fullfile(ses_path, 'beh');
         physio_dir = fullfile(ses_path, 'physio');
 
 
-        % % Extract task name
+        %% Extract task name
         % Look for any event JSON
         pattern_beh = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id); % both json and tsv
         beh_files = dir(fullfile(beh_dir, pattern_beh));        
@@ -161,8 +163,9 @@ for i = 1:length(subject_list)
 
         % --- get physio data ---
         physio_path = fullfile(ses_path,'physio');
-        [physio_data_cell, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
+        [psts, physio_data_cell, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
+        if psts < 1; warning('No Physio data'); end % Fix
 
         %% --- Get beh data ---
 
@@ -200,14 +203,15 @@ for i = 1:length(subject_list)
         infos.Physio.duration  = infos.duration;
 
         % Save session (cogent) file once per subject
-        cogent_ses_file_name = sprintf('pspm_%s_ses-%s_cogent.mat', subject_full_id,session_id);
+        cogent_ses_file_name = sprintf('pspm_%s_ses-%s.mat', subject_full_id,session_id);
         cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
         outfile{end+1} = cogent_ses_filepath;
-    
-        % Check the pspm structure
+        infos.importfile = cogent_ses_filepath;
+        
         fn.infos = infos;
         fn.data = session.data;
 
+        % Check the pspm structure
         [sts, ~, ~, ~] = pspm_load_data(fn);
         if sts < 1
             warning('The file struture has a problem'); % better warning text

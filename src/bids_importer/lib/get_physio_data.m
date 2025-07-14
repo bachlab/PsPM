@@ -4,7 +4,7 @@ function [sts , physio_data_cell, physio_info_data] = get_physio_data(subject_id
 % UPDATE HELPTEXT
 
 %% Initialize the physio data cell array
-sts = -1
+sts = -1;
 physio_signals = { 'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
 physio_data_cell = {}; 
@@ -115,18 +115,20 @@ else
 end
 
 
-%% Process eye data
+%% % Process eye data
 
 [ests , eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path);
 
-if ests == 1
+% if ests == 1
 
 % --- Add the eye data to the channels --- 
-switch length(eye_data_cell)
+n_eyes = length(eye_data_cell);
+switch n_eyes
     case 0; warning('No eye data available.');        
     case 1
         % Only one eye recorded; assign based on the eye type and warn the user.
         eyeSide = lower(eye_data_cell{1}.RecordedEye);
+        
         if strcmp(eyeSide, 'right')
             pupil_r  = eye_data_cell{1}.Columns{:,'pupil_size'};
             gaze_x_r = eye_data_cell{1}.Columns{:,'x_coordinate'};
@@ -134,10 +136,10 @@ switch length(eye_data_cell)
 
             data{1}.data  = pupil_r;
             data{1}.header.chantype  = 'pupil_r';
-            data{end+1}.data  = gaze_x_r;
-            data{end+1}.header.chantype  = 'gaze_x_r';
-            data{end+1}.data  = gaze_y_r;
-            data{end+1}.header.chantype  = 'gaze_y_r';
+            data{2}.data  = gaze_x_r;
+            data{2}.header.chantype  = 'gaze_x_r';
+            data{3}.data  = gaze_y_r;
+            data{3}.header.chantype  = 'gaze_y_r';
     
 
             warning('Only right eye data available.');
@@ -149,24 +151,26 @@ switch length(eye_data_cell)
       
             data{1}.data  = pupil_l;
             data{1}.header.chantype  = 'pupil_l';
-            data{end+1}.data  = gaze_x_l;
-            data{end+1}.header.chantype  = 'gaze_x_l';
-            data{end+1}.data  = gaze_y_l;
-            data{end+1}.header.chantype  = 'gaze_y_l';
+            data{2}.data  = gaze_x_l;
+            data{2}.header.chantype  = 'gaze_x_l';
+            data{3}.data  = gaze_y_l;
+            data{3}.header.chantype  = 'gaze_y_l';
 
             warning('Only left eye data available.');
-        else; error('Unknown RecordedEye eye_data_cell.'); end % !!! maybe warning?     
+        else; error('Unknown RecordedEye eye_data_cell.'); % !!! maybe warning?
+        end      
     case 2
         eyes = lower({eye_data_cell{1}.RecordedEye, eye_data_cell{2}.RecordedEye}); 
         if strcmp(eyes{1}, eyes{2})
             warning('Both recorded eyes are %s.', eyes{1});
-            % Maybe choose the better eye?
+            % Maybe choose the better eye? -> it chooses the better depends
+            % on l or eye
         else
             % Correctly assign each cell to the corresponding eye.
             idxRight = find(strcmp(eyes, 'right'), 1);
             idxLeft  = find(strcmp(eyes, 'left'),  1);
             
-            if isempty(idxRight) || isempty(idxLeft); warning('...');end 
+            if isempty(idxRight) || isempty(idxLeft); warning('...');end % ???
 
             pupil_r  = eye_data_cell{idxRight}.Columns{:,'pupil_size'};
             gaze_x_r = eye_data_cell{idxRight}.Columns{:,'x_coordinate'};
@@ -199,53 +203,51 @@ switch length(eye_data_cell)
 end
 
 data = data';
-% Add header data for pupil and gaze data
+%% Add header data for pupil and gaze data
+if n_eyes == 1; idxRight = 1; idxLeft  = 1; end % for one eye 
+
 for i = 1:length(data)
+    % pupil
     if strcmp(data{i}.header.chantype(1:end-1) , 'pupil_')
         if strcmp(data{i}.header.chantype(end:end) , 'r')
             data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description;
-            data{i}.header.units =    eye_data_cell{idxRight}.pupil_size.Units;
-            data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+            data{i}.header.units =   eye_data_cell{idxRight}.pupil_size.Units;
+            data{i}.header.sr    =   eye_data_cell{idxRight}.SamplingFrequency;
 
         elseif strcmp(data{i}.header.chantype(end:end) , 'l')
             data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description;
-            data{i}.header.units =    eye_data_cell{idxLeft}.pupil_size.Units;
-            data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
+            data{i}.header.units =   eye_data_cell{idxLeft}.pupil_size.Units;
+            data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency;
             
         else; warning('Something went wrong no pupil channel!')  % !!!!!
         end
-
+    % gaze
     elseif strcmp(data{i}.header.chantype(1:end-4) , 'gaze')
         if strcmp(data{i}.header.chantype(6) , 'x')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_x_r
-               data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
-               data{i}.header.units = 'pixel';  % eye_data_cell{idxRight}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
-               data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
+               data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
+               data{i}.header.r =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
-               data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; % 
-               data{i}.header.units =   'pixel'; % eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate;
-               data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]
-               
+               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingFrequency;
+               data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]      
            else; warning('Something went worng with gaze  y channels')
            end
 
         elseif strcmp(data{i}.header.chantype(6) , 'y')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_y_r
-               data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description; %
-               data{i}.header.units =  'pixel'; %  eye_data_cell{idxRight}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingRate;
+               data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
+               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
-               data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description; %
-               data{i}.header.units =   'pixel'; % eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingRate; % delelt with the new data
+               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
+               data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency; 
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       
            else ; warning('Something went worng with gaze  y channels')
@@ -254,39 +256,21 @@ for i = 1:length(data)
      end
 end
 
-% --- Make the infos struct --
-
-% %% Check that all fields are the same except of ->
-% eye1_struct = eye_data_cell{1};
-% eye2_struct = eye_data_cell{2};
-% 
-% % Define the fields to ignore 
-% % Assumtion this are all the fields that could be different
-% ignoreFields = {'MaximalCalibrationError', 'MaximalCalibrationError','Columns','RecordedEye', 'AverageCalibrationError  '};
-% % maybe others also needed for the other ?
-% 
-% % Remove these fields from both structs
-% eye1Reduced = rmfield(eye1_struct, ignoreFields);
-% eye2Reduced = rmfield(eye2_struct, ignoreFields);
-% 
-% % Compare the remaining fields
-% if isequal(eye1Reduced, eye2Reduced);    disp('The structures are equal except for the ignored fields.'); %
-% else;    disp('The structures differ in some non-ignored fields.'); % maybe show diff. fields
-% end
-
-
 
 %% --- Build the eye infosstruct ----
 
 infos = struct();
+infos.source = struct();
 infos.importdate =  datestr(date, 'dd-mmm-yyyy');
-infos.duration = eye_data_cell{1}.RecordingDuration;
-infos.durationinfo = 'Recording duration in seconds'; % where in eye_data_cell ???
+infos.duration = eye_data_cell{1}.RecordingDuration;  % will be changed later after alignment
+infos.durationinfo = 'Recording duration in seconds'; % Assumed to allays be seconds
+infos.importfile = ''; % will be added before saving
+infos.history = {''}; % what should be here??
 
 % --- infos.source ---
-infos.source.channel = {};% {'Column 02'} {'Column 01'} ????
-
-infos.source.chan_stats = cell(length(data), 1); % use size??
+infos.source.channel = {};% {'Column 02'} {'Column 01'} How to add this ???? from the imported files
+% nan_stats 
+infos.source.chan_stats = cell(length(data), 1); 
 for i = 1:length(data)
     n_data = size(data{i}.data, 1);
     n_inv = sum(isnan(data{i}.data));
@@ -294,40 +278,62 @@ for i = 1:length(data)
     infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
 end
 
-
+% date and time
 infos.source.date = '01.01.1900'; % no information in jsons
 infos.source.time = '00:00:00'; % no information in jsons
 
-if ~isequal(eye_data_cell{idxRight}.GazeRange,eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal") % Realy needed?
+% gaze_coords % Is the gaze range for both eyes always the same?
+if ~isequal(eye_data_cell{idxRight}.GazeRange, eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal"); end % if single eye data it will be equal
+infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
+infos.source.elcl_proc = eye_data_cell{idxRight}.PupilFitMethod; % or should it be called PupilFitMethod? lowercase!
+
+% eyesObserved and best_eye
+if n_eyes == 2
+    infos.source.eyesObserved = 'lr'; 
+elseif n_eyes == 1  
+    infos.source.eyesObserved =  data{1}.header.chantype(end); 
+end    
+infos.source.best_eye = eye_with_smaller_nan_ratio(data, infos.source.eyesObserved);
+
+
+infos.source.type = 'Bids (jason/tsv)' ; % needs a standardized data format type name
+if n_eyes == 2
+    infos.source.file = [eye_data_cell{1}.source.file, eye_data_cell{2}.source.file] ; %  {1},{2} gives the right order
+else
+    infos.source.file = [eye_data_cell{1}.source.file] ;
+end  
+
+%% Extrainforamtion json 
+% Add the information that is not in header under infos.eyes.l and
+% infos.eyes.r
+
+for i = 1:n_eyes
+    % Columns
+    fname = eye_data_cell{i}.RecordedEye;
+    
+    eye_infos.(fname).EnvironmentCoordinates = eye_data_cell{i}.EnvironmentCoordinates; % eg: "top-left" Where should i add this? gaza??
+    eye_infos.(fname).Manufacturer = eye_data_cell{i}.Manufacturer; % differente per eye
+    eye_infos.(fname).ManufacturersModelName = eye_data_cell{i}.ManufacturersModelName; % differente per eye
+    % RecordedEye
+    eye_infos.(fname).SampleCoordinateSystem = eye_data_cell{i}.SampleCoordinateSystem; % eg: "gaze-on-screen" add to the gaze header?
+    %  "SampleCoordinateUnits": "pixel"
+    %  "SamplingFrequency": 1000,
+    eye_infos.(fname).SoftwareVersion = eye_data_cell{i}.ManufacturersModelName; % eg: EYELINK II CL v5.15 Jan 24 2018
+    %    "pupil_size": { "Description": "Pupil diameter",  "Units": "mm"  }
+    
+    eye_infos.(fname).MaximalCalibrationError = eye_data_cell{i}.MaximalCalibrationError;
+    eye_infos.(fname).AverageCalibrationError = eye_data_cell{i}.AverageCalibrationError;
+    eye_infos.(fname).EyeTrackerDistance = eye_data_cell{i}.EyeTrackerDistance;
 end
 
-% What if there is just a felt eye?
-infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
-infos.source.PupilFitMethod = eye_data_cell{idxRight}.PupilFitMethod;
-infos.source.eyesObserved = 'lr';
-infos.source.best_eye = 'l' ;
-
-% infos.source.elcl_proc = eye_data_cell{idxRight}.
-infos.source.type = 'Bids (jason/tsv)' ; % exact name??
-infos.source.file = [eye_data_cell{idxRight}.source.file, eye_data_cell{idxRight}.source.file] ;% different orientation?
+% build infos struct
 
 
-% infos.importfile =  'ImportTestData/eyelink/pspm_S114_s2.mat' % late the end the file that will be produced look in the manual
-infos.history = {' Output channel ID: #08 -- added on 06-Mar-20'}; % what sould be here??
-
-% Maybe put in different order
-infos.source.SampleCoordinateSystem = eye_data_cell{idxRight}.SampleCoordinateSystem;
-% infos.source.EnvironmentCoordinates = eye_data_cell{idxRight}.EnvironmentCoordinates;
-% infos.source.Manufacturer = eye_data_cell{idxRight}.EnvironmentCoordinates;
-infos.source.ManufacturersModelName = eye_data_cell{idxRight}.ManufacturersModelName;
-infos.source.SoftwareVersion = eye_data_cell{idxRight}.ManufacturersModelName;
-infos.source.MaximalCalibrationError = eye_data_cell{idxRight}.MaximalCalibrationError;
-infos.source.AverageCalibrationError = eye_data_cell{idxRight}.AverageCalibrationError;
-% infos.source.EyeTrackerDistance = eye_data_cell{idxRight}.EyeTrackerDistance;
+%%
 
 chan_names{end+1} = 'eye'; % should it have a different name?
 file_paths{end+1} = infos.source.file;
-end
+
 
 physio_data_cell = [physio_data_cell; data]; %
 
@@ -347,6 +353,31 @@ physio_info_data.file_paths = file_paths; % make the eye  filenames in the right
 %% add temp duration
 
 
+end
 
 
+% adapted from in pspm_get_viewpoint and pspm_get_smi
+function best_eye = eye_with_smaller_nan_ratio(data, eyes_observed)
+    if length(eyes_observed) == 1;
+      best_eye = lower(eyes_observed);
+    else
+      eye_L_max_nan_ratio = 0;
+      eye_R_max_nan_ratio = 0;
+      for i = 1:numel(data)
+        left_data = strcmpi(data{i}.header.chantype(end),'l');      
+        right_data = strcmpi(data{i}.header.chantype(end),'r');
+        
+        if left_data
+          eye_L_max_nan_ratio = max(eye_L_max_nan_ratio, sum(isnan(data{i}.data)));
+        elseif right_data
+          eye_R_max_nan_ratio = max(eye_R_max_nan_ratio, sum(isnan(data{i}.data)));
+        end
+      end
+
+      if eye_L_max_nan_ratio > eye_R_max_nan_ratio
+        best_eye = 'r'; 
+      else
+        best_eye = 'l'; % if equal set 'l'
+      end
+    end
 end

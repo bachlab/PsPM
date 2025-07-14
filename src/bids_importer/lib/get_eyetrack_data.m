@@ -63,11 +63,7 @@ for i = 1:num_signals
     % I the futrure some kind of check maybe?
     eye_json.Columns = eye_data_table;
     
-    % SamplingFrequency -> SamplingRate
-    if isfield(eye_json, 'SamplingFrequency')
-        eye_json.SamplingRate = eye_json.SamplingFrequency;
-        eye_json = rmfield(eye_json, 'SamplingFrequency');
-    end
+
     
     % Store the combined struct into the cell array
     eye_data_cell{i} = eye_json;
