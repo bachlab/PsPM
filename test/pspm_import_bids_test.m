@@ -52,7 +52,7 @@ function test_subject_import(testCase)
     
     % Validate session files
     for i = 1:2
-        % expected_file = fullfile(testCase.temp_dir,   sprintf('pspm_sub-XX_ses-%02d_cogent.mat', i));
+        % expected_file = fullfile(testCase.temp_dir,   sprintf('pspm_sub-XX_ses-%02d.mat', i));
         % testCase.verifyEqual(outfiles{i},expected_file) 
         testCase.verifyTrue(exist(outfiles{i}, 'file') == 2, sprintf('File not found: %s', outfiles{i}));
         validate_pspm_file(testCase, outfiles{i});
@@ -69,7 +69,7 @@ function test_session_import(testCase)
     testCase.verifyEqual(sts, 1);
     testCase.verifyNumElements(outfiles, 1);
     
-    expected_file = fullfile(testCase.temp_dir_out, 'pspm_sub-CalinetWuerzburg03_ses-01_cogent.mat');
+    expected_file = fullfile(testCase.temp_dir_out, 'pspm_sub-CalinetWuerzburg03_ses-01.mat');
     
     % Use exist() instead of verifyFileExists
     testCase.verifyEqual(outfiles{:},expected_file) % to check if it is at the right folder
@@ -80,10 +80,10 @@ function test_session_import(testCase)
 end
 
 % function test_test_ss(testCase)
-%     testCase.validate_pspm_file('/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/pspm_sub-CalinetWuerzburg02_ses-01_cogent.mat');  
+%     testCase.validate_pspm_file('/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/pspm_sub-CalinetWuerzburg02_ses-01.mat');  
 % end
 
-% Path validation tests
+% Path validation tests / problem by moveing the physio event json back
 function test_invalid_dataset_path(testCase)
 
 % Test non-existent dataset path
@@ -130,7 +130,7 @@ function validate_pspm_file(testCase, filepath)
     [~, fn] = fileparts(filepath);
     reffilepath = fullfile(testCase.ref_path,[fn,'.mat']);
     [strf, ~, ~, filestruct_ref] = pspm_load_data(reffilepath);
-    testCase.verifyEqual(strf,1,'Import failed')
+    testCase.verifyEqual(strf,1,'Import reference file failed')
 
     
     % filestruct comparison(also values)

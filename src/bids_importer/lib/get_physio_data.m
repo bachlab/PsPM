@@ -9,7 +9,6 @@ physio_signals = { 'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
 physio_data_cell = {}; 
 
-
 % Initialize variables for infos
 chan_names = {}; 
 file_paths = {}; 
@@ -86,7 +85,7 @@ events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 
 % Checks if files exist
 if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
-    warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change
+    warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change !!!!!!!!!!!
 else
     % Append the file paths
     file_paths{cell_index,1} = events_tsv_filepath;
@@ -119,7 +118,7 @@ end
 
 [ests , eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path);
 
-% if ests == 1
+if ests == 1
 
 % --- Add the eye data to the channels --- 
 n_eyes = length(eye_data_cell);
@@ -326,18 +325,21 @@ for i = 1:n_eyes
     eye_infos.(fname).EyeTrackerDistance = eye_data_cell{i}.EyeTrackerDistance;
 end
 
-% build infos struct
-
-
-%%
-
+% add the eye data  
 chan_names{end+1} = 'eye'; % should it have a different name?
 file_paths{end+1} = infos.source.file;
+physio_data_cell = [physio_data_cell; data];
 
+end % the end of the if  ests
 
-physio_data_cell = [physio_data_cell; data]; %
 
 %% Prepare physio_info_data 
+
+% Not good change it !!!
+if isempty(data)
+    error('No data importated')
+else;  sts = 1; end
+
 
 % Add the eye channel names
 for i = 1:length(data)
@@ -353,7 +355,7 @@ physio_info_data.file_paths = file_paths; % make the eye  filenames in the right
 %% add temp duration
 
 
-end
+end % end of main function
 
 
 % adapted from in pspm_get_viewpoint and pspm_get_smi

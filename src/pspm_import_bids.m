@@ -23,44 +23,50 @@ end
 sts = -1;  
 outfile = {};
 
+
 % checks inputs
 if ~(ischar(dataset_path) || isstring(dataset_path))
     error('PsPM:InvalidInput', 'dataset_path must be a string.');
 end
 if nargin < 2
     parentDir = fileparts(dataset_path);
-    save_path = fullfile(parentDir, 'out'); 
-    % warning(['Only one input. The imported files will be saved to:' newline save_path]); % not really needed it will be mention later
- 
+    save_path = 0;
+
 elseif ~(ischar(save_path) || isstring(save_path)) 
     warning('InvalidInput', 'save_path must be a character vector or string.'); %%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parentDir = fileparts(dataset_path);
-    save_path = fullfile(parentDir, 'out');
+    save_path = 0;
 end
 
 if nargin > 2;  warning('More than two inputs detected; ignoring additional inputs.' ); end   
 
-% checks if the paths exist
+% checks if the path exist
 if ~exist(dataset_path, 'dir');  error( 'PsPM:InvalidPath','dataset_path has to be a folder'); end
-if ~exist(save_path, 'dir');  mkdir(save_path); end
-fprintf('\nImported files will be saved to:  %s',save_path); 
+
 
 
 % Adds libs to the path
 libpath = pspm_path('bids_importer','lib');
 addpath(libpath); 
 
-%% 2. Read meta information ------------------------------------------------
-
+%% 2. Read meta information & Add paths to the right variables ------------------------------------------------
 
 [~, currentFolder] = fileparts(dataset_path); 
+% problems with path that are written like /path/fold/ with "/" at the end
+% under linux -> needs to be tests under mac and windows
+if isempty(currentFolder)
+    dataset_path = dataset_path(1:end-1);
+    [~, currentFolder] = fileparts(dataset_path); 
+end
 
 % checks if dataset is to be imported
 dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-'));  % if not sub or not ses -> dataset
 % if ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); dataset_mode = true; end % if not sub or not ses -> dataset
+ses_mode = startsWith(currentFolder, 'ses-');  
 
 % dataset mode
 if dataset_mode
+    % Get dataset metadata
     dataset_description = read_dataset_description(dataset_path); % optional
     [participants_data, participant_data_headings] = read_participants_data(dataset_path); % has to be there
     
@@ -73,19 +79,18 @@ if dataset_mode
 
 % sub or ses to be imported 
 else
-    
-    ses_mode = startsWith(currentFolder, 'ses-');  
-    
-    % subject or session mode
+   % subject or session mode
     if ses_mode
         sub_path = fileparts(dataset_path); % one level above ses-*
+        ses_path = dataset_path;
     else % if not dataset and not ses -> sub
         sub_path = dataset_path; % subject path
     end
 
-    description_path = fileparts(sub_path); % on  level above the subject folder -> dataset What if there is no dataset folder ??
-    dataset_description = read_dataset_description(description_path); % optional!
-    [participants_data, participant_data_headings] = read_participants_data(description_path); % NOT optional
+    % dataset_path now becomes the real dataset level path 
+    dataset_path = fileparts(sub_path); % on  level above the subject folder -> dataset What if there is no dataset folder ??
+    dataset_description = read_dataset_description(dataset_path); % optional!
+    [participants_data, participant_data_headings] = read_participants_data(dataset_path); % NOT optional
    
     % Store participant information headings in dataset description
     dataset_description.ParticipantInformation = participant_data_headings; % maybe just the one that is imported??
@@ -93,6 +98,13 @@ else
     [~, subject_list(1).name] = fileparts(sub_path); % only one subject
 end
 
+% Output folder (save_path)
+if ~save_path 
+    %waring('No save path');  
+    save_path = [dataset_path, filesep, 'out']; 
+end % if there is no save_path or there was an error not char or string = 0
+if ~exist(save_path, 'dir');  mkdir(save_path); end
+fprintf('\nImported files will be saved to:  %s\n',save_path);
 
 %% 3. Loop over subjects ---------------------------------------------------
 for i = 1:length(subject_list)
@@ -109,8 +121,8 @@ for i = 1:length(subject_list)
     end
    
     % 
-    fprintf('\n------------------------------------------------------------');
-    fprintf('\n------------------------------------------------------------');
+    fprintf('\n------------------------------------------------------------------------------------------------------------------------');
+    fprintf('\n------------------------------------------------------------------------------------------------------------------------');
     fprintf('\n\nImporting %s ... \n', subject_full_id);
     
 
@@ -119,11 +131,12 @@ for i = 1:length(subject_list)
     end
 
     if ses_mode  
-        [~, session_dirs(1).name] = fileparts(dataset_path);  
-    else 
+        [~, session_dirs(1).name] = fileparts(ses_path);
+
+    else % subject mode
         session_dirs = dir(fullfile(sub_path,'ses-*'));
         session_dirs = session_dirs([session_dirs.isdir]);    
-    end % if session mode!
+    end 
 
     % checks if there are sessions
     if isempty(session_dirs); warning('PsPM:NoSessions','No session folder  (''ses-%s'') found in %s', sub_idx_str ,sub_path); continue; end
@@ -132,7 +145,7 @@ for i = 1:length(subject_list)
     %% Process each session    
     for j = 1:length(session_dirs)
         session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02' (could there be more 100 sessions?)        
-        ses_path = fullfile(sub_path ,session_dirs(j).name); 
+        ses_path   = fullfile(sub_path ,session_dirs(j).name); % if it is ses_mode it will be overwriten but that is okay
         beh_dir    = fullfile(ses_path, 'beh');
         physio_dir = fullfile(ses_path, 'physio');
 
@@ -141,12 +154,12 @@ for i = 1:length(subject_list)
         % Look for any event JSON
         pattern_beh = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id); % both json and tsv
         beh_files = dir(fullfile(beh_dir, pattern_beh));        
-        pattern_physio = sprintf('%s_ses-%s_task-*_events.tsv', subject_full_id, session_id);
+        pattern_physio = sprintf('%s_ses-%s_task-*_physioevents.*', subject_full_id, session_id);
         physio_files = dir(fullfile(physio_dir, pattern_physio));
 
-        if ~isempty(beh_files)
+        if ~isempty(beh_files) && length(beh_files) == 2
             fname = beh_files(1).name;
-        elseif ~isempty(physio_files)
+        elseif ~isempty(physio_files) && length(beh_files) == 2
             fname = physio_files(1).name;
         else
             warning('PsPM:NoFiles','No BIDS event or physio files for %s session %s', subject_full_id, session_id);
@@ -158,7 +171,7 @@ for i = 1:length(subject_list)
 
         %% Processing start
 
-        fprintf('\n------------------------------------------------------------');
+        fprintf('\n------------------------------------------------------------------------------------------------------------------------');
         fprintf('\n\n  Processing session %s with task %s ...\n\n', session_dirs(j).name, task_name);
 
         % --- get physio data ---
@@ -212,8 +225,8 @@ for i = 1:length(subject_list)
         fn.data = session.data;
 
         % Check the pspm structure
-        [sts, ~, ~, ~] = pspm_load_data(fn);
-        if sts < 1
+        [lsts, ~, ~, ~] = pspm_load_data(fn);
+        if lsts < 1
             warning('The file struture has a problem'); % better warning text
             contiue; 
         end
