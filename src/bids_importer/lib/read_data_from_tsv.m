@@ -1,4 +1,10 @@
 function data = read_data_from_tsv(tsv_filepath, has_headings, headings, col_types)
+
+if ~has_headings && isempty(headings)
+    error('If the file has no header, you must provide column headings.');
+end
+
+
 opts = detectImportOptions(tsv_filepath, 'FileType', 'text', 'Delimiter', '\t');
 
 if ~has_headings

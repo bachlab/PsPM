@@ -159,7 +159,7 @@ for i = 1:length(subject_list)
 
         if ~isempty(beh_files) && length(beh_files) == 2
             fname = beh_files(1).name;
-        elseif ~isempty(physio_files) && length(beh_files) == 2
+        elseif ~isempty(physio_files) && length(physio_files) == 2
             fname = physio_files(1).name;
         else
             warning('PsPM:NoFiles','No BIDS event or physio files for %s session %s', subject_full_id, session_id);
@@ -184,7 +184,7 @@ for i = 1:length(subject_list)
 
         beh_path = fullfile(ses_path,'beh');
         
-        % Marker channel 
+        % Marker beh channel 
         events_json_filename = sprintf('%s_ses-%s_task-%s_events.json', subject_full_id, session_id, task_name);
         events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_full_id, session_id, task_name);
         events_json_filepath = fullfile(beh_path, events_json_filename);
@@ -193,7 +193,7 @@ for i = 1:length(subject_list)
         if ~isfile(events_json_filepath); error('PsPM:NoEvent','File not found: %s', events_json_filepath); end
         if ~isfile(events_tsv_filepath);  error('PsPM:NoEvent','File not found: %s', events_tsv_filepath);  end
 
-        marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath);
+        marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath,true);
 
         %% --- Build the file structure  ---
 
@@ -228,7 +228,7 @@ for i = 1:length(subject_list)
         [lsts, ~, ~, ~] = pspm_load_data(fn);
         if lsts < 1
             warning('The file struture has a problem'); % better warning text
-            contiue; 
+            continue; 
         end
 
         % add overwrite ?
@@ -239,7 +239,7 @@ for i = 1:length(subject_list)
     end
 
 end
-rmpath(libpath); % What if the function breaks at anothe parth
+rmpath(libpath); % What if the function breaks at another path
 sts = 1;
 end
 
@@ -287,44 +287,47 @@ end
 
 function [data, new_duration] = align_channels(data)
 
-num_channels = length(data);
+num_channels = length(data); % the marker channels have to be taken away
 startTimes = zeros(num_channels,1);
 
 % Determine start time for each channel (assume 0 if missing)
 for i = 1:num_channels
     if isfield(data{i}.header, 'StartTime')
-        startTimes(i) = data{i}.header.StartTime;
+        startTimes(i) = data{i}.header.StartTime; %  assuming seconds
     else
         startTimes(i) = 0;
-        data{i}.header.StartTime = 0; % sure? now everything has a StartTime if marker
+        data{i}.header.StartTime = 0;
     end
 end
 
-global_min = min(startTimes);
+global_min = min(startTimes(~isnan(startTimes))); % excludes marker
 finalLengths = zeros(num_channels,1);
 
 for i = 1:num_channels        
     shift_sec = data{i}.header.StartTime - global_min;
-    
+
     % Check if this channel is an event channel.
     if isfield(data{i}, 'markerinfo')
-        data{i}.data = data{i}.data + shift_sec;
-        rmfield(data{i}.header,'StartTime');
+        data{i}.data = data{i}.data - global_min; 
+        data{i}.header.StartTime = data{i}.data(1); 
     else
         if ~isfield(data{i}.header, 'sr')
-            warning('Channel %d is missing sampling rate (sr) in its header.', i);
+            warning('Channel %d is missing sampling rate (sr) in its header. This will lead to probelms later.', i);
+            continue;
         end
         sr = data{i}.header.sr;
         numPad = round(shift_sec * sr);
-        
-        % Prepend zeros to the data vector. Do not trim any original samples.
+
+        % Prepadded zeros to the data vector. 
         data{i}.data = [zeros(numPad, 1); data{i}.data];
-        
+
         % Record the new length.
-        finalLengths(i) = length(data{i}.data);
+        finalLengths(i) = length(data{i}.data);% whay is thes needed?
         data{i}.header.StartTime = 0;
     end    
 end
+
+display(finalLengths(:)  )
 
 
 % Padding at the end

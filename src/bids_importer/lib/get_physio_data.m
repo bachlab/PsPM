@@ -54,7 +54,7 @@ for i = 1:num_signals
     chan.header.chantype = signal;
     chan.header.sr = physio_json.SamplingFrequency; 
     chan.header.StartTime = physio_json.StartTime; 
-
+   
 
 
     % Access Units field inside the signal-specific structure
@@ -75,7 +75,7 @@ for i = 1:num_signals
     cell_index = cell_index +1; 
 end
 
-%% Process physio event data -> header eyedata maybe somewhere else?
+%% Process physio eye event data -> header eyedata maybe somewhere else?
 
 
 events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
@@ -87,30 +87,43 @@ events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
     warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change !!!!!!!!!!!
 else
+    
+    % marker_data = get_marker_data(events_json_filepath,events_tsv_filepath,false);% has Columns field
+    
+
+    % Add to physio events marker to the cell array 
+    % physio_data_cell{cell_index,1} = marker_data;
+    % 
+    % % Collect channel names for info
+    % chan_names{cell_index,1} = 'physio marker';  % find a better name
+
+    % % increase index
+    % cell_index = cell_index +1; 
+    % 
+    
     % Append the file paths
     file_paths{cell_index,1} = events_tsv_filepath;
-    
+
     % Read JSON metadata
     events_json = extract_json_as_struct(events_json_filepath);
-    
+
     % Read events TSV
     has_headings = true;
     col_types = {'double', 'double', 'char', 'char', 'char'};
     events_table = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
-    
+
     headings = events_json.Columns;  
     events_json.Columns = struct();
-    
-    % Add the tsv tabel to events_json.Columns
+
+    % Add the tsv table to events_json.Columns
     for i = 1:length(headings)
         events_json.Columns.(headings{i}) = events_table.(headings{i});
     end
-    
+
     % Get duration: last value of event time info
     duration = events_table.onset(end) - events_table.onset(1); %  duration of the EVENTS (onset)
     events_json.duration = duration;
-    
-    % events_json will be added to physio_info_data at the end of the funciton
+   
 end
 
 
@@ -303,16 +316,16 @@ else
 end  
 
 %% Extrainforamtion json 
-% Add the information that is not in header under infos.eyes.l and
+% Add the information that is not saved in header under infos.eyes.l and
 % infos.eyes.r
 
 for i = 1:n_eyes
     % Columns
     fname = eye_data_cell{i}.RecordedEye;
     
-    eye_infos.(fname).EnvironmentCoordinates = eye_data_cell{i}.EnvironmentCoordinates; % eg: "top-left" Where should i add this? gaza??
-    eye_infos.(fname).Manufacturer = eye_data_cell{i}.Manufacturer; % differente per eye
-    eye_infos.(fname).ManufacturersModelName = eye_data_cell{i}.ManufacturersModelName; % differente per eye
+    eye_infos.(fname).EnvironmentCoordinates = eye_data_cell{i}.EnvironmentCoordinates; % eg: "top-left" Where should i add this? gaze
+    eye_infos.(fname).Manufacturer = eye_data_cell{i}.Manufacturer; % different per eye
+    eye_infos.(fname).ManufacturersModelName = eye_data_cell{i}.ManufacturersModelName; % different per eye
     % RecordedEye
     eye_infos.(fname).SampleCoordinateSystem = eye_data_cell{i}.SampleCoordinateSystem; % eg: "gaze-on-screen" add to the gaze header?
     %  "SampleCoordinateUnits": "pixel"
@@ -345,6 +358,12 @@ else;  sts = 1; end
 for i = 1:length(data)
     chan_names{cell_index+i,1} = data{i}.header.chantype;
 end
+
+% make out events_data
+
+
+
+
 
 physio_info_data = infos;
 physio_info_data.chan_names = chan_names; % add the name of all eye channels!! if it is not there??
