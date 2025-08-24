@@ -16,37 +16,37 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
       else
         this.assumeFail('No Python environment set up for testing reporting current environment.');
       end
-      pyenv('Version',original_env.Executable);  % Reset to original Python environment after the test
+      pyenv('Version', original_env.Version);  % Reset to original Python environment after the test
     end
 
-    % function test_set_new_python_environment(this)
-    %   % Test setting a new Python environment
-    %   % Note: Insert a valid path for the Python executable in your system
-    %   pyrunfile("test/pspm_py_find_location.py")
-    %   pyinfo_file = 'test/py_loc.txt';
-    %   pyinfo_text   = fileread(pyinfo_file);
-    %   disp(pyinfo_text);
-    %   if isunix
-    %     pyinfo_struct = regexp(pyinfo_text, '\n', 'split'); % LF for unix
-    %   else
-    %     pyinfo_struct = regexp(pyinfo_text, '\r\n', 'split'); % CRLF for windows
-    %   end
-    %   pyinfo        = pyinfo_struct(1:2); % 3 cells last one is -> {0x0 char} (linux)
-    %   % Adjustments
-    %   if isunix
-    %     % for unix, this needs to be something like ".../python3.11"
-    %     pyinfo{1} = [pyinfo{1}, '/python', pyinfo{2}];
-    %   else
-    %     % for windows
-    %     pyinfo{1} = [pyinfo{1}, '\python.EXE'];
-    %   end
-    %   valid_python_path = pyinfo{1};
-    %   disp(valid_python_path);
-    %   original_env = pyenv;
-    %   sts = pspm_check_python(valid_python_path); % does it need a terminate(valid_python_path)?
-    %   this.verifyEqual(sts, 1, 'Test passed: Expected sts = 1 when setting a new Python environment');
-    %   pyenv('Version', original_env.Executable);  % Reset to original Python environment after the test
-    % end
+    function test_set_new_python_environment(this)
+      % Test setting a new Python environment
+      % Note: Insert a valid path for the Python executable in your system
+      pyrunfile("test/pspm_py_find_location.py")
+      pyinfo_file = 'test/py_loc.txt';
+      pyinfo_text   = fileread(pyinfo_file);
+      disp(pyinfo_text);
+      if isunix
+        pyinfo_struct = regexp(pyinfo_text, '\n', 'split'); % LF for unix
+      else
+        pyinfo_struct = regexp(pyinfo_text, '\r\n', 'split'); % CRLF for windows
+      end
+      pyinfo        = pyinfo_struct(1:2);
+      % Adjustments
+      if isunix
+        % for unix, this needs to be something like ".../python3.11"
+        pyinfo{1} = [pyinfo{1}, '/python', pyinfo{2}];
+      else
+        % for windows
+        pyinfo{1} = [pyinfo{1}, '\python.EXE'];
+      end
+      valid_python_path = pyinfo{1};
+      disp(valid_python_path);
+      original_env = pyenv;
+      sts = pspm_check_python(valid_python_path);
+      this.verifyEqual(sts, 1, 'Test passed: Expected sts = 1 when setting a new Python environment');
+      pyenv('Version', original_env.Version);  % Reset to original Python environment after the test
+    end
 
     function test_set_invalid_python_environment(this)
       % Test setting an invalid Python environment
@@ -58,9 +58,9 @@ classdef pspm_check_python_test < matlab.unittest.TestCase
     function test_python_environment_already_set(this)
       % Test when the specified Python environment is already set as the current
       original_env = pyenv;
-      sts = pspm_check_python(original_env.Executable); % original_env.Executable is the path
+      sts = pspm_check_python(original_env.Version);
       this.verifyEqual(sts, 1, 'Test failed: Expected sts = 1 when the Python environment is already set');
-      pyenv('Version', original_env.Executable);
+      pyenv('Version', original_env.Version);
     end
   end
 end
