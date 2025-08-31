@@ -135,7 +135,8 @@ delimiter.name      = 'Delimiter';
 delimiter.tag       = 'delimiter';
 delimiter.strtype   = 's';
 delimiter.help      = {['The delimiter to be used for file reading, ',...
-  'leave blank to use any whitespace character.']};
+  'leave blank to use any whitespace character. ',...
+  'Delimiter could be, for example: comma (,), semicolon (;), tab (\t), or space ( ).']};
 
 header_lines           = cfg_entry;
 header_lines.name      = 'Header lines';
