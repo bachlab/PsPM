@@ -15,7 +15,7 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %   Written in 2024 by Sourav Koulkarni & Dominik R Bach & Bernhard A. von Raußendorf (Uni Bonn)
 
 
-%% 1. Initialise -----------------------------------------------------------
+%% 1. Initialize -----------------------------------------------------------
 global settings
 if isempty(settings)
   pspm_init;
@@ -198,7 +198,7 @@ for i = 1:length(subject_list)
         %% --- Build the file structure  ---
 
         % Build infos
-        infos  = get_beh_data(subject_full_id, session_id, beh_path);
+        infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
         infos.PhysioInfos =  physio_info_data ; % maybe wrong needs better structure
         infos.DatasetDescription = dataset_description;
         infos.Participant = Participant;
@@ -275,8 +275,9 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     fclose(fileID);
 end
 
-function [infos] = get_beh_data(subject_id, session_id, beh_path) 
-beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
+function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path) 
+
+beh_json_filename    = sprintf('%s_ses-%s_task-%s_beh.json', subject_id, session_id, task_name);
 beh_json_filepath    = fullfile(beh_path, beh_json_filename);
 
 if ~isfile(beh_json_filepath);    error('Behavior sidecar JSON file not found: %s', beh_json_filepath); end
@@ -322,7 +323,7 @@ for i = 1:num_channels
         data{i}.data = [zeros(numPad, 1); data{i}.data];
 
         % Record the new length.
-        finalLengths(i) = length(data{i}.data);% whay is thes needed?
+        finalLengths(i) = length(data{i}.data);
         data{i}.header.StartTime = 0;
     end    
 end

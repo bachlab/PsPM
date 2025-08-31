@@ -19,8 +19,11 @@ function [sts, eye_data_cell] = get_eye_data(subject_id, session_id, task_name, 
 
 sts = -1;
 eye_signals = get_eyes_list(physio_path);
-if isempty(eye_signals); warning('No eye data found: %s', eye_json_filepath); sts = -1 ;end % ------ %
+eye_data_cell = {};
 
+if isempty(eye_signals)
+    warning('No eye data found for subject %s sesssion %s', subject_id,session_id); 
+else % ------ %
 
 
 num_signals = length(eye_signals);
@@ -70,5 +73,7 @@ for i = 1:num_signals
     eye_data_cell{i}.source.file = [{eye_json_filepath};{eye_tsv_filepath}];
     
 end
-sts = 1;
+    sts = 1;
+end
+
 end

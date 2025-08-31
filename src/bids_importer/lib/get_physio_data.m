@@ -5,9 +5,11 @@ function [sts , physio_data_cell, physio_info_data] = get_physio_data(subject_id
 
 %% Initialize the physio data cell array
 sts = -1;
+physio_data_cell = {}; 
+physio_info_data = {};
+
 physio_signals = { 'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
-physio_data_cell = {}; 
 
 % Initialize variables for infos
 chan_names = {}; 
@@ -31,7 +33,8 @@ for i = 1:num_signals
     % Collect file paths for infos
     file_paths{cell_index,1} = physio_tsv_filepath;
 
-    % Check if files exist
+    % Check if files exist 
+    % The warning could be confusing 
     if ~isfile(physio_json_filepath); warning('File not found: %s', physio_json_filepath);continue; end
     if ~isfile(physio_tsv_filepath);  warning('File not found: %s', physio_tsv_filepath); continue; end
 
@@ -212,6 +215,8 @@ switch n_eyes
         end
         
     otherwise; error('Unexpected number of eye data cells.'); 
+
+
 end
 
 data = data';
@@ -268,7 +273,6 @@ for i = 1:length(data)
      end
 end
 
-
 %% --- Build the eye infosstruct ----
 
 infos = struct();
@@ -304,11 +308,13 @@ if n_eyes == 2
     infos.source.eyesObserved = 'lr'; 
 elseif n_eyes == 1  
     infos.source.eyesObserved =  data{1}.header.chantype(end); 
-end    
+end  
+
 infos.source.best_eye = eye_with_smaller_nan_ratio(data, infos.source.eyesObserved);
 
 
 infos.source.type = 'Bids (jason/tsv)' ; % needs a standardized data format type name
+
 if n_eyes == 2
     infos.source.file = [eye_data_cell{1}.source.file, eye_data_cell{2}.source.file] ; %  {1},{2} gives the right order
 else
@@ -343,7 +349,7 @@ chan_names{end+1} = 'eye'; % should it have a different name?
 file_paths{end+1} = infos.source.file;
 physio_data_cell = [physio_data_cell; data];
 
-end % the end of the if  ests
+
 
 
 %% Prepare physio_info_data 
@@ -359,13 +365,12 @@ for i = 1:length(data)
     chan_names{cell_index+i,1} = data{i}.header.chantype;
 end
 
-% make out events_data
-
-
-
-
-
 physio_info_data = infos;
+
+
+end % if ests == 1
+
+
 physio_info_data.chan_names = chan_names; % add the name of all eye channels!! if it is not there??
 physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation if it is not there??
 
@@ -374,9 +379,8 @@ physio_info_data.file_paths = file_paths; % make the eye  filenames in the right
 %% add temp duration
 
 
-end % end of main function
 
-
+end
 % adapted from in pspm_get_viewpoint and pspm_get_smi
 function best_eye = eye_with_smaller_nan_ratio(data, eyes_observed)
     if length(eyes_observed) == 1;

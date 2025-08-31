@@ -65,6 +65,7 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     marker_data.markerinfo.name  = marker_tsv_data_table.event_type;
     marker_data.markerinfo.value = marker_tsv_data_table.duration;
 
+
     % marker_data.duration = onset(end) - onset(1); %  duration of the EVENTS (onset)
 
 
