@@ -19,22 +19,22 @@ function [sts, import, sourceinfo] = pspm_get_txt(datafile, import)
 %   ├.delimiter :
 %   │            [optional] A char array corresponding to the delimiter used in the
 %   │            datafile to delimit data columns. To be used it should be specified on
-%   │            the first import cell, e.g.: import{1}.delimiter == ','. Default:
+%   │            the first import cell, e.g.: import{1}.delimiter = ','. Default:
 %   │            white-space (see textscan function).
 %   ├─.header_lines :
 %   │            [optional] A numeric value corresponding to the number of header lines.
 %   │            Which means the data start on line number: "header_lines + 1". To be
 %   │            used it should be specified on the first import cell,
-%   │            e.g.: import{1}.header_lines == 3. Default: 1.
+%   │            e.g.: import{1}.header_lines = 3. Default: 1.
 %   ├─.channel_names_line :
 %   │            [optional] A numeric value corresponding to the line number where the
 %   │            channel names are specified. To be used it should be specified
-%   │            on the first import cell, e.g. import{1}.channel_names_line == 2
+%   │            on the first import cell, e.g. import{1}.channel_names_line = 2
 %   │            Default: 1.
 %   └─.exclude_columns :
 %                [optional] A numeric value corresponding to the number of columns to
 %                exclude starting from the left. To be used it should be specified on
-%                the first import cell, e.g. import{1}.exclude_columns == 2. Default: 0.
+%                the first import cell, e.g. import{1}.exclude_columns = 2. Default: 0.
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
