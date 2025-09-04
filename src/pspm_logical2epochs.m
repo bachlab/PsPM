@@ -5,7 +5,7 @@ function epochs = pspm_logical2epochs(index, sr)
 % ● Format
 %   epochs = logical2pspm_epochs(index, sr)
 % ● Arguments
-%   *        index : [logical] index vector of length datalength
+%   *        index : [logical] index vector
 %   *           sr : sample rate used when index was created
 %                    
 % ● Outputs
@@ -14,6 +14,9 @@ function epochs = pspm_logical2epochs(index, sr)
 %   Written in 2024 by Bernhard Agoué von Raußendorf
 
 %%    
+
+N   = numel(index);
+
 % Compute the differences between consecutive elements in the index array,
 % with padding at the start and end
 diff_index = diff([0; index(:); 0]);
@@ -23,6 +26,8 @@ onsets = find(diff_index == 1);
 
 % Offsets are where the difference is -1 (1 to 0 transition)
 offsets = find(diff_index == -1);
+
+if ~isempty(offsets); offsets(end) = min(offsets(end) , N); end
 
 % Combine onsets and offsets into an nx2 matrix
 epochs = double([onsets, offsets]);
