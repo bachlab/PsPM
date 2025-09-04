@@ -100,8 +100,8 @@ end
 
 % Output folder (save_path)
 if ~save_path 
-    %waring('No save path');  
-    save_path = [dataset_path, filesep, 'out']; 
+    % warning('No save path');  
+    save_path = [dataset_path, filesep, 'out'];  % fullfile
 end % if there is no save_path or there was an error not char or string = 0
 if ~exist(save_path, 'dir');  mkdir(save_path); end
 fprintf('\nImported files will be saved to:  %s\n',save_path);

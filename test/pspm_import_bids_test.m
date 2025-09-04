@@ -1,10 +1,9 @@
 classdef pspm_import_bids_test < matlab.unittest.TestCase
 properties
-    test_data_path = '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/'; % dataset level   
-    test_sub  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03'; % subject level
-    test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03/ses-01' % session level
-    temp_dir  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/tmp';
-    temp_dir_out  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/tmp'; % where the test imports the *.mat
+    test_data_path = '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/Converted Data/'; % dataset level   
+    test_sub  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'; % subject level
+    test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'; % session level
+    temp_dir_out  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/tmp';
     ref_path  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/'; % *.mat already imported
      
 end

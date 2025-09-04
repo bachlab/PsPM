@@ -17,19 +17,13 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     end
 
 
-
-    % Add maker json date to marker_data.markerinfo
-    marker_data.markerinfo = marker_json;
-    
     
     % Get marker tsv data
     marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings, col_types );
 
 
-
-
     
-    % --------- onsets ---------
+    % --------- onsets (data) ---------
 
     onsets = zeros(size(marker_tsv_data_table.onset));
 
@@ -37,33 +31,19 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     for i = 1:numel(marker_tsv_data_table.onset)
         onsets(i) = marker_tsv_data_table.onset(i); 
     end
-
     marker_data.data = onsets;
-
     % Should the start and end blocks be remove??
 
 
-    % --------- markerinfo from  tsv---------
-    if noColumnField
-    headings = headings(~strcmp(headings, 'onset'));
+    % --------- markerinfo from  tsv ---------
 
-    for i = 1:length(headings(~strcmp(headings, 'onset'))  )
-        marker_data.markerinfo.Columns.(headings{i}) = marker_tsv_data_table.(headings{i}); % makes columns field to not make problems with the same named fields
-    end
-
-
-    else
-    marker_data.markerinfo.Columns = struct();
-    headings = headings(~strcmp(headings, 'onset'));       
-    for i = 1:length(headings(~strcmp(headings, 'onset'))  )
-        marker_data.markerinfo.Columns.(headings{i}) = marker_tsv_data_table.(headings{i}); % adds to the already existing Columns field
-    end   
-    end
 
     % the format is needed for pspm_check_data it isalso under markerinfo
     % under the duration event_type
-    marker_data.markerinfo.name  = marker_tsv_data_table.event_type;
-    marker_data.markerinfo.value = marker_tsv_data_table.duration;
+    names = marker_tsv_data_table.event_type;
+    marker_data.markerinfo.name  = names;
+    [~,~,idxnames] = unique(names,'stable');
+    marker_data.markerinfo.value = idxnames;
 
 
     % marker_data.duration = onset(end) - onset(1); %  duration of the EVENTS (onset)
@@ -74,6 +54,6 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     marker_data.header.units = 'events';
     marker_data.header.sr = 1; % is needed for pspm_check_data
     marker_data.header.StartTime = marker_data.data(1); % onset /
-    %including start block  not really needed 
+    % including start block  not really needed 
 
 end
