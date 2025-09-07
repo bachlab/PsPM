@@ -71,7 +71,7 @@ classdef import_smi_test < matlab.unittest.TestCase
             msg = parts{5};
             msg = msg(1 + numel('# Message: ') : end);
             this.verifyEqual(tbeg, data{1}.markers(msg_counter));
-            this.verifyEqual(msg, data{1}.markerinfos.name{msg_counter});
+            this.verifyEqual(msg, data{1}.markerinfo.name{msg_counter});
             msg_counter = msg_counter + 1;
           end
         end

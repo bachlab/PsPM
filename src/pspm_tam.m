@@ -14,7 +14,7 @@ function tam = pspm_tam(model, options)
 %   │               a struct (single session) with fields .names, .onsets,
 %   │               and (optional) .durations OR
 %   │               a cell array of struct OR
-%   │               a struct with fields 'markerinfos', 'markervalues',
+%   │               a struct with fields 'markerinfo', 'markervalues',
 %   │               'names' OR
 %   │               a cell array of struct
 %   ├──.timeunits:  a char array equal to 'seconds', 'samples' or 'markers'
@@ -162,7 +162,7 @@ oldsr = sr;
 
 % Checking if the sampling rate is the same for all samples.
 if n_file > 1 && any(diff(sr) > 0)
-  if model.filter.down > min(sr)) ||...                                    % if filter.down is less than the minimal sr
+  if model.filter.down > min(sr) ||...                                    % if filter.down is less than the minimal sr
       strcmpi(model.filter.down,'none')                                    % if filter.down is none
     model.filter.down = min(sr);
     fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n')

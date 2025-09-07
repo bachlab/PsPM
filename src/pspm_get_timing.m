@@ -19,7 +19,7 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %                  - a struct (single session) with fields .names, .onsets,
 %                       and (optional) .durations and .pmod
 %                  - a cell array of struct
-%                  - a struct with fields 'markerinfos', 'markervalues,
+%                  - a struct with fields 'markerinfo', 'markervalues,
 %                   'names' OR
 %                  - a cell array of struct
 %
@@ -27,16 +27,16 @@ function [sts, outtiming] = pspm_get_timing(varargin)
 %
 %   onsets and timeunits are 'markervalues':
 %      for defining onsets for multiple conditions (e.g. GLM) from
-%      entries in markerinfos:
+%      entries in markerinfo:
 %      intiming:  - a struct with fields 'markerinfo', 'markervalues',
 %                   'names' OR
 %                 - a cell array of struct
 %                 - in both cases:
 %                    - markerinfo as loaded from a marker channel
 %                    - if markervalues is a vector of numeric, this creates
-%                      conditions from the corresponding entries in markerinfos.value
+%                      conditions from the corresponding entries in markerinfo.value
 %                    - if markervalues is a cell array of char, it creates
-%                      conditions from the corresponding entries in markerinfos.name
+%                      conditions from the corresponding entries in markerinfo.name
 %                    - names: cell array of condition names for the values
 %                      indicated in markervalues
 %

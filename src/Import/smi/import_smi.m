@@ -34,8 +34,9 @@ function [data] = import_smi(varargin)
     %                           - xmax: x coordinate of bottom right corner of screen in pixels.
     %                           - ymax: y coordinate of bottom right corner of screen in pixels.
     %                       markers: Times of markers.
-    %                       markerinfos: Structure with fields
-    %                           - names: Cell array of marker names.
+    %                       markerinfo: Structure with fields
+    %                           - name: Cell array of marker names.
+    %                           - value: Numerical array of marker values
     %                       record_date: Recording date
     %                       record_time: Recording time
     %
@@ -346,8 +347,8 @@ function [data] = import_smi(varargin)
         end
         %% messages
         data{sn}.markers = [];
-        data{sn}.markerinfos.value = [];
-        data{sn}.markerinfos.name = {};
+        data{sn}.markerinfo.value = [];
+        data{sn}.markerinfo.name = {};
         val_msg_idx = cell2mat(msgs(2, :)) == sn;
         if ~isempty(val_msg_idx)
             msg_times_in_sn = cell2mat(msgs(1, :));
@@ -358,14 +359,14 @@ function [data] = import_smi(varargin)
             for u=1:length(msg_str_idx)
                 msg_str{u} = msg_str{u}(msg_str_idx(u)+2:end);
             end
-            data{sn}.markerinfos.name = msg_str;
+            data{sn}.markerinfo.name = msg_str;
 
             messages = unique(msg_str);
             msg_indices_in_uniq = [];
             for i = 1:numel(msg_str)
                 msg_indices_in_uniq(end + 1) = find(strcmpi(msg_str{i}, messages));
             end
-            data{sn}.markerinfos.value = msg_indices_in_uniq;
+            data{sn}.markerinfo.value = msg_indices_in_uniq;
         end
 
         %% remove lines containing NaN (i.e. pure text lines) so that lines have a time interpretation

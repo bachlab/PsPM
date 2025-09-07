@@ -6,7 +6,7 @@ function [sts, import, sourceinfo] = pspm_get_smi(datafile, import)
 % ● Arguments
 %   *  datafile : String or cell array of strings. The size of the cell
 %                 array can be 1 or 2. If datafile is string, it must be the
-%                 path to the sample file containing eye measuremnts. The file
+%                 path to the sample file containing eye measurements. The file
 %                 must be stored in ASCII format. If datafile is a cell array,
 %                 the first element must be the path to the sample file defined
 %                 above. The optional second string in the cell array can be
@@ -108,7 +108,7 @@ try
     data = import_smi(datafile{1});
   end
 catch err
-  warning(err.identifier, err.message);
+  warning(err.identifier, '%s', err.message);
   return;
 end
 if numel(data) > 1
@@ -492,12 +492,12 @@ for c = 1:numel(data)
   end
 
   n_data_in_session = size(data{c}.channels, 1);
-  n_markers_in_session = numel(data{c}.markerinfos.name);
+  n_markers_in_session = numel(data{c}.markerinfo.name);
 
   data_concat(end + 1:(end + n_data_in_session), 1:n_cols) = data{c}.channels;
   markers(end + 1:(end + n_markers_in_session), 1) = data{c}.markers' * microsec_to_sec;
-  mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.value';
-  mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfos.name';
+  mi_values(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfo.value';
+  mi_names(end + 1:(end + n_markers_in_session),1) = data{c}.markerinfo.name';
 
   last_time = end_time;
 end
