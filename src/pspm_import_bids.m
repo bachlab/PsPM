@@ -22,7 +22,7 @@ if isempty(settings)
 end
 sts = -1;  
 outfile = {};
-
+dataset_description = struct();
 
 % checks inputs
 if ~(ischar(dataset_path) || isstring(dataset_path))
@@ -53,7 +53,7 @@ addpath(libpath);
 
 [~, currentFolder] = fileparts(dataset_path); 
 % problems with path that are written like /path/fold/ with "/" at the end
-% under linux -> needs to be tests under mac and windows
+% under linux -> needs to be tests under mac and windows !!
 if isempty(currentFolder)
     dataset_path = dataset_path(1:end-1);
     [~, currentFolder] = fileparts(dataset_path); 
@@ -66,13 +66,12 @@ ses_mode = startsWith(currentFolder, 'ses-');
 
 % dataset mode
 if dataset_mode
-    % Get dataset metadata
-    dataset_description = read_dataset_description(dataset_path); % optional
-    [participants_data, participant_data_headings] = read_participants_data(dataset_path); % has to be there
-    
-    % Store participant information headings in dataset description
-    dataset_description.ParticipantInformation = participant_data_headings;
-    
+
+    % imports dataset description and participant information if available
+    dataset_description = read_dataset_description(dataset_path); 
+    [dataset_description.Participants.data, dataset_description.Participants.headings] ...
+     = read_participants_data(dataset_path);
+
     % Get list of subject directories (assumes names start with 'sub-')
     subject_list = dir(fullfile(dataset_path, 'sub-*'));
     subject_list = subject_list([subject_list.isdir]);
@@ -89,11 +88,13 @@ else
 
     % dataset_path now becomes the real dataset level path 
     dataset_path = fileparts(sub_path); % on  level above the subject folder -> dataset What if there is no dataset folder ??
-    dataset_description = read_dataset_description(dataset_path); % optional!
-    [participants_data, participant_data_headings] = read_participants_data(dataset_path); % NOT optional
-   
+  
+    % % imports dataset description and participant information if available
+    dataset_description = read_dataset_description(dataset_path); 
+    [dataset_description.Participants.data, dataset_description.Participants.headings] ...
+     = read_participants_data(dataset_path);
+
     % Store participant information headings in dataset description
-    dataset_description.ParticipantInformation = participant_data_headings; % maybe just the one that is imported??
        
     [~, subject_list(1).name] = fileparts(sub_path); % only one subject
 end
@@ -113,13 +114,22 @@ for i = 1:length(subject_list)
     sub_idx_str = regexp(subject_full_id, '\d+$', 'match', 'once');
     sub_idx = str2double(sub_idx_str); % e.g. '01' -> 1
     
-    % Build participant structure by mapping each field.
-    Participant = struct();
-    for p_info_ind = 1:numel(participant_data_headings)
-        field_name = participant_data_headings{p_info_ind};
-        Participant.(field_name) = participants_data{p_info_ind}{sub_idx};
+    % 
+    if isfield(dataset_description, 'Participants') && ~isempty(dataset_description.Participants) && ~isempty(dataset_description.Participants.data)
+        indx = find(contains(dataset_description.Participants.data{1}, subject_full_id));
+        % name
+        currentParticipant.(dataset_description.Participants.headings{1}) = ...
+        dataset_description.Participants.data{1}{indx};
+        % age
+        currentParticipant.(dataset_description.Participants.headings{2}) = ...
+        dataset_description.Participants.data{2}{indx};
+        % sex
+        currentParticipant.(dataset_description.Participants.headings{3}) = ...
+        dataset_description.Participants.data{3}{indx};
+        % handedness
+        currentParticipant.(dataset_description.Participants.headings{4}) = ...
+        dataset_description.Participants.data{4}{indx};
     end
-   
     % 
     fprintf('\n------------------------------------------------------------------------------------------------------------------------');
     fprintf('\n------------------------------------------------------------------------------------------------------------------------');
@@ -193,6 +203,7 @@ for i = 1:length(subject_list)
         if ~isfile(events_json_filepath); error('PsPM:NoEvent','File not found: %s', events_json_filepath); end
         if ~isfile(events_tsv_filepath);  error('PsPM:NoEvent','File not found: %s', events_tsv_filepath);  end
 
+        %  what is with the column fields?
         marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath,true);
 
         %% --- Build the file structure  ---
@@ -200,16 +211,17 @@ for i = 1:length(subject_list)
         % Build infos
         infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
         infos.PhysioInfos =  physio_info_data ; % maybe wrong needs better structure
-        infos.DatasetDescription = dataset_description;
-        infos.Participant = Participant;
-        
+
+        if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
+        if ~isempty(currentParticipant); infos.Participant = currentParticipant; end
+
         % --- save per ses 
         %session.infos = infos;
         session.data = {};
         session.data{end+1} = marker_chan;
         session.data = [session.data ; physio_data_cell];
         
-        % aligne all channels
+        % align all channels
         [session.data, infos.duration] = align_channels(session.data);
         
         % update duration after alignment
@@ -265,14 +277,20 @@ function dataset_description = read_dataset_description(dataset_path)
 end
 
 function [participants_data, column_headings] = read_participants_data(dataset_path)
+    % Imports the participant data from participiants.tsv (independent the participiants.json)   
+    participants_data = {};
+    column_headings = {};
     participants_tsv_filepath = fullfile(dataset_path, 'participants.tsv');
-    fileID = fopen(participants_tsv_filepath, 'r');
-    header_line = fgetl(fileID);
-    column_headings = strsplit(header_line, '\t');
-    num_columns = numel(column_headings);
-    format_spec = repmat('%s', 1, num_columns);
-    participants_data = textscan(fileID, format_spec, 'Delimiter', '\t');
-    fclose(fileID);
+    
+    if exist(participants_tsv_filepath,'file')
+        fileID = fopen(participants_tsv_filepath, 'r');
+        header_line = fgetl(fileID);
+        column_headings = strsplit(header_line, '\t');
+        num_columns = numel(column_headings);
+        format_spec = repmat('%s', 1, num_columns);
+        participants_data = textscan(fileID, format_spec, 'Delimiter', '\t');
+        fclose(fileID);
+    end
 end
 
 function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path) 
@@ -328,6 +346,8 @@ for i = 1:num_channels
     end    
 end
 
+
+%!!!!!!!!!!!!!!!!!!!!
 display(finalLengths(:)  )
 
 
@@ -340,5 +360,4 @@ if sts ~= 1 % if all are the same size does it give en error?
 end
 
 end
-
 

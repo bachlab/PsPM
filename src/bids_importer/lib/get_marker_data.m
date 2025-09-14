@@ -3,7 +3,7 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
     has_headings = true;
     marker_data.header = struct();
 
-    col_types = {'double', 'double', 'char', 'char', 'char'}; % if there are just 4 it is fine
+    col_types = {'double', 'double', 'char', 'char', 'char'};
         
     % Get the marker json
     marker_json = extract_json_as_struct(events_json_filepath);
@@ -16,12 +16,14 @@ function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath
         headings = []; % should not happen what happens later the??
     end
 
-
+    
+    
+    
     
     % Get marker tsv data
     marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings, col_types );
 
-
+    % marker_json.Columns{5}(1)
     
     % --------- onsets (data) ---------
 

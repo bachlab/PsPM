@@ -8,7 +8,7 @@ sts = -1;
 physio_data_cell = {}; 
 physio_info_data = {};
 
-physio_signals = { 'ecg','ppg', 'scr'};
+physio_signals = {'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
 
 % Initialize variables for infos
@@ -79,8 +79,6 @@ for i = 1:num_signals
 end
 
 %% Process physio eye event data -> header eyedata maybe somewhere else?
-
-
 events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
 events_tsv_filename  = sprintf('%s_ses-%s_task-%s_physioevents.tsv', subject_id, session_id, task_name);
 events_json_filepath = fullfile(physio_path, events_json_filename);
@@ -90,44 +88,17 @@ events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
     warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change !!!!!!!!!!!
 else
-    
-    % marker_data = get_marker_data(events_json_filepath,events_tsv_filepath,false);% has Columns field
-    
-
-    % Add to physio events marker to the cell array 
-    % physio_data_cell{cell_index,1} = marker_data;
-    % 
-    % % Collect channel names for info
-    % chan_names{cell_index,1} = 'physio marker';  % find a better name
-
-    % % increase index
-    % cell_index = cell_index +1; 
-    % 
-    
     % Append the file paths
     file_paths{cell_index,1} = events_tsv_filepath;
 
-    % Read JSON metadata
-    events_json = extract_json_as_struct(events_json_filepath);
+    marker_data = get_marker_data(events_json_filepath,events_tsv_filepath,false);% has Columns field
+    
+    % move this to alignment will be aligned when eye data is imported
 
-    % Read events TSV
-    has_headings = true;
-    col_types = {'double', 'double', 'char', 'char', 'char'};
-    events_table = read_data_from_tsv(events_tsv_filepath, has_headings, [], col_types);
+    physio_data_cell{cell_index,1} = marker_data;
+    cell_index = cell_index +1; 
 
-    headings = events_json.Columns;  
-    events_json.Columns = struct();
-
-    % Add the tsv table to events_json.Columns
-    for i = 1:length(headings)
-        events_json.Columns.(headings{i}) = events_table.(headings{i});
-    end
-
-    % Get duration: last value of event time info
-    duration = events_table.onset(end) - events_table.onset(1); %  duration of the EVENTS (onset)
-    events_json.duration = duration;
-   
-end
+end % end of physio marker
 
 
 %% % Process eye data
@@ -273,7 +244,7 @@ for i = 1:length(data)
      end
 end
 
-%% --- Build the eye infosstruct ----
+%% --- Build the eye infos struct ----
 
 infos = struct();
 infos.source = struct();
@@ -366,6 +337,16 @@ for i = 1:length(data)
 end
 
 physio_info_data = infos;
+
+
+
+% cell array where each cell holds a struct (or maybe empty/misc)
+fname = 'markerinfo';
+
+hasField = cellfun(@(x) isstruct(x) && isfield(x, fname), physio_data_cell);
+idx = find(hasField);               % indices of cells whose struct has the field
+
+
 
 
 end % if ests == 1
