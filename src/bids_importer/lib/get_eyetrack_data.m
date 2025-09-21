@@ -70,7 +70,7 @@ for i = 1:num_signals
     
     % Store the combined struct into the cell array
     eye_data_cell{i} = eye_json;
-    eye_data_cell{i}.source.file = [{eye_json_filepath};{eye_tsv_filepath}];
+    eye_data_cell{i}.source.file = [{eye_json_filepath}, {eye_tsv_filepath}];
     
 end
     sts = 1;

@@ -23,6 +23,7 @@ end
 sts = -1;  
 outfile = {};
 dataset_description = struct();
+currentParticipant = struct();
 
 % checks inputs
 if ~(ischar(dataset_path) || isstring(dataset_path))
@@ -69,8 +70,7 @@ if dataset_mode
 
     % imports dataset description and participant information if available
     dataset_description = read_dataset_description(dataset_path); 
-    [dataset_description.Participants.data, dataset_description.Participants.headings] ...
-     = read_participants_data(dataset_path);
+    [Participants.data, Participants.headings]  = read_participants_data(dataset_path);
 
     % Get list of subject directories (assumes names start with 'sub-')
     subject_list = dir(fullfile(dataset_path, 'sub-*'));
@@ -91,8 +91,7 @@ else
   
     % % imports dataset description and participant information if available
     dataset_description = read_dataset_description(dataset_path); 
-    [dataset_description.Participants.data, dataset_description.Participants.headings] ...
-     = read_participants_data(dataset_path);
+    [Participants.data, Participants.headings] = read_participants_data(dataset_path);
 
     % Store participant information headings in dataset description
        
@@ -114,8 +113,8 @@ for i = 1:length(subject_list)
     sub_idx_str = regexp(subject_full_id, '\d+$', 'match', 'once');
     sub_idx = str2double(sub_idx_str); % e.g. '01' -> 1
     
-    % 
-    if isfield(dataset_description, 'Participants') && ~isempty(dataset_description.Participants) && ~isempty(dataset_description.Participants.data)
+    % get current Participant
+    if ~isempty(Participants.headings) && ~isempty(Participants.data)
         indx = find(contains(dataset_description.Participants.data{1}, subject_full_id));
         % name
         currentParticipant.(dataset_description.Participants.headings{1}) = ...
@@ -186,7 +185,7 @@ for i = 1:length(subject_list)
 
         % --- get physio data ---
         physio_path = fullfile(ses_path,'physio');
-        [psts, physio_data_cell, physio_info_data] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
+        [psts, physio_data, physio_infos] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         
         if psts < 1; warning('No Physio data'); end % Fix
 
@@ -204,47 +203,59 @@ for i = 1:length(subject_list)
         if ~isfile(events_tsv_filepath);  error('PsPM:NoEvent','File not found: %s', events_tsv_filepath);  end
 
         %  what is with the column fields?
-        marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath,true);
+        marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath,false);
+        % get behave json (not the marker)
+        beh_json  = get_beh_json(subject_full_id, session_id, task_name, beh_path);
 
         %% --- Build the file structure  ---
+        % Build sessions infos
+       
 
-        % Build infos
-        infos  = get_beh_data(subject_full_id, session_id, task_name, beh_path);
-        infos.PhysioInfos =  physio_info_data ; % maybe wrong needs better structure
+        % ses.infos.duration - will be added after alignment
+        ses.infos.sourcefile = 1; % add the source files !
+        % infos.importfile - will be added before saving
+        dt = datetime('now'); 
+        ses.infos.importdate = sprintf('%.2d.%.2d.%.2d', dt.Day, dt.Month, dt.Year); % same as import_eyelink and importviewpoint; 
+        ses.infos.sourcetype = 'BIDS (json/tsv)'; % physio_infos.infos;
+        % ses.infos.recdate - no information;
+        % ses.info.rectime - no information;
 
+       % if infos.source
+        ses.infos.source = physio_infos.source;
         if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
-        if ~isempty(currentParticipant); infos.Participant = currentParticipant; end
+        if ~isempty(fieldnames(currentParticipant)); infos.Participant = currentParticipant; end
 
-        % --- save per ses 
-        %session.infos = infos;
-        session.data = {};
-        session.data{end+1} = marker_chan;
-        session.data = [session.data ; physio_data_cell];
+        %  save per session
+    
+        ses.data = {};
+        ses.data{1} = marker_chan;
+        ses.data = [ses.data ; physio_data]; % Marker channel first
         
         % align all channels
-        [session.data, infos.duration] = align_channels(session.data);
+        [ses.data, ses.infos.duration] = align_channels(ses.data);
         
-        % update duration after alignment
-        infos.Physio.duration  = infos.duration;
+
 
         % Save session (cogent) file once per subject
         cogent_ses_file_name = sprintf('pspm_%s_ses-%s.mat', subject_full_id,session_id);
         cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
         outfile{end+1} = cogent_ses_filepath;
-        infos.importfile = cogent_ses_filepath;
-        
-        fn.infos = infos;
-        fn.data = session.data;
 
+        ses.infos.importfile = cogent_ses_filepath; 
+        
         % Check the pspm structure
+        fn.infos = ses.infos;
+        fn.data = ses.data;
+
         [lsts, ~, ~, ~] = pspm_load_data(fn);
         if lsts < 1
             warning('The file struture has a problem'); % better warning text
             continue; 
         end
 
-        % add overwrite ?
-        data = session.data;
+        %  overwrite 
+        data = ses.data;
+        infos = fn.infos;
         save(cogent_ses_filepath,'infos', 'data');
         fprintf('\n\nSaved cogent file to %s\n', cogent_ses_filepath);
 
@@ -258,12 +269,13 @@ end
 %% 4. Sub-functions ---------------------------------------------------------
 
 function dataset_description = read_dataset_description(dataset_path)
+% returns [] if dataset_description.json does not exist
     dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
 
     if ~exist(dataset_description_filepath, 'file')
         warning('read_dataset_description:MissingFile', ...
             'dataset_description.json is missing in the specified path: %s', dataset_path);
-        dataset_description = struct();
+        dataset_description = [];
         return;
     end
 
@@ -271,13 +283,14 @@ function dataset_description = read_dataset_description(dataset_path)
     try
         dataset_description = jsondecode(fileread(dataset_description_filepath));
     catch ME
-        error('read_dataset_description:ReadError', ...
+        warning('read_dataset_description:ReadError', ...
             'Failed to read or parse dataset_description.json: %s', ME.message);
+        dataset_description = [];
     end
 end
 
 function [participants_data, column_headings] = read_participants_data(dataset_path)
-    % Imports the participant data from participiants.tsv (independent the participiants.json)   
+    % Imports the participant data from participants.tsv (independent the participiants.json)   
     participants_data = {};
     column_headings = {};
     participants_tsv_filepath = fullfile(dataset_path, 'participants.tsv');
@@ -293,7 +306,7 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     end
 end
 
-function [infos] = get_beh_data(subject_id, session_id, task_name, beh_path) 
+function [infos] = get_beh_json(subject_id, session_id, task_name, beh_path) 
 
 beh_json_filename    = sprintf('%s_ses-%s_task-%s_beh.json', subject_id, session_id, task_name);
 beh_json_filepath    = fullfile(beh_path, beh_json_filename);

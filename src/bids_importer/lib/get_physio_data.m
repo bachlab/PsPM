@@ -1,26 +1,28 @@
-function [sts , physio_data_cell, physio_info_data] = get_physio_data(subject_id, session_id, task_name, physio_path)
+function [sts , physio_data, physio_infos] = get_physio_data(subject_id, session_id, task_name, physio_path)
 % Returns a  cell array where each cell contains a struct with fields header and data (and markerinfo for events)
 % Also returns physio_info_data needed to create 'info' struct
 % UPDATE HELPTEXT
 
 %% Initialize the physio data cell array
 sts = -1;
-physio_data_cell = {}; 
-physio_info_data = {};
+physio_data = {}; 
+physio_infos = {};
 
 physio_signals = {'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
 
 % Initialize variables for infos
+
 chan_names = {}; 
 file_paths = {}; 
 
 % Index to keep track of the cell array
-cell_index = 1;
+cell_index = 0;
 
 
 %% Process each physio signal
 for i = 1:num_signals   
+
     signal = physio_signals{i};
     
     % Construct filenames
@@ -30,13 +32,18 @@ for i = 1:num_signals
     physio_json_filepath = fullfile(physio_path, physio_json_filename);
     physio_tsv_filepath  = fullfile(physio_path, physio_tsv_filename);
 
-    % Collect file paths for infos
-    file_paths{cell_index,1} = physio_tsv_filepath;
+
 
     % Check if files exist 
     % The warning could be confusing 
     if ~isfile(physio_json_filepath); warning('File not found: %s', physio_json_filepath);continue; end
     if ~isfile(physio_tsv_filepath);  warning('File not found: %s', physio_tsv_filepath); continue; end
+    
+    % index
+    cell_index = cell_index +1;
+    
+    % Collect file paths for infos
+    file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
 
     % Read JSON metadata
     physio_json = extract_json_as_struct(physio_json_filepath);
@@ -69,13 +76,9 @@ for i = 1:num_signals
     chan.data = physio_data_table.(headings{1});
 
     % Add to physio data cell array 
-    physio_data_cell{cell_index,1} = chan;
-
-    % Collect channel names for info
-    chan_names{cell_index,1} = signal;
+    physio_data{cell_index,1} = chan;
 
 
-    cell_index = cell_index +1; 
 end
 
 %% Process physio eye event data -> header eyedata maybe somewhere else?
@@ -88,16 +91,11 @@ events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
 if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
     warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change !!!!!!!!!!!
 else
-    % Append the file paths
-    file_paths{cell_index,1} = events_tsv_filepath;
-
-    marker_data = get_marker_data(events_json_filepath,events_tsv_filepath,false);% has Columns field
-    
-    % move this to alignment will be aligned when eye data is imported
-
-    physio_data_cell{cell_index,1} = marker_data;
     cell_index = cell_index +1; 
+    marker_data = get_marker_data(events_json_filepath,events_tsv_filepath,false); % has Columns 
 
+    file_paths{cell_index,1} = {events_json_filepath,events_tsv_filepath}; 
+    physio_data{cell_index,1} = marker_data;
 end % end of physio marker
 
 
@@ -214,12 +212,14 @@ for i = 1:length(data)
         if strcmp(data{i}.header.chantype(6) , 'x')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_x_r
-               data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               % data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
                data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.r =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
-               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.units =   eye_data_cell{idxLeft}.x_coordinate.Units; % 
                data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]      
            else; warning('Something went worng with gaze  y channels')
@@ -228,13 +228,15 @@ for i = 1:length(data)
         elseif strcmp(data{i}.header.chantype(6) , 'y')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_y_r
-               data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
+               % data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
+               data{i}.header.units =   eye_data_cell{idxRight}.y_coordinate.Units; 
                data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
-               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
+               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
+               data{i}.header.units =   eye_data_cell{idxLeft}.y_coordinate.Units; %'pixel';
                data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency; 
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       
@@ -244,120 +246,72 @@ for i = 1:length(data)
      end
 end
 
-%% --- Build the eye infos struct ----
+%% --- Build the eye infos.source  ----
 
-infos = struct();
-infos.source = struct();
-infos.importdate =  datestr(date, 'dd-mmm-yyyy');
-infos.duration = eye_data_cell{1}.RecordingDuration;  % will be changed later after alignment
-infos.durationinfo = 'Recording duration in seconds'; % Assumed to allays be seconds
-infos.importfile = ''; % will be added before saving
-infos.history = {''}; % what should be here??
+physio_infos.source = struct();        
 
 % --- infos.source ---
-infos.source.channel = {};% {'Column 02'} {'Column 01'} How to add this ???? from the imported files
+physio_infos.source.channel = {};% {'Column 02'} {'Column 01'} How to add this ???? from the imported files
 % nan_stats 
-infos.source.chan_stats = cell(length(data), 1); 
+physio_infos.source.chan_stats = cell(length(data), 1); 
 for i = 1:length(data)
     n_data = size(data{i}.data, 1);
     n_inv = sum(isnan(data{i}.data));
-    infos.source.chan_stats{i,1} = struct();
-    infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
+    physio_infos.source.chan_stats{i,1} = struct();
+    physio_infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
 end
 
-% date and time
-infos.source.date = '01.01.1900'; % no information in jsons
-infos.source.time = '00:00:00'; % no information in jsons
+% % date and time
+% infos.source.date = '01.01.1900'; % no information in json
+% infos.source.time = '00:00:00'; % no information in json
 
 % gaze_coords % Is the gaze range for both eyes always the same?
 if ~isequal(eye_data_cell{idxRight}.GazeRange, eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal"); end % if single eye data it will be equal
-infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
-infos.source.elcl_proc = eye_data_cell{idxRight}.PupilFitMethod; % or should it be called PupilFitMethod? lowercase!
+physio_infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
+physio_infos.source.elcl_proc = eye_data_cell{idxRight}.PupilFitMethod; % or should it be called PupilFitMethod? lowercase!
 
 % eyesObserved and best_eye
 if n_eyes == 2
-    infos.source.eyesObserved = 'lr'; 
+    physio_infos.source.eyesObserved = 'lr'; 
 elseif n_eyes == 1  
-    infos.source.eyesObserved =  data{1}.header.chantype(end); 
+    physio_infos.source.eyesObserved =  data{1}.header.chantype(end); 
 end  
 
-infos.source.best_eye = eye_with_smaller_nan_ratio(data, infos.source.eyesObserved);
+physio_infos.source.best_eye = eye_with_smaller_nan_ratio(data, physio_infos.source.eyesObserved);
+physio_infos.source.type = 'BIDS (json/tsv)' ; % needs a standardized data format type name
 
-
-infos.source.type = 'Bids (jason/tsv)' ; % needs a standardized data format type name
-
+cell_index = cell_index + 1;
 if n_eyes == 2
-    infos.source.file = [eye_data_cell{1}.source.file, eye_data_cell{2}.source.file] ; %  {1},{2} gives the right order
+    % physio_infos.source.file = [eye_data_cell{1}.source.file, eye_data_cell{2}.source.file] ; %  {1},{2} gives the right order
+    file_paths{cell_index,1} = eye_data_cell{1}.source.file; 
+    file_paths{cell_index+1,1} = eye_data_cell{2}.source.file; 
 else
-    infos.source.file = [eye_data_cell{1}.source.file] ;
+    file_paths{cell_index,1} = eye_data_cell{1}.source.file ;
 end  
 
-%% Extrainforamtion json 
-% Add the information that is not saved in header under infos.eyes.l and
-% infos.eyes.r
-
-for i = 1:n_eyes
-    % Columns
-    fname = eye_data_cell{i}.RecordedEye;
-    
-    eye_infos.(fname).EnvironmentCoordinates = eye_data_cell{i}.EnvironmentCoordinates; % eg: "top-left" Where should i add this? gaze
-    eye_infos.(fname).Manufacturer = eye_data_cell{i}.Manufacturer; % different per eye
-    eye_infos.(fname).ManufacturersModelName = eye_data_cell{i}.ManufacturersModelName; % different per eye
-    % RecordedEye
-    eye_infos.(fname).SampleCoordinateSystem = eye_data_cell{i}.SampleCoordinateSystem; % eg: "gaze-on-screen" add to the gaze header?
-    %  "SampleCoordinateUnits": "pixel"
-    %  "SamplingFrequency": 1000,
-    eye_infos.(fname).SoftwareVersion = eye_data_cell{i}.ManufacturersModelName; % eg: EYELINK II CL v5.15 Jan 24 2018
-    %    "pupil_size": { "Description": "Pupil diameter",  "Units": "mm"  }
-    
-    eye_infos.(fname).MaximalCalibrationError = eye_data_cell{i}.MaximalCalibrationError;
-    eye_infos.(fname).AverageCalibrationError = eye_data_cell{i}.AverageCalibrationError;
-    eye_infos.(fname).EyeTrackerDistance = eye_data_cell{i}.EyeTrackerDistance;
-end
-
-% add the eye data  
-chan_names{end+1} = 'eye'; % should it have a different name?
-file_paths{end+1} = infos.source.file;
-physio_data_cell = [physio_data_cell; data];
-
-
-
-
-%% Prepare physio_info_data 
-
-% Not good change it !!!
-if isempty(data)
-    error('No data importated')
-else;  sts = 1; end
-
-
-% Add the eye channel names
-for i = 1:length(data)
-    chan_names{cell_index+i,1} = data{i}.header.chantype;
-end
-
-physio_info_data = infos;
-
-
-
-% cell array where each cell holds a struct (or maybe empty/misc)
-fname = 'markerinfo';
-
-hasField = cellfun(@(x) isstruct(x) && isfield(x, fname), physio_data_cell);
-idx = find(hasField);               % indices of cells whose struct has the field
-
-
-
+% add the eye data
+physio_data = [physio_data; data];
 
 end % if ests == 1
 
 
-physio_info_data.chan_names = chan_names; % add the name of all eye channels!! if it is not there??
-physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation if it is not there??
+% Not good change it !!!
+if isempty(physio_data)
+    error('No data importated')
+else;  sts = 1; 
+end
 
 
+% makes a array of channel names
+chan_names = cellfun(@(x) x.header.chantype, physio_data, 'UniformOutput', false);
 
-%% add temp duration
+physio_infos.source.file = file_paths;
+
+physio_infos.chan_names = chan_names; 
+% physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation if it is not there??
+% RecordingDuration (eye data) sanity check?
+
+
 
 
 
