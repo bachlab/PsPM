@@ -212,14 +212,14 @@ for i = 1:length(data)
         if strcmp(data{i}.header.chantype(6) , 'x')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_x_r
-               % data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
-               data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
+               data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               % data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
                data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.r =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
-               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.units =   eye_data_cell{idxLeft}.x_coordinate.Units; % 
+               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               % data{i}.header.units =   eye_data_cell{idxLeft}.x_coordinate.Units; % 
                data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]      
            else; warning('Something went worng with gaze  y channels')
@@ -228,15 +228,15 @@ for i = 1:length(data)
         elseif strcmp(data{i}.header.chantype(6) , 'y')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_y_r
-               % data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
-               data{i}.header.units =   eye_data_cell{idxRight}.y_coordinate.Units; 
+               data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
+               % data{i}.header.units =   eye_data_cell{idxRight}.y_coordinate.Units; 
                data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
-               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
-               data{i}.header.units =   eye_data_cell{idxLeft}.y_coordinate.Units; %'pixel';
+               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
+               % data{i}.header.units =   eye_data_cell{idxLeft}.y_coordinate.Units; %'pixel';
                data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency; 
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       

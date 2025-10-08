@@ -67,9 +67,8 @@ ses_mode = startsWith(currentFolder, 'ses-');
 
 % dataset mode
 if dataset_mode
-
     % imports dataset description and participant information if available
-    dataset_description = read_dataset_description(dataset_path); 
+    % dataset_description = read_dataset_description(dataset_path); 
     [Participants.data, Participants.headings]  = read_participants_data(dataset_path);
 
     % Get list of subject directories (assumes names start with 'sub-')
@@ -114,21 +113,21 @@ for i = 1:length(subject_list)
     sub_idx = str2double(sub_idx_str); % e.g. '01' -> 1
     
     % get current Participant
-    if ~isempty(Participants.headings) && ~isempty(Participants.data)
-        indx = find(contains(dataset_description.Participants.data{1}, subject_full_id));
-        % name
-        currentParticipant.(dataset_description.Participants.headings{1}) = ...
-        dataset_description.Participants.data{1}{indx};
-        % age
-        currentParticipant.(dataset_description.Participants.headings{2}) = ...
-        dataset_description.Participants.data{2}{indx};
-        % sex
-        currentParticipant.(dataset_description.Participants.headings{3}) = ...
-        dataset_description.Participants.data{3}{indx};
-        % handedness
-        currentParticipant.(dataset_description.Participants.headings{4}) = ...
-        dataset_description.Participants.data{4}{indx};
-    end
+    % if ~isempty(Participants.headings) && ~isempty(Participants.data)
+    %     indx = find(contains(dataset_description.Participants.data{1}, subject_full_id));
+    %     % name
+    %     currentParticipant.(dataset_description.Participants.headings{1}) = ...
+    %     dataset_description.Participants.data{1}{indx};
+    %     % age
+    %     currentParticipant.(dataset_description.Participants.headings{2}) = ...
+    %     dataset_description.Participants.data{2}{indx};
+    %     % sex
+    %     currentParticipant.(dataset_description.Participants.headings{3}) = ...
+    %     dataset_description.Participants.data{3}{indx};
+    %     % handedness
+    %     currentParticipant.(dataset_description.Participants.headings{4}) = ...
+    %     dataset_description.Participants.data{4}{indx};
+    % end
     % 
     fprintf('\n------------------------------------------------------------------------------------------------------------------------');
     fprintf('\n------------------------------------------------------------------------------------------------------------------------');
@@ -309,6 +308,7 @@ end
 function [infos] = get_beh_json(subject_id, session_id, task_name, beh_path) 
 
 beh_json_filename    = sprintf('%s_ses-%s_task-%s_beh.json', subject_id, session_id, task_name);
+%beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
 beh_json_filepath    = fullfile(beh_path, beh_json_filename);
 
 if ~isfile(beh_json_filepath);    error('Behavior sidecar JSON file not found: %s', beh_json_filepath); end

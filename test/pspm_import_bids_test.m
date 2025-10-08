@@ -1,12 +1,32 @@
 classdef pspm_import_bids_test < matlab.unittest.TestCase
 properties
-    test_data_path = '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/Converted Data/'; % dataset level   
-    test_sub  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'; % subject level
-    test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'; % session level
-    temp_dir_out  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/tmp';
-    ref_path  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/'; % *.mat already imported
+    test_data_path = 'ImportTestData/BIDs/Converted Data/'; % dataset level   
+    test_sub  =  'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'; % subject level
+    test_ses  =  'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'; % session level
+    temp_dir_out  =  'ImportTestData/BIDs/tmp';
+    ref_path  =  'ImportTestData/BIDs/out/'; % *.mat already imported
      
 end
+
+%% Session-level test
+function test_session_import(testCase)
+    % sub-CalinetWuerzburg03->ses-01
+    [sts, outfiles] = pspm_import_bids(testCase.test_ses, testCase.temp_dir_out);
+    
+    % Verify success and single output file
+    testCase.verifyEqual(sts, 1);
+    testCase.verifyNumElements(outfiles, 1);
+    
+    expected_file = fullfile(testCase.temp_dir_out, 'pspm_sub-CalinetWuerzburg03_ses-01.mat');
+    
+    % Use exist() instead of verifyFileExists
+    testCase.verifyEqual(outfiles{:},expected_file) % to check if it is at the right folder
+    testCase.verifyTrue(exist(outfiles{:}, 'file') == 2, sprintf('File not found: %s', outfiles{:}));
+    testCase.validate_pspm_file(outfiles{:});
+        
+
+end
+
 
 methods (TestClassSetup)
     function setup_paths(testCase)
@@ -59,24 +79,7 @@ function test_subject_import(testCase)
 
 end
 
-%% Session-level test
-function test_session_import(testCase)
-    % sub-CalinetWuerzburg03->ses-01
-    [sts, outfiles] = pspm_import_bids(testCase.test_ses, testCase.temp_dir_out);
-    
-    % Verify success and single output file
-    testCase.verifyEqual(sts, 1);
-    testCase.verifyNumElements(outfiles, 1);
-    
-    expected_file = fullfile(testCase.temp_dir_out, 'pspm_sub-CalinetWuerzburg03_ses-01.mat');
-    
-    % Use exist() instead of verifyFileExists
-    testCase.verifyEqual(outfiles{:},expected_file) % to check if it is at the right folder
-    testCase.verifyTrue(exist(outfiles{:}, 'file') == 2, sprintf('File not found: %s', outfiles{:}));
-    testCase.validate_pspm_file(outfiles{:});
-        
 
-end
 
 % function test_test_ss(testCase)
 %     testCase.validate_pspm_file('/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/out/pspm_sub-CalinetWuerzburg02_ses-01.mat');  
