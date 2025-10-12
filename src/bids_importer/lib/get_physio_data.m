@@ -17,7 +17,7 @@ chan_names = {};
 file_paths = {}; 
 
 % Index to keep track of the cell array
-cell_index = 0;
+cell_index = 1;
 
 
 %% Process each physio signal
@@ -39,8 +39,7 @@ for i = 1:num_signals
     if ~isfile(physio_json_filepath); warning('File not found: %s', physio_json_filepath);continue; end
     if ~isfile(physio_tsv_filepath);  warning('File not found: %s', physio_tsv_filepath); continue; end
     
-    % index
-    cell_index = cell_index +1;
+
     
     % Collect file paths for infos
     file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
@@ -78,25 +77,10 @@ for i = 1:num_signals
     % Add to physio data cell array 
     physio_data{cell_index,1} = chan;
 
-
+    % index
+    cell_index = cell_index +1;
 end
 
-%% Process physio eye event data -> header eyedata maybe somewhere else?
-events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
-events_tsv_filename  = sprintf('%s_ses-%s_task-%s_physioevents.tsv', subject_id, session_id, task_name);
-events_json_filepath = fullfile(physio_path, events_json_filename);
-events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
-
-% Checks if files exist
-if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
-    warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change !!!!!!!!!!!
-else
-    cell_index = cell_index +1; 
-    marker_data = get_marker_data(events_json_filepath,events_tsv_filepath,false); % has Columns 
-
-    file_paths{cell_index,1} = {events_json_filepath,events_tsv_filepath}; 
-    physio_data{cell_index,1} = marker_data;
-end % end of physio marker
 
 
 %% % Process eye data
@@ -212,14 +196,14 @@ for i = 1:length(data)
         if strcmp(data{i}.header.chantype(6) , 'x')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_x_r
-               data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
-               % data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
+               % data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
                data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.r =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
-               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               % data{i}.header.units =   eye_data_cell{idxLeft}.x_coordinate.Units; % 
+               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               data{i}.header.units =   eye_data_cell{idxLeft}.x_coordinate.Units; % 
                data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]      
            else; warning('Something went worng with gaze  y channels')
@@ -228,15 +212,15 @@ for i = 1:length(data)
         elseif strcmp(data{i}.header.chantype(6) , 'y')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_y_r
-               data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
-               % data{i}.header.units =   eye_data_cell{idxRight}.y_coordinate.Units; 
+               % data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
+               data{i}.header.units =   eye_data_cell{idxRight}.y_coordinate.Units; 
                data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
-               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
-               % data{i}.header.units =   eye_data_cell{idxLeft}.y_coordinate.Units; %'pixel';
+               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
+               data{i}.header.units =   eye_data_cell{idxLeft}.y_coordinate.Units; %'pixel';
                data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency; 
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       
@@ -295,19 +279,43 @@ physio_data = [physio_data; data];
 end % if ests == 1
 
 
+
+
+
+
+%% Process physio eye event data -> header eyedata maybe somewhere else?
+% we need 
+events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
+events_tsv_filename  = sprintf('%s_ses-%s_task-%s_physioevents.tsv', subject_id, session_id, task_name);
+events_json_filepath = fullfile(physio_path, events_json_filename);
+events_tsv_filepath  = fullfile(physio_path, events_tsv_filename);
+
+% Checks if files exist
+if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
+    warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_path); % Change !!!!!!!!!!!
+else
+    cell_index = cell_index +1; 
+
+    marker_data = get_physio_events_data(events_json_filepath,events_tsv_filepath,false); % has Columns 
+
+    file_paths{cell_index,1} = {events_json_filepath,events_tsv_filepath}; 
+    physio_data = [ physio_data; marker_data];
+end % end of physio marker
+
+%%
 % Not good change it !!!
 if isempty(physio_data)
     error('No data importated')
-else;  sts = 1; 
+else;  
+    sts = 1; 
 end
 
-
-% makes a array of channel names
-chan_names = cellfun(@(x) x.header.chantype, physio_data, 'UniformOutput', false);
+% % makes a array of channel names
+% chan_names = cellfun(@(x) x.header.chantype, physio_data, 'UniformOutput', false);
 
 physio_infos.source.file = file_paths;
 
-physio_infos.chan_names = chan_names; 
+% physio_infos.chan_names = chan_names; 
 % physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation if it is not there??
 % RecordingDuration (eye data) sanity check?
 
@@ -340,4 +348,102 @@ function best_eye = eye_with_smaller_nan_ratio(data, eyes_observed)
         best_eye = 'l'; % if equal set 'l'
       end
     end
+end
+
+function data = get_physio_events_data(events_json_filepath, events_tsv_filepath, noColumnField)
+sr = 1; % default
+has_headings = true;
+marker_data.header = struct();
+
+col_types = {'double', 'double', 'char', 'char', 'char'};
+    
+% Get the marker json
+marker_json = extract_json_as_struct(events_json_filepath);
+
+if noColumnField 
+    headings = fieldnames(marker_json).';
+elseif isfield(marker_json, 'Columns')
+    headings = marker_json.Columns;
+else
+    headings = []; % should not happen what happens later the??
+end
+
+
+
+
+% Get marker tsv data
+marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings, col_types );
+
+% onsets = zeros(size(marker_tsv_data_table.onset)); % needed?
+
+
+% If physioevents - sr needs to be extracted - build blin
+if any(ismember(marker_tsv_data_table.Properties.VariableNames, {'blink','message'}))   % only if pyhsioevents
+      
+       
+    idx_header = strcmp(marker_tsv_data_table.event_type, 'n/a') & ~strcmp(marker_tsv_data_table.message, 'CS');
+    
+    idx_data = ~idx_header; % data without header but with CS
+    % indices_CS = setdiff(indices , indices_na);   % what is CS?
+    
+    % find Record Configuration
+    indices_reccfg = find(contains(marker_tsv_data_table.message, 'RECCFG')); % find Record Configuration
+    reccfg = split(marker_tsv_data_table.message(indices_reccfg));
+    sr = str2double(reccfg{3});
+    eyes = str2double(reccfg{6}); % looks which eyes L,R or LR (maybe allways LR?) - integreate later
+
+    
+    % indexies refer to the data
+    % set first measurment to zero
+    onsets = marker_tsv_data_table.onset(idx_data); 
+    onsets = (onsets - onsets(1)) ;%/ sr; % addjust SR????
+
+    event_type = marker_tsv_data_table.event_type(idx_data); % including CS (NaN) will be excluted later
+  
+
+    idx_blink = strcmp(event_type, 'blink');
+    idx_saccade = strcmp(event_type, 'saccade');
+    % idx_fixation = strcmp(event_type, 'fixation');
+
+
+    o_blink = onsets(idx_blink);
+    o_saccade = onsets(idx_saccade);
+    % o_fixation = onsets(idx_fixation);
+    
+    signal = {'blink','saccade'}; % 'fixation'
+    o_signal = {o_blink, o_saccade}; % add o_fixation
+    
+    import = {}; % import struct
+
+    for s = 1:numel(signal)
+        z_vector = zeros(onsets(end),1);  % an array of zeros 
+
+        for i = 1:length(o_signal{s}) % chooses the right signal
+            % Map values to these indices (set them to 1)
+            z_vector(o_signal{s}(i),1) = 1; % no rounding needed
+        end
+
+        if ~(sum(z_vector) == length(o_signal{s})); warning('not same siue'); return; end
+
+        import{s}.data = z_vector;
+        import{s}.units = signal{s};
+        import{s}.sr = sr;    
+        data{s,1}.header.StartTime = 0; % how needs alignemnt with eye data start maybe downstream of the code
+    end
+
+
+    [stsb, data{1,1}] = pspm_get_blink_l(import{1}); % change to pspm_get_blink_C
+    [stsl, data{2,1}] = pspm_get_saccade_l(import{2}); % change to pspm_get_saccade_C
+    % [sts, data{3}] = pspm_get_fixation(import{3});
+
+    % needs a check
+
+   
+else
+    warining('No physio events') % should not be called 
+    marker_data = -1;
+    return ;
+end
+
+
 end
