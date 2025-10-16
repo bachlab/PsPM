@@ -196,14 +196,14 @@ for i = 1:length(data)
         if strcmp(data{i}.header.chantype(6) , 'x')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_x_r
-               % data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
-               data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
+               data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               % data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
                data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.r =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
               % gaze_x_l
-               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
-               data{i}.header.units =   eye_data_cell{idxLeft}.x_coordinate.Units; % 
+               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits;
+               % data{i}.header.units =   eye_data_cell{idxLeft}.x_coordinate.Units; % 
                data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]      
            else; warning('Something went worng with gaze  y channels')
@@ -212,15 +212,15 @@ for i = 1:length(data)
         elseif strcmp(data{i}.header.chantype(6) , 'y')
            if strcmp(data{i}.header.chantype(8) , 'r')
                % gaze_y_r
-               % data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
-               data{i}.header.units =   eye_data_cell{idxRight}.y_coordinate.Units; 
+               data{i}.header.units =   eye_data_cell{idxRight}.SampleCoordinateUnits; 
+               % data{i}.header.units =   eye_data_cell{idxRight}.y_coordinate.Units; 
                data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingFrequency;
                data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
            
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_y_l
-               % data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
-               data{i}.header.units =   eye_data_cell{idxLeft}.y_coordinate.Units; %'pixel';
+               data{i}.header.units =   eye_data_cell{idxLeft}.SampleCoordinateUnits; %'pixel';
+               % data{i}.header.units =   eye_data_cell{idxLeft}.y_coordinate.Units; %'pixel';
                data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency; 
                data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
                       
@@ -368,9 +368,6 @@ else
     headings = []; % should not happen what happens later the??
 end
 
-
-
-
 % Get marker tsv data
 marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings, col_types );
 
@@ -378,72 +375,71 @@ marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, he
 
 
 % If physioevents - sr needs to be extracted - build blin
-if any(ismember(marker_tsv_data_table.Properties.VariableNames, {'blink','message'}))   % only if pyhsioevents
-      
-       
-    idx_header = strcmp(marker_tsv_data_table.event_type, 'n/a') & ~strcmp(marker_tsv_data_table.message, 'CS');
-    
-    idx_data = ~idx_header; % data without header but with CS
-    % indices_CS = setdiff(indices , indices_na);   % what is CS?
-    
-    % find Record Configuration
-    indices_reccfg = find(contains(marker_tsv_data_table.message, 'RECCFG')); % find Record Configuration
-    reccfg = split(marker_tsv_data_table.message(indices_reccfg));
-    sr = str2double(reccfg{3});
-    eyes = str2double(reccfg{6}); % looks which eyes L,R or LR (maybe allways LR?) - integreate later
-
-    
-    % indexies refer to the data
-    % set first measurment to zero
-    onsets = marker_tsv_data_table.onset(idx_data); 
-    onsets = (onsets - onsets(1)) ;%/ sr; % addjust SR????
-
-    event_type = marker_tsv_data_table.event_type(idx_data); % including CS (NaN) will be excluted later
-  
-
-    idx_blink = strcmp(event_type, 'blink');
-    idx_saccade = strcmp(event_type, 'saccade');
-    % idx_fixation = strcmp(event_type, 'fixation');
-
-
-    o_blink = onsets(idx_blink);
-    o_saccade = onsets(idx_saccade);
-    % o_fixation = onsets(idx_fixation);
-    
-    signal = {'blink','saccade'}; % 'fixation'
-    o_signal = {o_blink, o_saccade}; % add o_fixation
-    
-    import = {}; % import struct
-
-    for s = 1:numel(signal)
-        z_vector = zeros(onsets(end),1);  % an array of zeros 
-
-        for i = 1:length(o_signal{s}) % chooses the right signal
-            % Map values to these indices (set them to 1)
-            z_vector(o_signal{s}(i),1) = 1; % no rounding needed
-        end
-
-        if ~(sum(z_vector) == length(o_signal{s})); warning('not same siue'); return; end
-
-        import{s}.data = z_vector;
-        import{s}.units = signal{s};
-        import{s}.sr = sr;    
-        data{s,1}.header.StartTime = 0; % how needs alignemnt with eye data start maybe downstream of the code
-    end
-
-
-    [stsb, data{1,1}] = pspm_get_blink_l(import{1}); % change to pspm_get_blink_C
-    [stsl, data{2,1}] = pspm_get_saccade_l(import{2}); % change to pspm_get_saccade_C
-    % [sts, data{3}] = pspm_get_fixation(import{3});
-
-    % needs a check
-
-   
-else
+if ~any(ismember(marker_tsv_data_table.Properties.VariableNames, {'blink','message'}))   % only if pyhsioevents % what if not there like physio event Pupilbench
     warining('No physio events') % should not be called 
     marker_data = -1;
     return ;
 end
+
+% && is for logical scalar
+idx_header = strcmp(marker_tsv_data_table.event_type, 'n/a') & ~strcmp(marker_tsv_data_table.message, 'CS'); % 'CS*' check again
+
+idx_data = ~idx_header; % data without header but with CS
+% indices_CS = setdiff(indices , indices_na);   % what is CS?
+
+% find Record Configuration
+indices_reccfg = find(contains(marker_tsv_data_table.message, 'RECCFG')); % find Record Configuration
+reccfg = split(marker_tsv_data_table.message(indices_reccfg));
+sr = str2double(reccfg{3});
+eyes = str2double(reccfg{6}); % looks which eyes L,R or LR (maybe allways LR?) - integreate later
+
+
+% indexies refer to the data
+% set first measurment to zero
+onsets = marker_tsv_data_table.onset(idx_data); 
+onsets = (onsets - onsets(1)) ;%/ sr; % addjust SR????
+
+event_type = marker_tsv_data_table.event_type(idx_data); % including CS (NaN) will be excluted later
+
+
+idx_blink = strcmp(event_type, 'blink');
+idx_saccade = strcmp(event_type, 'saccade');
+% idx_fixation = strcmp(event_type, 'fixation');
+
+
+o_blink = onsets(idx_blink);
+o_saccade = onsets(idx_saccade);
+% o_fixation = onsets(idx_fixation);
+
+signal = {'blink','saccade'}; % 'fixation'
+o_signal = {o_blink, o_saccade}; % add o_fixation
+
+import = {}; % import struct
+
+for s = 1:numel(signal)
+    z_vector = zeros(onsets(end),1);  % an array of zeros 
+
+    for i = 1:length(o_signal{s}) % chooses the right signal
+        % Map values to these indices (set them to 1)
+        z_vector(o_signal{s}(i),1) = 1; % no rounding needed
+    end
+
+    if ~(sum(z_vector) == length(o_signal{s})); warning('not same siue'); return; end
+
+    import{s}.data = z_vector;
+    import{s}.units = signal{s};
+    import{s}.sr = sr;    
+    data{s,1}.header.StartTime = 0; % how needs alignemnt with eye data start maybe downstream of the code
+end
+
+
+[stsb, data{1,1}] = pspm_get_blink_l(import{1}); % change to pspm_get_blink_C
+[stsl, data{2,1}] = pspm_get_saccade_l(import{2}); % change to pspm_get_saccade_C
+% [sts, data{3}] = pspm_get_fixation(import{3});
+
+% needs a check
+
+   
 
 
 end

@@ -256,7 +256,7 @@ for i = 1:length(subject_list)
         data = ses.data;
         infos = fn.infos;
         save(cogent_ses_filepath,'infos', 'data');
-        fprintf('\n\nSaved cogent file to %s\n', cogent_ses_filepath);
+        fprintf('\n\nSaved cogent file to ''%s''\n', cogent_ses_filepath);
 
     end
 
