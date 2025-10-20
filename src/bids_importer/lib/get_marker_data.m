@@ -13,7 +13,7 @@ if noColumnField
 elseif isfield(marker_json, 'Columns')
     headings = marker_json.Columns;
 else
-    headings = []; % should not happen what happens later the??
+    headings = []; % should not happen what happens later the?? !!!
 end
 
 
@@ -27,9 +27,15 @@ marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, he
 
 % logical indexing for not block start and not block end
 idx_block = (strcmp(marker_tsv_data_table.event_type, 'block_start') | strcmp(marker_tsv_data_table.event_type, 'block_end'));
-% logical indexing for not task_name = 'habituation'
-idx_habit = (strcmp(marker_tsv_data_table.task_name, 'habituation'));
-idx =  logical(1 - (idx_block | idx_habit));
+
+% logical indexing for not task_name = 'habituation' 
+if any(ismember(marker_tsv_data_table.Properties.VariableNames, {'task_name'})) && any(strcmp(marker_tsv_data_table.task_name, 'habituation'))
+    idx_habit = (strcmp(marker_tsv_data_table.task_name, 'habituation')); % not in PupilBench_Corpus_mini
+    idx =  ~(idx_block | idx_habit);
+else
+    idx = ~(idx_block);
+end
+
 
 % onsets, names, and tastnames
 onsets = marker_tsv_data_table.onset;

@@ -185,9 +185,10 @@ for i = 1:length(subject_list)
         % --- get physio data ---
         physio_path = fullfile(ses_path,'physio');
         [psts, physio_data, physio_infos] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
+        [pests, physio_eye_data, physio_eye_infos] = get_physio_eye_data(subject_full_id, session_id, task_name, physio_path);
         
         if psts < 1; warning('No Physio data'); end % Fix
-
+        if pests < 1; warning('No eye data'); end
         %% --- Get beh data ---
 
         beh_path = fullfile(ses_path,'beh');
@@ -220,7 +221,7 @@ for i = 1:length(subject_list)
         % ses.info.rectime - no information;
 
        % if infos.source
-        ses.infos.source = physio_infos.source;
+        ses.infos.source = physio_eye_infos.source;
         if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
         if ~isempty(fieldnames(currentParticipant)); infos.Participant = currentParticipant; end
 
@@ -228,7 +229,7 @@ for i = 1:length(subject_list)
     
         ses.data = {};
         ses.data{1} = marker_chan;
-        ses.data = [ses.data ; physio_data]; % Marker channel first
+        ses.data = [ses.data ; physio_data; physio_eye_data]; % Marker channel first
         
         % align all channels
         [ses.data, ses.infos.duration] = align_channels(ses.data);

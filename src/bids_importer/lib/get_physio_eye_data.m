@@ -1,0 +1,383 @@
+function [sts , physio_eye_data, physio_eye_infos] = get_physio_eye_data(subject_id, session_id, task_name, physio_eye_path)
+sts = -1;
+physio_eye_data = {}; 
+physio_eye_infos = {};
+
+%% % Process eye data
+
+[ests , eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_eye_path);
+
+if ests == 1
+
+%% --- Add the eye data to the channels --- 
+n_eyes = length(eye_data_cell);
+switch n_eyes
+    case 0; warning('No eye data available.');        
+    case 1
+        % Only one eye recorded; assign based on the eye type and warn the user.
+        eyeSide = lower(eye_data_cell{1}.RecordedEye);
+        
+        if strcmp(eyeSide, 'right')
+            pupil_r  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            gaze_x_r = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            gaze_y_r = eye_data_cell{1}.Columns{:,'y_coordinate'};
+
+            data{1}.data  = pupil_r;
+            data{1}.header.chantype  = 'pupil_r';
+            data{2}.data  = gaze_x_r;
+            data{2}.header.chantype  = 'gaze_x_r';
+            data{3}.data  = gaze_y_r;
+            data{3}.header.chantype  = 'gaze_y_r';
+    
+
+            warning('Only right eye data available.');
+        elseif strcmp(eyeSide, 'left')
+            %  
+            pupil_l  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            gaze_x_l = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            gaze_y_l = eye_data_cell{1}.Columns{:,'y_coordinate'};
+      
+            data{1}.data  = pupil_l;
+            data{1}.header.chantype  = 'pupil_l';
+            data{2}.data  = gaze_x_l;
+            data{2}.header.chantype  = 'gaze_x_l';
+            data{3}.data  = gaze_y_l;
+            data{3}.header.chantype  = 'gaze_y_l';
+
+            warning('Only left eye data available.');
+        else; error('Unknown RecordedEye eye_data_cell.'); % !!! maybe warning?
+        end      
+    case 2
+        eyes = lower({eye_data_cell{1}.RecordedEye, eye_data_cell{2}.RecordedEye}); 
+        if strcmp(eyes{1}, eyes{2})
+            warning('Both recorded eyes are %s.', eyes{1});
+            % Maybe choose the better eye? -> it chooses the better depends
+            % on l or eye
+        else
+            % Correctly assign each cell to the corresponding eye.
+            idxRight = find(strcmp(eyes, 'right'), 1);
+            idxLeft  = find(strcmp(eyes, 'left'),  1);
+            
+            if isempty(idxRight) || isempty(idxLeft); warning('...');end % ???
+
+            pupil_r  = eye_data_cell{idxRight}.Columns{:,'pupil_size'};
+            gaze_x_r = eye_data_cell{idxRight}.Columns{:,'x_coordinate'};
+            gaze_y_r = eye_data_cell{idxRight}.Columns{:,'y_coordinate'};
+           
+            pupil_l  = eye_data_cell{idxLeft}.Columns{:,'pupil_size'};
+            gaze_x_l = eye_data_cell{idxLeft}.Columns{:,'x_coordinate'};
+            gaze_y_l = eye_data_cell{idxLeft}.Columns{:,'y_coordinate'};
+            
+            % right eye channels
+            data{1}.header.chantype  = 'pupil_r';
+            data{1}.data  = pupil_r;
+            
+            data{2}.header.chantype  = 'gaze_x_r';
+            data{2}.data  = gaze_x_r;
+            data{3}.header.chantype  = 'gaze_y_r';
+            data{3}.data  = gaze_y_r;
+
+            % left eye channels
+            data{4}.header.chantype  = 'pupil_l';
+            data{4}.data  = pupil_l;
+            data{5}.header.chantype  = 'gaze_x_l';
+            data{5}.data  = gaze_x_l;
+            data{6}.header.chantype  = 'gaze_y_l';
+            data{6}.data  = gaze_y_l;
+        
+        end
+        
+    otherwise; error('Unexpected number of eye data cells.'); 
+
+
+end
+
+data = data';
+%% Add header data for pupil and gaze data
+if n_eyes == 1; idxRight = 1; idxLeft  = 1; end % for one eye 
+
+for i = 1:length(data)
+    % pupil
+    if strcmp(data{i}.header.chantype(1:end-1) , 'pupil_')
+        if strcmp(data{i}.header.chantype(end:end) , 'r')
+            data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description;
+            data{i}.header.units =   eye_data_cell{idxRight}.pupil_size.Units;
+            data{i}.header.sr    =   eye_data_cell{idxRight}.SamplingFrequency;
+
+        elseif strcmp(data{i}.header.chantype(end:end) , 'l')
+            data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description;
+            data{i}.header.units =   eye_data_cell{idxLeft}.pupil_size.Units;
+            data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency;
+            
+        else; warning('Something went wrong no pupil channel!')  % !!!!!
+        end
+    % gaze
+    elseif strcmp(data{i}.header.chantype(1:end-4) , 'gaze')
+        if strcmp(data{i}.header.chantype(6) , 'x')
+           if strcmp(data{i}.header.chantype(8) , 'r')
+               % gaze_x_r
+               if  any(strcmp(fieldnames(eye_data_cell{idxRight}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               elseif  any(strcmp(fieldnames(eye_data_cell{idxRight}),'x_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  % should i add a check that x and y are the same units?
+               end   % what happens when both fail?
+
+               data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
+               data{i}.header.r =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
+           elseif strcmp(data{i}.header.chantype(8) , 'l')
+               % gaze_x_l
+               
+               if  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.SampleCoordinateUnits;  % "pixel"
+               elseif  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'x_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.x_coordinate.Units;  % should i add a check that x and y are the same units?
+               end   % what happens when both fail?   
+
+               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingFrequency;
+               data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]      
+           else; warning('Something went worng with gaze  y channels')
+           end
+
+        elseif strcmp(data{i}.header.chantype(6) , 'y')
+           if strcmp(data{i}.header.chantype(8) , 'r')
+               % gaze_y_r
+              if  any(strcmp(fieldnames(eye_data_cell{idxRight}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               elseif  any(strcmp(fieldnames(eye_data_cell{idxRight}),'y_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.y_coordinate.Units;  % should i add a check that x and y are the same units?
+               end   % what happens when both fail?
+
+               data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingFrequency;
+               data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
+           
+           elseif strcmp(data{i}.header.chantype(8) , 'l')
+               % gaze_y_l
+              if  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.SampleCoordinateUnits;  % "pixel"
+               elseif  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'y_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.y_coordinate.Units;  % should i add a check that x and y are the same units?
+               end   % what happens when both fail?
+
+               data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency; 
+               data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
+                      
+           else ; warning('Something went worng with gaze  y channels')
+           end
+        end
+     end
+end
+
+%% --- Build the eye infos.source  ----
+
+physio_eye_infos.source = struct();        
+
+% --- infos.source ---
+physio_eye_infos.source.channel = {};% {'Column 02'} {'Column 01'} How to add this ???? from the imported files
+% nan_stats 
+physio_eye_infos.source.chan_stats = cell(length(data), 1); 
+for i = 1:length(data)
+    n_data = size(data{i}.data, 1);
+    n_inv = sum(isnan(data{i}.data));
+    physio_eye_infos.source.chan_stats{i,1} = struct();
+    physio_eye_infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
+end
+
+
+% gaze_coords % Is the gaze range for both eyes always the same?
+if ~isequal(eye_data_cell{idxRight}.GazeRange, eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal"); end % if single eye data it will be equal
+physio_eye_infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
+physio_eye_infos.source.elcl_proc = eye_data_cell{idxRight}.PupilFitMethod; % or should it be called PupilFitMethod? lowercase!
+
+% eyesObserved and best_eye
+if n_eyes == 2
+    physio_eye_infos.source.eyesObserved = 'lr'; 
+elseif n_eyes == 1  
+    physio_eye_infos.source.eyesObserved =  data{1}.header.chantype(end); 
+end  
+
+physio_eye_infos.source.best_eye = eye_with_smaller_nan_ratio(data, physio_eye_infos.source.eyesObserved);
+physio_eye_infos.source.type = 'BIDS (json/tsv)' ; % needs a standardized data format type name
+
+
+if n_eyes == 2
+    % physio_infos.source.file = [eye_data_cell{1}.source.file, eye_data_cell{2}.source.file] ; %  {1},{2} gives the right order
+    file_paths{1,1} = eye_data_cell{1}.source.file; 
+    file_paths{2,1} = eye_data_cell{2}.source.file; 
+else
+    file_paths{1,1} = eye_data_cell{1}.source.file ;
+end  
+
+% add the eye data
+physio_eye_data = [physio_eye_data; data];
+
+end % if ests == 1
+
+
+
+
+
+
+%% Process physio eye event data -> header eyedata maybe somewhere else?
+% we need 
+events_json_filename = sprintf('%s_ses-%s_task-%s_physioevents.json', subject_id, session_id, task_name);
+events_tsv_filename  = sprintf('%s_ses-%s_task-%s_physioevents.tsv', subject_id, session_id, task_name);
+events_json_filepath = fullfile(physio_eye_path, events_json_filename);
+events_tsv_filepath  = fullfile(physio_eye_path, events_tsv_filename);
+
+% Checks if files exist
+if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
+    warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_eye_path); % Change !!!!!!!!!!!
+else
+
+    marker_data = get_physio_events_data(events_json_filepath,events_tsv_filepath,false); % has Columns 
+    % check that the StartTime is the same as eye data
+
+
+    file_paths{end+1,1} = {events_json_filepath,events_tsv_filepath}; 
+    physio_eye_data = [ physio_eye_data; marker_data];
+end % end of physio marker
+
+%%
+% Not good change it !!!
+if isempty(physio_eye_data)
+    error('No data importated')
+else 
+    sts = 1; 
+end
+
+if isfield(physio_eye_data{1}.header, 'StartTime')
+start_times = cellfun(@(x) x.header.StartTime, physio_eye_data, 'UniformOutput', false);
+if ~isequal(start_times{:}); warning('Not all data have the same StartTime. Please check the input data.'); end
+else; for i = 1:length(physio_eye_data); physio_eye_data{i}.header.StartTime = 0; end; end
+for i = 1:length(marker_data); marker_data{i}.header.StartTime = physio_eye_data{i}.header.StartTime; end
+
+% % makes a array of channel names
+% chan_names = cellfun(@(x) x.header.chantype, physio_data, 'UniformOutput', false);
+
+physio_eye_infos.source.file = file_paths;
+
+% physio_infos.chan_names = chan_names; 
+% physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation if it is not there??
+% RecordingDuration (eye data) sanity check?
+
+
+
+
+
+end
+% adapted from in pspm_get_viewpoint and pspm_get_smi
+function best_eye = eye_with_smaller_nan_ratio(data, eyes_observed)
+    if length(eyes_observed) == 1;
+      best_eye = lower(eyes_observed);
+    else
+      eye_L_max_nan_ratio = 0;
+      eye_R_max_nan_ratio = 0;
+      for i = 1:numel(data)
+        left_data = strcmpi(data{i}.header.chantype(end),'l');      
+        right_data = strcmpi(data{i}.header.chantype(end),'r');
+        
+        if left_data
+          eye_L_max_nan_ratio = max(eye_L_max_nan_ratio, sum(isnan(data{i}.data)));
+        elseif right_data
+          eye_R_max_nan_ratio = max(eye_R_max_nan_ratio, sum(isnan(data{i}.data)));
+        end
+      end
+
+      if eye_L_max_nan_ratio > eye_R_max_nan_ratio
+        best_eye = 'r'; 
+      else
+        best_eye = 'l'; % if equal set 'l'
+      end
+    end
+end
+
+function data = get_physio_events_data(events_json_filepath, events_tsv_filepath, noColumnField)
+sr = 1; % default
+has_headings = true;
+data{1}.data.header = struct();
+
+col_types = {'double', 'double', 'char', 'char', 'char'};
+    
+% Get the marker json
+marker_json = extract_json_as_struct(events_json_filepath);
+
+if noColumnField 
+    headings = fieldnames(marker_json).';
+elseif isfield(marker_json, 'Columns')
+    headings = marker_json.Columns;
+else
+    headings = []; % should not happen what happens later the?? why does it!!!!
+end
+
+% Get marker tsv data
+marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings, col_types );
+
+% onsets = zeros(size(marker_tsv_data_table.onset)); % needed?
+
+
+% If physioevents - sr needs to be extracted - build blin
+if ~any(ismember(marker_tsv_data_table.Properties.VariableNames, {'blink','message'}))   % only if pyhsioevents % what if not there like physio event Pupilbench
+    warining('No physio events') % should not be called 
+    data = -1;
+    return ;
+end
+
+% && is for logical scalar
+idx_header = strcmp(marker_tsv_data_table.event_type, 'n/a') & ~strcmp(marker_tsv_data_table.message, 'CS'); % 'CS*' check again
+
+idx_data = ~idx_header; % data without header but with CS
+% indices_CS = setdiff(indices , indices_na);   % what is CS?
+
+% find Record Configuration
+indices_reccfg = find(contains(marker_tsv_data_table.message, 'RECCFG')); % find Record Configuration
+reccfg = split(marker_tsv_data_table.message(indices_reccfg));
+sr = str2double(reccfg{3});
+eyes = reccfg{6}; % looks which eyes L,R or LR (maybe allways LR?) - integreate later
+
+
+% indexies refer to the data
+% set first measurment to zero
+onsets = marker_tsv_data_table.onset(idx_data); 
+onsets = (onsets - onsets(1));  % first recoding
+duration = marker_tsv_data_table.duration(idx_data);
+event_type = marker_tsv_data_table.event_type(idx_data); % including CS (NaN) will be excluted later
+
+signal = {'blink','saccade'}; % 'fixation'}
+
+for s = 1:numel(signal)
+
+% index of the onsets of the signal
+idx_signal = find(strcmp(event_type, signal{1}));
+
+% get onset start to onset end(onset+duration)
+start = onsets(idx_signal);
+ende  = onsets(idx_signal) + duration(idx_signal);
+
+all_indices = [];
+for i = 1:length(start);  all_indices = [all_indices, start(i):ende(i)]; end 
+
+idx_signal = unique(all_indices); %  unique removes overlaps - should not exist! ?
+
+import = {}; % import struct
+data_signal  = zeros(idx_signal(end),1); 
+
+for i = 1:length(idx_signal); data_signal(idx_signal(i),1) = 1; end % Map values to these indices (set them to 1)
+if ~(sum(data_signal) == length(idx_signal)); warning('not same '); return; end % quick check
+
+import{s}.data = data_signal;
+import{s}.units = signal{s}; %? 
+import{s}.sr = sr;    
+
+% import the signals with pspm_functions
+
+switch signal{s}   
+case 'blink';      [stsb, data{1,1}] = pspm_get_blink_l(import{s});   % change to pspm_get_blink_C
+case 'saccade';    [stsl, data{2,1}] = pspm_get_saccade_l(import{s}); % change to pspm_get_saccade_C
+%case 'fixation';   [sts, data{3}] = pspm_get_fixation_c(import{3});
+end
+
+data{s,1}.header.StartTime = 0; % how needs alignemnt with eye data start maybe downstream of the code
+
+
+end
+end
