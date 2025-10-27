@@ -1,8 +1,9 @@
-function [sts , physio_eye_data, physio_eye_infos] = get_physio_eye_data(subject_id, session_id, task_name, physio_eye_path)
+function [sts , data, infos] = get_physio_eye_data(subject_id, session_id, task_name, physio_eye_path)
 sts = -1;
-physio_eye_data = {}; 
-physio_eye_infos = {};
-
+data = {}; 
+infos = {};
+file_paths  = {};
+data = {};
 %% % Process eye data
 
 [ests , eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_eye_path);
@@ -169,34 +170,40 @@ end
 
 %% --- Build the eye infos.source  ----
 
-physio_eye_infos.source = struct();        
+infos.source = struct();        
 
 % --- infos.source ---
-physio_eye_infos.source.channel = {};% {'Column 02'} {'Column 01'} How to add this ???? from the imported files
+infos.source.channel = {};% {'Column 02'} {'Column 01'} How to add this ???? from the imported files
 % nan_stats 
-physio_eye_infos.source.chan_stats = cell(length(data), 1); 
+infos.source.chan_stats = cell(length(data), 1); 
 for i = 1:length(data)
     n_data = size(data{i}.data, 1);
     n_inv = sum(isnan(data{i}.data));
-    physio_eye_infos.source.chan_stats{i,1} = struct();
-    physio_eye_infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
+    infos.source.chan_stats{i,1} = struct();
+    infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
 end
 
 
 % gaze_coords % Is the gaze range for both eyes always the same?
 if ~isequal(eye_data_cell{idxRight}.GazeRange, eye_data_cell{idxLeft}.GazeRange); warning("GazeRange is not equal"); end % if single eye data it will be equal
-physio_eye_infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
-physio_eye_infos.source.elcl_proc = eye_data_cell{idxRight}.PupilFitMethod; % or should it be called PupilFitMethod? lowercase!
+infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange;
+% if ismember(eye_data_cell{idxRight}.
+                 
+if  any(strcmp(fieldnames(eye_data_cell{idxRight}),'PupilFitMethod'))
+infos.source.elcl_proc = eye_data_cell{idxRight}.PupilFitMethod; % or should it be called PupilFitMethod? lowercase!
+elseif  any(strcmp(fieldnames(eye_data_cell{idxRight}),'ElclProc'))
+infos.source.elcl_proc = eye_data_cell{idxRight}.ElclProc; % like in the Calinet dataset
+end
 
 % eyesObserved and best_eye
 if n_eyes == 2
-    physio_eye_infos.source.eyesObserved = 'lr'; 
+    infos.source.eyesObserved = 'lr'; 
 elseif n_eyes == 1  
-    physio_eye_infos.source.eyesObserved =  data{1}.header.chantype(end); 
+    infos.source.eyesObserved =  data{1}.header.chantype(end); 
 end  
 
-physio_eye_infos.source.best_eye = eye_with_smaller_nan_ratio(data, physio_eye_infos.source.eyesObserved);
-physio_eye_infos.source.type = 'BIDS (json/tsv)' ; % needs a standardized data format type name
+infos.source.best_eye = eye_with_smaller_nan_ratio(data, infos.source.eyesObserved);
+infos.source.type = 'BIDS (json/tsv)' ; % needs a standardized data format type name
 
 
 if n_eyes == 2
@@ -207,8 +214,18 @@ else
     file_paths{1,1} = eye_data_cell{1}.source.file ;
 end  
 
-% add the eye data
-physio_eye_data = [physio_eye_data; data];
+
+
+% Check if the first data has the StartTime field
+if isfield(data{1}.header, 'StartTime')
+    % Check if all StartTimes are the same
+    start_times = cellfun(@(x) x.header.StartTime, data, 'UniformOutput', false);
+    if ~isequal(start_times{:}) ; warning('Not all data have the same StartTime. Please check the input data.');  end
+else 
+    % If there is no StartTime field start time will set to 0
+    for i = 1:length(data); data{i}.header.StartTime = 0; end 
+end
+
 
 end % if ests == 1
 
@@ -224,47 +241,36 @@ events_tsv_filename  = sprintf('%s_ses-%s_task-%s_physioevents.tsv', subject_id,
 events_json_filepath = fullfile(physio_eye_path, events_json_filename);
 events_tsv_filepath  = fullfile(physio_eye_path, events_tsv_filename);
 
-% Checks if files exist
+% Checks if the event files exist
 if ~isfile(events_json_filepath) || ~isfile(events_tsv_filepath)
     warning('No physio events for task "%s" in %s. Skipping event processing.', task_name, physio_eye_path); % Change !!!!!!!!!!!
 else
-
-    marker_data = get_physio_events_data(events_json_filepath,events_tsv_filepath,false); % has Columns 
-    % check that the StartTime is the same as eye data
-
-
+    data_events = get_physio_events_data(events_json_filepath,events_tsv_filepath,false); % has Columns 
+    % gives the events the StartTime time as the eye data
+    if ~isempty(data) % if there are no eye data but eye_events 
+        for i = 1:length(data_events);  data_events{i}.header.StartTime = data{1}.header.StartTime; end
+    end
     file_paths{end+1,1} = {events_json_filepath,events_tsv_filepath}; 
-    physio_eye_data = [ physio_eye_data; marker_data];
+    data = [ data; data_events];
 end % end of physio marker
 
 %%
 % Not good change it !!!
-if isempty(physio_eye_data)
+if isempty(data)
     error('No data importated')
 else 
     sts = 1; 
 end
 
-if isfield(physio_eye_data{1}.header, 'StartTime')
-start_times = cellfun(@(x) x.header.StartTime, physio_eye_data, 'UniformOutput', false);
-if ~isequal(start_times{:}); warning('Not all data have the same StartTime. Please check the input data.'); end
-else; for i = 1:length(physio_eye_data); physio_eye_data{i}.header.StartTime = 0; end; end
-for i = 1:length(marker_data); marker_data{i}.header.StartTime = physio_eye_data{i}.header.StartTime; end
 
-% % makes a array of channel names
-% chan_names = cellfun(@(x) x.header.chantype, physio_data, 'UniformOutput', false);
 
-physio_eye_infos.source.file = file_paths;
-
-% physio_infos.chan_names = chan_names; 
-% physio_info_data.file_paths = file_paths; % make the eye  filenames in the right orientation if it is not there??
-% RecordingDuration (eye data) sanity check?
-
+infos.source.file = file_paths;
 
 
 
 
 end
+
 % adapted from in pspm_get_viewpoint and pspm_get_smi
 function best_eye = eye_with_smaller_nan_ratio(data, eyes_observed)
     if length(eyes_observed) == 1;
@@ -294,7 +300,10 @@ end
 function data = get_physio_events_data(events_json_filepath, events_tsv_filepath, noColumnField)
 sr = 1; % default
 has_headings = true;
-data{1}.data.header = struct();
+% better way?
+data{1,1}.data.header = struct();
+data{2,1}.data.header = struct();
+data{3,1}.data.header = struct();
 
 col_types = {'double', 'double', 'char', 'char', 'char'};
     
@@ -342,7 +351,8 @@ onsets = (onsets - onsets(1));  % first recoding
 duration = marker_tsv_data_table.duration(idx_data);
 event_type = marker_tsv_data_table.event_type(idx_data); % including CS (NaN) will be excluted later
 
-signal = {'blink','saccade'}; % 'fixation'}
+signal = {'blink','saccade','fixation'};
+singal_chan = {'blink_c','saccade_c','fixation_c'};
 
 for s = 1:numel(signal)
 
@@ -358,24 +368,20 @@ for i = 1:length(start);  all_indices = [all_indices, start(i):ende(i)]; end
 
 idx_signal = unique(all_indices); %  unique removes overlaps - should not exist! ?
 
-import = {}; % import struct
 data_signal  = zeros(idx_signal(end),1); 
 
 for i = 1:length(idx_signal); data_signal(idx_signal(i),1) = 1; end % Map values to these indices (set them to 1)
-if ~(sum(data_signal) == length(idx_signal)); warning('not same '); return; end % quick check
+if ~(sum(data_signal) == length(idx_signal)); warning('not same '); return; end % sanitiy check
 
-import{s}.data = data_signal;
-import{s}.units = signal{s}; %? 
-import{s}.sr = sr;    
 
-% import the signals with pspm_functions
 
-switch signal{s}   
-case 'blink';      [stsb, data{1,1}] = pspm_get_blink_l(import{s});   % change to pspm_get_blink_C
-case 'saccade';    [stsl, data{2,1}] = pspm_get_saccade_l(import{s}); % change to pspm_get_saccade_C
-%case 'fixation';   [sts, data{3}] = pspm_get_fixation_c(import{3});
-end
 
+% assign pupil data
+data{s,1}.data = data_signal(:); %(:) why??
+% add header
+data{s,1}.header.chantype = singal_chan{s}; %%
+data{s,1}.header.units = signal{s};
+data{s,1}.header.sr = sr;
 data{s,1}.header.StartTime = 0; % how needs alignemnt with eye data start maybe downstream of the code
 
 

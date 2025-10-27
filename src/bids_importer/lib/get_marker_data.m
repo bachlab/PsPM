@@ -24,6 +24,9 @@ marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, he
 
 % onsets = zeros(size(marker_tsv_data_table.onset)); % needed?
 
+if ~isempty(marker_tsv_data_table) && any(ismember(marker_tsv_data_table.Properties.VariableNames, {'trial_type'}))
+    marker_tsv_data_table.Properties.VariableNames{'trial_type'} = 'event_type';
+end
 
 % logical indexing for not block start and not block end
 idx_block = (strcmp(marker_tsv_data_table.event_type, 'block_start') | strcmp(marker_tsv_data_table.event_type, 'block_end'));

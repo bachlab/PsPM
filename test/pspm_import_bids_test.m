@@ -1,31 +1,14 @@
 classdef pspm_import_bids_test < matlab.unittest.TestCase
 properties
-    test_data_path = 'ImportTestData/BIDs/Converted Data/'; % dataset level   
-    test_sub  =  'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'; % subject level
-    test_ses  =  'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'; % session level
-    temp_dir_out  =  'ImportTestData/BIDs/tmp';
-    ref_path  =  'ImportTestData/BIDs/out/'; % *.mat already imported
-     
-end
-
-%% Session-level test
-function test_session_import(testCase)
-    % sub-CalinetWuerzburg03->ses-01
-    [sts, outfiles] = pspm_import_bids(testCase.test_ses, testCase.temp_dir_out);
-    
-    % Verify success and single output file
-    testCase.verifyEqual(sts, 1);
-    testCase.verifyNumElements(outfiles, 1);
-    
-    expected_file = fullfile(testCase.temp_dir_out, 'pspm_sub-CalinetWuerzburg03_ses-01.mat');
-    
-    % Use exist() instead of verifyFileExists
-    testCase.verifyEqual(outfiles{:},expected_file) % to check if it is at the right folder
-    testCase.verifyTrue(exist(outfiles{:}, 'file') == 2, sprintf('File not found: %s', outfiles{:}));
-    testCase.validate_pspm_file(outfiles{:});
-        
+    % main = '/home/bernd/git/PsPM/'; %
+    test_data_path = fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Converted Data/'); % dataset level   
+    test_sub  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'); % subject level
+    test_ses  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'); % session level
+    temp_dir_out  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/tmp');
+    ref_path  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/ref'); % *.mat already imported
 
 end
+
 
 
 methods (TestClassSetup)
@@ -44,22 +27,24 @@ end
 
 
 methods (Test)
-%% Dataset-level test
-function test_dataset_import(testCase)
-    [sts, outfiles] = pspm_import_bids(testCase.test_data_path, testCase.temp_dir_out);
-    
-    % Verify success and file count (5 files)
-    testCase.verifyEqual(sts, 1, 'Import failed');
-    testCase.verifyNumElements(outfiles, 5, 'Incorrect file count');
-    
-    % Validate each output file
-    for i = 1:numel(outfiles)
-        testCase.verifyTrue(exist(outfiles{i}, 'file') == 2, sprintf('File not found: %s', outfiles{i}));
-        validate_pspm_file(testCase, outfiles{i});
-    end
-    
-end
 
+%% Session-level test
+function test_session_import(testCase)
+    % sub-CalinetWuerzburg03->ses-01
+    [sts, outfiles] = pspm_import_bids(testCase.test_ses, testCase.temp_dir_out);
+    
+    % Verify success and single output file
+    testCase.verifyEqual(sts, 1);
+    testCase.verifyNumElements(outfiles, 1);
+    
+    expected_file = fullfile(testCase.temp_dir_out, 'pspm_sub-CalinetWuerzburg03_ses-01.mat');
+    
+    % Use exist() instead of verifyFileExists
+    testCase.verifyEqual(outfiles{:},expected_file) % to check if it is at the right folder
+    testCase.verifyTrue(exist(outfiles{:}, 'file') == 2, sprintf('File not found: %s', outfiles{:}));
+    testCase.validate_pspm_file(outfiles{:});  
+end
+    
 %% Subject-level test
 function test_subject_import(testCase)
     % sub-CalinetWuerzburg03->ses-01,ses-02
@@ -77,7 +62,25 @@ function test_subject_import(testCase)
         validate_pspm_file(testCase, outfiles{i});
     end
 
+end 
+
+%% Dataset-level test
+function test_dataset_import(testCase)
+    [sts, outfiles] = pspm_import_bids(testCase.test_data_path, testCase.temp_dir_out);
+    
+    % Verify success and file count (5 files)
+    testCase.verifyEqual(sts, 1, 'Import failed');
+    testCase.verifyNumElements(outfiles, 5, 'Incorrect file count');
+    
+    % Validate each output file
+    for i = 1:numel(outfiles)
+        testCase.verifyTrue(exist(outfiles{i}, 'file') == 2, sprintf('File not found: %s', outfiles{i}));
+        validate_pspm_file(testCase, outfiles{i});
+    end
+    
 end
+
+
 
 
 
@@ -86,6 +89,8 @@ end
 % end
 
 % Path validation tests / problem by moveing the physio event json back
+
+%%
 function test_invalid_dataset_path(testCase)
 
 % Test non-existent dataset path
@@ -117,7 +122,9 @@ end
 
 
 
+
 end
+
 %% PSPM file validation helper
 methods (Access = private)
 
@@ -130,8 +137,8 @@ function validate_pspm_file(testCase, filepath)
 
     % Load reference file    
     [~, fn] = fileparts(filepath);
-    reffilepath = fullfile(testCase.ref_path,[fn,'.mat']);
-    [strf, ~, ~, filestruct_ref] = pspm_load_data(reffilepath);
+    filepath_ref = fullfile(testCase.ref_path,[fn,'.mat']);
+    [strf, ~, ~, filestruct_ref] = pspm_load_data(filepath_ref);
     testCase.verifyEqual(strf,1,'Import reference file failed')
 
     
@@ -151,7 +158,7 @@ function validate_pspm_file(testCase, filepath)
     % load wave data the data / length of the channels to compare
  
     [~, infos, data, ~] = pspm_load_data(filepath,'wave');
-    [~, infos_ref, data_ref, ~] = pspm_load_data(reffilepath,'wave');
+    [~, infos_ref, data_ref, ~] = pspm_load_data(filepath_ref,'wave');
 
     % Compare channel counts of the actual loaded channels
     testCase.verifyEqual(numel(data), numel(data_ref), 'Channel count mismatch'); % maybe assert?
@@ -168,7 +175,7 @@ function validate_pspm_file(testCase, filepath)
     %% marker
 
     [~, infos, data, ~] = pspm_load_data(filepath,'events');
-    [~, infos_ref, data_ref, ~] = pspm_load_data(reffilepath,'events');
+    [~, infos_ref, data_ref, ~] = pspm_load_data(filepath_ref,'events');
 
     % Compare channel counts of the actual loaded channels
     testCase.verifyEqual(numel(data), numel(data_ref), 'Channel count mismatch'); % maybe assert?
@@ -181,6 +188,11 @@ function validate_pspm_file(testCase, filepath)
     for q = 1:numel(data)
         testCase.verifyEqual( length(data{q}.data) ,length(data_ref{q}.data) , duration_ref,'AbsTol', 0.001) ;% rigth tolerance?
     end
+    % Ensure the function ends properly
+    if nargout > 0
+        varargout{1} = sts; % Return status if requested
+    end
+end    
 
     % % 4. Compare metadata
     % testCase.verifyEqual(loaded.infos.Participant.participant_id, ref.infos.Participant.participant_id, 'Participant ID mismatch');
@@ -188,4 +200,4 @@ function validate_pspm_file(testCase, filepath)
 
 end
 end
-end
+
