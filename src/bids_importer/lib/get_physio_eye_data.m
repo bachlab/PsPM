@@ -257,7 +257,7 @@ end % end of physio marker
 %%
 % Not good change it !!!
 if isempty(data)
-    error('No data importated')
+    warning('No data importated')
 else 
     sts = 1; 
 end
