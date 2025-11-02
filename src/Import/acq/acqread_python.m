@@ -1,6 +1,7 @@
 function [sts, header, data] = acqread_python(filename)
 % ● Description
 %   acqread_python read data from acq files by calling bioread package.
+%   see https://github.com/uwmadison-chm/bioread
 % ● Format
 %   [sts, data] = acqread_python(filename)
 % ● Arguments
@@ -62,11 +63,10 @@ for idx = 1:length(acq_data.channels)
 end
 data = raw.data;
 header = struct();
-header.dSampleTime = unique([raw.samples_per_second{:}])/1000;
-% this was in "s", now converted to "ms" to be in line with conventional acq_read
+header.samples_per_second = unique([raw.samples_per_second{:}]);
 header.szCommentText = raw.name;
 header.szUnitsText = raw.units;
-header.nVarSampleDivider = [raw.frequency_divider{:}];
+header.frequency_divider = [raw.frequency_divider{:}]; % sample rate divider for individual channels
 header.dAmplScale = [raw.raw_scale_factor{:}];
 header.dAmplOffset = [raw.raw_offset{:}];
 sts = 1;
