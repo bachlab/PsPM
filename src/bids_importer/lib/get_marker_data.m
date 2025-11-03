@@ -1,5 +1,5 @@
 function marker_data = get_marker_data(events_json_filepath, events_tsv_filepath, noColumnField)
-sr = 1; % default
+
 has_headings = true;
 marker_data.header = struct();
 
@@ -16,57 +16,27 @@ else
     headings = []; % should not happen what happens later the?? !!!
 end
 
-
-
-
 % Get marker tsv data
 marker_tsv_data_table = read_data_from_tsv(events_tsv_filepath, has_headings, headings, col_types );
 
-% onsets = zeros(size(marker_tsv_data_table.onset)); % needed?
-
-if ~isempty(marker_tsv_data_table) && any(ismember(marker_tsv_data_table.Properties.VariableNames, {'trial_type'}))
-    marker_tsv_data_table.Properties.VariableNames{'trial_type'} = 'event_type';
-end
-
-% logical indexing for not block start and not block end
-idx_block = (strcmp(marker_tsv_data_table.event_type, 'block_start') | strcmp(marker_tsv_data_table.event_type, 'block_end'));
-
-% logical indexing for not task_name = 'habituation' 
-if any(ismember(marker_tsv_data_table.Properties.VariableNames, {'task_name'})) && any(strcmp(marker_tsv_data_table.task_name, 'habituation'))
-    idx_habit = (strcmp(marker_tsv_data_table.task_name, 'habituation')); % not in PupilBench_Corpus_mini
-    idx =  ~(idx_block | idx_habit);
-else
-    idx = ~(idx_block);
-end
-
-
-% onsets, names, and tastnames
-onsets = marker_tsv_data_table.onset;
-onsets = onsets(idx);
-names = marker_tsv_data_table.event_type(idx);
-
-
 % --------- markerinfo from  tsv ---------
-
-
-% the format is needed for pspm_check_data it is also under markerinfo
-% under the duration event_type
-marker_data.data = onsets;
+marker_data.data = marker_tsv_data_table.onset;
+names = marker_tsv_data_table.event_type;
 marker_data.markerinfo.name  = names;
 [~,~,idxnames] = unique(names,'stable');
 marker_data.markerinfo.value = idxnames;
 
+% Imports task_names if available
 if any(ismember(marker_tsv_data_table.Properties.VariableNames, {'task_name'}))
-    marker_data.markerinfo.task_name = marker_tsv_data_table.task_name(idx);
+    marker_data.markerinfo.task_name = marker_tsv_data_table.task_name;
 end
-% marker_data.duration = onset(end) - onset(1); %  duration of the EVENTS (onset)
 
 
 % --------- marker header ---------
 marker_data.header.chantype = 'marker';
 marker_data.header.units = 'events';
 marker_data.header.sr = 1; % allways 1 
-marker_data.header.StartTime = marker_data.data(1); % onset /
-% including start block  not really needed 
+marker_data.header.StartTime = marker_data.data(1); 
+% marker_data.header.duration = marker_data.data(end) - marker_data.data(1);
 
 end

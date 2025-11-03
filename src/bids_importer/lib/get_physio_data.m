@@ -12,8 +12,6 @@ file_paths = {};
 physio_signals = {'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
 
-% Initialize variables for infos
-
 
 % Index to keep track of the cell array
 cell_index = 1;
@@ -33,8 +31,7 @@ for i = 1:num_signals
     % The warning could be confusing 
     if ~isfile(physio_json_filepath); warning('File not found: %s', physio_json_filepath);continue; end
     if ~isfile(physio_tsv_filepath);  warning('File not found: %s', physio_tsv_filepath); continue; end
-    
-
+   
     
     % Collect file paths for infos
     file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
@@ -49,8 +46,7 @@ for i = 1:num_signals
     
  
     % Create channel struct
-    chaninfo = physio_json; % add the json to the infos field
-    chaninfo = rmfield(chaninfo,'Columns'); % removes Columns field
+
     chan = struct();
     % header chantype, sr, StartTime and units
     chan.header = struct();
@@ -59,8 +55,10 @@ for i = 1:num_signals
     chan.header.StartTime = physio_json.StartTime; 
 
     % Access Units field inside the signal-specific structure
-    if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units') ; chan.header.units = physio_json.(signal).Units;
-    else; chan.header.units = 'unknown'; warning('Units not specified in JSON file for %s. Setting units to "unknown".', signal); 
+    if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units')  
+        chan.header.units = physio_json.(signal).Units;
+    else 
+        chan.header.units = 'unknown'; warning('Units not specified in JSON file for %s. Setting units to "unknown".', signal); 
     end 
 
     % Assign data

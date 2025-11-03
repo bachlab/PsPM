@@ -1,6 +1,6 @@
 function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 % ● Description
-%   pspm_import_bids reads a BIDS-PP formatted dataset for a set of 
+%   pspm_import_bids reads a BIDS formatted dataset for a set of 
 %   participants from a given data path and stores data as PsPM file(s).
 % ● Format
 %   [sts, outfile] = pspm_import_bids(dataset_path, save_path)
@@ -14,7 +14,6 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %   Introduced in PsPM 7.0
 %   Written in 2024 by Sourav Koulkarni & Dominik R Bach & Bernhard A. von Raußendorf (Uni Bonn)
 
-
 %% 1. Initialize -----------------------------------------------------------
 global settings
 if isempty(settings)
@@ -23,54 +22,44 @@ end
 sts = -1;  
 outfile = {};
 dataset_description = struct();
-currentParticipant = struct();
 
 % checks inputs
+% check data set path
 if ~(ischar(dataset_path) || isstring(dataset_path))
     error('PsPM:InvalidInput', 'dataset_path must be a string.');
+elseif ~exist(dataset_path, 'dir')
+    error('PsPM:InvalidPath','dataset_path has to be a folder'); 
 end
 if nargin < 2
-    parentDir = fileparts(dataset_path);
     save_path = 0;
-
 elseif ~(ischar(save_path) || isstring(save_path)) 
-    warning('InvalidInput', 'save_path must be a character vector or string.'); %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parentDir = fileparts(dataset_path);
     save_path = 0;
 end
 
-if nargin > 2;  warning('More than two inputs detected; ignoring additional inputs.' ); end   
-
-% checks if the path exist
-if ~exist(dataset_path, 'dir');  error( 'PsPM:InvalidPath','dataset_path has to be a folder'); end
-
+if nargin > 2;  warning('More than two inputs have been provided; any additional inputs will be ignored.' ); end   
 
 
 % Adds libs to the path
 libpath = pspm_path('bids_importer','lib');
 addpath(libpath); 
 
+
 %% 2. Read meta information & Add paths to the right variables ------------------------------------------------
 
 [~, currentFolder] = fileparts(dataset_path); 
-% problems with path that are written like /path/fold/ with "/" at the end
-% under linux -> needs to be tests under mac and windows !!
+% so that path can end with "/" e.g. /home/
 if isempty(currentFolder)
     dataset_path = dataset_path(1:end-1);
     [~, currentFolder] = fileparts(dataset_path); 
 end
 
-% checks if dataset is to be imported
-dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-'));  % if not sub or not ses -> dataset
-% if ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); dataset_mode = true; end % if not sub or not ses -> dataset
+% checks if what needs to be imported
+dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); 
 ses_mode = startsWith(currentFolder, 'ses-');  
+sub_mode = startsWith(currentFolder, 'sub-');  
 
 % dataset mode
 if dataset_mode
-    % imports dataset description and participant information if available
-    % dataset_description = read_dataset_description(dataset_path); 
-    [Participants.data, Participants.headings]  = read_participants_data(dataset_path);
-
     % Get list of subject directories (assumes names start with 'sub-')
     subject_list = dir(fullfile(dataset_path, 'sub-*'));
     subject_list = subject_list([subject_list.isdir]);
@@ -81,67 +70,55 @@ else
     if ses_mode
         sub_path = fileparts(dataset_path); % one level above ses-*
         ses_path = dataset_path;
-    else % if not dataset and not ses -> sub
-        sub_path = dataset_path; % subject path
+    elseif sub_mode 
+        sub_path = dataset_path; 
     end
 
-    % dataset_path now becomes the real dataset level path 
-    dataset_path = fileparts(sub_path); % on  level above the subject folder -> dataset What if there is no dataset folder ??
+    % dataset_path now becomes the real dataset path 
+    dataset_path = fileparts(sub_path); 
   
-    % % imports dataset description and participant information if available
+    % imports dataset description 
     dataset_description = read_dataset_description(dataset_path); 
-    [Participants.data, Participants.headings] = read_participants_data(dataset_path);
-
-    % Store participant information headings in dataset description
        
     [~, subject_list(1).name] = fileparts(sub_path); % only one subject
 end
 
-% Output folder (save_path)
+% checks if there are subject
+if isempty(subject_list)
+    error('No subject folders found.');
+end
+
+% output folder (save_path)
 if ~save_path 
-    % warning('No save path');  
-    save_path = [dataset_path, filesep, 'out'];  % fullfile
-end % if there is no save_path or there was an error not char or string = 0
+    save_path = [dataset_path, filesep, 'out'];  
+    warning("No or invalid save path specified; using '%s' instead.", save_path);
+end 
+
 if ~exist(save_path, 'dir');  mkdir(save_path); end
 fprintf('\nImported files will be saved to:  %s\n',save_path);
+
+
+
 
 %% 3. Loop over subjects ---------------------------------------------------
 for i = 1:length(subject_list)
    
     subject_full_id = subject_list(i).name;  % e.g., 'sub-CalinetBonn01
     sub_idx_str = regexp(subject_full_id, '\d+$', 'match', 'once');
-    sub_idx = str2double(sub_idx_str); % e.g. '01' -> 1
+
     
-    % get current Participant
-    % if ~isempty(Participants.headings) && ~isempty(Participants.data)
-    %     indx = find(contains(dataset_description.Participants.data{1}, subject_full_id));
-    %     % name
-    %     currentParticipant.(dataset_description.Participants.headings{1}) = ...
-    %     dataset_description.Participants.data{1}{indx};
-    %     % age
-    %     currentParticipant.(dataset_description.Participants.headings{2}) = ...
-    %     dataset_description.Participants.data{2}{indx};
-    %     % sex
-    %     currentParticipant.(dataset_description.Participants.headings{3}) = ...
-    %     dataset_description.Participants.data{3}{indx};
-    %     % handedness
-    %     currentParticipant.(dataset_description.Participants.headings{4}) = ...
-    %     dataset_description.Participants.data{4}{indx};
-    % end
-    % 
     fprintf('\n------------------------------------------------------------------------------------------------------------------------');
     fprintf('\n------------------------------------------------------------------------------------------------------------------------');
     fprintf('\n\nImporting %s ... \n', subject_full_id);
     
-
     if dataset_mode 
+        % current subject path
         sub_path = fullfile(dataset_path, subject_full_id); 
     end
 
     if ses_mode  
         [~, session_dirs(1).name] = fileparts(ses_path);
-
-    else % subject mode
+    else % subject mode or dataset_mode
         session_dirs = dir(fullfile(sub_path,'ses-*'));
         session_dirs = session_dirs([session_dirs.isdir]);    
     end 
@@ -187,7 +164,7 @@ for i = 1:length(subject_list)
         [psts, physio_data, physio_infos] = get_physio_data(subject_full_id, session_id, task_name, physio_path);
         [pests, physio_eye_data, physio_eye_infos] = get_physio_eye_data(subject_full_id, session_id, task_name, physio_path);
         
-        if psts < 1; warning('No Physio data'); end % Fix
+        if psts  < 1; warning('No Physio data'); end % Fix
         if pests < 1; warning('No eye data'); end
         %% --- Get beh data ---
 
@@ -195,16 +172,22 @@ for i = 1:length(subject_list)
         
         % Marker beh channel 
         events_json_filename = sprintf('%s_ses-%s_task-%s_events.json', subject_full_id, session_id, task_name);
-        events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv', subject_full_id, session_id, task_name);
+        events_tsv_filename  = sprintf('%s_ses-%s_task-%s_events.tsv',  subject_full_id, session_id, task_name);
         events_json_filepath = fullfile(beh_path, events_json_filename);
         events_tsv_filepath  = fullfile(beh_path, events_tsv_filename);
+        
+        % allready checked before by the task extraction!!!
+        if isfile(events_json_filepath) && isfile(events_tsv_filepath)
+            %  what is with the column fields?
+            marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath,false);
+        else
+            marker_chan = [ ];
+            warning('PsPM:NoEvent','File not found: %s', events_json_filepath); 
+            warning('PsPM:NoEvent','File not found: %s', events_tsv_filepath);  
+        end
 
-        if ~isfile(events_json_filepath); error('PsPM:NoEvent','File not found: %s', events_json_filepath); end
-        if ~isfile(events_tsv_filepath);  error('PsPM:NoEvent','File not found: %s', events_tsv_filepath);  end
-
-        %  what is with the column fields?
-        marker_chan = get_marker_data(events_json_filepath, events_tsv_filepath,false);
-        % get behave json (not the marker)
+        % get behave json (not the marker) !! where to add it in the infos
+        % field !! maybe as a check
         beh_json  = get_beh_json(subject_full_id, session_id, task_name, beh_path);
 
         %% --- Build the file structure  ---
@@ -212,7 +195,7 @@ for i = 1:length(subject_list)
        
 
         % ses.infos.duration - will be added after alignment
-        ses.infos.sourcefile = 1; % add the source files !
+        ses.infos.sourcefile = ses_path; 
         % infos.importfile - will be added before saving
         dt = datetime('now'); 
         ses.infos.importdate = sprintf('%.2d.%.2d.%.2d', dt.Day, dt.Month, dt.Year); % same as import_eyelink and importviewpoint; 
@@ -220,44 +203,39 @@ for i = 1:length(subject_list)
         % ses.infos.recdate - no information;
         % ses.info.rectime - no information;
 
-       % if infos.source
+        % if infos.source
         ses.infos.source = physio_eye_infos.source;
         if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
-        if ~isempty(fieldnames(currentParticipant)); infos.Participant = currentParticipant; end
+        % if ~isempty(fieldnames(currentParticipant)); infos.Participant = currentParticipant; end
 
         %  save per session
-    
         ses.data = {};
-        ses.data{1} = marker_chan;
-        ses.data = [ses.data ; physio_data; physio_eye_data]; % Marker channel first
+        if ~isempty(marker_chan); ses.data{1} = marker_chan; end
+        ses.data = [ses.data ; physio_data; physio_eye_data]; 
         
         % align all channels
         [ses.data, ses.infos.duration] = align_channels(ses.data);
         
 
-
         % Save session (cogent) file once per subject
-        cogent_ses_file_name = sprintf('pspm_%s_ses-%s.mat', subject_full_id,session_id);
-        cogent_ses_filepath = fullfile(save_path, cogent_ses_file_name);
-        outfile{end+1} = cogent_ses_filepath;
+        ses_filename = sprintf('pspm_%s_ses-%s.mat', subject_full_id,session_id);
+        ses_filepath = fullfile(save_path, ses_filename);
+        outfile{end+1} = ses_filepath; 
 
-        ses.infos.importfile = cogent_ses_filepath; 
+        ses.infos.importfile = ses_filepath; 
         
         % Check the pspm structure
-        fn.infos = ses.infos;
-        fn.data = ses.data;
-
-        [lsts, ~, ~, ~] = pspm_load_data(fn);
+        [lsts, ~, ~, ~] = pspm_load_data(ses);
         if lsts < 1
             warning('The file struture has a problem'); % better warning text
             continue; 
         end
 
-        %  overwrite 
-        data = ses.data;
-        infos = fn.infos;
-        save(cogent_ses_filepath,'infos', 'data');
-        fprintf('\n\nSaved cogent file to ''%s''\n', cogent_ses_filepath);
+        %  saves as pspm file (overwrite)
+        data  = ses.data;
+        infos = ses.infos;
+        save(ses_filepath,'infos', 'data');
+        fprintf('\n\nSaved cogent file to ''%s''\n', ses_filepath);
 
     end
 
@@ -273,8 +251,7 @@ function dataset_description = read_dataset_description(dataset_path)
     dataset_description_filepath = fullfile(dataset_path, 'dataset_description.json');
 
     if ~exist(dataset_description_filepath, 'file')
-        warning('read_dataset_description:MissingFile', ...
-            'dataset_description.json is missing in the specified path: %s', dataset_path);
+        warning("'dataset_description.json' is missing in folder: %s", dataset_path);
         dataset_description = [];
         return;
     end
@@ -307,15 +284,17 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
 end
 
 function [infos] = get_beh_json(subject_id, session_id, task_name, beh_path) 
-
+infos = struct();
 beh_json_filename    = sprintf('%s_ses-%s_task-%s_beh.json', subject_id, session_id, task_name);
 %beh_json_filename    = sprintf('%s_ses-%s_beh.json', subject_id, session_id);
 beh_json_filepath    = fullfile(beh_path, beh_json_filename);
 
-if ~isfile(beh_json_filepath);    error('Behavior sidecar JSON file not found: %s', beh_json_filepath); end
-
-beh_sidecar = extract_json_as_struct(beh_json_filepath);
-infos = beh_sidecar;
+if ~isfile(beh_json_filepath) 
+    warning('Behavior sidecar JSON file not found: %s', beh_json_filepath); 
+    return
+else
+    infos = extract_json_as_struct(beh_json_filepath);
+end
 end
 
 function [data, new_duration] = align_channels(data)
@@ -362,12 +341,11 @@ end
 
 
 %!!!!!!!!!!!!!!!!!!!!
-display(finalLengths(:)  )
+%display(finalLengths(:)  )
 
 
 % Padding at the end
 [sts, data, new_duration] = pspm_align_channels(data); % can the fprint be turned off?
-% [~, data, new_duration, sts] = evalc('[sts, data, new_duration] = pspm_align_channels(data);'); % turns of fprint
 
 if sts ~= 1 % if all are the same size does it give en error?
     error('Channel alignment failed.');
