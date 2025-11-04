@@ -31,7 +31,12 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','acq'));
-[sts, header, inputdata] = acqread_python(datafile);
+[lsts, header, inputdata] = acqread_python(datafile);
+% there might be a glitch in bioread itself ...
+if lsts < 1 || all(cellfun('isempty', inputdata))
+    warning('Unknown error with bioread - please contact the PsPM development team.');
+    return;
+end
 %% Extract individual channels
 for k = 1:numel(import)
   % define channel number ---
