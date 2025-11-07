@@ -214,7 +214,8 @@ if ~isempty(options.missing_epochs_filename)
         warning('ID:invalid_input', 'Missing epoch file exists, and overwriting not allowed by user.');
         return
     else
-        save(options.missing_epochs_filename, 'epochs_missing');
+        epochs = epochs_missing;
+        save(options.missing_epochs_filename, 'epochs');
         out = options.missing_epochs_filename;
     end
 else

@@ -23,20 +23,59 @@ classdef pspm_logical2epochs_test < matlab.unittest.TestCase
     methods (Test)
         function testBasicFunctionality(testCase)
             index = double([0; 1; 1; 0; 0; 1; 0; 0; 0; 0]);
-            sr = 1;
             expectedOutput = [2, 4; 6, 7];
-            actualOutput = pspm_logical2epochs(index, sr);
+            actualOutput = pspm_logical2epochs(index);
             testCase.verifyEqual(actualOutput, expectedOutput);
         end
-       
+
+        function testWithEdgeCase(testCase)
+            index = double([0; 1; 1; 0; 0; 1; 0; 0; 0; 1]);
+            expectedOutput = [2, 4; 6, 7; 10 , 10]; % last offset not exclusive
+            actualOutput = pspm_logical2epochs(index);
+            testCase.verifyEqual(actualOutput, expectedOutput);        
+        end   
 
         function testWithSampleRateConversion(testCase)
-            index = double([0; 0; 1; 0; 1; 0; 0; 0; 0; 0]);
+            index = double([0; 0; 1; 0; 1; 0; 0; 0; 0; ]);
             sr = 2;
             expectedOutput = [1, 1.5; 2, 2.5];
             actualOutput = pspm_logical2epochs(index, sr);
             testCase.verifyEqual(actualOutput, expectedOutput);
         end
+
+        function testWithSampleRateConversionWithEdgeCase(testCase)
+            index = double([0; 0; 1; 0; 1; 0; 0; 0; 0; 1]);
+            sr = 2;
+            expectedOutput = [1, 1.5; 2, 2.5; 4.5, 5]; % last offset not exclusive
+            actualOutput = pspm_logical2epochs(index, sr);
+            testCase.verifyEqual(actualOutput, expectedOutput);
+        end
+
+        function testWithSampleRateOneWithEdgeCase(testCase)
+            index = double([0; 0; 1; 0; 1; 0; 0; 0; 0; 1]);
+            sr = 1;
+            expectedOutput = [2, 3; 4, 5; 9, 10];
+            actualOutput = pspm_logical2epochs(index, sr);
+            testCase.verifyEqual(actualOutput, expectedOutput);
+        end        
+
+        function testWithEmptyVector(testCase)
+            index = [];
+            sr = 1;
+            expectedOutput = []; 
+            actualOutput = pspm_logical2epochs(index, sr);
+            testCase.verifyEqual(actualOutput, expectedOutput);        
+        end   
+
+        function testWithEmptyVectorWithSampleRateConversion(testCase)
+            index = [];
+            sr = 2;
+            expectedOutput = []; 
+            actualOutput = pspm_logical2epochs(index, sr);
+            testCase.verifyEqual(actualOutput, expectedOutput);        
+        end  
+
+
 
     end
 end
