@@ -6,9 +6,8 @@ function [sts , physio_data, infos] = get_physio_data(subject_id, session_id, ta
 %% Initialize the physio data cell array
 sts = -1;
 physio_data = {}; 
-infos = {};
 file_paths = {}; 
-
+infos.source.file = {};
 physio_signals = {'ecg','ppg', 'scr'};
 num_signals = length(physio_signals);
 
@@ -29,8 +28,9 @@ for i = 1:num_signals
 
     % Check if files exist  
     % The warning could be confusing 
-    if ~isfile(physio_json_filepath); warning('File not found: %s', physio_json_filepath);continue; end
-    if ~isfile(physio_tsv_filepath);  warning('File not found: %s', physio_tsv_filepath); continue; end
+    if ~isfile(physio_json_filepath) || ~isfile(physio_tsv_filepath)
+        continue; 
+    end
    
     
     % Collect file paths for infos
@@ -58,7 +58,8 @@ for i = 1:num_signals
     if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units')  
         chan.header.units = physio_json.(signal).Units;
     else 
-        chan.header.units = 'unknown'; warning('Units not specified in JSON file for %s. Setting units to "unknown".', signal); 
+        chan.header.units = 'unknown'; 
+        warning('Units not specified in JSON file for %s. Setting units to "unknown".', signal); 
     end 
 
     % Assign data
@@ -71,8 +72,13 @@ for i = 1:num_signals
     cell_index = cell_index +1;
 end
 
+if isempty(physio_data)
+    fprintf(">No physio data ('ecg','ppg','scr') were imported for subject %s, session %s.", subject_id, session_id);
+    return
+end
 
 infos.source.file = file_paths;
+
 sts = 1;
 
 end

@@ -1,4 +1,4 @@
-function [sts, eye_data_cell] = get_eye_data(subject_id, session_id, task_name, physio_path)
+function [sts, eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path)
 % get_eye_data Extracts eye-tracking data for a given subject, session, and task.
 %
 % This function returns a 2x1 cell array where each cell contains a struct

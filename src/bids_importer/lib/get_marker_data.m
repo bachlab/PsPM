@@ -13,7 +13,7 @@ if noColumnField
 elseif isfield(marker_json, 'Columns')
     headings = marker_json.Columns;
 else
-    headings = []; % should not happen what happens later the?? !!!
+    headings = []; 
 end
 
 % Get marker tsv data
@@ -37,6 +37,5 @@ marker_data.header.chantype = 'marker';
 marker_data.header.units = 'events';
 marker_data.header.sr = 1; % allways 1 
 marker_data.header.StartTime = marker_data.data(1); 
-% marker_data.header.duration = marker_data.data(end) - marker_data.data(1);
 
 end

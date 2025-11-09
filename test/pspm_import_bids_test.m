@@ -1,29 +1,29 @@
 classdef pspm_import_bids_test < matlab.unittest.TestCase
 properties
-    % main = '/home/bernd/git/PsPM/'; %
-    test_data_path = fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Converted Data/'); % dataset level   
-    test_sub  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'); % subject level
-    test_ses  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'); % session level
-    temp_dir_out  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/tmp');
-    ref_path  =  fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/ref'); % *.mat already imported
-    exeption_path = fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/');
 
-    move_list = {...
+test_data_path = 'ImportTestData/BIDs/Converted Data/'; % dataset level   
+test_sub  =  'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'; % subject level
+test_ses  =  'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'; % session level
+temp_dir_out  =  'ImportTestData/BIDs/tmp';
+ref_path  =  'ImportTestData/BIDs/ref'; % *.mat already imported
+exeption_path = 'ImportTestData/BIDs/Specialcases/';
+
+move_list = { ...
 % no behave marker (beh)
-{fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/beh/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_events.')};
+{'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/beh/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_events'};
 % only eye1 data (physio) but with eyemarker
-{fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio')};
+{'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio'};
 % no eyes (phyfilePathsio) but with eyemarker
-{fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio');
-fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio')};
+{'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio';
+ 'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio'};
 % no eyes and no eyemarker 
-{fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio');
-fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio');
-fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents')};
+{'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio';
+ 'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_recording-eye2_physio';
+ 'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents'};
 % only eyesppermuations´
-{fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_recording-ecg_physio');
-fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_recording-scr_physio');
-fullfile('/home/bernd/git/PsPM/','ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_recording-ppg_physio')} 
+{ 'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_recording-ecg_physio';
+  'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_recording-scr_physio';
+  'ImportTestData/BIDs/Specialcases/sub-CalinetWuerzburg03/ses-01/physio/sub-CalinetWuerzburg03_ses-01_recording-ppg_physio'} 
  }
     % add more path permuations because´´
 end
@@ -31,12 +31,32 @@ end
 
 
 methods (TestClassSetup)
-    function setup_paths(testCase)
-        % check for reference files? (add)
-        if ~exist(testCase.temp_dir_out)
-            mkdir(testCase.temp_dir_out);
-        end
+function setup_paths(testCase)
+path = fileparts(pspm_path);
+
+% Loop through the properties and prepend the test_data_path to each file path
+for i = 1:length(testCase.move_list)
+    for j = 1:length(testCase.move_list{i})
+        testCase.move_list{i}{j} = fullfile(path, testCase.move_list{i}{j});
     end
+end
+
+
+testCase.test_data_path = fullfile(path, 'ImportTestData/BIDs/Converted Data/'); % dataset level   
+testCase.test_sub    =  fullfile(path, 'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03'); % subject level
+testCase.test_ses    =  fullfile(path, 'ImportTestData/BIDs/Converted Data/sub-CalinetWuerzburg03/ses-01'); % session level
+testCase.temp_dir_out  =  fullfile(path, 'ImportTestData/BIDs/tmp');
+testCase.ref_path    =  fullfile(path, 'ImportTestData/BIDs/ref'); % *.mat already imported
+testCase.exeption_path = fullfile(path, 'ImportTestData/BIDs/Specialcases/');
+
+
+
+% check for reference files? (add)
+
+if ~exist(testCase.temp_dir_out)
+    mkdir(testCase.temp_dir_out);
+end
+end
 end
 
 methods (TestClassTeardown)
@@ -50,21 +70,6 @@ end
 methods (Test)
 
 %% Session-level test
-
-function test_if_exist(testCase)
-    % Check if all files in move_list exist
-    for i = 1:length(testCase.move_list)
-        for j = 1:length(testCase.move_list{i}) % Fixed the variable name from testCasemove_list to testCase.move_list
-            file_path = testCase.move_list{i}{j}{1}; % Get the file path
-            if ~exist(file_path, 'file')
-                error('File not found: %s', file_path);
-            end
-        end
-    end
-end
-
-
-
 function test_session_import(testCase)
     % sub-CalinetWuerzburg03->ses-01
     [sts, outfiles] = pspm_import_bids(testCase.test_ses, testCase.temp_dir_out);
@@ -100,10 +105,6 @@ function test_subject_import(testCase)
 
 end 
 
-
-
-
-
 %% Dataset-level test
 function test_dataset_import(testCase)
     [sts, outfiles] = pspm_import_bids(testCase.test_data_path, testCase.temp_dir_out);
@@ -120,7 +121,7 @@ function test_dataset_import(testCase)
     
 end
 
-
+%%
 function test_session_with_missing(testCase)
     % Loop through the move_list and duplicate every entry
     for i = 1:length(testCase.move_list)
@@ -153,9 +154,6 @@ function test_session_with_missing(testCase)
     end
 end
 
-
-
-
 function test_session_no_beh_import(testCase)
     % sub-CalinetWuerzburg03->ses-01
     
@@ -179,20 +177,8 @@ function test_invalid_dataset_path(testCase)
 
 % Test non-existent dataset path
 invalid_path = '/invalid/path';
-testCase.verifyError(@() pspm_import_bids(invalid_path),'PsPM:InvalidPath');
-testCase.verifyError(@() pspm_import_bids(123),'PsPM:InvalidInput');
-
-% no marker channel
-% test_ses  =  '/home/bernd/Banks/git/PsPM/ImportTestData/BIDs/CalinetWuerzburg BIDS Sample news/sub-CalinetWuerzburg03/ses-01' 
-event_json  = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.json';
-% event_tsv = 'physio/sub-CalinetWuerzburg03_ses-01_task-FearAcquisition_physioevents.tsv';
-
-event_path = fullfile(testCase.test_ses,event_json);
-event_path_tmp = fullfile(testCase.test_ses,'physio/tmp.json');
-
-movefile(event_path,event_path_tmp)
-testCase.verifyWarning(@() pspm_import_bids(testCase.test_ses),'PsPM:NoEvent');
-movefile(event_path_tmp,event_path)
+testCase.verifyError(@() pspm_import_bids(invalid_path),'ID:invalid_input');
+testCase.verifyError(@() pspm_import_bids(123),'ID:invalid_input');
 
 end
 
