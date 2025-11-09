@@ -39,14 +39,14 @@ function outfile = pspm_testdata_gen(channels, duration, filename)
 %                             in continuous channels
 %                           -> 'min' and 'max' could be used as a
 %                           counterpart for a continuous wave form channel
-% filename: filname of the .mat file, where the generated data will be
+% filename: filename of the .mat file, where the generated data will be
 %           saved (optional).
 %
 % outfile:  a struct with the two following fields:
 %           - .infos: a struct with the fields '.duration' and '.durationinfo'
 %           - .data:  a cell array of struct with the following fields for
 %                    each channel:
-%                    - .data:   the genarated data as a column vector
+%                    - .data:   the generated data as a column vector
 %                    - .header: a struct with the fields '.chantype',
 %                               '.units', '.sr' and '.eventrt' for eventbased
 %                               channels or '.freq' and  for continuous channels
