@@ -200,14 +200,18 @@ defaults.channeltypes(end+1) = struct(s_t, 'pupil_missing_c',  s_de, 'Pupil data
 % Blink
 defaults.channeltypes(end+1) = struct(s_t, 'blink_l',          s_de, 'Blink left',                               s_i, @pspm_get_blink_l,   s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'blink_r',          s_de, 'Blink right',                              s_i, @pspm_get_blink_r,   s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'blink_c',          s_de, 'Blink combined',                           s_i, @none,               s_da, 'wave');
 % Saccade
 defaults.channeltypes(end+1) = struct(s_t, 'saccade_l',        s_de, 'Saccade left',                             s_i, @pspm_get_saccade_l, s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'saccade_r',        s_de, 'Saccade right',                            s_i, @pspm_get_saccade_r, s_da, 'wave');
+defaults.channeltypes(end+1) = struct(s_t, 'saccade_c',        s_de, 'Saccade combined',                         s_i, @none,               s_da, 'wave');
 % Scanpath
 defaults.channeltypes(end+1) = struct(s_t, 'sps',              s_de, 'Scanpath speed',                           s_i, @pspm_get_sps,       s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'sps_l',            s_de, 'Scanpath speed left',                      s_i, @pspm_get_sps_l,     s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'sps_r',            s_de, 'Scanpath speed right',                     s_i, @pspm_get_sps_r,     s_da, 'wave');
 defaults.channeltypes(end+1) = struct(s_t, 'sps_c',            s_de, 'Scanpath speed combined',                  s_i, @pspm_get_sps_c,     s_da, 'wave');
+% Fixation
+defaults.channeltypes(end+1) = struct(s_t, 'fixation_c',       s_de, 'Fixation combined',                        s_i, @none,               s_da, 'wave');
 % Custom
 defaults.channeltypes(end+1) = struct(s_t, 'custom',           s_de, 'Custom',                                   s_i, @pspm_get_custom,    s_da, 'wave');
 
