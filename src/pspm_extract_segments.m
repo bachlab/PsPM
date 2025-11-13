@@ -273,8 +273,8 @@ for c=1:numel(onsets)
   m = segments{c}.data;
   segments{c}.name = names{c};
   % create mean
-  segments{c}.mean = nanmean(m, 1);
-  segments{c}.std = nanstd(m, [], 1);
+  segments{c}.mean = mean(m, 1, 'omitnan');
+  segments{c}.std = std(m, [], 1, 'omitnan');
   segments{c}.sem = segments{c}.std./sqrt(size(segments{c}.data, 1));
   segments{c}.trial_nan_percent = 100.0 * sum(isnan(m), 2)/size(m,2);
   segments{c}.total_nan_percent = 100.0 * sum(sum(isnan(m), 2))/numel(m);
