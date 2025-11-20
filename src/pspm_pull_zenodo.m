@@ -47,7 +47,7 @@ for iFiles = 1:2
 
         if any(newpathindx)
             newpath = fullfile(datapath, newdir(newpathindx).name);
-            filelist = dir(fullfile(newpath, '*.mat'));
+            filelist = dir(fullfile(newpath, '*.*'));
             oldfile = fullfile(newpath, {filelist.name});
             newfile = fullfile(datapath, {filelist.name});
             for i_fn = 1:numel(oldfile)
