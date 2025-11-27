@@ -369,8 +369,8 @@ switch FunName
     options = autofill_channel_action(options,            'add',      {'replace'}       );
     options = autofill(options, 'channel',                'scr',      '*Int*Char'       );
     options = autofill(options, 'baseline_jump',          1.5,        '>', 0            );
-    options = autofill(options, 'clipping_window_size',   10000,      '*Int'            );
-    options = autofill(options, 'clipping_step_size',     2,          '*Int'            );
+    options = autofill(options, 'clipping_window_size',   100,      '*Int'            );
+    options = autofill(options, 'clipping_step_size',     10,          '*Int'            );
     options = autofill(options, 'clipping_threshold',     0.1,        '*Num'            );
     options = autofill(options, 'data_island_threshold',  0,          '>=', 0           );
     options = autofill(options, 'deflection_threshold',   0.1,        '*Num'            );
