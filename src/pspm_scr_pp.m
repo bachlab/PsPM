@@ -144,6 +144,7 @@ end
 
 %% Create filters
 % filt == 1 if sample is valid and filt == 0 if it is invalid
+% index == 0 if sample is valid and index == 1 if it is invalid
 data_changed = NaN(size(indata));
 filt_range = indata < options.max & indata > options.min;
 filt_slope = true(size(indata));
@@ -164,8 +165,7 @@ else
     filt_clipping = 1-index_clipping;
 end
 % combine filters: 
-filt = filt_range & filt_slope;
-filt = filt & (1-filt_clipping);
+filt = filt_range & filt_slope & filt_clipping;
 
 
 %% Find data islands and expand artefact islands
