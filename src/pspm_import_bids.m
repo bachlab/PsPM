@@ -30,11 +30,6 @@ if ~(ischar(dataset_path) || isstring(dataset_path))
 elseif ~exist(dataset_path, 'dir')
     error('ID:invalid_input','dataset_path has to be a folder'); 
 end
-if nargin < 2
-    save_path = 0;
-elseif ~(ischar(save_path) || isstring(save_path)) 
-    save_path = 0;
-end
 
 if nargin > 2;  warning('More than two inputs have been provided; any additional inputs will be ignored.' ); end   
 
@@ -89,15 +84,16 @@ if isempty(subject_list)
 end
 
 % output folder (save_path)
-if ~save_path 
-    save_path = [dataset_path, filesep, 'out'];  
-    warning("ID:nonexistent_folder","No or invalid save path specified; using '%s' instead.", save_path);
-end 
+if ~isstring(save_path) 
+    % save_path = [dataset_path, filesep, 'out'];
+    save_path = fullfile(dataset_path, "out");
+    disp(save_path);
+    % warning("ID:nonexistent_folder","No or invalid save path specified; using '%s' instead.", save_path);
+    warning(sprintf("ID:nonexistent_folder: No or invalid save path specified; using '%s' instead.", save_path));
+end
 
-if ~exist(save_path, 'dir');  mkdir(save_path); end
+mkdir(save_path)
 fprintf('\nImported files will be saved to:  %s\n',save_path);
-
-
 
 
 %% 3. Loop over subjects ---------------------------------------------------
@@ -134,7 +130,6 @@ for i = 1:length(subject_list)
         beh_dir    = fullfile(ses_path,'beh');
         physio_dir = fullfile(ses_path,'physio');
 
-
         %% Extract task name
         % Look for any event JSON in the beh and physio folders
         pattern_beh = sprintf('%s_ses-%s_task-*_events.*', subject_full_id, session_id); % both json and tsv
@@ -157,7 +152,7 @@ for i = 1:length(subject_list)
         %% Processing start
 
         fprintf('\n------------------------------------------------------------------------------------------------------------------------');
-        fprintf('\n\n  Processing session %s with task %s ...\n\n', session_dirs(j).name, task_name);
+        fprintf('\n\n  Processing session %s with task %s ...\n\n', session_dirs(j).name, task_name); 
 
         % --- get physio data ---
         physio_path = fullfile(ses_path,'physio');
@@ -236,6 +231,11 @@ for i = 1:length(subject_list)
 
         ses.infos.importfile = ses_filepath; 
         
+        fn = fieldnames(beh_json);
+        for ii = 1:numel(fn)
+            ses.infos.(fn{ii}) = beh_json.(fn{ii});
+        end
+
         % Check the pspm structure
         [lsts, ~, ~, ~] = pspm_load_data(ses);
         if lsts < 1
