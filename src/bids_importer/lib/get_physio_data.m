@@ -4,12 +4,12 @@ function [sts , physio_data, infos] = get_physio_data(subject_id, session_id, ta
 % UPDATE HELPTEXT
 
 %% Initialize the physio data cell array
-sts = -1;
-physio_data = {}; 
-file_paths = {}; 
-infos.source.file = {};
-physio_signals = {'ecg','ppg', 'scr'};
-num_signals = length(physio_signals);
+sts                 = -1;
+physio_data         = {}; 
+file_paths          = {}; 
+infos.source.file   = {};
+physio_signals      = {'ecg', 'ppg', 'scr'};
+num_signals         = length(physio_signals);
 
 
 % Index to keep track of the cell array
@@ -18,22 +18,35 @@ cell_index = 1;
 for i = 1:num_signals   
 
     signal = physio_signals{i};
+         
+    %% Construct filenames depending on whether task is present
+    if isempty(task_name)
+        % No task entity → standard BIDS physio filename
+        physio_json_filename = sprintf('%s_ses-%s_recording-%s_physio.json', ...
+                                       subject_id, session_id, signal);
     
-    % Construct filenames
-    physio_json_filename = sprintf('%s_ses-%s_recording-%s_physio.json', subject_id, session_id, signal);
-    physio_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', subject_id, session_id, signal);
+        physio_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', ...
+                                       subject_id, session_id, signal);
+    
+    else
+        % Task entity present → include _task-<taskname>_ in filename
+        physio_json_filename = sprintf('%s_ses-%s_task-%s_recording-%s_physio.json', ...
+                                       subject_id, session_id, task_name, signal);
+    
+        physio_tsv_filename  = sprintf('%s_ses-%s_task-%s_recording-%s_physio.tsv', ...
+                                       subject_id, session_id, task_name, signal);
+    end
+
     physio_json_filepath = fullfile(physio_path, physio_json_filename);
     physio_tsv_filepath  = fullfile(physio_path, physio_tsv_filename);
-
-
-    % Check if files exist  
+    %% Check if files exist  
     % The warning could be confusing 
     if ~isfile(physio_json_filepath) || ~isfile(physio_tsv_filepath)
         continue; 
     end
-   
-    
-    % Collect file paths for infos
+
+    fprintf('%s:\t%s\n', signal, physio_tsv_filepath);
+    %% Collect file paths for infos
     file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
 
     % Read JSON metadata
@@ -66,19 +79,18 @@ for i = 1:num_signals
     chan.data = physio_data_table.(headings{1});
 
     % Add to physio data cell array 
-    physio_data{cell_index,1} = chan;
+    physio_data{cell_index,1} = chan; %#ok<*AGROW> 
 
     % index
     cell_index = cell_index +1;
 end
 
 if isempty(physio_data)
-    fprintf(">No physio data ('ecg','ppg','scr') were imported for subject %s, session %s.", subject_id, session_id);
+    fprintf(">No physio data ('ecg','ppg','scr') were imported for %s, ses-%s.\n", subject_id, session_id);
     return
 end
 
 infos.source.file = file_paths;
-
 sts = 1;
 
 end

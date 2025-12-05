@@ -37,9 +37,22 @@ for i = 1:num_signals
     signal = eye_signals{i};
     
     % Construct filenames based on BIDS naming convention:
-    % e.g., sub-CalinetWuerzburg01_ses-01_task-FearAcquisition_recording-eye1_physio.json
-    eye_json_filename = sprintf('%s_ses-%s_task-%s_recording-%s_physio.json', subject_id, session_id, task_name, signal);
-    eye_tsv_filename  = sprintf('%s_ses-%s_task-%s_recording-%s_physio.tsv', subject_id, session_id, task_name, signal);
+    if isempty(task_name)
+        % No task entity → standard BIDS physio filename
+        eye_json_filename = sprintf('%s_ses-%s_recording-%s_physio.json', ...
+                                       subject_id, session_id, signal);
+    
+        eye_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', ...
+                                       subject_id, session_id, signal);
+    
+    else
+        % Task entity present → include _task-<taskname>_ in filename
+        eye_json_filename = sprintf('%s_ses-%s_task-%s_recording-%s_physio.json', ...
+                                       subject_id, session_id, task_name, signal);
+    
+        eye_tsv_filename  = sprintf('%s_ses-%s_task-%s_recording-%s_physio.tsv', ...
+                                       subject_id, session_id, task_name, signal);
+    end
     
     eye_json_filepath = fullfile(physio_path, eye_json_filename);
     eye_tsv_filepath  = fullfile(physio_path, eye_tsv_filename);
@@ -52,6 +65,8 @@ for i = 1:num_signals
     if ~isfile(eye_json_filepath); warning('File not found: %s', eye_json_filepath); sts = -1 ;end
     if ~isfile(eye_tsv_filepath); warning('File not found: %s', eye_tsv_filepath); sts = -1 ; end
     
+    fprintf('%s:\t%s\n', signal, eye_tsv_filepath);
+
     % Read JSON metadata (assumed to be converted into a struct)
     eye_json = extract_json_as_struct(eye_json_filepath);
     
