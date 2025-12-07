@@ -129,7 +129,6 @@ options = pspm_options(options, 'scr_pp');
 if options.invalid
     return
 end
-disp(options)
 %% Sanity checks
 [sts_loading, indatas, infos, pos_of_channel] = pspm_load_channel(datafile, options.channel, 'scr'); % check and get datafile
 if sts_loading < 1
