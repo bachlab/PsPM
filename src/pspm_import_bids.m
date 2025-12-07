@@ -234,7 +234,7 @@ for i = 1:length(subject_list)
             %% Get beh data ---    
             % *events file can be in 'beh' or 'physio' folder | prioritize
             % 'beh'
-            [events_json_filepath, events_tsv_filepath, ~, ~] = bids_find_events(ses_path, beh_base, task_name);
+            [events_json_filepath, events_tsv_filepath, beh_json_filepath, ~, ~] = bids_find_events(ses_path, beh_base, task_name);
             
             if isfile(events_json_filepath) && isfile(events_tsv_filepath)
                 marker_chan{1} = get_marker_data(events_json_filepath, events_tsv_filepath, true);
@@ -243,9 +243,16 @@ for i = 1:length(subject_list)
                 warning('ID:nonexistent_file','File not found: %s', events_json_filepath); 
                 warning('ID:nonexistent_file','File not found: %s', events_tsv_filepath);  
             end
+
+            % beh-file contains relevant info about stimulus presentation;
+            % required for eye-data 
+            if ~isfile(beh_json_filepath)
+                beh_json_filepath = events_json_filepath;
+                warning('ID:nonexistent_file','File not found: %s. Attempting to use %s, but may result in issues downstream', beh_json_filepath, events_json_filepath); 
+            end            
     
             % get behave json  
-            beh_json = get_beh_json(events_json_filepath);
+            beh_json = get_beh_json(beh_json_filepath);
     
             %% --- Build the file structure  ---
             % Build sessions infos
@@ -499,10 +506,10 @@ fprintf('=======================================================================
 
 end
 
-function [json_path, tsv_path, source_dir, status] = bids_find_events(ses_path, beh_base, task_name)
+function [json_path, tsv_path, beh_path, source_dir, status] = bids_find_events(ses_path, beh_base, task_name)
 % BIDS_FIND_EVENTS  Locate behavioral/physio event files for a PsPM session.
 %
-%   [json_path, tsv_path, source_dir, status] = bids_find_events(ses_path, beh_base, task_name)
+%   [json_path, tsv_path, beh_path, source_dir, status] = bids_find_events(ses_path, beh_base, task_name)
 %
 %   - Searches in priority order:  "beh" → "physio"
 %   - beh_base is the filename prefix (including task- if applicable)
@@ -511,11 +518,13 @@ function [json_path, tsv_path, source_dir, status] = bids_find_events(ses_path, 
 %   Returns:
 %      json_path   Full path to events.json
 %      tsv_path    Full path to events.tsv
+%      beh_path    Full path to beh.json
 %      source_dir  Directory used ('beh' or 'physio')
 %      status      1 if found, 0 otherwise
 
     json_path  = "";
     tsv_path   = "";
+    beh_path   = "";
     source_dir = "";
     status     = 0;
 
@@ -527,10 +536,12 @@ function [json_path, tsv_path, source_dir, status] = bids_find_events(ses_path, 
         % Build patterns
         pattern_json = beh_base + "events.json";
         pattern_tsv  = beh_base + "events.tsv";
+        pattern_beh  = beh_base + "beh.json";
 
         % Search using dir()
         json_files = dir(fullfile(candidate_dir, pattern_json));
         tsv_files  = dir(fullfile(candidate_dir, pattern_tsv));
+        beh_files  = dir(fullfile(candidate_dir, pattern_beh));
 
         if ~isempty(json_files) && ~isempty(tsv_files)
             % Found matching pair
@@ -538,8 +549,13 @@ function [json_path, tsv_path, source_dir, status] = bids_find_events(ses_path, 
             tsv_path   = fullfile(candidate_dir, tsv_files(1).name);
             source_dir = d;
             status     = 1;
-            return;
         end
+
+        if ~isempty(beh_files)
+            % Found matching pair
+            beh_path = fullfile(candidate_dir, beh_files(1).name);
+        end
+        return;
     end
 
     % No match found
