@@ -13,7 +13,7 @@ function [sts, out] = pspm_pipeline_fc_scr(fn, missing, onsets, isi, method, nor
 % * isi: CS-US interval in s (scalar or vector, in the latter case must be
 %        defined for all trials, or cell array)
 % * method: one of '2026_short_uni', '2026_short_bi', '2026_long_uni',
-%          '2026_short_bi'. Here, 'long/short' refer to the isi in de Vries 
+%          '2026_long_bi'. Here, 'long/short' refer to the isi in de Vries 
 %          et al. (which was 3.5 s for 'short', and > 6 s for 'long'), and
 %          'uni/bi' refers to unidirectional or bidirectional filtering
 %          (where bidirectional filtering was slightly better in the tested
@@ -39,7 +39,7 @@ end
 sts = -1;
 out = [];
 
-if nargin <= 5
+if nargin < 5 
     warning('Don''t know what to do');
     return
 end
@@ -55,18 +55,18 @@ end
 %% Parse options and setup timings
 if ~iscell(fn)
     onsets = {onsets};
-    isi    = {isi};
+    isi    = {isi}; 
 end
 
 for i_sn = 1:numel(onsets)
-    timing{i_sn}{1} = onsets{i_sn}(:) + isi{i_sn};(:)
+    timing{i_sn}{1} = onsets{i_sn}(:) + isi{i_sn}(:);
     if ismember(method, {'2026_short_uni', '2026_short_bi'})
         % flex-fix
         timing{i_sn}{2} = [onsets{i_sn}(:); onsets{i_sn}(:) + isi{i_sn}(:)];
     elseif ismember(method, {'2026_long_uni', '2026_long_bi'})
         % flex-flex-fix with halved ISI
-        timing{i_sn}{2} = [onsets{i_sn}(:); onsets{i_sn}(:) + isi{i_sn}(:)/2];
-        timing{i_sn}{3} = [onsets{i_sn}(:) + isi{i_sn}(:)/2; onsets{i_sn}(:) + isi{i_sn}(:)];
+        timing{i_sn}{2} = [onsets{i_sn}(:), onsets{i_sn}(:) + isi{i_sn}(:)/2];
+        timing{i_sn}{3} = [onsets{i_sn}(:) + isi{i_sn}(:)/2, onsets{i_sn}(:) + isi{i_sn}(:)];
     else
         warning('Unknown method');
         return
@@ -79,15 +79,15 @@ end
 
 %% Setup model
 model = struct( ...
-    datafile, fn, ...
-    missing, missing, ...
-    timing, timing, ...
-    norm, normalize);
+    'datafile', fn, ...
+    'missing', missing, ...
+    'timing', [], ... % 
+    'norm', normalize);
+model.timing = timing; 
 % set (dummy) filename
 [pth, fn, ext] = fileparts(fn);
 model_fn = fullfile(pth, ['mdl_', fn, ext]);
-model.modelfile = model_fn;
-
+model.modelfile = model_fn; 
 if strcmpi(method, '2026_short_uni')
 elseif strcmpi(method, '2026_short_bi')
 elseif strcmpi(method, '2026_long_uni')
@@ -99,6 +99,7 @@ elseif strcmpi(method, '2026_long_uni')
 elseif strcmpi(method, '2026_long_bi')
     % default model
 end
+
 
 %% Setup options
 options = struct('overwrite', 0, 'nosave', 1-keepfile);
