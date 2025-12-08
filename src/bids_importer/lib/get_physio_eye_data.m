@@ -225,7 +225,7 @@ if ests == 1
     else
         file_paths{1,1} = eye_data_cell{1}.source.file ;
     end
-
+    
     % Check if the first data has the StartTime field
     if isfield(data{1}.header, 'StartTime')
         % Check if all StartTimes are the same
@@ -274,8 +274,10 @@ else
         data_events = get_physio_events_data(events_json_filepath, events_tsv_filepath, false); % has ColumnField
     
         % Gives the events the StartTime time as the eye data
-        if ~isempty(data) % if there are eye data but eye_events
+        if ~isempty(data_events) % if there are eye data but eye_events
             for i = 1:length(data_events);  data_events{i}.header.StartTime = data{1}.header.StartTime; end
+        else
+            warning('No events for physio eye data were imported.');
         end
         file_paths{end+1,1} = {events_json_filepath,events_tsv_filepath};
         data = [data; data_events];
@@ -401,6 +403,7 @@ if ~isempty(reccfg)
         data{s,1}.header.sr = sr;
         data{s,1}.header.StartTime = onsets(1)/sr; % to get it in secondes
     end
-
+else
+    data = {};
 end
 end
