@@ -130,7 +130,7 @@ for i = 1:length(data)
                end
 
                data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
-               data{i}.header.r =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
+               data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
            elseif strcmp(data{i}.header.chantype(8) , 'l')
                % gaze_x_l     
                if  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'SampleCoordinateUnits'))
