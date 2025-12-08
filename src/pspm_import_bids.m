@@ -84,11 +84,9 @@ if isempty(subject_list)
 end
 
 % output folder (save_path)
-if ~isstring(save_path) 
-    % save_path = [dataset_path, filesep, 'out'];
-    save_path = fullfile(dataset_path, "out");
+if ~ischar(save_path) 
+    save_path = fullfile(dataset_path, 'out');
     disp(save_path);
-    % warning("ID:nonexistent_folder","No or invalid save path specified; using '%s' instead.", save_path);
     warning(sprintf("ID:nonexistent_folder: No or invalid save path specified; using '%s' instead.", save_path));
 end
 
