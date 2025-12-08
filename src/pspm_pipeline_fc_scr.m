@@ -12,12 +12,13 @@ function [sts, out] = pspm_pipeline_fc_scr(fn, missing, onsets, isi, method, nor
 % * onsets: onset times of all CS (vector), or cell array of onset times
 % * isi: CS-US interval in s (scalar or vector, in the latter case must be
 %        defined for all trials, or cell array)
-% * method: one of '2026_short_uni', '2026_short_bi', '2026_long_uni',
-%          '2026_long_bi'. Here, 'long/short' refer to the isi in de Vries 
-%          et al. (which was 3.5 s for 'short', and > 6 s for 'long'), and
-%          'uni/bi' refers to unidirectional or bidirectional filtering
-%          (where bidirectional filtering was slightly better in the tested
-%          data sets but can be suboptimal with long inter-trial intervals)
+% * method: one of '2026_short', '2026_long_uni', '2026_long_bi'. Here, 
+%          'long/short' refer to the isi in de Vries et al. (which was 
+%           3.5 s for 'short', and > 6 s for 'long'), and 'uni/bi' refers 
+%          to unidirectional or bidirectional filtering (where bidirectional 
+%          filtering was slightly better for long ISI in the tested
+%          data sets but can be suboptimal with long inter-trial intervals.
+%          For short ISI, unidirectional filtering was always better).
 % * normalize: [optional] Normalise data. Data are normalised during inversion 
 %         but results are transformed back into raw data units. Default: 0.
 % * keepfile: [optional] Save model file for diagnostic purposes. Default: 0.
@@ -39,7 +40,7 @@ end
 sts = -1;
 out = [];
 
-if nargin < 5 
+if nargin < 5
     warning('Don''t know what to do');
     return
 end
@@ -55,18 +56,18 @@ end
 %% Parse options and setup timings
 if ~iscell(fn)
     onsets = {onsets};
-    isi    = {isi}; 
+    isi    = {isi};
 end
 
 for i_sn = 1:numel(onsets)
     timing{i_sn}{1} = onsets{i_sn}(:) + isi{i_sn}(:);
-    if ismember(method, {'2026_short_uni', '2026_short_bi'})
+    if ismember(method, {'2026_short'})
         % flex-fix
         timing{i_sn}{2} = [onsets{i_sn}(:); onsets{i_sn}(:) + isi{i_sn}(:)];
     elseif ismember(method, {'2026_long_uni', '2026_long_bi'})
         % flex-flex-fix with halved ISI
-        timing{i_sn}{2} = [onsets{i_sn}(:), onsets{i_sn}(:) + isi{i_sn}(:)/2];
-        timing{i_sn}{3} = [onsets{i_sn}(:) + isi{i_sn}(:)/2, onsets{i_sn}(:) + isi{i_sn}(:)];
+        timing{i_sn}{2} = [onsets{i_sn}(:); onsets{i_sn}(:) + isi{i_sn}(:)/2];
+        timing{i_sn}{3} = [onsets{i_sn}(:) + isi{i_sn}(:)/2; onsets{i_sn}(:) + isi{i_sn}(:)];
     else
         warning('Unknown method');
         return
@@ -78,18 +79,22 @@ if ~iscell(fn)
 end
 
 %% Setup model
-model = struct( ...
-    'datafile', fn, ...
-    'missing', missing, ...
-    'timing', [], ... % 
-    'norm', normalize);
-model.timing = timing; 
 % set (dummy) filename
 [pth, fn, ext] = fileparts(fn);
 model_fn = fullfile(pth, ['mdl_', fn, ext]);
-model.modelfile = model_fn; 
-if strcmpi(method, '2026_short_uni')
-elseif strcmpi(method, '2026_short_bi')
+
+model = struct( ...
+    'datafile', fn, ...
+    'missing', missing, ...
+    'modelfile', model_fn, ...
+    'norm', normalize);
+model.timing = timing;
+
+if strcmpi(method, '2026_short')
+    model.constrained = 1;
+    % filter
+    model.filter = settings.dcm{1}.filter;
+    model.filter.direction = 'uni';
 elseif strcmpi(method, '2026_long_uni')
     % this is a hidden option in pspm_dcm_inv (upper bound in s)
     model.constrained_upper = 1; 
@@ -99,7 +104,6 @@ elseif strcmpi(method, '2026_long_uni')
 elseif strcmpi(method, '2026_long_bi')
     % default model
 end
-
 
 %% Setup options
 options = struct('overwrite', 0, 'nosave', 1-keepfile);
