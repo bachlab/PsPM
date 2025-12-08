@@ -150,7 +150,7 @@ if isempty(subject_list)
 end
 
 % output folder (save_path)
-if ~isstring(save_path) 
+if ~(isstring(save_path) || ischar(save_path))
     % save_path = [dataset_path, filesep, 'out'];
     save_path = fullfile(dataset_path, "out");
     disp(save_path);
@@ -304,8 +304,8 @@ for i = 1:length(subject_list)
             end
     
             ses_filepath            = fullfile(save_path, ses_filename);
-            outfile{end+1}          = ses_filepath; 
-            ses.infos.importfile    = ses_filepath; 
+            outfile{end+1}          = char(ses_filepath); 
+            ses.infos.importfile    = char(ses_filepath); 
     
             % Check the pspm structure
             [lsts, ~, ~, ~] = pspm_load_data(ses);
