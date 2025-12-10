@@ -136,6 +136,12 @@ to assess fear learning. *Psychophysiology*, *54*, 202-214.
 [\[PubMed\]](https://www.ncbi.nlm.nih.gov/pubmed/27753123)
 
 ## Recent examples for application studies using PsPM
+* Fraenz C, Metzen D, Packheiser J, Merz CJ, Selpien H, Axmacher N, Genç E (2025). Multi-modal brain properties are associated with interindividual differences in fear acquisition and extinction. [\[preprint\]](https://doi.org/10.1101/2025.04.05.647350)
+* Duda JM, Keding TJ, Kribakaran S, Odriozola P, Kitt ER, Cohodes EM, Zacharek SJ, McCauley S, Haberman JT, Joormann J, Gee DG (2025). Exposure to unpredictable childhood environments is associated with amygdala activation during early extinction in adulthood. *Developmental Cognitive Neuroscience*, *74*, 101578. [\[doi\]](https://doi.org/10.1016/j.dcn.2025.101578)
+* De Aquino JP, Costa GPA, Nunes JC, Hudak J, Odette M, Garland EL (2025) Cannabis use frequency is associated with emotion dysregulation among persons receiving long-term opioid therapy for chronic pain: A psychophysiological study. *Drug and Alcohol Dependence*, *275*, 112812. [\[doi\]](https://doi.org/10.1016/j.drugalcdep.2025.112812)
+* Jelsma E, Zhang A, Goosby BJ, Chadle JE (2024). Sympathetic arousal among depressed college students: Examining the interplay between psychopathology and social activity. *Psychophysiology*, *61*, e14597. [\[doi\]](https://doi.org/10.1111/psyp.1459)
+* Becker J, Viertler M, Korn CW, Blank H (2024). The pupil dilation response as an indicator of visual cue uncertainty and auditory outcome surprise. *European Journal of Neuroscience*, *59*, 2686–2701. [\[doi\]](https://doi.org/10.1111/ejn.16306)
+* Eickstead CT, Davis ES, Goodman AM, Purcell JB, Dark HE, Grey DK, Bolaram A, Orem TR, Wheelock MD, Mrug S, Knight DC (2025). Violence exposure moderates stress-elicited neurobehavioral function in young people. *Emotion*, *in press*. [\[doi\]](https://doi.apa.org/doi/10.1037/emo0001590)
 * Xia Y, Wehrli J, Abivardi A , Hostiuc M, Kleim B, Bach DR (2024). Attenuating human fear memory retention with minocycline: a randomized placebo-controlled trial. *Translational Psychiatry*, *14*, 28.
 * Wehrli J, Xia Y, Abivardi A , Kleim B, Bach DR (2024). The impact of doxycycline on human contextual fear memory. *Psychopharmacology*, *241*, 1065–1077.
 * Wehrli J, Xia Y, Offenhammer B, Kleim B, Müller D, Bach DR (2023). Effect of the matrix metalloproteinase inhibitor doxycycline on human trace fear memory. *eNeuro*, ENEURO.0243-22.2023.
