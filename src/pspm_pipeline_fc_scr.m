@@ -66,8 +66,8 @@ for i_sn = 1:numel(onsets)
         timing{i_sn}{2} = [onsets{i_sn}(:); onsets{i_sn}(:) + isi{i_sn}(:)];
     elseif ismember(method, {'2026_long_uni', '2026_long_bi'})
         % flex-flex-fix with halved ISI
-        timing{i_sn}{2} = [onsets{i_sn}(:); onsets{i_sn}(:) + isi{i_sn}(:)/2];
-        timing{i_sn}{3} = [onsets{i_sn}(:) + isi{i_sn}(:)/2; onsets{i_sn}(:) + isi{i_sn}(:)];
+        timing{i_sn}{2} = [onsets{i_sn}(:), onsets{i_sn}(:) + isi{i_sn}(:)/2];
+        timing{i_sn}{3} = [onsets{i_sn}(:) + isi{i_sn}(:)/2, onsets{i_sn}(:) + isi{i_sn}(:)];
     else
         warning('Unknown method');
         return
@@ -80,8 +80,8 @@ end
 
 %% Setup model
 % set (dummy) filename
-[pth, fn, ext] = fileparts(fn);
-model_fn = fullfile(pth, ['mdl_', fn, ext]);
+[pth, fn_model, ext] = fileparts(fn);
+model_fn = fullfile(pth, ['mdl_', fn_model, ext]);
 
 model = struct( ...
     'datafile', fn, ...
