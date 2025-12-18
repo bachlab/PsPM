@@ -90,13 +90,6 @@ model.datafile = fn;
 model.missing = missing;
 model.timing = timing;
 
-% sanity check
-n = numel(model.datafile);
-if ~(numel(model.missing) == n && numel(model.timing) == n)
-    warning('Not the same length!')
-    return
-end
-
 if strcmpi(method, '2026_short')
     model.constrained = 1;
     % filter
