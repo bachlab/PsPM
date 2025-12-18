@@ -80,15 +80,22 @@ end
 
 %% Setup model
 % set (dummy) filename
-[pth, fn_model, ext] = fileparts(fn);
-model_fn = fullfile(pth, ['mdl_', fn_model, ext]);
+[pth, fn_m, ext] = fileparts(fn);
+model_fn = fullfile(pth{1}, ['mdl_', fn_m{1}, '.mat']);
 
 model = struct( ...
-    'datafile', fn, ...
-    'missing', missing, ...
     'modelfile', model_fn, ...
     'norm', normalize);
+model.datafile = fn;
+model.missing = missing;
 model.timing = timing;
+
+% sanity check
+n = numel(model.datafile);
+if ~(numel(model.missing) == n && numel(model.timing) == n)
+    waring('Not the same length!')
+    return
+end
 
 if strcmpi(method, '2026_short')
     model.constrained = 1;
