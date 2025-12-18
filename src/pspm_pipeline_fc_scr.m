@@ -93,7 +93,7 @@ model.timing = timing;
 % sanity check
 n = numel(model.datafile);
 if ~(numel(model.missing) == n && numel(model.timing) == n)
-    waring('Not the same length!')
+    warning('Not the same length!')
     return
 end
 
