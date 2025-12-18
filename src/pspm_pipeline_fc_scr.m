@@ -63,7 +63,7 @@ for i_sn = 1:numel(onsets)
     timing{i_sn}{1} = onsets{i_sn}(:) + isi{i_sn}(:);
     if ismember(method, {'2026_short'})
         % flex-fix
-        timing{i_sn}{2} = [onsets{i_sn}(:); onsets{i_sn}(:) + isi{i_sn}(:)];
+        timing{i_sn}{2} = [onsets{i_sn}(:), onsets{i_sn}(:) + isi{i_sn}(:)];
     elseif ismember(method, {'2026_long_uni', '2026_long_bi'})
         % flex-flex-fix with halved ISI
         timing{i_sn}{2} = [onsets{i_sn}(:), onsets{i_sn}(:) + isi{i_sn}(:)/2];
