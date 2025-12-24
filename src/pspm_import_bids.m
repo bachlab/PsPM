@@ -115,7 +115,7 @@ if isempty(currentFolder)
 end
 
 % checks if what needs to be imported
-dataset_mode = ~(startsWith(currentFolder, 'sub-') || startsWith(currentFolder, 'ses-')); 
+dataset_mode = exist(fullfile(dataset_path, 'dataset_description.json'), 'file') == 2;
 ses_mode = startsWith(currentFolder, 'ses-');  
 sub_mode = startsWith(currentFolder, 'sub-');  
 
@@ -137,12 +137,12 @@ else
 
     % dataset_path now becomes the real dataset path 
     dataset_path = fileparts(sub_path); 
-  
-    % imports dataset description 
-    dataset_description = read_dataset_description(dataset_path); 
        
     [~, subject_list(1).name] = fileparts(sub_path); % only one subject
 end
+
+% imports dataset description 
+dataset_description = read_dataset_description(dataset_path); 
 
 % checks if there are subject
 if isempty(subject_list)
@@ -150,7 +150,7 @@ if isempty(subject_list)
 end
 
 % output folder (save_path)
-if ~(isstring(save_path) || ischar(save_path))
+if nargin<2 || ~(isstring(save_path) || ischar(save_path))
     % save_path = [dataset_path, filesep, 'out'];
     save_path = fullfile(dataset_path, "out");
     disp(save_path);
@@ -227,14 +227,29 @@ for i = 1:length(subject_list)
             end            
             %% Processing start         
             % read in data
-            physio_path                             = fullfile(ses_path, 'physio');
-            [~, physio_data, physio_infos]          = get_physio_data(subject_full_id, session_id, task_name, physio_path);
-            [~, physio_eye_data, physio_eye_infos]  = get_physio_eye_data(subject_full_id, session_id, task_name, physio_path);
+            physio_path = fullfile(ses_path, 'physio');
+            [~, physio_data, physio_infos] = get_physio_data( ...
+                subject_full_id, ...
+                session_id, ...
+                task_name, ...
+                physio_path ...
+            );
+            
+            [~, physio_eye_data, physio_eye_infos] = get_physio_eye_data( ...
+                subject_full_id, ...
+                session_id, ...
+                task_name, ...
+                physio_path ...
+            );
             
             %% Get beh data ---    
             % *events file can be in 'beh' or 'physio' folder | prioritize
             % 'beh'
-            [events_json_filepath, events_tsv_filepath, beh_json_filepath, ~, ~] = bids_find_events(ses_path, beh_base, task_name);
+            [events_json_filepath, events_tsv_filepath, beh_json_filepath, ~, ~] = bids_find_events( ...
+                ses_path, ...
+                beh_base, ...
+                task_name ...
+            );
             
             if isfile(events_json_filepath) && isfile(events_tsv_filepath)
                 marker_chan{1} = get_marker_data(events_json_filepath, events_tsv_filepath, true);
