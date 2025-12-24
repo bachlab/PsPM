@@ -389,10 +389,10 @@ function [med_d, mad, thresh] = madCalc(d,n)
 %--------------------------------------------------------------------------
 
 % Calc the median:
-med_d  = nanmedian(d);
+med_d = median(d, 'omitnan');
 
-% Calc the mad:
-mad    = nanmedian(abs(d - med_d));
+% Calc the MAD:
+mad = median(abs(d - med_d), 'omitnan');
 
 % Calc the threshold:
 thresh = med_d + (n * mad);
