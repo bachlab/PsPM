@@ -376,7 +376,7 @@ if ~isempty(reccfg)
 
     signal = {'blink','saccade','fixation'};
     singal_chan = {'blink_c','saccade_c','fixation_c'};
-
+    
     for s = 1:numel(signal)
 
         % Index of the onsets of the signal
@@ -385,15 +385,33 @@ if ~isempty(reccfg)
         % get onset start to onset end(onset+duration)
         starts = onsets(idx_signal);
         ends  = onsets(idx_signal) + duration(idx_signal);
+        
+        % safer
+        ranges = cell(numel(starts),1);
+        
+        for k = 1:numel(starts)
+            if starts(k) <= ends(k)
+                ranges{k} = (starts(k):ends(k)).';
+            else
+                ranges{k} = [];
+            end
+        end
+        
+        all_indices = vertcat(ranges{:});
 
-        all_indices = [];
-        for i = 1:length(starts);  all_indices = [all_indices, starts(i):ends(i)]; end
-
-        idx_signal = unique(all_indices); %  removes overlaps
-        data_signal  = zeros(idx_signal(end),1);
-
-        for i = 1:length(idx_signal); data_signal(idx_signal(i),1) = 1; end % Map values to these indices (set them to 1)
-        if ~(sum(data_signal) == length(idx_signal)); warning('Not same length.'); return; end % sanitiy check
+        % remove overlaps + invalid index
+        idx_signal = unique(all_indices);
+        idx_signal  = idx_signal(idx_signal > 0);     % drop 0
+        
+        % create signal
+        data_signal = zeros(max(idx_signal),1);
+        data_signal(idx_signal) = 1;
+        
+        % sanitiy check
+        if ~(sum(data_signal) == length(idx_signal))
+            warning('Not same length.')
+            return
+        end
 
         % assign pupil data
         data{s,1}.data = data_signal;
