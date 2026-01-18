@@ -44,17 +44,21 @@ for channel = 1:numel(chanlist)
     errorflag(channel)=1;
     chandata{channel}=[];
     chanhead{channel}.title='';
+    chanhead{channel}.kind = -1 ;
   end
 end
 fclose(fid);
+
 % 2.5 delete empty channels
-if ~isempty(errorflag)
+if isempty(errorflag)
   ind=find(errorflag);
   for channel=ind(end:-1:1)
-    chandata(channel)=[];
-    chanhead(channel)=[];
+    temp_len = chandata(channel);
+    temp_sr =  chanhead{channel}.sampleinterval;
+    break
   end
 end
+
 warning on;
 %% 3 extract individual channels
 % 3.1 loop through import jobs
@@ -75,7 +79,10 @@ for iImport = 1:numel(import)
   sourceinfo.channel{iImport, 1} = sprintf('Channel %02.0f: %s', channel, chanhead{channel}.title);
   % 3.1.2 convert to waveform or get sample rate for wave channel types
   if strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'wave')
-    if chanhead{channel}.kind == 1 % waveform
+    if  chanhead{channel}.kind == -1 % empty channel      
+      import{iImport}.data = NaN(temp_len,1);
+      import{iImport}.units = '';
+    elseif chanhead{channel}.kind == 1 % waveform
       import{iImport}.data = chandata{channel};
       import{iImport}.sr   = 1./chanhead{channel}.sampleinterval;
     elseif chanhead{channel}.kind == 3 % timestamps
@@ -100,7 +107,11 @@ for iImport = 1:numel(import)
     end
     % extract, and possibly denoise event channels
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
-    if chanhead{channel}.kind == 1 % waveform
+    if  chanhead{channel}.kind == -1 % empty channel
+      import{iImport}.marker = 'continuous'  ; % change
+      import{iImport}.data = zeros(1,0);
+      import{iImport}.units = 'event';  
+    elseif chanhead{channel}.kind == 1 % waveform
       import{iImport}.marker = 'continuous';
       import{iImport}.data = chandata{channel};
       import{iImport}.sr   = 1./chanhead{channel}.sampleinterval;
