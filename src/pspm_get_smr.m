@@ -48,17 +48,6 @@ for channel = 1:numel(chanlist)
   end
 end
 fclose(fid);
-
-% 2.5 delete empty channels
-if isempty(errorflag)
-  ind=find(errorflag);
-  for channel=ind(end:-1:1)
-    temp_len = chandata(channel);
-    temp_sr =  chanhead{channel}.sampleinterval;
-    break
-  end
-end
-
 warning on;
 %% 3 extract individual channels
 % 3.1 loop through import jobs
@@ -82,6 +71,7 @@ for iImport = 1:numel(import)
     if  chanhead{channel}.kind == -1 % empty channel      
       import{iImport}.data = NaN(temp_len,1);
       import{iImport}.units = '';
+      import{iImport}.sr   = 1;
     elseif chanhead{channel}.kind == 1 % waveform
       import{iImport}.data = chandata{channel};
       import{iImport}.sr   = 1./chanhead{channel}.sampleinterval;
@@ -108,9 +98,10 @@ for iImport = 1:numel(import)
     % extract, and possibly denoise event channels
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
     if  chanhead{channel}.kind == -1 % empty channel
-      import{iImport}.marker = 'continuous'  ; % change
+      import{iImport}.marker = 'continuous'  ; % or ''
       import{iImport}.data = zeros(1,0);
       import{iImport}.units = 'event';  
+      import{iImport}.sr = 1;  
     elseif chanhead{channel}.kind == 1 % waveform
       import{iImport}.marker = 'continuous';
       import{iImport}.data = chandata{channel};
