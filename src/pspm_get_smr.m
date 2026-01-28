@@ -69,7 +69,7 @@ for iImport = 1:numel(import)
   % 3.1.2 convert to waveform or get sample rate for wave channel types
   if strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'wave')
     if  chanhead{channel}.kind == -1 % empty channel      
-      import{iImport}.data = NaN(temp_len,1);
+      import{iImport}.data = zeros(1,0);
       import{iImport}.units = '';
       import{iImport}.sr   = 1;
     elseif chanhead{channel}.kind == 1 % waveform
