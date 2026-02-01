@@ -47,13 +47,14 @@ for iFiles = 1:2
 
         if any(newpathindx)
             newpath = fullfile(datapath, newdir(newpathindx).name);
-            filelist = dir(fullfile(newpath, '*.mat'));
+            filelist = dir(newpath);
+            filelist = filelist(~[filelist.isdir]);   % remove directories
             oldfile = fullfile(newpath, {filelist.name});
             newfile = fullfile(datapath, {filelist.name});
             for i_fn = 1:numel(oldfile)
                 movefile(oldfile{i_fn}, newfile{i_fn});
             end
-            rmdir(newpath);
+            rmdir(newpath, 's');
         end
     end
 end

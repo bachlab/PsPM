@@ -8,7 +8,7 @@ function [sts, out] = pspm_data_editor(varargin)
 %   ┌─────options 
 %   ├.output_file:  When this is specified, marked epochs will be saved
 %   │               to a missing epochs file when clicking 'save' or 'apply'.
-%   │               It is also possible to specificy this file from within 
+%   │               It is also possible to specify this file from within 
 %   │               the interactive data editor.
 %   ├─.epoch_file:  When this is specified, epochs will be imported from 
 %   │               this file and can be changed further. This file must 

@@ -31,7 +31,12 @@ end
 sts = -1;
 sourceinfo = [];
 addpath(pspm_path('Import','acq'));
-[sts, header, inputdata] = acqread_python(datafile);
+[lsts, header, inputdata] = acqread_python(datafile);
+% there might be a glitch in bioread itself ...
+if lsts < 1 || all(cellfun('isempty', inputdata))
+    warning('Unknown error with bioread - please contact the PsPM development team.');
+    return;
+end
 %% Extract individual channels
 for k = 1:numel(import)
   % define channel number ---
@@ -48,18 +53,19 @@ for k = 1:numel(import)
   % retrieve sample rate ---
   % we might need to change this if different sample rates are used for
   % each channel
-  if numel(header.dSampleTime) > 1
+  if numel(header.samples_per_second) > 1
     warning('Unknown sample rate format Please contact the developers.'); return;
-  elseif isfield(header, 'nVarSampleDivider') && ~isempty(header.nVarSampleDivider) && numel(header.nVarSampleDivider) >= channel
+  elseif isfield(header, 'frequency_divider') && ~isempty(header.frequency_divider) && numel(header.frequency_divider) >= channel
     % allows for channel-specific sample rates from version 3.7 upwards
-    import{k}.sr = double(1000 * (1./header.dSampleTime) ./ header.nVarSampleDivider(channel)); % acqread returns the sample rate in milliseconds
+    import{k}.sr = double(header.samples_per_second) ./ header.frequency_divider(channel); % acqread returns the sample rate in milliseconds
   else
-    import{k}.sr = double(1000 * 1./header.dSampleTime); % acqread returns the sampling time in milliseconds
+    import{k}.sr = double(header.samples_per_second); % acqread returns the sampling time in milliseconds
   end
-  % acqread function returns the signal without any processing. scale and offset parameters
-  % provided an .acq files are meant to apply a linear transformation to each x_i.
-  % See https://www.mathworks.com/matlabcentral/fileexchange/16023-acqread
-  temp = header.dAmplScale(channel) * double(inputdata{channel}) + header.dAmplOffset(channel);
+  % bioread function apparently returns the signal after applying processing. scale
+  % and offset parameters are still stored in header.dAmplScale and header.dAmplOffset
+  % checked this via comparison with a file directly exported to matlab
+  % from Acknowledge
+  temp = double(inputdata{channel});
   [r,c]= size(temp);
   if r == 1 && c > 1
     temp = transpose(temp);

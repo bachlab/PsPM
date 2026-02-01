@@ -5,7 +5,8 @@ function [sts, data, duration] = pspm_align_channels(data, induration)
 %   If a duration argument is stated, all channels will be aligned to this
 %   duration.
 % ● Format
-%   [sts, data, duration] = pspm_align_channels(data, induration)
+%       [sts, data, duration] = pspm_align_channels(data, induration)
+%       [sts, data, duration] = pspm_align_channels(data)
 % ● Arguments
 %   *                data : [struct] the input data to be processed, in PsPM data format.
 %   *          induration : [double] the duration of the input data.
@@ -21,7 +22,7 @@ if isempty(settings)
 end
 sts = -1;
 %% Check input arguments
-if nargin == 2;
+if nargin == 2
   if ~(isnumeric(induration) && numel(induration) == 1)
     warning('ID:invalid_input', 'induration must be a numeric scalar'); return;
   end

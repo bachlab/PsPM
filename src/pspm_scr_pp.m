@@ -56,10 +56,10 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   │             of artefact epochs will be removed. Default: 0.5 s
 %   ├.clipping_step_size:
 %   │             [Optional] A numerical value specifying the step size in moving average
-%   │             algorithm for detecting clipping. Default: 10
+%   │             algorithm for detecting clipping. Default: 10 s
 %   ├.clipping_window_size:
 %   │             [Optional] A numerical value specifying the window size in moving average
-%   │             algorithm for detecting clipping. Default: 100
+%   │             algorithm for detecting clipping. Default: 100 s
 %   ├.clipping_threshold:
 %   │             [Optional] A float between 0 and 1 specifying the proportion of local
 %   │             maximum in a step. Default: 0.1
@@ -75,7 +75,7 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   │             [Optional] A bool value to determine if detected baseline alteration
 %   │             will be included in the calculated clippings.
 %   │             Default: 0 (not to include baseline alteration in clippings)
-%   ├─.overwrite: [logical] (0 or 1)
+%   ├─.overwrite: [logical] (0 or 1 or 2)
 %   │             [Optional] Define whether to overwrite existing missing epochs files 
 %   │             or not (default). Will only be used if
 %   │             options.missing_epochs_filename is specified.
@@ -129,7 +129,6 @@ options = pspm_options(options, 'scr_pp');
 if options.invalid
     return
 end
-
 %% Sanity checks
 [sts_loading, indatas, infos, pos_of_channel] = pspm_load_channel(datafile, options.channel, 'scr'); % check and get datafile
 if sts_loading < 1
@@ -144,6 +143,7 @@ end
 
 %% Create filters
 % filt == 1 if sample is valid and filt == 0 if it is invalid
+% index == 0 if sample is valid and index == 1 if it is invalid
 data_changed = NaN(size(indata));
 filt_range = indata < options.max & indata > options.min;
 filt_slope = true(size(indata));
@@ -157,15 +157,14 @@ if (options.deflection_threshold ~= 0) && ~all(filt_slope==1)
     end
 end
 [index_clipping, index_baseline] = detect_clipping_baseline(indata, options.clipping_step_size, ...
-    options.clipping_window_size, options.baseline_jump, options.clipping_threshold);
+    options.clipping_window_size, options.baseline_jump, options.clipping_threshold,sr);
 if options.include_baseline
     filt_clipping = 1 - (index_clipping | index_baseline);
 else
     filt_clipping = 1-index_clipping;
 end
 % combine filters: 
-filt = filt_range & filt_slope;
-filt = filt & (1-filt_clipping);
+filt = filt_range & filt_slope & filt_clipping;
 
 
 %% Find data islands and expand artefact islands
@@ -214,7 +213,8 @@ if ~isempty(options.missing_epochs_filename)
         warning('ID:invalid_input', 'Missing epoch file exists, and overwriting not allowed by user.');
         return
     else
-        save(options.missing_epochs_filename, 'epochs_missing');
+        epochs = epochs_missing;
+        save(options.missing_epochs_filename, 'epochs');
         out = options.missing_epochs_filename;
     end
 else
@@ -235,7 +235,9 @@ return
 
 
 
-function [index_clipping, index_baseline] = detect_clipping_baseline(data, step_size, window_size, jump, threshold)
+function [index_clipping, index_baseline] = detect_clipping_baseline(data, step_size, window_size, jump, threshold, sr)
+window_size = window_size*sr; % window_size in datapoints
+step_size = step_size*sr;
 l_data = length(data);
 n_window = floor((l_data-window_size) / step_size);
 index_window_starter = 1:step_size:(step_size*n_window+1);
