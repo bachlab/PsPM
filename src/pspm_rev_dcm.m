@@ -127,10 +127,10 @@ switch job
       xt(x + 1, :) = f_SCR(xt(x, :), Theta, ut(:, x), in);
     end
     figure; plot(xt(:, 1));
-    set(gca, 'YAxisLocation','left', 'YTickMode','auto', 'XTick', 0:50:300, 'XTickLabel', 0:5:30, 'FontWeight', 'Bold', 'FontSize', 12);
+    set(gca, 'YTickMode', 'auto', 'XTick', 0:50:300, 'XTickLabel', 0:5:30,'XLim', [0 300], 'FontWeight', 'Bold', 'FontSize', 12);
     set(get(gca, 'Title'), 'String', 'Skin conductance response function', 'FontWeight', 'Bold', 'FontSize', 16);
-    set(get(gca,'XLabel'), 'String',   'Time (seconds)', 'FontWeight','Bold', 'FontSize',12);
-    set(get(gca,'YLabel'), 'String',   'SCR amplitude (data units)', 'FontWeight','Bold', 'FontSize',12);
+    set(get(gca, 'XLabel'), 'String', 'Time (s)', 'FontWeight', 'Bold', 'FontSize', 12)
+    set(get(gca, 'YLabel'), 'String', 'Skin conductance (\muS)', 'FontWeight', 'Bold','FontSize', 12);
   case 'names'
     fprintf('Trial names for %s:\n---------------------------------------\n', dcm.dcmname);
     for n=1:numel(dcm.trlnames)
