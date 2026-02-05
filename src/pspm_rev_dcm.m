@@ -81,8 +81,8 @@ switch job
     y = dcm.sn{sn}.y(:);
     yhat = dcm.sn{sn}.yhat(:);
     f.h = figure('Position', [50 50 750 750], 'PaperPositionMode', 'auto', 'PaperOrientation', 'Portrait', 'InvertHardCopy', 'off', 'Color', 'w', 'Name', 'Session summary');
-    foo = ceil(sqrt(trlno));
-    f.r = foo; f.c = ceil(trlno/foo);
+    foo = ceil(sqrt(trlno+1)); % +1 for the dummy plot
+    f.r = foo; f.c = ceil((trlno+1)/foo); % +1 for the dummy plot
     sr = 10;
     for n = 1:trlno
       if n < trlno
@@ -98,9 +98,22 @@ switch job
       set(gca, 'XTickLabel', xt / dcm.input.sr);
       set(gca, 'YLim', [min(yhat), max(yhat)]);
     end
-    % display scrf
+
+  idx = trlno + 1;
+  subplot(f.r, f.c, idx);
+  cla;
+
+  %—— hide top/right spines, keep bottom/left ticks but no numbers
+  set(gca, 'Box','off', 'XTickMode','auto', 'XTickLabel', [], ...          
+    'YTickMode','auto', 'YTickLabel',[],  'FontSize',8);
+  set( get(gca,'XLabel'), 'String','Time (s)', ...
+    'FontSize',8, 'Units','normalized', 'Position',[0.5, 0.20, 0], 'Visible','on');
+  set( get(gca,'YLabel'), 'String','SCR ', ...
+    'FontSize',8, 'Units','normalized', 'Position',[0.20, 0.5, 0], 'Visible','on');
+
+  % display scrf
     % ---------------------------------------------------------------------
-  case 'scrf'
+  case 'scrf'   
     xt = zeros(1, 7);
     ut = 0:0.1:30;% time
     ut(2, :) = 0; % aSCR
@@ -114,8 +127,10 @@ switch job
       xt(x + 1, :) = f_SCR(xt(x, :), Theta, ut(:, x), in);
     end
     figure; plot(xt(:, 1));
-    set(gca, 'YTick', [], 'XTick', 0:50:300, 'XTickLabel', 0:5:30, 'FontWeight', 'Bold', 'FontSize', 12);
+    set(gca, 'YTickMode', 'auto', 'XTick', 0:50:300, 'XTickLabel', 0:5:30,'XLim', [0 300], 'FontWeight', 'Bold', 'FontSize', 12);
     set(get(gca, 'Title'), 'String', 'Skin conductance response function', 'FontWeight', 'Bold', 'FontSize', 16);
+    set(get(gca, 'XLabel'), 'String', 'Time (s)', 'FontWeight', 'Bold', 'FontSize', 12)
+    set(get(gca, 'YLabel'), 'String', 'Skin conductance (\muS)', 'FontWeight', 'Bold','FontSize', 12);
   case 'names'
     fprintf('Trial names for %s:\n---------------------------------------\n', dcm.dcmname);
     for n=1:numel(dcm.trlnames)
