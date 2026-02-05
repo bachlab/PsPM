@@ -190,7 +190,13 @@ end
 %% 7 Check data & infos
 [sts, data] = pspm_check_data(data, infos);
 if sts < 1, return, end
-
+% Check if data is single    
+for k = 1:numel(data)
+  if ~strcmpi(data{k}.header.units, 'events') && ~isa(data{k}.data, 'double')
+    data{k}.data = double(data{k}.data);
+    fprintf('Channel %d converted to double.\n', k);
+  end
+end
 %% 8 Analyse file structure
 filestruct.numofwavechan = 0;
 filestruct.numofeventchan = 0;
