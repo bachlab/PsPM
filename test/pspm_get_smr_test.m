@@ -13,14 +13,15 @@ classdef pspm_get_smr_test < pspm_get_superclass
       % testcase 1
       this.testcases{1}.pth = 'ImportTestData/spike/AEC_11.smr';
       this.testcases{1}.import{1} = struct('type', 'scr'   , 'channel', 1);
-      this.testcases{1}.import{2} = struct('type', 'marker', 'channel', 2);
-      this.testcases{1}.import{3} = struct('type', 'marker', 'channel', 3);
+      this.testcases{1}.import{2} = struct('type', 'marker', 'channel', 2);% empty
+      this.testcases{1}.import{3} = struct('type', 'marker', 'channel', 3);% empty
       this.testcases{1}.import{4} = struct('type', 'marker', 'channel', 4);
       this.testcases{1}.import{5} = struct('type', 'marker', 'channel', 5);
       this.testcases{1}.import{6} = struct('type', 'marker', 'channel', 6);
       this.testcases{1}.import{7} = struct('type', 'marker', 'channel', 7);
-      % this.testcases{1}.import{8} = struct('type', 'marker', 'channel', 8);
-      % this.testcases{1}.import{9} = struct('type', 'marker', 'channel', 9);
+      this.testcases{1}.import{8} = struct('type', 'marker', 'channel', 8);
+      this.testcases{1}.import{9} = struct('type', 'marker', 'channel', 9);
+      this.testcases{1}.import{10} = struct('type', 'marker', 'channel', 10);% empty
       % testcase 2
       this.testcases{2}.pth = 'ImportTestData/spike/Spike_SCR_Marker.smr';
       this.testcases{2}.import{1} = struct('type', 'scr'   , 'channel', 1);

@@ -29400,7 +29400,8 @@ In the line 1-5 of a markdown file,
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename /Users/teddy/Desktop/Screenshot 2025-02-06 at 14.51.44.png
+	filename Figures/screenshot-000.png
+	scale 50
 
 \end_inset
 
@@ -29468,7 +29469,7 @@ The second line is the title of this webpage.
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename /Users/teddy/Desktop/Screenshot 2025-02-06 at 15.14.02.png
+	filename Figures/screenshot-002.png
 	width 90text%
 
 \end_inset
@@ -29612,7 +29613,7 @@ toc-date.html
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename /Users/teddy/Desktop/Screenshot 2025-02-07 at 03.32.35.png
+	filename Figures/screenshot-004.png
 	width 95text%
 
 \end_inset
