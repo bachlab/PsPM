@@ -7,7 +7,7 @@ function [sts, import, sourceinfo] = pspm_get_smr(datafile, import)
 % ● Arguments
 %   *  datafile : the data file to be imported. 
 %   ┌───import
-%   ├───channel : X
+%   ├───channel : the number of the channel to load.
 %   └───denoise : for marker channels in CED spike format (recorded as 'level'),
 %                 only retains markers with duration longer than the value given here (in ms).
 % ● Outputs
@@ -44,17 +44,10 @@ for channel = 1:numel(chanlist)
     errorflag(channel)=1;
     chandata{channel}=[];
     chanhead{channel}.title='';
+    chanhead{channel}.kind = -1 ;
   end
 end
 fclose(fid);
-% 2.5 delete empty channels
-if ~isempty(errorflag)
-  ind=find(errorflag);
-  for channel=ind(end:-1:1)
-    chandata(channel)=[];
-    chanhead(channel)=[];
-  end
-end
 warning on;
 %% 3 extract individual channels
 % 3.1 loop through import jobs
@@ -75,7 +68,11 @@ for iImport = 1:numel(import)
   sourceinfo.channel{iImport, 1} = sprintf('Channel %02.0f: %s', channel, chanhead{channel}.title);
   % 3.1.2 convert to waveform or get sample rate for wave channel types
   if strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'wave')
-    if chanhead{channel}.kind == 1 % waveform
+    if  chanhead{channel}.kind == -1 % empty channel      
+      import{iImport}.data = zeros(1,0);
+      import{iImport}.units = '';
+      import{iImport}.sr   = 1;
+    elseif chanhead{channel}.kind == 1 % waveform
       import{iImport}.data = chandata{channel};
       import{iImport}.sr   = 1./chanhead{channel}.sampleinterval;
     elseif chanhead{channel}.kind == 3 % timestamps
@@ -100,7 +97,12 @@ for iImport = 1:numel(import)
     end
     % extract, and possibly denoise event channels
   elseif strcmpi(settings.channeltypes(import{iImport}.typeno).data, 'events')
-    if chanhead{channel}.kind == 1 % waveform
+    if  chanhead{channel}.kind == -1 % empty channel
+      import{iImport}.marker = 'continuous'  ; % or ''
+      import{iImport}.data = zeros(1,0);
+      import{iImport}.units = 'event';  
+      import{iImport}.sr = 1;  
+    elseif chanhead{channel}.kind == 1 % waveform
       import{iImport}.marker = 'continuous';
       import{iImport}.data = chandata{channel};
       import{iImport}.sr   = 1./chanhead{channel}.sampleinterval;

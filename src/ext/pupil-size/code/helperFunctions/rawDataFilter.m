@@ -559,6 +559,3 @@ if ~isnan(minGap) || ~isnan(maxGap)
 end
 
 end
-
-
-

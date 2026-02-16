@@ -5584,7 +5584,12 @@ Here,
 \end_layout
 
 \begin_layout Paragraph
-CED Spike
+CED Spike 
+\end_layout
+
+\begin_layout Standard
+When importing SMR files,
+ channels that are empty are still imported as empty channels rather than being removed.
 \end_layout
 
 \begin_layout Paragraph

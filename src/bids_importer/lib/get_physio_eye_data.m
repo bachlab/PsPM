@@ -226,15 +226,231 @@ if ests == 1
         file_paths{1,1} = eye_data_cell{1}.source.file ;
     end
     
-    % Check if the first data has the StartTime field
-    if isfield(data{1}.header, 'StartTime')
-        % Check if all StartTimes are the same
-        start_times = cellfun(@(x) x.header.StartTime, data, 'UniformOutput', false);
-        if ~isequal(start_times{:}) ; warning('Not all data have the same StartTime. Please check the input data.');  end
-    else
-        % If there is no StartTime field start time will set to 0
-        for i = 1:length(data); data{i}.header.StartTime = 0; end
-    end
+%% --- Add the eye data to the channels --- 
+num_eyes = length(eye_data_cell);
+switch num_eyes
+    case 0; warning('No eye data available.');        
+    case 1
+        eyeSide = lower(eye_data_cell{1}.RecordedEye);
+        warning('Only %s eye data available.', eyeSide);  
+
+        if strcmp(eyeSide, 'right')
+            pupil_r  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            gaze_x_r = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            gaze_y_r = eye_data_cell{1}.Columns{:,'y_coordinate'};
+
+            data{1}.data  = pupil_r;
+            data{1}.header.chantype  = 'pupil_r';
+            data{2}.data  = gaze_x_r;
+            data{2}.header.chantype  = 'gaze_x_r';
+            data{3}.data  = gaze_y_r;
+            data{3}.header.chantype  = 'gaze_y_r';
+    
+        elseif strcmp(eyeSide, 'left')
+            pupil_l  = eye_data_cell{1}.Columns{:,'pupil_size'};
+            gaze_x_l = eye_data_cell{1}.Columns{:,'x_coordinate'};
+            gaze_y_l = eye_data_cell{1}.Columns{:,'y_coordinate'};
+      
+            data{1}.data  = pupil_l;
+            data{1}.header.chantype  = 'pupil_l';
+            data{2}.data  = gaze_x_l;
+            data{2}.header.chantype  = 'gaze_x_l';
+            data{3}.data  = gaze_y_l;
+            data{3}.header.chantype  = 'gaze_y_l';
+
+        else 
+            warning('Unknown RecordedEye eye_data_cell.'); 
+            return
+        end      
+    case 2
+        eyes = lower({eye_data_cell{1}.RecordedEye, eye_data_cell{2}.RecordedEye}); 
+        if strcmp(eyes{1}, eyes{2})
+            warning('Both recorded eyes are %s.', eyes{1});
+            % Maybe choose the better eye? -> it chooses the better depends
+            % on l or eye
+        else
+            % Correctly assign each cell to the corresponding eye.
+            idxRight = find(strcmp(eyes, 'right'), 1);
+            idxLeft  = find(strcmp(eyes, 'left'),  1);
+            
+            if isempty(idxRight) || isempty(idxLeft); warning('...');end % ???
+
+            pupil_r  = eye_data_cell{idxRight}.Columns{:,'pupil_size'};
+            gaze_x_r = eye_data_cell{idxRight}.Columns{:,'x_coordinate'};
+            gaze_y_r = eye_data_cell{idxRight}.Columns{:,'y_coordinate'};
+           
+            pupil_l  = eye_data_cell{idxLeft}.Columns{:,'pupil_size'};
+            gaze_x_l = eye_data_cell{idxLeft}.Columns{:,'x_coordinate'};
+            gaze_y_l = eye_data_cell{idxLeft}.Columns{:,'y_coordinate'};
+            
+            % right eye channels
+            data{1}.header.chantype  = 'pupil_r';
+            data{1}.data  = pupil_r;
+            
+            data{2}.header.chantype  = 'gaze_x_r';
+            data{2}.data  = gaze_x_r;
+            data{3}.header.chantype  = 'gaze_y_r';
+            data{3}.data  = gaze_y_r;
+
+            % left eye channels
+            data{4}.header.chantype  = 'pupil_l';
+            data{4}.data  = pupil_l;
+            data{5}.header.chantype  = 'gaze_x_l';
+            data{5}.data  = gaze_x_l;
+            data{6}.header.chantype  = 'gaze_y_l';
+            data{6}.data  = gaze_y_l;
+        
+        end
+        
+    otherwise; error('Unexpected number of eye data cells.'); 
+
+
+end
+
+data = data';
+
+%% Add header data for pupil and gaze data
+
+% For one eye 
+if num_eyes == 1; idxRight = 1; idxLeft  = 1; end 
+
+for i = 1:length(data)
+    % pupil
+    if strcmp(data{i}.header.chantype(1:end-1) , 'pupil_')
+        if strcmp(data{i}.header.chantype(end:end) , 'r')
+            data{i}.header.Description = eye_data_cell{idxRight}.pupil_size.Description;
+            data{i}.header.units =   eye_data_cell{idxRight}.pupil_size.Units;
+            data{i}.header.sr    =   eye_data_cell{idxRight}.SamplingFrequency;
+
+        elseif strcmp(data{i}.header.chantype(end:end) , 'l')
+            data{i}.header.Description = eye_data_cell{idxLeft}.pupil_size.Description;
+            data{i}.header.units =   eye_data_cell{idxLeft}.pupil_size.Units;
+            data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency;
+            
+        else 
+            warning('No valid pupil channel found.');
+        end
+    % gaze
+    elseif strcmp(data{i}.header.chantype(1:end-4) , 'gaze')
+        if strcmp(data{i}.header.chantype(6) , 'x')
+           if strcmp(data{i}.header.chantype(8) , 'r')
+               % gaze_x_r
+               if  any(strcmp(fieldnames(eye_data_cell{idxRight}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+               elseif  any(strcmp(fieldnames(eye_data_cell{idxRight}),'x_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.x_coordinate.Units;  
+               else
+                   warning('ID:missing_units', 'Units could not be determined for gaze_x_r channel.');
+               end
+
+               data{i}.header.sr    =  eye_data_cell{idxRight}.SamplingFrequency;
+               data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.xmin, eye_data_cell{idxRight}.GazeRange.xmax] ;    % e.g. [0 1151]
+           elseif strcmp(data{i}.header.chantype(8) , 'l')
+               % gaze_x_l     
+               if  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.SampleCoordinateUnits;  % "pixel"
+               elseif  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'x_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.x_coordinate.Units;  
+               else
+                   warning('ID:missing_units', 'Units could not be determined for gaze_x_l channel.');
+               end   
+
+               data{i}.header.sr   =    eye_data_cell{idxLeft}.SamplingFrequency;
+               data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.xmin, eye_data_cell{idxLeft}.GazeRange.xmax] ;    % e.g. [0 1151]      
+           else
+               warning('Something went worng with gaze  x channels')
+           end
+
+        elseif strcmp(data{i}.header.chantype(6) , 'y')
+           if strcmp(data{i}.header.chantype(8) , 'r')
+               % gaze_y_r
+              if  any(strcmp(fieldnames(eye_data_cell{idxRight}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.SampleCoordinateUnits;  % "pixel"
+              elseif  any(strcmp(fieldnames(eye_data_cell{idxRight}),'y_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxRight}.y_coordinate.Units; 
+              else
+                   warning('ID:missing_units', 'Units could not be determined for gaze_y_r channel.');
+              end
+              data{i}.header.sr   =    eye_data_cell{idxRight}.SamplingFrequency;
+              data{i}.header.range =  [eye_data_cell{idxRight}.GazeRange.ymin, eye_data_cell{idxRight}.GazeRange.ymax] ;    % e.g. [0 1151]
+           
+           elseif strcmp(data{i}.header.chantype(8) , 'l')
+               % gaze_y_l
+              if  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'SampleCoordinateUnits'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.SampleCoordinateUnits;  % "pixel"
+              elseif  any(strcmp(fieldnames(eye_data_cell{idxLeft}),'y_coordinate'))
+                   data{i}.header.units =  eye_data_cell{idxLeft}.y_coordinate.Units;  % should i add a check that x and y are the same units?
+              else
+                   warning('ID:missing_units', 'Units could not be determined for gaze_y_l channel.');
+              end
+
+              data{i}.header.sr    =   eye_data_cell{idxLeft}.SamplingFrequency; 
+              data{i}.header.range =  [eye_data_cell{idxLeft}.GazeRange.ymin, eye_data_cell{idxLeft}.GazeRange.ymax] ;    % e.g. [0 1151]
+                      
+           else 
+               warning('Something went worng with gaze  y channels')
+           end
+        end
+     end
+end
+
+%% --- Build the eye infos.source  ----
+ 
+% --- infos.source ---
+infos.source = struct();  
+infos.source.chan = {} ;% {'Column 02'} {'Column 01'}?
+infos.source.chan_stats = cell(length(data), 1); % nan_stats 
+
+% Calculating the nan ratio
+for i = 1:length(data)
+    n_data = size(data{i}.data, 1);
+    n_inv = sum(isnan(data{i}.data));
+    infos.source.chan_stats{i,1} = struct();
+    infos.source.chan_stats{i,1}.nan_ratio = n_inv / n_data;
+end
+
+if ~isequal(eye_data_cell{idxRight}.GazeRange, eye_data_cell{idxLeft}.GazeRange)
+    warning("GazeRange is not equal"); 
+end 
+
+infos.source.gaze_coords = eye_data_cell{idxRight}.GazeRange; 
+                 
+if  any(strcmp(fieldnames(eye_data_cell{idxRight}),'PupilFitMethod'))
+    infos.source.elcl_proc = lower(eye_data_cell{idxRight}.PupilFitMethod); % or should it be called PupilFitMethod? lowercase!
+elseif  any(strcmp(fieldnames(eye_data_cell{idxRight}),'ElclProc'))
+    infos.source.elcl_proc = lower(eye_data_cell{idxRight}.ElclProc); % like in the Calinet dataset
+end
+
+% eyesObserved and best_eye
+if num_eyes == 2
+    infos.source.eyesObserved = 'lr'; 
+elseif num_eyes == 1  
+    infos.source.eyesObserved =  data{1}.header.chantype(end); 
+end  
+
+infos.source.best_eye = eye_with_smaller_nan_ratio(data, infos.source.eyesObserved);
+infos.source.type = 'BIDS (json/tsv)' ;
+
+
+if num_eyes == 2
+    % physio_infos.source.file = [eye_data_cell{1}.source.file, eye_data_cell{2}.source.file] ; %  {1},{2} gives the right order
+    file_paths{1,1} = eye_data_cell{1}.source.file; 
+    file_paths{2,1} = eye_data_cell{2}.source.file; 
+else
+    file_paths{1,1} = eye_data_cell{1}.source.file ;
+end  
+
+
+
+% Check if the first data has the StartTime field
+if isfield(data{1}.header, 'StartTime')
+    % Check if all StartTimes are the same
+    start_times = cellfun(@(x) x.header.StartTime, data, 'UniformOutput', false);
+    if ~isequal(start_times{:}) ; warning('Not all data have the same StartTime. Please check the input data.');  end
+else 
+    % If there is no StartTime field start time will set to 0
+    for i = 1:length(data); data{i}.header.StartTime = 0; end 
+end
 
 else
     warning('No data for physio eye data was imported.');
