@@ -37,7 +37,7 @@ if nargin < 3
 end
 
 % Compute X's mean and sd, and standardize it
-mu = nanmean(x,dim);
+mu = mean(x, dim, 'omitnan');
 sigma = nanstd(x,flag,dim);
 sigma0 = sigma;
 sigma0(sigma0==0) = 1;
