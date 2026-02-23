@@ -13,24 +13,24 @@ classdef pspm_pupil_correct_test < pspm_testcase
       opt.C_z = 1;
       opt.S_x = 1;
       opt.S_y = 1;
-      this.verifyWarning(@()pspm_pupil_correct(pupil, gaze_x, gaze_y, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct(pupil, opt), 'ID:invalid_input');
       opt.S_z = 'a';
-      this.verifyWarning(@()pspm_pupil_correct(pupil, gaze_x, gaze_y, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct(pupil, opt), 'ID:invalid_input');
       opt.S_z = 5;
       pupil = 'abc';
-      this.verifyWarning(@()pspm_pupil_correct(pupil, gaze_x, gaze_y, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct(pupil, opt), 'ID:invalid_input');
       pupil = 1:3;
       gaze_x = 'abc';
-      this.verifyWarning(@()pspm_pupil_correct(pupil, gaze_x, gaze_y, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct(pupil, opt), 'ID:invalid_input');
       gaze_x = 1:3;
       gaze_y = 'abc';
-      this.verifyWarning(@()pspm_pupil_correct(pupil, gaze_x, gaze_y, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct(pupil,  opt), 'ID:invalid_input');
       gaze_y = 1:3;
       pupil = 1:100;
-      this.verifyWarning(@()pspm_pupil_correct(pupil, gaze_x, gaze_y, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct(pupil,  opt), 'ID:invalid_input');
       pupil = 8:10;
       gaze_x = ones(10);
-      this.verifyWarning(@()pspm_pupil_correct(pupil, gaze_x, gaze_y, opt), 'ID:invalid_input');
+      this.verifyWarning(@()pspm_pupil_correct(pupil,  opt), 'ID:invalid_input');
     end
     function looking_directly_at_camera_doesnt_change_pupil(this)
       N = 1000;

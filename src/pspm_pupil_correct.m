@@ -1,4 +1,4 @@
-function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
+function [sts, pupil_corrected] = pspm_pupil_correct(fn, geometry_setup)
 % ● Description
 %   pspm_pupil_correct performs pupil foreshortening error (PFE) correction for arbitrary
 %   eye tracker measurements according to equations (3) and (4) in [1].
@@ -54,7 +54,19 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1;
+
+%% add inpus checks
+% add load file
+
+% get pupil and gaze channels
+[lsts, pupil_data, infos, pos_of_channel] = pspm_load_channel(fn, 'pupil');
+if lsts ~= 1, return, end
+[lsts, gaze_x_data, gaze_y_data] = pspm_load_gaze(fn, pupil_data.header.chantype);
+if lsts ~= 1; return; end
+
+pupil = pupil_data.data; 
+gaze_x_mm = gaze_x_data.data;
+gaze_y_mm = gaze_y_data.data;
 
 % input checks
 % -------------------------------------------------------------------------
