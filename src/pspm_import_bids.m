@@ -31,28 +31,17 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %               ├── sub-<subID>_<ses>_task-Extinction_... (same pattern)
 %               ├── sub-<subID>_<ses>_task-Habituation_... (same pattern)
 %
-%   Example supported layout (tasks split per session, no 'task' ID):
+%   Example supported layout (tasks split per session, no 'task' ID, eyetracker data only):
 %
 %       sub-<sub>/
-%       ├── ses-01
-%       │   ├── beh
-%       │   │   ├── sub-<sub>_ses-01_beh.json
-%       │   │   ├── sub-<sub>_ses-01_events.json
-%       │   │   └── sub-<sub>_ses-01_events.tsv
-%       │   └── physio
-%       │       ├── sub-<sub>_ses-01_recording-ecg_physio.json
-%       │       ├── sub-<sub>_ses-01_recording-ecg_physio.tsv
-%       │       ├── sub-<sub>_ses-01_recording-eye1_physio.json
-%       │       ├── sub-<sub>_ses-01_recording-eye1_physio.tsv
-%       │       ├── sub-<sub>_ses-01_recording-eye2_physio.json
-%       │       ├── sub-<sub>_ses-01_recording-eye2_physio.tsv
-%       │       ├── sub-<sub>_ses-01_recording-ppg_physio.json
-%       │       ├── sub-<sub>_ses-01_recording-ppg_physio.tsv
-%       │       ├── sub-<sub>_ses-01_recording-scr_physio.json
-%       │       └── sub-<sub>_ses-01_recording-scr_physio.tsv
-%       └── ses-02
-%           ├── beh
-%           └── physio
+%       └── ses-01
+%           └── beh
+%              ├── sub-<sub>_ses-01_events.json
+%              ├── sub-<sub>_ses-01_events.tsv
+%              ├── sub-<sub>_ses-01_recording-eye1_physio.json
+%              ├── sub-<sub>_ses-01_recording-eye1_physio.tsv
+%              ├── sub-<sub>_ses-01_recording-eye2_physio.json
+%              └── sub-<sub>_ses-01_recording-eye2_physio.tsv
 %
 % ● Format
 %   [sts, outfile] = pspm_import_bids(dataset_path, save_path)
@@ -69,9 +58,9 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %
 % ● History
 %   Introduced in PsPM 7.0
-%   Written in 2024 by Sourav Koulkarni,
-%                    Dominik R. Bach,
-%                    Bernhard A. von Raußendorf (University of Bonn)
+%   Written in 2024 by  Sourav Koulkarni,
+%                       Dominik R. Bach,
+%                       Bernhard A. von Raußendorf (University of Bonn)
 %
 %   05.12.2025: 
 %       - Overall updates on logic and flow
@@ -79,6 +68,13 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %       - Abstracted away some logic in separate functions
 %       - Updated handling of 'save_path' argument
 %       - Prettify interface
+%
+%   16.02.2026: 
+%       - Update to support BEP020
+%           - No specific 'beh'-folder -> events are linked by task/run
+%           - tsv.gz files instead of tsv
+%           - 
+%       - Extra support for run-specific inputs
 %
 %% 1. Initialize -----------------------------------------------------------
 global settings
@@ -155,7 +151,7 @@ if nargin<2 || ~(isstring(save_path) || ischar(save_path))
     save_path = fullfile(dataset_path, "out");
     disp(save_path);
     % warning("ID:nonexistent_folder","No or invalid save path specified; using '%s' instead.", save_path);
-    warning(sprintf("ID:nonexistent_folder: No or invalid save path specified; using '%s' instead.", save_path));
+    warning("ID:nonexistent_folder: No or invalid save path specified; using '%s' instead.", save_path);
 end
       
 %% Start message
@@ -166,6 +162,7 @@ end
 
 nSubjects = 0;
 nSessions = 0;
+nRuns = 0;
 %% 3. Loop over subjects ---------------------------------------------------
 for i = 1:length(subject_list)
    
@@ -190,151 +187,183 @@ for i = 1:length(subject_list)
     % checks if there are sessions
     if isempty(session_dirs); warning('ID:nonexistent_folder','No session folder  (''ses-%s'') found in %s', sub_idx_str ,sub_path); continue; end
 
-
     %% Process each session
     for j = 1:length(session_dirs)
         session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02' (could there be more 100 sessions?)        
-        ses_path   = fullfile(sub_path,session_dirs(j).name); % if it is ses_mode it will be overwriten but that is okay
-        physio_dir = fullfile(ses_path, 'physio');
-        
+        ses_path   = fullfile(sub_path,session_dirs(j).name);
+
+        % eye-tracking files can live in 'beh', 'physio', or any modality they have been acquired in
+        % concurrently (e.g., 'func' during fMRI) [BEP020].
+        % SCR and other data will live in 'physio' [BEP045]
+        eye_search_dirs = { ...
+            fullfile(ses_path,'beh'), ...
+            fullfile(ses_path,'physio'), ...
+            fullfile(ses_path,'func') ...
+        };
+
+        % keep only those that exist
+        eye_search_dirs = eye_search_dirs(cellfun(@isfolder, eye_search_dirs));
+
         fprintf('\n--------------------------------------------------------------------------------\n');
 
         %% Extract task name
         % Look for any event JSON in the beh and physio folders
-        task_ids = get_bids_task_ids(physio_dir);
-        
-        % If none found → process the session once without a task name
-        if isempty(task_ids)
-            task_ids = {''};   % placeholder for “no task”
-            fprintf('Processing %s\n', session_dirs(j).name);
-        else
-            task_list_str = strjoin(task_ids, ', ');
-            fprintf('Processing %s with %d task(s): %s\n', ...
-                    session_dirs(j).name, length(task_ids), task_list_str);
-        end
-
+        task_ids = get_bids_task_ids(eye_search_dirs);
+       
         % loop over tasks
         for t = 1:numel(task_ids)
 
-            %% Build file patterns depending on task_name
-            task_name = task_ids{t};
-            if isempty(task_name)
-                fprintf("\nReading data\n");
-                beh_base = sprintf('%s_ses-%s_', subject_full_id, session_id);
-            else
-                fprintf("\nReading data from task-%s\n", task_name);
-                beh_base = sprintf('%s_ses-%s_task-%s_', subject_full_id, session_id, task_name);
-            end            
-            %% Processing start         
-            % read in data
-            physio_path = fullfile(ses_path, 'physio');
-            [~, physio_data, physio_infos] = get_physio_data( ...
+            %% Build file patterns depending on task_id
+            task_id = task_ids{t};
+
+            % Detect runs for this task (if any)
+            run_ids = get_bids_run_ids( ...
+                eye_search_dirs, ...
                 subject_full_id, ...
                 session_id, ...
-                task_name, ...
-                physio_path ...
+                task_id ...
             );
             
-            [~, physio_eye_data, physio_eye_infos] = get_physio_eye_data( ...
-                subject_full_id, ...
-                session_id, ...
-                task_name, ...
-                physio_path ...
-            );
-            
-            %% Get beh data ---    
-            % *events file can be in 'beh' or 'physio' folder | prioritize
-            % 'beh'
-            [events_json_filepath, events_tsv_filepath, beh_json_filepath, ~, ~] = bids_find_events( ...
-                ses_path, ...
-                beh_base, ...
-                task_name ...
-            );
-            
-            if isfile(events_json_filepath) && isfile(events_tsv_filepath)
-                marker_chan{1} = get_marker_data(events_json_filepath, events_tsv_filepath, true);
+            if isempty(run_ids)
+                run_ids = {''}; % placeholder: “no run”
+                n_runs = 1;
             else
-                marker_chan = [ ];
-                warning('ID:nonexistent_file','File not found: %s', events_json_filepath); 
-                warning('ID:nonexistent_file','File not found: %s', events_tsv_filepath);  
+                n_runs = length(run_ids);
             end
 
-            % beh-file contains relevant info about stimulus presentation;
-            % required for eye-data 
-            if ~isfile(beh_json_filepath)
-                beh_json_filepath = events_json_filepath;
-                warning('ID:nonexistent_file','File not found: %s. Attempting to use %s, but may result in issues downstream', beh_json_filepath, events_json_filepath); 
-            end            
-    
-            % get behave json  
-            beh_json = get_beh_json(beh_json_filepath);
-    
-            %% --- Build the file structure  ---
-            % Build sessions infos
-           
-    
-            % ses.infos.duration - will be added after alignment
-    
-            % infos.importfile - will be added before saving
-            dt = datetime('now'); 
-            ses.infos.importdate = sprintf('%.2d.%.2d.%.2d', dt.Day, dt.Month, dt.Year); % same as import_eyelink and importviewpoint; 
-            % durationinfo = 'Recording duration in seconds';
-            % ses.infos.recdate - no information;
-            % ses.infos.rectime - no information;
-    
-            % infos.source
-            % ses.infos.source = struct();
-            ses.infos.source = physio_eye_infos.source;
-            ses.infos.source.file = [physio_infos.source.file; physio_eye_infos.source.file];
-            ses.infos.source.type = 'BIDS (json/tsv)'; % physio_infos.infos;
-            % ses.infos.source.chan_stats - will be calculted later
-    
-            if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
-            % if ~isempty(fieldnames(currentParticipant)); infos.Participant = currentParticipant; end
-    
-            % data
-            ses.data = {};
-            ses.data = [marker_chan; physio_data; physio_eye_data]; 
-            
-            % Calculates the nan_ratio for all channels
-            fprintf("Calculate the nan_ratio for all channels\n");
-            ses = pspm_update_nan_stats(ses);
-
-            % populate fields from json
-            fprintf("Adding info from %s to channel headers\n", events_json_filepath);
-            fn = fieldnames(beh_json);
-            for ii = 1:numel(fn)
-                ses.infos.(fn{ii}) = beh_json.(fn{ii});
-            end
-    
-            % Aligns all channels
-            [asts, ses.data, ses.infos.duration] = align_channels(ses.data);
-            if asts ~= 1; continue; end
-            
-            % Save session
-            if isempty(task_name) || length(task_ids) == 1
-                ses_filename = sprintf('pspm_%s_ses-%s.mat', subject_full_id, session_id);
+            % If none found → process the session once without a task name
+            if isempty(task_ids)
+                task_ids = {''};   % placeholder for “no task”
+                fprintf('Processing %s\n [%d run(s)]', session_dirs(j).name, n_runs);
             else
-                ses_filename = sprintf('pspm_%s_ses-%s_task-%s.mat', subject_full_id, session_id, task_name);
+                task_list_str = strjoin(task_ids, ', ');
+                fprintf('Processing %s with %d task(s): %s [%d run(s)]\n', ...
+                        session_dirs(j).name, length(task_ids), task_list_str, n_runs);
             end
-    
-            ses_filepath            = fullfile(save_path, ses_filename);
-            outfile{end+1}          = char(ses_filepath); 
-            ses.infos.importfile    = char(ses_filepath); 
-    
-            % Check the pspm structure
-            [lsts, ~, ~, ~] = pspm_load_data(ses);
-            if lsts < 1
-                warning('ID:could_not_be_saved','The file struture has a problem'); % better warning text
-                continue; 
-            end
-    
-            %  saves as pspm file (overwrite)
-            data  = ses.data;
-            infos = ses.infos;
-            save(ses_filepath,'infos', 'data');
-            fprintf('\nSaved PsPM-file to ''%s''\n', ses_filepath);
+            
+            % loop over runs
+            for r = 1:numel(run_ids)
 
+                run_id = run_ids{r};
+                
+                %% Processing start         
+                % read in physio data
+                physio_path = fullfile(ses_path, 'physio');
+                [~, physio_data, physio_infos] = get_physio_data( ...
+                    physio_path, ...
+                    subject_full_id, ...
+                    session_id, ...
+                    task_id, ...
+                    run_id ...
+                );
+                
+                % read in eye-tracking data
+                [~, physio_eye_data, physio_eye_infos] = get_physio_eye_data( ...
+                    eye_search_dirs, ...
+                    subject_full_id, ...
+                    session_id, ...
+                    task_id, ...
+                    run_id ...
+                );
+                
+                %% Get events
+                % *events file can be in 'beh' or 'physio' folder | prioritize
+                % 'beh'
+                [events_tsv_filepath, events_json_filepath] = find_bids_file( ...
+                    ses_path, ...
+                    'events.tsv', ...
+                    task_id, ...
+                    run_id ...
+                );
+            
+                % read events
+                if isfile(events_json_filepath) && isfile(events_tsv_filepath)
+                    fprintf('Events:\t%s\n', events_tsv_filepath);
+                    marker_chan{1} = get_marker_data( ...
+                        events_json_filepath, ...
+                        events_tsv_filepath, ...
+                        true ...
+                    );
+                else
+                    marker_chan = [ ];
+                    warning('ID:nonexistent_file','File not found: %s', events_json_filepath); 
+                    warning('ID:nonexistent_file','File not found: %s', events_tsv_filepath);  
+                end
+    
+                % events_json_filepath contains relevant info about stimulus presentation;
+                event_json = extract_json_as_struct(events_json_filepath);
+                
+                %% Build the file structure
+                dt = datetime('now'); 
+                ses.infos.importdate = sprintf('%.2d.%.2d.%.2d', dt.Day, dt.Month, dt.Year); % same as import_eyelink and importviewpoint; 
+        
+                % infos.source
+                ses.infos.source = physio_eye_infos.source;
+                ses.infos.source.file = [physio_infos.source.file; physio_eye_infos.source.file];
+                ses.infos.source.type = 'BIDS (json/tsv)'; % physio_infos.infos;
+                
+                if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
+                
+                % data
+                ses.data = {};
+                
+                % Ensure column cell arrays
+                marker_chan      = marker_chan(:);
+                physio_data      = physio_data(:);
+                physio_eye_data  = physio_eye_data(:);
+                
+                ses.data = [marker_chan; physio_data; physio_eye_data];
+    
+                % Calculates the nan_ratio for all channels
+                fprintf("Calculate the nan_ratio for all channels\n");
+                ses = pspm_update_nan_stats(ses);
+    
+                % populate fields from json
+                fprintf("Adding info from %s to channel headers\n", events_json_filepath);
+                fn = fieldnames(event_json);
+                for ii = 1:numel(fn)
+                    ses.infos.(fn{ii}) = event_json.(fn{ii});
+                end
+                    
+                % Aligns all channels
+                fprintf("Aligning all channels in temporal domain\n");
+                [asts, ses.data, ses.infos.duration] = align_channels(ses.data);
+                if asts ~= 1; continue; end
+                
+                %% Build output file
+                % Save session
+                if isempty(task_id) || length(task_ids) == 1
+                    ses_filename = sprintf('pspm_%s_ses-%s', subject_full_id, session_id);
+                else
+                    ses_filename = sprintf('pspm_%s_ses-%s_task-%s', subject_full_id, session_id, task_id);
+                end
+
+                if ~isempty(run_id)
+                    ses_filename = sprintf('%s_run-%s', ses_filename, run_id);
+                end
+
+                ses_filename = sprintf('%s.mat', ses_filename);
+                   
+                ses_filepath            = fullfile(save_path, ses_filename);
+                outfile{end+1}          = char(ses_filepath); 
+                ses.infos.importfile    = char(ses_filepath); 
+                
+                %% Verify output structure
+                % Check the pspm structure
+                [lsts, ~, ~, ~] = pspm_load_data(ses);
+                if lsts < 1
+                    warning('ID:could_not_be_saved','The file struture has a problem'); % better warning text
+                    continue; 
+                end
+        
+                %  saves as pspm file (overwrite)
+                data  = ses.data;
+                infos = ses.infos;
+                save(ses_filepath,'infos', 'data');
+                fprintf('\nSaved PsPM-file to ''%s''\n', ses_filepath);
+
+            end % close run loop
+            nRuns = nRuns + 1;
         end % close task loop
         nSessions = nSessions + 1;
     end % close ses loop
@@ -345,7 +374,12 @@ rmpath(libpath); % What if the function breaks at another path
 sts = 1;
 
 %% footer
-pspm_bids_importer_footer(nSubjects, nSessions, save_path)
+pspm_bids_importer_footer( ...
+    nSubjects, ...
+    nSessions, ...
+    nRuns, ...
+    save_path ...
+)
 end
 
 %% 4. Sub-functions ---------------------------------------------------------
@@ -386,17 +420,6 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
         participants_data = textscan(fileID, format_spec, 'Delimiter', '\t');
         fclose(fileID);
     end
-end
-
-function [infos] = get_beh_json(beh_json_filepath) 
-
-infos = struct();
-if ~isfile(beh_json_filepath) 
-    warning('ID:non_existent_file','Behavior sidecar JSON file not found: %s', beh_json_filepath); 
-    return
-else
-    infos = extract_json_as_struct(beh_json_filepath);
-end
 end
 
 function [sts, data, new_duration] = align_channels(data)
@@ -450,25 +473,23 @@ end
 
 end
 
-function task_ids = get_bids_task_ids(physio_dir)
-
-    files = dir(fullfile(physio_dir, '*.json'));   % look at metadata files
+function task_ids = get_bids_task_ids(search_dirs)
     task_ids = {};
-
-    % regexp pattern for `_task-<taskid>`
-    expr = '(?<=_task-)[a-zA-Z0-9]+';
-
-    for i = 1:numel(files)
-        tokens = regexp(files(i).name, expr, 'match');
-        if ~isempty(tokens)
-            task_ids{end+1} = tokens{1};
+    for k = 1:numel(search_dirs)
+        d = search_dirs{k};
+        if ~isfolder(d), continue; end
+        
+        % grab anything with task-... in the filename (events, eyetrack, physio)
+        files = dir(fullfile(d, '*task-*_*.tsv*'));
+        names = {files.name};
+        for i = 1:numel(names)
+            tok = regexp(names{i}, 'task-([A-Za-z0-9]+)', 'tokens', 'once');
+            if ~isempty(tok)
+                task_ids{end+1} = tok{1}; %#ok<AGROW>
+            end
         end
     end
-
-    % return uniques (preserve order)
-    if ~isempty(task_ids)
-        task_ids = unique(task_ids, 'stable');
-    end
+    task_ids = unique(task_ids, 'stable');
 end
 
 function pspm_bids_importer_header(dataset_path, nSubjects, save_path)
@@ -496,7 +517,7 @@ fprintf('=======================================================================
 
 end
 
-function pspm_bids_importer_footer(nSubjects, nSessions, output_dir)
+function pspm_bids_importer_footer(nSubjects, nSessions, nRuns, output_dir)
 
 timestamp = string(datetime('now', 'Format', 'yyyy-MM-dd HH:mm:ss'));
 fprintf('\n');
@@ -512,73 +533,16 @@ if nargin >= 2 && ~isempty(nSessions)
     fprintf('  Sessions processed : %d\n', nSessions);
 end
 
-if nargin >= 3 && ~isempty(output_dir)
+if nargin >= 3 && ~isempty(nRuns)
+    fprintf('  Runs processed     : %d\n', nRuns);
+end
+
+if nargin >= 4 && ~isempty(output_dir)
     fprintf('  Output directory   : %s\n', output_dir);
 end
 
 fprintf('  Finished at        : %s\n', timestamp);
 fprintf('================================================================================\n\n');
-
-end
-
-function [json_path, tsv_path, beh_path, source_dir, status] = bids_find_events(ses_path, beh_base, task_name)
-% BIDS_FIND_EVENTS  Locate behavioral/physio event files for a PsPM session.
-%
-%   [json_path, tsv_path, beh_path, source_dir, status] = bids_find_events(ses_path, beh_base, task_name)
-%
-%   - Searches in priority order:  "beh" → "physio"
-%   - beh_base is the filename prefix (including task- if applicable)
-%   - task_name may be '' for sessions without tasks
-%
-%   Returns:
-%      json_path   Full path to events.json
-%      tsv_path    Full path to events.tsv
-%      beh_path    Full path to beh.json
-%      source_dir  Directory used ('beh' or 'physio')
-%      status      1 if found, 0 otherwise
-
-    json_path  = "";
-    tsv_path   = "";
-    beh_path   = "";
-    source_dir = "";
-    status     = 0;
-
-    event_dirs = ["beh", "physio"];  % priority order
-
-    for d = event_dirs
-        candidate_dir = fullfile(ses_path, d);
-
-        % Build patterns
-        pattern_json = beh_base + "events.json";
-        pattern_tsv  = beh_base + "events.tsv";
-        pattern_beh  = beh_base + "beh.json";
-
-        % Search using dir()
-        json_files = dir(fullfile(candidate_dir, pattern_json));
-        tsv_files  = dir(fullfile(candidate_dir, pattern_tsv));
-        beh_files  = dir(fullfile(candidate_dir, pattern_beh));
-
-        if ~isempty(json_files) && ~isempty(tsv_files)
-            % Found matching pair
-            json_path  = fullfile(candidate_dir, json_files(1).name);
-            tsv_path   = fullfile(candidate_dir, tsv_files(1).name);
-            source_dir = d;
-            status     = 1;
-        end
-
-        if ~isempty(beh_files)
-            % Found matching pair
-            beh_path = fullfile(candidate_dir, beh_files(1).name);
-        end
-        return;
-    end
-
-    % No match found
-    if isempty(task_name)
-        warning('No event files found in %s (no task).', ses_path);
-    else
-        warning('No event files found for task "%s" in %s.', task_name, ses_path);
-    end
 
 end
 
@@ -623,3 +587,33 @@ function ses = pspm_update_nan_stats(ses)
     ses.infos.source.chan_stats = chan_stats;
 end
 
+function run_ids = get_bids_run_ids(search_dirs, subject_full_id, session_id, task_id)
+% Returns cell array of run strings like {'01','02'} or {} if none.
+
+run_ids = {};
+
+% Build stem up to task (if any)
+if isempty(task_id)
+    stem = sprintf('%s_ses-%s_', subject_full_id, session_id);
+else
+    stem = sprintf('%s_ses-%s_task-%s_', subject_full_id, session_id, task_id);
+end
+
+for k = 1:numel(search_dirs)
+    d = search_dirs{k};
+    if ~isfolder(d), continue; end
+
+    % look for any run-XX entity after stem
+    files = dir(fullfile(d, [stem 'run-*_*.tsv*']));
+    names = {files.name};
+
+    for i = 1:numel(names)
+        tok = regexp(names{i}, 'run-([0-9]+)', 'tokens', 'once');
+        if ~isempty(tok)
+            run_ids{end+1} = tok{1}; %#ok<AGROW>
+        end
+    end
+end
+
+run_ids = unique(run_ids, 'stable');
+end

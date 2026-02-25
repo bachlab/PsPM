@@ -1,4 +1,4 @@
-function [sts, eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_name, physio_path)
+function [sts, eye_data_cell] = get_eyetrack_data(candidate_paths, subject_id, session_id, task_id, run_id)
 % get_eye_data Extracts eye-tracking data for a given subject, session, and task.
 %
 % This function returns a 2x1 cell array where each cell contains a struct
@@ -15,52 +15,43 @@ function [sts, eye_data_cell] = get_eyetrack_data(subject_id, session_id, task_n
 % Example:
 %   [eye_data, dur, info] = get_eye_data('sub-CalinetWuerzburg01','01','FearAcquisition', '/path/to/physio');
 
+%% Find all 'tsv.gz' files in session directory
+eye_files = find_eye_files( ...
+    candidate_paths, ...
+    task_id, ...
+    run_id ...
+);
+
+% enfore cell
+if isstring(eye_files)
+    eye_files = cellstr(eye_files);
+end
+
+% If eye_files is a char (single path):
+if ischar(eye_files)
+    eye_files = {eye_files};
+end
+
 %% Initialize the cell array and info variables
 
 sts = -1;
-eye_signals = get_eyes_list(physio_path);
+eye_signals = get_eyes_list(eye_files);
 eye_data_cell = {};
 
 if isempty(eye_signals)
-    warning('No eye data found for subject %s sesssion %s', subject_id,session_id); 
+    warning('No eye data found for subject %s session %s', subject_id,session_id); 
 else % ------ %
-
 
 num_signals = length(eye_signals);
 eye_data_cell = cell(num_signals, 1);
-
 chan_names = cell(num_signals, 1);
-file_paths = cell(num_signals, 1);
 
 %% Process each eye channel
 for i = 1:num_signals
     signal = eye_signals{i};
-    
-    % Construct filenames based on BIDS naming convention:
-    if isempty(task_name)
-        % No task entity → standard BIDS physio filename
-        eye_json_filename = sprintf('%s_ses-%s_recording-%s_physio.json', ...
-                                       subject_id, session_id, signal);
-    
-        eye_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', ...
-                                       subject_id, session_id, signal);
-    
-    else
-        % Task entity present → include _task-<taskname>_ in filename
-        eye_json_filename = sprintf('%s_ses-%s_task-%s_recording-%s_physio.json', ...
-                                       subject_id, session_id, task_name, signal);
-    
-        eye_tsv_filename  = sprintf('%s_ses-%s_task-%s_recording-%s_physio.tsv', ...
-                                       subject_id, session_id, task_name, signal);
-    end
-    
-    eye_json_filepath = fullfile(physio_path, eye_json_filename);
-    eye_tsv_filepath  = fullfile(physio_path, eye_tsv_filename);
-    
-    % Save file path and channel name for info
-    file_paths{i} = eye_tsv_filepath;
-    chan_names{i} = signal;
-    
+    eye_tsv_filepath = eye_files{i};
+    eye_json_filepath = regexprep(eye_tsv_filepath, '\.tsv\.gz$', '.json');
+
     % Check if files exist
     if ~isfile(eye_json_filepath); warning('File not found: %s', eye_json_filepath); sts = -1 ;end
     if ~isfile(eye_tsv_filepath); warning('File not found: %s', eye_tsv_filepath); sts = -1 ; end
@@ -75,13 +66,16 @@ for i = 1:num_signals
     col_types = repmat({'double'}, 1, length(headings));
     
     % read_data_from_tsv is assumed to return a numeric matrix with dimensions [n_samples x n_columns]
-    eye_data_table = read_data_from_tsv(eye_tsv_filepath, false, headings.', col_types);
+    eye_data_table = read_data_from_tsv( ...
+        eye_tsv_filepath, ...
+        false, ...
+        headings.', ...
+        col_types ...
+    );
     
     % Combine the JSON metadata with the TSV data.
     % I the futrure some kind of check maybe?
     eye_json.Columns = eye_data_table;
-    
-
     
     % Store the combined struct into the cell array
     eye_data_cell{i} = eye_json;

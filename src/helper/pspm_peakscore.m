@@ -50,7 +50,7 @@ function [sts, glm] = pspm_peakscore(datafile, regfile, modelfile, timeunits, no
 % $Rev$
 
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % check input arguments
 if nargin<1

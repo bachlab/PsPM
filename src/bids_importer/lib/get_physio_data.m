@@ -1,4 +1,4 @@
-function [sts , physio_data, infos] = get_physio_data(subject_id, session_id, task_name, physio_path)
+function [sts , physio_data, infos] = get_physio_data(physio_path, subject_id, session_id, task_id, run_id)
 % Returns a  cell array where each cell contains a struct with fields header and data (and markerinfo for events)
 % Also returns physio_info_data needed to create 'info' struct
 % UPDATE HELPTEXT
@@ -18,27 +18,15 @@ cell_index = 1;
 for i = 1:num_signals   
 
     signal = physio_signals{i};
-         
-    %% Construct filenames depending on whether task is present
-    if isempty(task_name)
-        % No task entity → standard BIDS physio filename
-        physio_json_filename = sprintf('%s_ses-%s_recording-%s_physio.json', ...
-                                       subject_id, session_id, signal);
-    
-        physio_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', ...
-                                       subject_id, session_id, signal);
-    
-    else
-        % Task entity present → include _task-<taskname>_ in filename
-        physio_json_filename = sprintf('%s_ses-%s_task-%s_recording-%s_physio.json', ...
-                                       subject_id, session_id, task_name, signal);
-    
-        physio_tsv_filename  = sprintf('%s_ses-%s_task-%s_recording-%s_physio.tsv', ...
-                                       subject_id, session_id, task_name, signal);
-    end
 
-    physio_json_filepath = fullfile(physio_path, physio_json_filename);
-    physio_tsv_filepath  = fullfile(physio_path, physio_tsv_filename);
+    % find modality-specific physio file
+    [physio_tsv_filepath, physio_json_filepath] = find_physio_file( ...
+        physio_path, ...
+        signal, ...
+        task_id, ...
+        run_id ...
+    );
+
     %% Check if files exist  
     % The warning could be confusing 
     if ~isfile(physio_json_filepath) || ~isfile(physio_tsv_filepath)
@@ -55,13 +43,16 @@ for i = 1:num_signals
     % Read TSV data
     headings = physio_json.Columns;  
     col_types = repmat({'double'}, 1, length(headings));
-    physio_data_table = read_data_from_tsv(physio_tsv_filepath, false, headings.', col_types);
-    
+    physio_data_table = read_data_from_tsv( ...
+        physio_tsv_filepath, ...
+        false, ...
+        headings.', ...
+        col_types ...
+    );
  
     % Create channel struct
 
     chan = struct();
-    % header chantype, sr, StartTime and units
     chan.header = struct();
     chan.header.chantype = signal;
     chan.header.sr = physio_json.SamplingFrequency; 
