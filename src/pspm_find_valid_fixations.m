@@ -184,7 +184,7 @@ if ~strcmpi(options.channel, 'both')
 
 
     % load corresponding gaze channels in correct units
-    channelunits_list = cellfun(@(x) data.header.units, alldata.data, 'uni', false);
+    channelunits_list = cellfun(@(x) x.header.units, alldata.data, 'uni', false);
     if strcmpi(mode, 'fixation')
         channels_correct_units = find(~contains(channelunits_list, 'degree') & ~contains(channelunits_list, 'pixel'));
     elseif strcmpi(mode, 'bitmap')
