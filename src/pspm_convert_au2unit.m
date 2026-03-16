@@ -163,7 +163,7 @@ switch mode
         [sts, channeldata, infos, pos_of_channel(i)] = pspm_load_channel(alldata, channel{i}, 'pupil');
             if sts < 1, return; end
             % recursive call to avoid the formula being stated twice in the same function
-            [sts, convert_data.data{i}] = pspm_convert_au2unit(channeldata.data, unit, distance, record_method, ...
+            [sts, convert_data{i}.data] = pspm_convert_au2unit(channeldata.data, unit, distance, record_method, ...
                 multiplicator, reference_distance, reference_unit, options);
             if sts < 1, return; end
             convert_data{i}.header = channeldata.header;
