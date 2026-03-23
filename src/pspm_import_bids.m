@@ -162,6 +162,7 @@ end
 
 nSubjects = 0;
 nSessions = 0;
+nTasks = 0;
 nRuns = 0;
 %% 3. Loop over subjects ---------------------------------------------------
 for i = 1:length(subject_list)
@@ -169,8 +170,8 @@ for i = 1:length(subject_list)
     subject_full_id = subject_list(i).name;  % e.g., 'sub-CalinetBonn01
     sub_idx_str = regexp(subject_full_id, '\d+$', 'match', 'once');
 
-    fprintf('Importing %s ... \n', subject_full_id);
-    
+    fprintf('Importing %s\n', subject_full_id);
+
     if dataset_mode 
         % current subject path
         sub_path = fullfile(dataset_path, subject_full_id); 
@@ -182,6 +183,12 @@ for i = 1:length(subject_list)
         session_dirs = dir(fullfile(sub_path,'ses-*'));
         session_dirs = session_dirs([session_dirs.isdir]);
         session_dirs = session_dirs(~ismember({session_dirs.name}, {'.','..'}));
+        
+        if isempty(session_dirs)
+            % Treat subject folder as a single "session"
+            session_dirs = struct('name', '');  % empty name signals no ses level
+        end
+
     end 
 
     % checks if there are sessions
@@ -189,26 +196,38 @@ for i = 1:length(subject_list)
 
     %% Process each session
     for j = 1:length(session_dirs)
-        session_id = session_dirs(j).name(5:end);  % e.g., '01' or '02' (could there be more 100 sessions?)        
-        ses_path   = fullfile(sub_path,session_dirs(j).name);
+
+        if isempty(session_dirs(j).name)
+            % No session folders → operate directly in subject folder
+            session_id = '';  
+            ses_path   = sub_path;
+        else
+            session_id = session_dirs(j).name(5:end);  % e.g., '01'
+            ses_path   = fullfile(sub_path, session_dirs(j).name);
+        end
 
         % eye-tracking files can live in 'beh', 'physio', or any modality they have been acquired in
         % concurrently (e.g., 'func' during fMRI) [BEP020].
         % SCR and other data will live in 'physio' [BEP045]
-        eye_search_dirs = { ...
-            fullfile(ses_path,'beh'), ...
-            fullfile(ses_path,'physio'), ...
-            fullfile(ses_path,'func') ...
+        physio_search_dirs = { ...
+            fullfile(ses_path, 'beh'), ...
+            fullfile(ses_path, 'physio'), ...
+            fullfile(ses_path, 'func') ...
         };
 
         % keep only those that exist
-        eye_search_dirs = eye_search_dirs(cellfun(@isfolder, eye_search_dirs));
-
+        physio_search_dirs = physio_search_dirs(cellfun(@isfolder, physio_search_dirs));
+        
         fprintf('\n--------------------------------------------------------------------------------\n');
 
+        if isempty(session_id)
+            fprintf('Subject-level import (no session folder)\n');
+        else
+            fprintf('Session: ses-%s\n', session_id);
+        end
         %% Extract task name
         % Look for any event JSON in the beh and physio folders
-        task_ids = get_bids_task_ids(eye_search_dirs);
+        task_ids = get_bids_task_ids(physio_search_dirs);
        
         % loop over tasks
         for t = 1:numel(task_ids)
@@ -218,7 +237,7 @@ for i = 1:length(subject_list)
 
             % Detect runs for this task (if any)
             run_ids = get_bids_run_ids( ...
-                eye_search_dirs, ...
+                physio_search_dirs, ...
                 subject_full_id, ...
                 session_id, ...
                 task_id ...
@@ -226,26 +245,21 @@ for i = 1:length(subject_list)
             
             if isempty(run_ids)
                 run_ids = {''}; % placeholder: “no run”
-                n_runs = 1;
             else
-                n_runs = length(run_ids);
             end
 
             % If none found → process the session once without a task name
-            if isempty(task_ids)
-                task_ids = {''};   % placeholder for “no task”
-                fprintf('Processing %s\n [%d run(s)]', session_dirs(j).name, n_runs);
-            else
-                task_list_str = strjoin(task_ids, ', ');
-                fprintf('Processing %s with %d task(s): %s [%d run(s)]\n', ...
-                        session_dirs(j).name, length(task_ids), task_list_str, n_runs);
+            if ~isempty(task_id)
+                fprintf('Task:\t%s\n', task_id);
             end
-            
             % loop over runs
             for r = 1:numel(run_ids)
 
                 run_id = run_ids{r};
-                
+                if ~isempty(run_id)
+                    fprintf('Run:\trun-%d\n', run_id);
+                end
+
                 %% Processing start         
                 % read in physio data
                 physio_path = fullfile(ses_path, 'physio');
@@ -259,13 +273,13 @@ for i = 1:length(subject_list)
                 
                 % read in eye-tracking data
                 [~, physio_eye_data, physio_eye_infos] = get_physio_eye_data( ...
-                    eye_search_dirs, ...
+                    physio_search_dirs, ...
                     subject_full_id, ...
                     session_id, ...
                     task_id, ...
                     run_id ...
                 );
-                
+
                 %% Get events
                 % *events file can be in 'beh' or 'physio' folder | prioritize
                 % 'beh'
@@ -298,9 +312,21 @@ for i = 1:length(subject_list)
                 ses.infos.importdate = sprintf('%.2d.%.2d.%.2d', dt.Day, dt.Month, dt.Year); % same as import_eyelink and importviewpoint; 
         
                 % infos.source
-                ses.infos.source = physio_eye_infos.source;
-                ses.infos.source.file = [physio_infos.source.file; physio_eye_infos.source.file];
-                ses.infos.source.type = 'BIDS (json/tsv)'; % physio_infos.infos;
+                ses.infos.source = struct();
+                ses.infos.source.type = 'BIDS (json/tsv)';
+                ses.infos.source.file = {};
+                
+                if exist('physio_infos', 'var') && ~isempty(physio_infos) && ...
+                        isfield(physio_infos, 'source') && isfield(physio_infos.source, 'file') && ...
+                        ~isempty(physio_infos.source.file)
+                    ses.infos.source.file = [ses.infos.source.file; physio_infos.source.file];
+                end
+                
+                if exist('physio_eye_infos', 'var') && ~isempty(physio_eye_infos) && ...
+                        isfield(physio_eye_infos, 'source') && isfield(physio_eye_infos.source, 'file') && ...
+                        ~isempty(physio_eye_infos.source.file)
+                    ses.infos.source.file = [ses.infos.source.file; physio_eye_infos.source.file];
+                end
                 
                 if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
                 
@@ -315,7 +341,7 @@ for i = 1:length(subject_list)
                 ses.data = [marker_chan; physio_data; physio_eye_data];
     
                 % Calculates the nan_ratio for all channels
-                fprintf("Calculate the nan_ratio for all channels\n");
+                fprintf("\nCalculate the nan_ratio for all channels\n");
                 ses = pspm_update_nan_stats(ses);
     
                 % populate fields from json
@@ -326,23 +352,28 @@ for i = 1:length(subject_list)
                 end
                     
                 % Aligns all channels
-                fprintf("Aligning all channels in temporal domain\n");
-                [asts, ses.data, ses.infos.duration] = align_channels(ses.data);
+                fprintf("Clip to shortest duration\n");
+                [asts, ses.data, duration] = pspm_clip_channels_to_shortest(ses.data);
                 if asts ~= 1; continue; end
-                
+                fprintf("New duration: %.2f seconds\n", duration);
+                ses.infos.duration = duration;
+
                 %% Build output file
-                % Save session
-                if isempty(task_id) || length(task_ids) == 1
-                    ses_filename = sprintf('pspm_%s_ses-%s', subject_full_id, session_id);
-                else
-                    ses_filename = sprintf('pspm_%s_ses-%s_task-%s', subject_full_id, session_id, task_id);
+                parts = {['pspm_' subject_full_id]};
+                
+                if ~isempty(session_id)
+                    parts{end+1} = sprintf('ses-%s', session_id);
+                end
+                
+                if ~isempty(task_id) && numel(task_ids) > 1
+                    parts{end+1} = sprintf('task-%s', task_id);
                 end
 
-                if ~isempty(run_id)
-                    ses_filename = sprintf('%s_run-%s', ses_filename, run_id);
+                if ~isempty(run_id) && numel(run_ids) > 1
+                    parts{end+1} = sprintf('run-%d', run_id);
                 end
 
-                ses_filename = sprintf('%s.mat', ses_filename);
+                ses_filename = [strjoin(parts, '_') '.mat'];
                    
                 ses_filepath            = fullfile(save_path, ses_filename);
                 outfile{end+1}          = char(ses_filepath); 
@@ -360,10 +391,13 @@ for i = 1:length(subject_list)
                 data  = ses.data;
                 infos = ses.infos;
                 save(ses_filepath,'infos', 'data');
-                fprintf('\nSaved PsPM-file to ''%s''\n', ses_filepath);
+                fprintf('Saved PsPM-file to ''%s''\n', ses_filepath);
+                fprintf('\n--------------------------------------------------------------------------------\n');
 
+                nRuns = nRuns + 1;
+                
             end % close run loop
-            nRuns = nRuns + 1;
+            nTasks = nTasks + 1;
         end % close task loop
         nSessions = nSessions + 1;
     end % close ses loop
@@ -378,6 +412,7 @@ pspm_bids_importer_footer( ...
     nSubjects, ...
     nSessions, ...
     nRuns, ...
+    nTasks, ...
     save_path ...
 )
 end
@@ -404,6 +439,7 @@ function dataset_description = read_dataset_description(dataset_path)
     end
 end
 
+
 % Could be implemented in the future  
 function [participants_data, column_headings] = read_participants_data(dataset_path)
     % Imports the participant data from participants.tsv (independent the participiants.json)   
@@ -422,56 +458,82 @@ function [participants_data, column_headings] = read_participants_data(dataset_p
     end
 end
 
-function [sts, data, new_duration] = align_channels(data)
-sts = -1;
-num_channels = length(data); % the marker channels have to be taken away
-startTimes = zeros(num_channels,1);
 
-% Determine start time for each channel (assume 0 if missing)
-for i = 1:num_channels
-    if isfield(data{i}.header, 'StartTime')
-        startTimes(i) = data{i}.header.StartTime; %  assuming seconds
-    else
-        startTimes(i) = 0;
-        data{i}.header.StartTime = 0;
+function [sts, data, duration] = pspm_clip_channels_to_shortest(data, induration)
+% Clip continuous channels to the shortest common duration.
+% Optionally also clip to induration if provided (>0).
+
+    sts = -1;
+
+    if nargin < 2 || isempty(induration)
+        induration = 0;
     end
-end
 
-global_min = min(startTimes(~isnan(startTimes))); % excludes marker
-finalLengths = zeros(num_channels,1);
+    if ~(isnumeric(induration) && isscalar(induration))
+        warning('ID:invalid_input', 'induration must be a numeric scalar');
+        duration = [];
+        return
+    end
 
-for i = 1:num_channels        
-    shift_sec = data{i}.header.StartTime - global_min;
+    n = numel(data);
+    is_event = false(1, n);
+    durations = nan(1, n);
 
-    % Check if this channel is an event channel.
-    if isfield(data{i}, 'markerinfo')
-        data{i}.data = data{i}.data - global_min; 
-        data{i}.header.StartTime = data{i}.data(1); 
-    else
-        if ~isfield(data{i}.header, 'sr')
-            warning('ID:non_existent_field','Channel %d is missing sampling rate (sr) in its header. This will lead to problems later.', i);
-            continue;
+    for k = 1:n
+        units = "";
+        if isfield(data{k}, 'header') && isfield(data{k}.header, 'units') && ~isempty(data{k}.header.units)
+            units = string(data{k}.header.units);
         end
-        sr = data{i}.header.sr;
-        numPad = round(shift_sec * sr);
 
-        % Prepadded zeros to the data vector. 
-        data{i}.data = [zeros(numPad, 1); data{i}.data];
+        is_event(k) = strcmpi(units, "events");
 
-        % Record the new length.
-        finalLengths(i) = length(data{i}.data)/sr;
-        data{i}.header.StartTime = 0;
-    end    
+        if is_event(k)
+            % event channels do not define the target duration
+            durations(k) = NaN;
+        else
+            if ~isfield(data{k}.header, 'sr') || isempty(data{k}.header.sr) || data{k}.header.sr <= 0
+                warning('Channel %d (%s) has invalid sampling rate.', k, data{k}.header.chantype);
+                duration = [];
+                return
+            end
+            durations(k) = numel(data{k}.data) / double(data{k}.header.sr);
+        end
+    end
+
+    cont_durations = durations(~isnan(durations));
+    if isempty(cont_durations)
+        warning('No continuous channels found.');
+        duration = [];
+        return
+    end
+
+    duration = min(cont_durations);
+    if induration > 0
+        duration = min(duration, induration);
+    end
+
+    for k = 1:n
+        if is_event(k)
+            if ~isempty(data{k}.data)
+                data{k}.data = data{k}.data(data{k}.data <= duration);
+            end
+        else
+            sr = double(data{k}.header.sr);
+            n_keep = floor(duration * sr);
+            n_keep = min(n_keep, numel(data{k}.data));
+    
+            data{k}.data = data{k}.data(1:n_keep);
+    
+            % update header
+            data{k}.header.duration = duration;
+            data{k}.header.nsamples = n_keep;
+            data{k}.header.StartTime = 0;
+        end
+    end
+
+    sts = 1;
 end
 
-% Padding at the end
-[sts, data, new_duration] = pspm_align_channels(data); % can the fprint be turned off?
-if sts ~= 1 % if all are the same size does it give en error?
-    warning('ID:channel_alignment_failed','Channel alignment failed.');  
-    return
-end
-
-end
 
 function task_ids = get_bids_task_ids(search_dirs)
     task_ids = {};
@@ -491,6 +553,7 @@ function task_ids = get_bids_task_ids(search_dirs)
     end
     task_ids = unique(task_ids, 'stable');
 end
+
 
 function pspm_bids_importer_header(dataset_path, nSubjects, save_path)
 
@@ -517,10 +580,10 @@ fprintf('=======================================================================
 
 end
 
-function pspm_bids_importer_footer(nSubjects, nSessions, nRuns, output_dir)
+
+function pspm_bids_importer_footer(nSubjects, nSessions, nRuns, nTasks, output_dir)
 
 timestamp = string(datetime('now', 'Format', 'yyyy-MM-dd HH:mm:ss'));
-fprintf('\n');
 fprintf('================================================================================\n');
 fprintf('  BIDS Import Completed Successfully\n');
 fprintf('--------------------------------------------------------------------------------\n');
@@ -537,7 +600,11 @@ if nargin >= 3 && ~isempty(nRuns)
     fprintf('  Runs processed     : %d\n', nRuns);
 end
 
-if nargin >= 4 && ~isempty(output_dir)
+if nargin >= 4 && ~isempty(nTasks)
+    fprintf('  Tasks processed    : %d\n', nTasks);
+end
+
+if nargin >= 5 && ~isempty(output_dir)
     fprintf('  Output directory   : %s\n', output_dir);
 end
 
@@ -545,6 +612,7 @@ fprintf('  Finished at        : %s\n', timestamp);
 fprintf('================================================================================\n\n');
 
 end
+
 
 function ses = pspm_update_nan_stats(ses)
 % PSPM_UPDATE_NAN_STATS
@@ -586,6 +654,7 @@ function ses = pspm_update_nan_stats(ses)
     % Insert into ses
     ses.infos.source.chan_stats = chan_stats;
 end
+
 
 function run_ids = get_bids_run_ids(search_dirs, subject_full_id, session_id, task_id)
 % Returns cell array of run strings like {'01','02'} or {} if none.

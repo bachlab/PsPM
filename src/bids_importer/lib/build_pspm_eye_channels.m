@@ -62,67 +62,89 @@ function data = build_pspm_eye_channels(eye_data_cell)
 %   See also
 %   --------
 %   NORMALIZE_EYE_ENTRIES, FILL_EYE_CHANNEL_HEADER
+    data = {};
 
-data = {};  % output cell array of PsPM channels
-
-if isempty(eye_data_cell)
-    warning('No eye data available.');
-    return
-end
-
-% normalize to "eyes.r" and "eyes.l" (robust to ordering)
-eyes = normalize_eye_entries(eye_data_cell);
-
-if isempty(eyes.r) && isempty(eyes.l)
-    warning('No valid right/left eye entries found.');
-    return
-end
-
-% define channel mapping once
-sig = struct( ...
-    'col',  {'pupil_size', 'x_coordinate', 'y_coordinate'}, ...
-    'name', {'pupil',      'gaze_x',       'gaze_y'} ...
-);
-
-% create channels in consistent order: right then left
-order = {'r','l'};
-ch = 0;
-
-for s = 1:numel(order)
-    side = order{s};
-    m = eyes.(side);
-    if isempty(m), continue; end
-
-    % warn if only one eye present
-    if xor(isempty(eyes.r), isempty(eyes.l))
-        if side == 'r'
-            warning('Only right eye data available.');
-        else
-            warning('Only left eye data available.');
-        end
+    if isempty(eye_data_cell)
+        fprintf('No eye data available\n');
+        return
     end
 
-    T = m.Columns;
-    if ~istable(T)
-        warning('Eye "%s" has no valid Columns table; skipping.', side);
-        continue
+    eyes = normalize_eye_entries(eye_data_cell);
+
+    if isempty(eyes.r) && isempty(eyes.l)
+        warning('No valid right/left eye entries found.');
+        return
     end
 
-    for k = 1:numel(sig)
-        if ~ismember(sig(k).col, T.Properties.VariableNames)
-            warning('Missing column "%s" for eye "%s"; skipping channel.', sig(k).col, side);
+    sig = struct( ...
+        'col',  {'pupil_size', 'x_coordinate', 'y_coordinate'}, ...
+        'name', {'pupil',      'gaze_x',       'gaze_y'} ...
+    );
+
+    order = {'r', 'l'};
+    ch = 0;
+
+    for s = 1:numel(order)
+        side = order{s};
+        entry = eyes.(side);
+
+        if isempty(entry)
             continue
         end
 
-        ch = ch + 1;
+        [meta, T] = split_eye_entry(entry);
 
-        % base channel
-        data{ch}.data = T{:, sig(k).col};
-        data{ch}.header.chantype = sprintf('%s_%s', sig(k).name, side);
+        if ~istable(T)
+            warning('Eye "%s" has no valid sample table; skipping.', side);
+            continue
+        end
 
-        % populate header fields from metadata
-        data{ch}.header = fill_eye_channel_header(data{ch}.header, m, sig(k).name);
+        for k = 1:numel(sig)
+            if ~ismember(sig(k).col, T.Properties.VariableNames)
+                warning('Missing column "%s" for eye "%s"; skipping channel.', sig(k).col, side);
+                continue
+            end
+
+            ch = ch + 1;
+            data{ch}.data = T{:, sig(k).col};
+            data{ch}.header.chantype = sprintf('%s_%s', sig(k).name, side);
+            data{ch}.header = fill_eye_channel_header(data{ch}.header, meta, sig(k).name);
+        end
     end
 end
 
+
+function [meta, T] = split_eye_entry(entry)
+% Try to separate metadata struct from samples table.
+
+    meta = entry;
+    T = [];
+
+    % Preferred structure: entry.meta + entry.table
+    if isstruct(entry)
+        if isfield(entry, 'meta') && isstruct(entry.meta)
+            meta = entry.meta;
+        end
+
+        if isfield(entry, 'table') && istable(entry.table)
+            T = entry.table;
+            return
+        end
+
+        if isfield(entry, 'data') && istable(entry.data)
+            T = entry.data;
+            return
+        end
+
+        if isfield(entry, 'tsv') && istable(entry.tsv)
+            T = entry.tsv;
+            return
+        end
+    end
+
+    % Backward-compatible fallback: if entry.Columns is already a table
+    if isstruct(entry) && isfield(entry, 'Columns') && istable(entry.Columns)
+        T = entry.Columns;
+        return
+    end
 end

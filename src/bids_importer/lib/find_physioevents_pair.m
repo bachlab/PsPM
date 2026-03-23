@@ -9,7 +9,7 @@ function [ev_tsv, ev_json] = find_physioevents_pair(candidate_paths, task_id, ru
 
 ev_json = "";
 ev_tsv  = "";
-suffix  = 'physioevents.tsv';
+suffix  = 'physioevents.tsv.gz';
 
 % look in dirs
 for k = 1:numel(candidate_paths)

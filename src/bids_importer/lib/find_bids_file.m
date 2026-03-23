@@ -63,9 +63,6 @@ function [data_file, json_file] = find_bids_file( ...
     end
 
     % No match found
-    warning('No files found in "%s" with filters: %s.', ...
-        ses_path, strjoin(search, ', '));
-
     data_file = '';
     json_file = '';
 end

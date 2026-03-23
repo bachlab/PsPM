@@ -2,14 +2,15 @@ function eyes = get_eyes_list(files)
 
 eyes = {};
 
-% Loop through each file
-for i = 1:length(files)
-    % Get the filename
+for i = 1:numel(files)
     filename = files{i};
+
     token = regexp(filename, 'recording-(eye\d+)', 'tokens', 'once');
-    eyes{end+1} = token{1};
+
+    if ~isempty(token)
+        eyes{end+1} = token{1};
+    end
 end
 
-% Get unique list of eyes
 eyes = unique(eyes);
 end
