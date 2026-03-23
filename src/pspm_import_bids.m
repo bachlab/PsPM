@@ -14,22 +14,22 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %   Example supported layout (multi-task session, no 'beh' folder):
 %
 %       sub-<subID>/
-%       └── <ses>
+%       └── ses-<ses>
 %           └── physio
-%               ├── sub-<subID>_<ses>_task-Acquisition_events.json
-%               ├── sub-<subID>_<ses>_task-Acquisition_events.tsv
-%               ├── sub-<subID>_<ses>_task-Acquisition_physioevents.json
-%               ├── sub-<subID>_<ses>_task-Acquisition_physioevents.tsv
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-ecg_physio.json
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-ecg_physio.tsv
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-eye1_physio.json
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-eye1_physio.tsv
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-eye2_physio.json
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-eye2_physio.tsv
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-scr_physio.json
-%               ├── sub-<subID>_<ses>_task-Acquisition_recording-scr_physio.tsv
-%               ├── sub-<subID>_<ses>_task-Extinction_... (same pattern)
-%               ├── sub-<subID>_<ses>_task-Habituation_... (same pattern)
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_events.json
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_events.tsv
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_physioevents.json
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_physioevents.tsv.gz
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-ecg_physio.json
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-ecg_physio.tsv.gz
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-eye1_physio.json
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-eye1_physio.tsv.gz
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-eye2_physio.json
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-eye2_physio.tsv.gz
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-scr_physio.json
+%               ├── sub-<subID>_ses-<ses>_task-Acquisition_recording-scr_physio.tsv.gz
+%               ├── sub-<subID>_ses-<ses>_task-Extinction_... (same pattern)
+%               ├── sub-<subID>_ses-<ses>_task-Habituation_... (same pattern)
 %
 %   Example supported layout (tasks split per session, no 'task' ID, eyetracker data only):
 %
@@ -39,9 +39,9 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %              ├── sub-<sub>_ses-01_events.json
 %              ├── sub-<sub>_ses-01_events.tsv
 %              ├── sub-<sub>_ses-01_recording-eye1_physio.json
-%              ├── sub-<sub>_ses-01_recording-eye1_physio.tsv
+%              ├── sub-<sub>_ses-01_recording-eye1_physio.tsv.gz
 %              ├── sub-<sub>_ses-01_recording-eye2_physio.json
-%              └── sub-<sub>_ses-01_recording-eye2_physio.tsv
+%              └── sub-<sub>_ses-01_recording-eye2_physio.tsv.gz
 %
 % ● Format
 %   [sts, outfile] = pspm_import_bids(dataset_path, save_path)
@@ -76,7 +76,13 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %           - 
 %       - Extra support for run-specific inputs
 %
-%% 1. Initialize -----------------------------------------------------------
+%   23.34.2026: 
+%       - Update for BEP045
+%       - Assume channels are aligned already, just clip to shortest dura-
+%         tion. This avoids the scenario where already-aligned channels are
+%         separated in time if the number of samples do not align.
+%
+%% 1. Initialize
 global settings
 if isempty(settings)
   pspm_init;
@@ -188,7 +194,6 @@ for i = 1:length(subject_list)
             % Treat subject folder as a single "session"
             session_dirs = struct('name', '');  % empty name signals no ses level
         end
-
     end 
 
     % checks if there are sessions
@@ -245,7 +250,6 @@ for i = 1:length(subject_list)
             
             if isempty(run_ids)
                 run_ids = {''}; % placeholder: “no run”
-            else
             end
 
             % If none found → process the session once without a task name

@@ -45,6 +45,7 @@ end
 if strlength(events_json_filepath) > 0 && strlength(events_tsv_filepath) > 0
 
     % read physioevents.tsv.gz
+    fprintf('PEVs:\t%s\n', events_tsv_filepath);
     data_events = get_physio_events_data( ...
         events_json_filepath, ...
         events_tsv_filepath, ...
@@ -56,8 +57,6 @@ if strlength(events_json_filepath) > 0 && strlength(events_tsv_filepath) > 0
             data_events{i}.header.StartTime = startTimeRef;
         end
         data = [data, data_events.'];
-    else
-        warning('No events for physio eye data were imported.');
     end
 else
     parts = {subject_id};
