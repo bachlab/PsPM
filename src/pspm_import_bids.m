@@ -62,21 +62,21 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %                       Dominik R. Bach,
 %                       Bernhard A. von Raußendorf (University of Bonn)
 %
-%   05.12.2025: 
+%   05.12.2025 (Jurjen Heij): 
 %       - Overall updates on logic and flow
 %       - Addded support for multiple tasks within a single session.
 %       - Abstracted away some logic in separate functions
 %       - Updated handling of 'save_path' argument
 %       - Prettify interface
 %
-%   16.02.2026: 
+%   16.02.2026 (Jurjen Heij):
 %       - Update to support BEP020
 %           - No specific 'beh'-folder -> events are linked by task/run
 %           - tsv.gz files instead of tsv
 %           - 
 %       - Extra support for run-specific inputs
 %
-%   23.34.2026: 
+%   23.03.2026 (Jurjen Heij): 
 %       - Update for BEP045
 %       - Assume channels are aligned already, just clip to shortest dura-
 %         tion. This avoids the scenario where already-aligned channels are
