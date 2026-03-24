@@ -49,7 +49,7 @@ for i = 1:num_signals
         headings.', ...
         col_types ...
     );
- 
+    
     % Create channel struct
 
     chan = struct();
@@ -67,7 +67,7 @@ for i = 1:num_signals
     end 
 
     % Assign data
-    chan.data = physio_data_table.(headings{1});
+    chan.data = physio_data_table.(headings{strcmp(headings, signal)});
 
     % Add to physio data cell array 
     physio_data{cell_index,1} = chan; %#ok<*AGROW> 
