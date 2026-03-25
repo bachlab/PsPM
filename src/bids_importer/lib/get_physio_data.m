@@ -40,8 +40,16 @@ for i = 1:num_signals
     % Read JSON metadata
     physio_json = extract_json_as_struct(physio_json_filepath);
 
-    % Read TSV data
+    % Read columns and format into cell to string doesn't get separated
     headings = physio_json.Columns;  
+
+    if ischar(headings)
+        headings = {headings};   % wrap into cell array
+    elseif isstring(headings)
+        headings = cellstr(headings);
+    end
+    
+    % read TSV file
     col_types = repmat({'double'}, 1, length(headings));
     physio_data_table = read_data_from_tsv( ...
         physio_tsv_filepath, ...
