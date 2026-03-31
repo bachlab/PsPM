@@ -363,22 +363,22 @@ for i = 1:length(subject_list)
                 ses.infos.duration = duration;
 
                 %% Build output file
-                parts = {['pspm_' subject_full_id]};
+                parts = {sprintf('pspm_%s', char(subject_full_id))};
                 
                 if ~isempty(session_id)
-                    parts{end+1} = sprintf('ses-%s', session_id);
+                    parts{end+1} = sprintf('ses-%s', char(session_id));
                 end
                 
                 if ~isempty(task_id) && numel(task_ids) > 1
-                    parts{end+1} = sprintf('task-%s', task_id);
+                    parts{end+1} = sprintf('task-%s', char(task_id));
                 end
-
+                
                 if ~isempty(run_id) && numel(run_ids) > 1
                     parts{end+1} = sprintf('run-%d', run_id);
                 end
-
+                
                 ses_filename = [strjoin(parts, '_') '.mat'];
-                   
+                                   
                 ses_filepath            = fullfile(save_path, ses_filename);
                 outfile{end+1}          = char(ses_filepath); 
                 ses.infos.importfile    = char(ses_filepath); 
