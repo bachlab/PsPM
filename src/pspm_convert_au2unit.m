@@ -11,7 +11,7 @@ function [sts, outchannel] = pspm_convert_au2unit(varargin)
 %   input data if the recording method is area. This is performed to always
 %   return linear units.
 %   Using the given variables, the following calculations are performed:
-%   0. Take square root of data if recording is 'area'.
+%   0. Take 2*sqrt(data/pi) of data if recording is 'area'.
 %   1. Let from unit to reference_unit converted recording distance be Dconv.
 %   2. x ← A*(Dconv/Dref)*x
 %   3. Convert x from ref_unit to unit.
@@ -169,19 +169,26 @@ switch mode
             convert_data{i}.header = channeldata.header;
             convert_data{i}.header.units = unit;
         end
-        [f_sts, f_info] = pspm_write_channel(fn, convert_data, options.channel_action, struct('channel', pos_of_channel));
-        if f_sts < 1, return; end
+        [sts, f_info] = pspm_write_channel(fn, convert_data, options.channel_action, struct('channel', pos_of_channel));
+        if sts < 1, return; end
         outchannel = f_info.channel;
      % convert data
     case 'data'
         convert_data = data;
         if strcmpi(record_method, 'area')
-            convert_data = sqrt(convert_data);
+            [f_sts, convert_data] = pspm_convert_area2diameter(convert_data);
+            if f_sts < 1, return; end
         end
-        [~, distance] = pspm_convert_unit(distance, unit, reference_unit);
+
+        [f_sts, distance] = pspm_convert_unit(distance, unit, reference_unit);
+        if f_sts < 1, return; end
         convert_data = multiplicator * (distance / reference_distance) * convert_data;
+
         %% convert data from reference_unit to unit
-        [~, convert_data] = pspm_convert_unit(convert_data, reference_unit, unit);
+        [f_sts, convert_data] = pspm_convert_unit(convert_data, reference_unit, unit);
+        if f_sts < 1, return; end
         outchannel = convert_data;
+        sts = 1;
 end
-sts = 1;
+ 
+end

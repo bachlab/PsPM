@@ -21,24 +21,70 @@ function testDiameterUnitConversion(testCase)
     testCase.verifyEqual(out, 0.72);
 end
 function testAreaSameUnits(testCase)
-    [sts, out] = pspm_convert_au2unit(100, 'mm', 60, 'area', 0.1, 50, 'mm');
+    data = 100;
+    [sts, out] = pspm_convert_au2unit(data, 'mm', 60, 'area', 0.1, 50, 'mm');
     testCase.verifyEqual(sts, 1);
-    testCase.verifyEqual(out, 1.2);
+    
+    % expected with formula diameter = 2.*sqrt(area./pi);
+    expected_from_formula = 0.1 * (60 / 50) * 2*sqrt(data./pi);
+    testCase.verifyEqual(out, expected_from_formula);
+
+    % expected with [sts, diameter] = pspm_convert_area2diameter(area)
+    [sts, diam] = pspm_convert_area2diameter(data);
+    expected_from_pspm = 0.1 * (60 / 50) * diam;
+    testCase.verifyEqual(out, expected_from_pspm);
+
 end
 function testAreaUnitConversion(testCase)
-    [sts, out] = pspm_convert_au2unit(400, 'mm', 100, 'area', 0.1, 100, 'm');
+    data = 400;
+    [sts, out] = pspm_convert_au2unit(data, 'mm', 100, 'area', 0.1, 100, 'm'); % reference_unit in m
     testCase.verifyEqual(sts, 1);
-    testCase.verifyEqual(out, 2, 'AbsTol', 1e-12);
+
+    
+    % expected with formula diameter = 2.*sqrt(area./pi);
+    % ref. units in m: Dconv 100mm -> 0.1 m and A(Dconv/Dref) m -> mm (*1000)
+    expected_from_formula = 0.1 * (0.1 / 100) * 2 * sqrt(data ./ pi) * 1000;
+    testCase.verifyEqual(out, expected_from_formula);
+
+    % expected with [sts, diameter] = pspm_convert_area2diameter(area)
+    [sts, diam] = pspm_convert_area2diameter(data);
+    expected_from_pspm = 0.1 * (0.1 / 100) * diam * 1000;
+    testCase.verifyEqual(out, expected_from_pspm);
+
+
+    
 end
 function testVectorAreaSameUnits(testCase)
-    [sts, out] = pspm_convert_au2unit([25 36 49], 'mm', 80, 'area', 0.05, 40, 'mm');
+    data = [25 36 49]
+    [sts, out] = pspm_convert_au2unit(data, 'mm', 80, 'area', 0.05, 40, 'mm');
     testCase.verifyEqual(sts, 1);
-    testCase.verifyEqual(out, [0.5 0.6 0.7], 'AbsTol', 1e-12);
+
+
+    % expected with formula diameter = 2.*sqrt(area./pi);
+    expected_from_formula = 0.05 * (80 / 40) * 2 * sqrt(data ./ pi) ;
+    testCase.verifyEqual(out, expected_from_formula);
+
+    % expected with [sts, diameter] = pspm_convert_area2diameter(area)
+    [sts, diam] = pspm_convert_area2diameter(data);
+    expected_from_pspm = 0.05 * (80 / 40) * diam ;
+    testCase.verifyEqual(out, expected_from_pspm);
+
 end
 function testVectorAreaUnitConversion(testCase)
-    [sts,out]=pspm_convert_au2unit([100 400 900],'mm',100,'area',0.1,50,'m'); 
+    data = [100 400 900];
+    [sts,out]=pspm_convert_au2unit(data,'mm',100,'area',0.1,50,'m'); 
     testCase.verifyEqual(sts,1); 
-    testCase.verifyEqual(out,[2 4 6],'AbsTol',1e-12);
+
+    % expected with formula diameter = 2.*sqrt(area./pi);
+    expected_from_formula = 0.1 * (0.1 / 50) * 2 * sqrt(data ./ pi) * 1000 ;
+    testCase.verifyEqual(out, expected_from_formula);
+
+    % expected with [sts, diameter] = pspm_convert_area2diameter(area)
+    [sts, diam] = pspm_convert_area2diameter(data);
+    expected_from_pspm = 0.1 * (0.1 / 50) * diam * 1000;
+    testCase.verifyEqual(out, expected_from_pspm);
+
+
 end
 
 %% Error handeling
@@ -78,7 +124,6 @@ function testErrorHandling(testCase)
 end
 
 %% Pspm files
-
 
 function testFileRoundTripConvertAu2Unit(testCase)
 
