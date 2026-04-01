@@ -59,6 +59,9 @@ else
 end;
 options.filter = 1;
 try options.norm; catch, options.norm = 0; end;
+try options.optimize;   catch, options.optimize   = 2; end
+try options.export_era; catch, options.export_era = [1 4 0.01 1]; end
+try options.ledalab_args; catch, options.ledalab_args = {}; end
 
 % does result file exist?
 if exist(outfile, 'file')
@@ -101,8 +104,10 @@ for k = 1:numel(options.method)
     mkdir(workpath);
     copyfile(fullfile(cpth, ledafn{1}), fullfile(workpath, ledafn{1}));
     % do the analysis
-    Ledalab(workpath, 'open', 'leda', 'analyze', options.method{k}, 'optimize', 2, ...
-        'export_era', [1 4 0.01 1]); 
+    Ledalab(workpath, 'open', 'leda', 'analyze', options.method{k}, ...
+        'optimize', options.optimize, ...
+        'export_era', options.export_era, ...
+        options.ledalab_args{:}); 
     % rename files and copy to current path
     ledafiles = dir(workpath);
     for f = 3:numel(ledafiles)
