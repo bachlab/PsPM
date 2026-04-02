@@ -83,7 +83,25 @@ function testVectorAreaUnitConversion(testCase)
     [sts, diam] = pspm_convert_area2diameter(data);
     expected_from_pspm = 0.1 * (0.1 / 50) * diam * 1000;
     testCase.verifyEqual(out, expected_from_pspm);
+end
+function testVectorAreaUnitConversionTEST(testCase)
+    data = [100 400 900];
+    [sts,out]=pspm_convert_au2unit(data,'mm',100,'area',0.1,50,'mm'); 
+    testCase.verifyEqual(sts,1); 
+    % 
+    % % expected with formula diameter = 2.*sqrt(area./pi);
+    % expected_from_formula = 0.1 * (0.1 / 50) * 2 * sqrt(data ./ pi) * 1000 ;
+    % testCase.verifyEqual(out, expected_from_formula);
+    % 
+    % % expected with [sts, diameter] = pspm_convert_area2diameter(area)
+    % [sts, diam] = pspm_convert_area2diameter(data);
+    % expected_from_pspm = 0.1 * (0.1 / 50) * diam * 1000;
+    % testCase.verifyEqual(out, expected_from_pspm);
 
+    data2 = unit2au(out,'mm',100,'area',0.1,50,'mm');
+    testCase.verifyEqual(data   , data2, 'AbsTol', 1e-12);
+
+    
 
 end
 
@@ -124,9 +142,7 @@ function testErrorHandling(testCase)
 end
 
 %% Pspm files
-
 function testFileRoundTripConvertAu2Unit(testCase)
-
     fn = '/home/bernd/git/PsPM/ImportTestData/eyelink/pspm_u_sc4b31.mat';
     fn_roundtrip = '/home/bernd/git/PsPM/ImportTestData/eyelink/pspm_u_sc4b31_au.mat';
 
@@ -145,55 +161,45 @@ function testFileRoundTripConvertAu2Unit(testCase)
     options.channel = 'pupil';
     options.channel_action = 'replace';
 
-    %% 1) Original laden
+    %% 1) load original file
     [sts, infos, data] = pspm_load_data(fn);
     testCase.verifyEqual(sts, 1);
 
-
-    %% 3) Originalkanal mit Einheiten laden
+    %% 2) load pupil channel
     [sts, original_channel, ~, pos] = pspm_load_channel(fn, options.channel, 'pupil');
     testCase.verifyEqual(sts, 1);
 
-    %% 4) Werte künstlich zurück in arbitrary units rechnen
+    %% 3) change units to au
     au_data = unit2au(original_channel.data, unit, distance, record_method, ...
         multiplicator, reference_distance, reference_unit);
 
-    %% 5) AU-Kanal in die neue Datei schreiben
     newdata = original_channel;
     newdata.data = au_data;
     newdata.header.units = 'au';
 
-    [sts, info_write] = pspm_write_channel( ...
-        fn_roundtrip, newdata, 'replace', struct('channel', pos));
+    [sts, info_write] = pspm_write_channel(fn_roundtrip, newdata, 'replace', struct('channel', pos));
     testCase.verifyEqual(sts, 1);
 
-    %% 6) Neue Datei wieder mit convert_au2unit umrechnen
+    %% 4) convert back to units
     [sts, outchannel] = pspm_convert_au2unit( ...
         fn_roundtrip, unit, distance, record_method, ...
         multiplicator, reference_distance, reference_unit, ...
         struct('channel', pos, 'channel_action', 'replace'));
     testCase.verifyEqual(sts, 1);
 
-    %% 7) Rekonvertierten Kanal laden
+    %% 5) load converted channel
     [sts, reconverted_channel] = pspm_load_channel(fn_roundtrip, outchannel, 'pupil');
     testCase.verifyEqual(sts, 1);
 
-    %% 8) Vergleich
+    %% 8) Test
     testCase.verifyEqual(reconverted_channel.data, original_channel.data, 'AbsTol', 1e-12);
     testCase.verifyEqual(reconverted_channel.header.units, unit);
 
-    %% optional cleanup
+    %% cleanup
     if exist(fn_roundtrip, 'file')
         delete(fn_roundtrip);
     end
 end
-
-
-
-
-
-
-
 
 end
 end
@@ -201,16 +207,19 @@ end
 function data = unit2au(outchannel, unit, distance, record_method, ...
     multiplicator, reference_distance, reference_unit)
 
-    [~, outchannel_ref] = pspm_convert_unit(outchannel, unit, reference_unit);
-    [~, distance_ref] = pspm_convert_unit(distance, unit, reference_unit);
+    % [~, outchannel_ref] = pspm_convert_unit(outchannel, unit, reference_unit);
+    % [~, distance_conv] = pspm_convert_unit(distance, unit, reference_unit);
 
     switch lower(record_method)
         case 'diameter'
-            data = outchannel_ref ./ ...
-                (multiplicator * (distance_ref / reference_distance));
+            data = outchannel ./ ...
+                (multiplicator * (distance / reference_distance ));
         case 'area'
-            data = (outchannel_ref ./ ...
-                (multiplicator * (distance_ref / reference_distance))).^2;
+
+            data = (outchannel ./ ...
+                (multiplicator * ( distance/ reference_distance)));
+            data = ((data./2).^2 ).*pi;
+            
         otherwise
             error('Invalid record_method');
     end
