@@ -144,7 +144,7 @@ limit_upper.tag     = 'upper';
 limit_upper.strtype = 'r';
 limit_upper.num     = [1 1];
 limit_upper.val     = {2};
-limit_upper.help    = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.upper');
+limit_upper.help    = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.limit_upper');
 
 limit_lower         = cfg_entry;
 limit_lower.name    = 'Lower limit';
@@ -152,7 +152,7 @@ limit_lower.tag     = 'lower';
 limit_lower.strtype = 'r';
 limit_lower.num     = [1 1];
 limit_lower.val     = {.2};
-limit_lower.help    = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.lower');
+limit_lower.help    = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.limit_lower');
 
 limit               = cfg_branch;
 limit.name          = 'Limit';
