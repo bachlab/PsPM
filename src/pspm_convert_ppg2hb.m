@@ -67,6 +67,8 @@ outchannel = [];
 % -------------------------------------------------------------------------
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
+elseif ~(ischar(fn) || isstruct(fn))
+  warning('ID:invalid_input', 'Need file name string or struct as first input.'); return;  
 elseif nargin < 2
   options = struct();
   options.channel = 'ppg';
@@ -84,7 +86,7 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 % get data
 % -------------------------------------------------------------------------
 [nsts, data, infos, pos_of_channel] = pspm_load_channel(fn, options.channel, 'ppg');
-if nsts == -1, return; end
+if nsts < 1, return; end
 
 ppg = data.data;
 sr = data.header.sr;
@@ -245,13 +247,13 @@ newdata.header.chantype = 'hb';
 
 write_options = struct();
 write_options.msg = msg;
-write_options.channel = pos_of_channel;
+% write_options.channel = pos_of_channel;
+write_options.channel = 0;
 
 % Replace last existing channel or save as new channel
 [nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
-if ~nsts
-  return
-end
+if nsts < 1; return; end
+
 % user output
 fprintf('  done.\n');
 sts = 1;

@@ -100,9 +100,6 @@ function testVectorAreaUnitConversionTEST(testCase)
 
     data2 = unit2au(out,'mm',100,'area',0.1,50,'mm');
     testCase.verifyEqual(data   , data2, 'AbsTol', 1e-12);
-
-    
-
 end
 
 %% Error handeling
