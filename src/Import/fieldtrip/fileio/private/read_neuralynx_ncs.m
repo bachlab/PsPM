@@ -149,7 +149,7 @@ if NRecords>0
   % detect the number of timestamps per block while avoiding influencce of gaps
   d = double(TimeStamp(2:end)-TimeStamp(1:end-1));
   maxJump  = ceil(10^6./(Fs-1))*512;
-  gapCorrectedTimeStampPerSample =  nanmean(d(d<maxJump))/512;
+  gapCorrectedTimeStampPerSample = mean(d(d<maxJump),'omitnan') / 512;
   
   % read the timestamp from the first and last record
   if (ispc), fclose(fid); end
