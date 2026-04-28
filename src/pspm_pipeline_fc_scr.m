@@ -58,6 +58,12 @@ if ~iscell(fn)
     onsets = {onsets};
     isi    = {isi};
 end
+if ~iscell(fn)
+    fn = {fn};
+end
+if ~iscell(missing) && ~isempty(missing)
+    missing = {missing};
+end
 
 for i_sn = 1:numel(onsets)
     timing{i_sn}{1} = onsets{i_sn}(:) + isi{i_sn}(:);
@@ -80,12 +86,19 @@ end
 
 %% Setup model
 % set (dummy) filename
-[pth, fn_m, ext] = fileparts(fn);
-model_fn = fullfile(pth{1}, ['mdl_', fn_m{1}, '.mat']);
+[pth, fn_m, ~] = fileparts(fn);
+
+if iscell(pth)
+    model_fn = fullfile(pth{1}, ['mdl_', fn_m{1}, '.mat']);
+else
+    model_fn = fullfile(pth, ['mdl_', fn_m, '.mat']);
+end
 
 model = struct( ...
     'modelfile', model_fn, ...
-    'norm', normalize);
+    'norm', normalize ...
+);
+
 model.datafile = fn;
 model.missing = missing;
 model.timing = timing;
