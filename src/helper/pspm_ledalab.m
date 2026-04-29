@@ -11,10 +11,15 @@ function [sts, outfile] = pspm_ledalab(datafile, outfile, options)
 % files are renamed and moved to the current path. If required, they are
 % deleted after being read out
 % FORMAT: [sts, outfile] = pspm_ledalab(datafile, outfile, options)
+%       datafile: name of data file to be processed
+%       outfile: name of the output file to save results
 %       options.overwrite: overwrite all existing files (default 0)
 %       options.cleanup: clean up intermediate ledalab files (default 1)
 %       options.method: 'nonnegative' ('DDA'), 'continuous' ('CDA'), 'both' (default)
 %       options.norm: normalise SCR data (default: 0)
+%       options.optimize: Ledalab optimization setting (default 2)
+%       options.export_era: arguments passed to Ledalab export_era (default [1 4 0.01 1])
+%       options.ledalab_args: additional arguments passed to Ledalab as a cell array (default {})
 %__________________________________________________________________________
 % PsPM 3.0
 % (c) 2008-2015 Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
