@@ -1,34 +1,96 @@
-function [sts, out] = pspm_pipeline_fc_scr(fn, missing, onsets, isi, method, normalize, keepfile)
+function [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, varargin)
+% PSPM_PIPELINE_FC_SCR  Run PsPM DCM pipeline for fear-conditioned SCR
+%
 % ● Description
-% This function runs a standard PsPM pipeline for fear-conditioned SCR,
-% based on the winning methods from the paper de Vries et al. (2026) in
-% preparation. 
-% ● Format
-% [sts, out] = pspm_pipeline_fc_scr(fn, missing, onsets, soa, method,  norm, keepfile)
-% ● Arguments
-% * fn: a PsPM data file name, or cell array of file names
-% * missing: a PsPM epoch file name (set to [] if no missing file), or cell
-%   array of epoch file names
-% * onsets: onset times of all CS (vector), or cell array of onset times
-% * isi: CS-US interval in s (scalar or vector, in the latter case must be
-%        defined for all trials, or cell array)
-% * method: one of '2026_short', '2026_long_uni', '2026_long_bi'. Here, 
-%          'long/short' refer to the isi in de Vries et al. (which was 
-%           3.5 s for 'short', and > 6 s for 'long'), and 'uni/bi' refers 
-%          to unidirectional or bidirectional filtering (where bidirectional 
-%          filtering was slightly better for long ISI in the tested
-%          data sets but can be suboptimal with long inter-trial intervals.
-%          For short ISI, unidirectional filtering was always better).
-% * normalize: [optional] Normalise data. Data are normalised during inversion 
-%         but results are transformed back into raw data units. Default: 0.
-% * keepfile: [optional] Save model file for diagnostic purposes. Default: 0.
-% 
+% Runs a standard PsPM pipeline for fear-conditioned skin conductance
+% responses (SCR), based on the methods described in:
+%   de Vries et al. (2026, in preparation).
+%
+% The function supports single or multiple sessions/files. All inputs are
+% internally normalised to cell arrays and processed per session.
+%
+% ● Syntax
+%   [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi);
+%       - Uses default method: '2026_long_uni'
+%       - No missing data
+%       - No normalization, no file saving, no overwrite
+%
+%   [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, 'method', '2026_short');
+%       - Use the short-ISI model
+%       - Unidirectional filtering
+%       - Suitable for short CS–US intervals (~3.5 s)
+%
+%   [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, 'missing', missing_file);
+%       - Exclude artefact/missing segments defined in missing_file
+%       - Useful for handling signal dropouts or invalid epochs
+%
+%   [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, 'normalize', 1);
+%       - Enable normalization during model inversion
+%       - Results are returned in original data units
+%
+%   [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, ...
+%       'method', '2026_long_bi', ...
+%       'normalize', 1, ...
+%       'keepfile', 1, ...
+%       'overwrite', 1);
+%       - Use long-ISI model with bidirectional filtering
+%       - Enable normalization
+%       - Save model file to disk
+%       - Overwrite existing model files if present
+%
+% ● Inputs
+%   fn        - PsPM data file (string/char) or cell array of files
+%
+%   onsets    - CS onset times (in seconds)
+%               • numeric vector, or cell array of vectors (one per session)
+%
+%   isi       - CS–US interval (in seconds)
+%               • scalar (applied to all trials)
+%               • vector (same length as onsets per session)
+%               • or cell array (one entry per session)
+%
+%   method    - (optional) Processing method (string)
+%               Default: '2026_long_uni'
+%               • '2026_short'
+%               • '2026_long_uni'
+%               • '2026_long_bi'
+%
+%               Interpretation:
+%               - 'short' vs 'long' refers to ISI regime
+%               - 'uni' / 'bi' refers to filter direction
+%
+%   missing   - (optional) Missing/artefact epochs file(s), or []
+%               • string/char, cell array, or []
+%               • if empty, no missing data are applied
+%
+%   normalize - (optional) logical or 0/1
+%               Normalize data during inversion (default: 0)
+%
+%   keepfile  - (optional) logical or 0/1
+%               Save model file to disk (default: 0)
+%
+%   overwrite - (optional) logical or 0/1
+%               Overwrite existing model files (default: 0)
+%
 % ● Outputs
-% * out: trial-by-trial estimate of the conditioned response.
+%   sts       - Status flag returned by pspm_dcm
+%               > 0 indicates success
+%
+%   out       - Trial-wise conditioned response estimates
+%               • short ISI: amplitude estimates
+%               • long ISI: combined amplitude × dispersion estimates
+%
+% ● Notes
+%   - All inputs are internally converted to cell arrays for consistency.
+%   - ISI must be scalar or match the number of trials per session.
+%   - Number of sessions must match across fn, onsets, and missing.
+%
 % ● History
-% Introduced in PsPM 7.2
-% ● References
-% [1] de Vries et al. (2026) forthcoming.
+%   Introduced in PsPM 7.2
+%
+% ● Reference
+%   de Vries et al. (2026). In preparation.
+
 
 %% Initialise. 
 % most of the checks are performed in downstream functions and give
@@ -40,52 +102,105 @@ end
 sts = -1;
 out = [];
 
-if nargin < 5
-    warning('Don''t know what to do');
-    return
-end
+% set default args
+p = inputParser;
+addParameter(p, 'method', '2026_long_uni');
+addParameter(p, 'missing', []);
+addParameter(p, 'normalize', 0);
+addParameter(p, 'keepfile', 0);
+addParameter(p, 'overwrite', 0);
+parse(p, varargin{:});
 
-if nargin < 6
-    normalize = 0;
-end
+method    = p.Results.method;
+missing   = p.Results.missing;
+normalize = p.Results.normalize;
+keepfile  = p.Results.keepfile;
+overwrite = p.Results.overwrite;
 
-if nargin < 7
-    keepfile = 0;
-end
-
-%% Parse options and setup timings
+%% Parse inputs
 if ~iscell(fn)
+    fn = {fn};
+end
+
+if ~iscell(onsets)
     onsets = {onsets};
-    isi    = {isi};
 end
 
-for i_sn = 1:numel(onsets)
-    timing{i_sn}{1} = onsets{i_sn}(:) + isi{i_sn}(:);
-    if ismember(method, {'2026_short'})
-        % flex-fix
-        timing{i_sn}{2} = [onsets{i_sn}(:), onsets{i_sn}(:) + isi{i_sn}(:)];
-    elseif ismember(method, {'2026_long_uni', '2026_long_bi'})
-        % flex-flex-fix with halved ISI
-        timing{i_sn}{2} = [onsets{i_sn}(:), onsets{i_sn}(:) + isi{i_sn}(:)/2];
-        timing{i_sn}{3} = [onsets{i_sn}(:) + isi{i_sn}(:)/2, onsets{i_sn}(:) + isi{i_sn}(:)];
+if isempty(missing)
+    missing = cell(size(fn));
+elseif ~iscell(missing)
+    missing = {missing};
+end
+
+if ~iscell(isi)
+    isi = {isi};
+end
+
+% input consistency checks
+n_sn = numel(fn);
+
+if numel(onsets) ~= n_sn
+    error('Number of onset vectors must match number of data files.');
+end
+
+if numel(missing) ~= n_sn
+    error('Number of missing files must match number of data files.');
+end
+
+if ~(numel(isi) == 1 || numel(isi) == n_sn)
+    error('ISI must be scalar/vector for all sessions or one entry per data file.');
+end
+
+%% sort out trial-wise inputs
+timing = cell(size(fn));
+
+for i_sn = 1:n_sn
+    this_onsets = onsets{i_sn}(:);
+
+    if numel(isi) == 1
+        this_isi = isi{1};
     else
-        warning('Unknown method');
-        return
+        this_isi = isi{i_sn};
     end
-end
 
-if ~iscell(fn)
-    timing = timing{1};
+    if isscalar(this_isi)
+        this_isi = repmat(this_isi, size(this_onsets));
+    else
+        this_isi = this_isi(:);
+    end
+
+    if numel(this_isi) ~= numel(this_onsets)
+        error('ISI must be scalar or match the number of onsets for session %d.', i_sn);
+    end
+
+    timing{i_sn}{1} = this_onsets + this_isi;
+
+    if strcmpi(method, '2026_short')
+        timing{i_sn}{2} = [this_onsets, this_onsets + this_isi];
+
+    elseif ismember(method, {'2026_long_uni', '2026_long_bi'})
+        timing{i_sn}{2} = [this_onsets, this_onsets + this_isi/2];
+        timing{i_sn}{3} = [this_onsets + this_isi/2, this_onsets + this_isi];
+
+    else
+        error('Unknown method "%s". Use 2026_short, 2026_long_uni, or 2026_long_bi.', method);
+    end
 end
 
 %% Setup model
 % set (dummy) filename
-[pth, fn_m, ext] = fileparts(fn);
-model_fn = fullfile(pth{1}, ['mdl_', fn_m{1}, '.mat']);
+model_fn = cell(size(fn));
+
+for i = 1:numel(fn)
+    [pth_i, fn_m_i, ~] = fileparts(fn{i});
+    model_fn{i} = fullfile(pth_i, ['mdl1_', fn_m_i, '.mat']);
+end
 
 model = struct( ...
     'modelfile', model_fn, ...
-    'norm', normalize);
+    'norm', normalize ...
+);
+
 model.datafile = fn;
 model.missing = missing;
 model.timing = timing;
@@ -106,7 +221,10 @@ elseif strcmpi(method, '2026_long_bi')
 end
 
 %% Setup options
-options = struct('overwrite', 0, 'nosave', 1-keepfile);
+options = struct( ...
+    'overwrite', overwrite, ...
+    'nosave', 1 - keepfile ...
+);
 
 %% Run DCM
 [sts, dcm] = pspm_dcm(model, options);
@@ -124,4 +242,3 @@ if sts > 0
               dcm.stats(:, amp_indx(2)) .* dcm.stats(:, disp_indx(2)); 
     end
 end
-
