@@ -370,6 +370,14 @@ function varargout = pspm_data_editor_OutputFcn(hObject, ~, handles)
 %   handles    structure with handles and user data (see GUIDATA)
 % UIWAIT makes pspm_data_editor wait for user response (see UIRESUME)
 % handles.lbEpochsvarargout{1} = handles.output;
+for i = 1:nargout
+    varargout{i} = []; %#ok<AGROW>
+end
+
+if isfield(handles, 'output')
+    varargout{1} = handles.output;
+end
+
 delete(hObject);
 
 function lbEpochs_Callback(hObject, ~, ~)
