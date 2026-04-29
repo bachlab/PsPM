@@ -170,7 +170,8 @@ nSubjects = 0;
 nSessions = 0;
 nTasks = 0;
 nRuns = 0;
-%% 3. Loop over subjects ---------------------------------------------------
+
+%% 3. Loop over subjects
 for i = 1:length(subject_list)
    
     subject_full_id = subject_list(i).name;  % e.g., 'sub-CalinetBonn01
