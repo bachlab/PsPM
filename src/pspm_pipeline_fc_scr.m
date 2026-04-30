@@ -2,14 +2,14 @@ function [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, varargin)
 % PSPM_PIPELINE_FC_SCR  Run PsPM DCM pipeline for fear-conditioned SCR
 %
 % ● Description
-% Runs a standard PsPM pipeline for fear-conditioned skin conductance
-% responses (SCR), based on the methods described in:
+%   Runs a standard PsPM pipeline for fear-conditioned skin conductance
+%   responses (SCR), based on the methods described in:
 %   de Vries et al. (2026, in preparation).
 %
-% The function supports single or multiple sessions/files. All inputs are
-% internally normalised to cell arrays and processed per session.
+%   The function supports single or multiple sessions/files. All inputs are
+%   internally normalised to cell arrays and processed per session.
 %
-% ● Syntax
+% ● Format
 %   [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi);
 %       - Uses default method: '2026_long_uni'
 %       - No missing data
@@ -38,18 +38,18 @@ function [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, varargin)
 %       - Save model file to disk
 %       - Overwrite existing model files if present
 %
-% ● Inputs
-%   fn        - PsPM data file (string/char) or cell array of files
+% ● Arguments
+%  * fn:       - PsPM data file (string/char) or cell array of files
 %
-%   onsets    - CS onset times (in seconds)
+%  * onsets:   - CS onset times (in seconds)
 %               • numeric vector, or cell array of vectors (one per session)
 %
-%   isi       - CS–US interval (in seconds)
+%  * isi:      - CS–US interval (in seconds)
 %               • scalar (applied to all trials)
 %               • vector (same length as onsets per session)
 %               • or cell array (one entry per session)
 %
-%   method    - (optional) Processing method (string)
+%  * method:   - (optional) Processing method (string)
 %               Default: '2026_long_uni'
 %               • '2026_short'
 %               • '2026_long_uni'
@@ -59,24 +59,24 @@ function [sts, out] = pspm_pipeline_fc_scr(fn, onsets, isi, varargin)
 %               - 'short' vs 'long' refers to ISI regime
 %               - 'uni' / 'bi' refers to filter direction
 %
-%   missing   - (optional) Missing/artefact epochs file(s), or []
+%  * missing:   - (optional) Missing/artefact epochs file(s), or []
 %               • string/char, cell array, or []
 %               • if empty, no missing data are applied
 %
-%   normalize - (optional) logical or 0/1
+%  * normalize:- (optional) logical or 0/1
 %               Normalize data during inversion (default: 0)
 %
-%   keepfile  - (optional) logical or 0/1
+%  * keepfile: - (optional) logical or 0/1
 %               Save model file to disk (default: 0)
 %
-%   overwrite - (optional) logical or 0/1
+%  * overwrite:- (optional) logical or 0/1
 %               Overwrite existing model files (default: 0)
 %
 % ● Outputs
-%   sts       - Status flag returned by pspm_dcm
+%  * sts:       - Status flag returned by pspm_dcm
 %               > 0 indicates success
 %
-%   out       - Trial-wise conditioned response estimates
+%  * out:       - Trial-wise conditioned response estimates
 %               • short ISI: amplitude estimates
 %               • long ISI: combined amplitude × dispersion estimates
 %
@@ -104,11 +104,11 @@ out = [];
 
 % set default args
 p = inputParser;
-addParameter(p, 'method', '2026_long_uni');
-addParameter(p, 'missing', []);
-addParameter(p, 'normalize', 0);
-addParameter(p, 'keepfile', 0);
-addParameter(p, 'overwrite', 0);
+addParameter(p, 'method', '2026_long_uni',  @(x) ischar(x) );
+addParameter(p, 'missing', [],  @(x) isempty(x)   || ischar(x) || iscell(x));
+addParameter(p, 'normalize', 0, @(x) (islogical(x) || isnumeric(x)) && isscalar(x) && ismember(x, [0 1]));
+addParameter(p, 'keepfile',  0, @(x) (islogical(x) || isnumeric(x)) && isscalar(x) && ismember(x, [0 1]));
+addParameter(p, 'overwrite', 0, @(x) (islogical(x) || isnumeric(x)) && isscalar(x) && ismember(x, [0 1]));
 parse(p, varargin{:});
 
 method    = p.Results.method;
@@ -176,9 +176,11 @@ for i_sn = 1:n_sn
     timing{i_sn}{1} = this_onsets + this_isi;
 
     if strcmpi(method, '2026_short')
+        % flex-fix
         timing{i_sn}{2} = [this_onsets, this_onsets + this_isi];
 
     elseif ismember(method, {'2026_long_uni', '2026_long_bi'})
+        % flex-flex-fix with halved ISI
         timing{i_sn}{2} = [this_onsets, this_onsets + this_isi/2];
         timing{i_sn}{3} = [this_onsets + this_isi/2, this_onsets + this_isi];
 
@@ -189,11 +191,13 @@ end
 
 %% Setup model
 % set (dummy) filename
-model_fn = cell(size(fn));
+% One DCM model file for all sessions together
+[pth_i, fn_m_i, ~] = fileparts(fn{1});
 
-for i = 1:numel(fn)
-    [pth_i, fn_m_i, ~] = fileparts(fn{i});
-    model_fn{i} = fullfile(pth_i, ['mdl1_', fn_m_i, '.mat']);
+if numel(fn) == 1
+    model_fn = fullfile(pth_i, ['mdl1_', fn_m_i, '.mat']);
+else
+    model_fn = fullfile(pth_i, ['mdl1_', fn_m_i, '_multi.mat']);
 end
 
 model = struct( ...
@@ -241,4 +245,5 @@ if sts > 0
         out = dcm.stats(:, amp_indx(1)) .* dcm.stats(:, disp_indx(1)) + ... % a x c for each response, then summed
               dcm.stats(:, amp_indx(2)) .* dcm.stats(:, disp_indx(2)); 
     end
+end
 end
