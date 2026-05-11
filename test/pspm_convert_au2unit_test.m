@@ -101,6 +101,86 @@ function testVectorAreaUnitConversionTEST(testCase)
     data2 = unit2au(out,'mm',100,'area',0.1,50,'mm');
     testCase.verifyEqual(data   , data2, 'AbsTol', 1e-12);
 end
+function testFileChannelActionAddAndReplace(testCase)
+    fn = fullfile('ImportTestData', 'eyelink', 'pspm_u_sc4b31.mat');
+    fn_test = fullfile('ImportTestData', 'eyelink', 'pspm_u_sc4b31_au_addreplace.mat');
+
+    S = load(fn);
+    save(fn_test, '-struct', 'S');
+
+    cleanupObj = onCleanup(@() delete(fn_test));
+
+    unit = 'mm';
+    distance = 600;
+    record_method = 'diameter';
+    multiplicator = 0.04;
+    reference_distance = 500;
+    reference_unit = 'mm';
+
+    %% Load original pupil channel
+    [sts, original_channel, ~, pos] = pspm_load_channel(fn_test, 'pupil', 'pupil');
+    testCase.verifyEqual(sts, 1);
+
+    original_data = original_channel.data;
+
+    %% Convert original mm data to artificial au data
+    au_data = unit2au(original_data, unit, distance, record_method, ...
+        multiplicator, reference_distance, reference_unit);
+
+    newdata = original_channel;
+    newdata.data = au_data;
+    newdata.header.units = 'au';
+
+    [sts, ~] = pspm_write_channel(fn_test, newdata, 'replace', struct('channel', pos));
+    testCase.verifyEqual(sts, 1);
+
+    %% Count channels before add
+    [sts, ~, ~, filestruct_before] = pspm_load_data(fn_test, 'none');
+    testCase.verifyEqual(sts, 1);
+    numofchanbefore = filestruct_before.numofchan;
+
+    %% Test add
+    options = struct();
+    options.channel = pos;
+    options.channel_action = 'add';
+
+    [sts, out_add] = pspm_convert_au2unit(fn_test, unit, distance, record_method, ...
+        multiplicator, reference_distance, reference_unit, options);
+
+    testCase.verifyEqual(sts, 1);
+
+    [sts, ~, data_after_add, filestruct_after_add] = pspm_load_data(fn_test, 'none');
+    testCase.verifyEqual(sts, 1);
+
+    testCase.verifyEqual(filestruct_after_add.numofchan, numofchanbefore + 1);
+    testCase.verifyEqual(out_add, filestruct_after_add.numofchan);
+    testCase.verifyEqual(data_after_add{out_add}.header.units, unit);
+    testCase.verifyEqual(data_after_add{out_add}.header.chantype, original_channel.header.chantype);
+
+    valid = isfinite(original_data);
+    testCase.verifyEqual(data_after_add{out_add}.data(valid), ...
+        original_data(valid), 'AbsTol', 1e-12);
+
+    %% Test replace
+    options.channel = pos;
+    options.channel_action = 'replace';
+
+    [sts, out_replace] = pspm_convert_au2unit(fn_test, unit, distance, record_method, ...
+        multiplicator, reference_distance, reference_unit, options);
+
+    testCase.verifyEqual(sts, 1);
+
+    [sts, ~, data_after_replace, filestruct_after_replace] = pspm_load_data(fn_test, 'none');
+    testCase.verifyEqual(sts, 1);
+
+    testCase.verifyEqual(filestruct_after_replace.numofchan, filestruct_after_add.numofchan);
+    testCase.verifyEqual(out_replace, pos);
+    testCase.verifyEqual(data_after_replace{pos}.header.units, unit);
+    testCase.verifyEqual(data_after_replace{pos}.header.chantype, original_channel.header.chantype);
+
+    testCase.verifyEqual(data_after_replace{pos}.data(valid), ...
+        original_data(valid), 'AbsTol', 1e-12);
+end
 
 %% Error handeling
 function testErrorHandling(testCase)
@@ -140,8 +220,8 @@ end
 
 %% Pspm files
 function testFileRoundTripConvertAu2Unit(testCase)
-    fn = '/home/bernd/git/PsPM/ImportTestData/eyelink/pspm_u_sc4b31.mat';
-    fn_roundtrip = '/home/bernd/git/PsPM/ImportTestData/eyelink/pspm_u_sc4b31_au.mat';
+    fn = fullfile('ImportTestData', 'eyelink', 'pspm_u_sc4b31.mat');
+    fn_roundtrip = fullfile('ImportTestData', 'eyelink', 'pspm_u_sc4b31_au.mat');
 
     % copy file
     S = load(fn);
