@@ -28,8 +28,12 @@ function [sts, dcm] = pspm_dcm_inv(model, options)
 %   ├─.missing_data:  [optional] missing epoch data, originally loaded as model.missing
 %   │                 from pspm_dcm, but calculated into .missing_data (created
 %   │                 in pspm_dcm and then transferred to pspm_dcm_inv.
-%   └──.constrained:  [optional] constrained model for flexible responses which have
-%                     have fixed dispersion (0.3 s SD) but flexible latency
+%   └─.constrained: [optional] Constrain dispersion of flexible responses.
+%                 The value stated here refers to the SD in seconds. 
+%                 Minimum and default value: 0.3 s. For each estimated
+%                 response, the upper limit of the dispersion is the
+%                 minimum of this value and 1/2 the duration of the flexible
+%                 response window.
 %   ┌───────options
 %   ├─────────.eSCR:  [optional] contains the data to estimate RF from
 %   ├─────────.aSCR:  [optional] contains the data to adjust the RF to
@@ -109,8 +113,7 @@ try model.trlstart; catch, warning('Trial starts not defined.'); return; end
 try model.trlstop; catch, warning('Trial ends not defined.'); return; end
 try model.iti; catch, warning('ITIs not defined.'); return; end
 try model.norm; catch, model.norm = 0; end
-try model.constrained; catch, model.constrained = 0; end
-try model.constrained_upper; catch, model.constrained_upper = 0; end
+try model.constrained; catch, model.constrained = settings.dcm{1}.sigma_offset; end
 
 
 try model.aSCR; catch, model.aSCR = 0; end
@@ -140,7 +143,6 @@ try settings.dcm{1}.sigma_offset = options.aSCR_sigma_offset; catch; end
 sftheta = pspm_sf_theta;
 sf_unit = 1./exp(sftheta(5));
 sftheta = sftheta(1:3);
-fixedSD = 0.3;
 
 % CRF priors generated on 27.04.2010 --
 % numeric values given in log(parameter space) such that these
@@ -184,11 +186,7 @@ eSCRno = size(model.events{2}{1}, 2);
 
 % aSCR priors --
 prior.aTheta.m = zeros(1, aSCRno);
-if model.constrained
-  prior.aTheta.s = 100 * ones(1, aSCRno);
-else
-  prior.aTheta.s = zeros(1, aSCRno);
-end
+prior.aTheta.s = zeros(1, aSCRno);
 prior.aTheta.a = log(0.25) * ones(1, aSCRno);
 
 % shorten variable names --
@@ -385,14 +383,8 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
   for k = 1:aSCRno
     u(5 + k, :)                 = model.flexevents(k, 1);
     u(5 + aSCRno + k, :)        = model.flexevents(k, 2);            % aSCR mean upper bound
-    if model.constrained
-      u(5 + 2 * aSCRno + k, :)    = fixedSD - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
-    elseif model.constrained_upper
-      u(5 + 2 * aSCRno + k, :)    = model.constrained_upper - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
-    else
-      u(5 + 2 * aSCRno + k, :)    = diff(model.flexevents(k, :))/2 - settings.dcm{1}.sigma_offset;    % aSCR SD upper bound
-    end
-  end
+    u(5 + 2 * aSCRno + k, :) = min(diff(model.flexevents(k, :))/2, model.constrained) - settings.dcm{1}.sigma_offset; % aSCR SD upper bound
+ end
   for k = 1:eSCRno
     u(5 + 3 * aSCRno + k, :)    = model.fixevents(k);                % eSCR onset
   end
@@ -406,8 +398,9 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
   % output function parameters are now fixed
   for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end
 
-  % if model constrained, flexible response dispersion is fixed
-  if model.constrained
+  % if flexible response dispersion is fixed, set prior precision to
+  % infinity
+  if model.constrained == settings.dcm{1}.sigma_offset
     aSCRindx = theta_n + 3 * ((1:aSCRno) - 1) + 2;
     for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end
   end
@@ -604,13 +597,8 @@ if ~options.getrf
         u(5 + u(2, 1) + (1:u(2, 1)), :) = repmat(foo(:), 1, size(u, 2));
         aSCR_ln(1:aSCRno, trl) = foo(:, 1); % save first trial for transformation of parameter values into seconds
         % - get aSCR SD upper bound (zero for dummy events, fixed SD for constrained models)
-        if model.constrained
-            u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(fixedSD, numel(foo), size(u, 2)) - settings.dcm{1}.sigma_offset;
-        elseif model.constrained_upper > 0
-            u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(model.constrained_upper, numel(foo), size(u, 2)) - settings.dcm{1}.sigma_offset;
-        else
-            u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(foo(:)/2, 1, size(u, 2)) - settings.dcm{1}.sigma_offset;
-        end
+        upper_bound = min([foo(:)/2, repmat(model.constrained, [numel(foo), 1])], [], 2);
+        u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(upper_bound, size(u, 2)) - settings.dcm{1}.sigma_offset;
         % tidy up
         clear aSCR_on foo aSCR_dummy
       else
@@ -838,11 +826,7 @@ if ~options.getrf
       for k = 1:aSCRno
         sig.G0 = aSCR_ln(k, trl);
         aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);
-        if model.constrained
-          sig.G0 = fixedSD - settings.dcm{1}.sigma_offset;
-        else
-          sig.G0 = aSCR_ln(k, trl)/2 - settings.dcm{1}.sigma_offset;
-        end
+        sig.G0 = min(aSCR_ln(k, trl)/2, model.constrained) - settings.dcm{1}.sigma_offset;
         aTheta(trl).s(k) = sigm(aTheta(trl).s(k), sig) + settings.dcm{1}.sigma_offset;
       end
       aTheta(trl).a = newzfactor .* exp(aTheta(trl).a) ./ eSCR_unit;

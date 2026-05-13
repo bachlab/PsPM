@@ -112,8 +112,12 @@ function [model, options] = pspm_check_model(model, options, modeltype)
 %   ├.substhresh: [optional, DCM (modeltype) only] Minimum duration (in seconds) of NaN
 %   │             periods to cause splitting up into subsessions which get evaluated
 %   │             independently (excluding NaN values). Default as 2.
-%   ├.constrained: [optional, DCM (modeltype) only] Constrained model for flexible
-%   │             responses which have fixed dispersion (0.3 s SD) but flexible latency.
+%   ├.constrained: [optional, DCM (modeltype) only] Constrain dispersion of flexible responses.
+%   │             The value stated here refers to the SD in seconds. 
+%   │             Minimum and default value: 0.3 s. For each estimated
+%   │             response, the upper limit of the dispersion is the
+%   │             minimum of this value and 1/2 the duration of the flexible
+%   │             response window.
 %   └────method : [optional, SF (modeltype) only] [string/cell_array]
 %                   [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %                   [cell_array] a cell array of methods mentioned above.
@@ -312,9 +316,9 @@ if strcmpi(modeltype, 'dcm')
     end
 
     if ~isfield(model, 'constrained')
-        model.constrained = 0;
-    elseif ~any(ismember(model.constrained, [0, 1]))
-        warning('ID:invalid_input', 'Constrained model must be specified as 0 or 1.'); return;
+        model.constrained = settings.dcm{1}.sigma_offset;
+    elseif ~isnumeric(model.constrained) || model.constrained < settings.dcm{1}.sigma_offset
+        warning('ID:invalid_input', 'Flexible response dispersion must be numeric and larger than %01.0f s.', settings.dcm{1}.sigma_offset); return;
     end
 
     if ~isfield(model, 'substhresh')

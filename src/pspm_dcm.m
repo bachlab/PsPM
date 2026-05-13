@@ -11,9 +11,14 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   (evoked after a specified event) responses can be modelled.
 %   For fixed responses, delay and dispersion are assumed to be constant
 %   (either pre-determined or estimated from the data), while for flexible
-%   responses, both are estimated for each individual trial.
+%   responses, latency (and if selected, dispersion) are estimated for each 
+%   individual trial.
 %   Flexible responses can for example be anticipatory, decision-related,
 %   or evoked with unknown onset.
+%   If flexible response dispersion is estimated from the data, we
+%   recommend multiplying it with the estimated amplitude to obtain a 
+%   valid estimate of the psychological variable (see de Vries et al.
+%   2026).
 %   PsPM implements an iterative trial-by-trial algorithm. Different from 
 %   GLM, response parameters are always estimated per trial, and the 
 %   algorithm is not informed about the condition.
@@ -74,8 +79,12 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             i.e. Data are normalised during inversion but results
 %   │             transformed back into raw data units.
 %   │             Default: 0.
-%   └─.constrained: [optional] Constrained model for flexible responses
-%                 which have fixed dispersion (0.3 s SD) but flexible latency.
+%   └─.constrained: [optional] Constrain dispersion of flexible responses.
+%                 The value stated here refers to the SD in seconds. 
+%                 Minimum and default value: 0.3 s. For each estimated
+%                 response, the upper limit of the dispersion is the
+%                 minimum of this value and 1/2 the duration of the flexible
+%                 response window.
 %   ┌────options
 %   ├─.crfupdate: [0/1] Re-estimate RF parameters from canonical SCRF, 
 %   │             or use pre-estimated RF parameters. This can be used when
@@ -178,10 +187,14 @@ function [sts, dcm] = pspm_dcm(model, options)
 %       modelling of anticipatory skin conductance changes. Biological
 %       Psychology, 85(1), 163-70
 %   [2] Model validation and improvement:
-%       Staib, M., Castegnetti, G., & Bach, D. R. (2015). Optimising a
+%       Staib M, Castegnetti G, Bach DR (2015). Optimising a
 %       model-based approach to inferring fear learning from skin
 %       conductance responses. Journal of Neuroscience Methods, 255,
 %       131-138.
+%   [3] Optimisation of the forward model:
+%       de Vries O, Mancinelli F, Sporrer JK, Bach DR (2026). Optimal 
+%       quantification of fear conditioning from skin conductance data. 
+%       preprint available at https://osf.io/preprints/psyarxiv/abe4t_v1
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2010-2021 by Dominik R Bach (Wellcome Centre for Human Neuroimaging, UCL)
