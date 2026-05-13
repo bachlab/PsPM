@@ -740,7 +740,7 @@ defaults.glm(end+1) = struct(...
 % analysis. Further modalities and models can be implemented.
 %
 % DCM for SCR filter settings
-defaults.dcm{1} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'bi'), 'sigma_offset', 0.3);
+defaults.dcm{1} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'uni'), 'sigma_offset', 0.3);
 % DCM for SF filter settings
 defaults.dcm{2} = struct('filter', struct('lpfreq', 5,  'lporder',  1,  'hpfreq', 0.0159, 'hporder',  1,  'down', 10, 'direction', 'uni'));
 %% 8 TAM settings
