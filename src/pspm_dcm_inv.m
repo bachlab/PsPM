@@ -598,7 +598,7 @@ if ~options.getrf
         aSCR_ln(1:aSCRno, trl) = foo(:, 1); % save first trial for transformation of parameter values into seconds
         % - get aSCR SD upper bound (zero for dummy events, fixed SD for constrained models)
         upper_bound = min([foo(:)/2, repmat(model.constrained, [numel(foo), 1])], [], 2);
-        u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(upper_bound, size(u, 2)) - settings.dcm{1}.sigma_offset;
+        u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(upper_bound, [1, size(u, 2)]) - settings.dcm{1}.sigma_offset;
         % tidy up
         clear aSCR_on foo aSCR_dummy
       else
