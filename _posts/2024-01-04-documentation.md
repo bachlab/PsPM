@@ -149,6 +149,6 @@ to assess fear learning. *Psychophysiology*, *54*, 202-214.
 * Wehrli J, Xia Y, Abivardi A , Kleim B, Bach DR (2024). The impact of doxycycline on human contextual fear memory. *Psychopharmacology*, *241*, 1065–1077.
 * Wehrli J, Xia Y, Offenhammer B, Kleim B, Müller D, Bach DR (2023). Effect of the matrix metalloproteinase inhibitor doxycycline on human trace fear memory. *eNeuro*, ENEURO.0243-22.2023.
 * Xia Y, Wehrli J, Gerster S, Kroes M, Houtekamer M, Bach DR (2023). Measuring human context fear conditioning and retention after consolidation. *Learning & Memory*, *30*, 139–150.
-* Ojala KE*, Staib M*, Gerster S, Ruff CC, Bach DR (2022). Inhibiting human aversive memory by transcranial theta-burst stimulation to primary sensory cortex. *Biological Psychiatry*, *92*, 149-157.
+* Ojala KE, Staib M, Gerster S, Ruff CC, Bach DR (2022). Inhibiting human aversive memory by transcranial theta-burst stimulation to primary sensory cortex. *Biological Psychiatry*, *92*, 149-157.
 * Wehrli JM, Xia Y, Gerster S, & Bach DR (2022). Measuring human trace fear conditioning. *Psychophysiology*, *59*, e14119.
 * Homan P, Lau HL, Levy I, Raio CM, Bach DR, Carmel D, Schiller S (2021). Evidence for a minimal role of stimulus awareness in reversal of threat learning. *Learning & Memory*, *28*, 95-103.
