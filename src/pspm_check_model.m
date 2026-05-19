@@ -318,7 +318,7 @@ if strcmpi(modeltype, 'dcm')
     if ~isfield(model, 'constrained')
         model.constrained = settings.dcm{1}.sigma_offset;
     elseif ~isnumeric(model.constrained) || model.constrained < settings.dcm{1}.sigma_offset
-        warning('ID:invalid_input', 'Flexible response dispersion must be numeric and larger than %01.0f s.', settings.dcm{1}.sigma_offset); return;
+        warning('ID:invalid_input', 'Flexible response dispersion must be numeric and at least than %0.1f s.', settings.dcm{1}.sigma_offset); return;
     end
 
     if ~isfield(model, 'substhresh')
