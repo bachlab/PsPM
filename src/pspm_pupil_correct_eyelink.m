@@ -60,6 +60,10 @@ end
 sts = -1;
 outchannel = 0;
 
+if nargin < 2 || isempty(options)
+  options = struct();
+end
+
 %% Default values
 
 all_fieldnames = {'C_x', 'C_y', 'C_z', 'S_x', 'S_y', 'S_z'};
@@ -70,7 +74,7 @@ default_params(625) = [183, -230, 625, -76, 156, 937];
 
 %% input checks
 
-if ~ischar(fn)
+if ~ischar(fn) % need something for cell()
   warning('ID:invalid_input', 'Data file must be a char.');
   return;
 end
@@ -103,6 +107,7 @@ if strcmpi(options.mode, 'auto')
     return;
   end
 end
+
 
 %% load data
 alldata = struct();

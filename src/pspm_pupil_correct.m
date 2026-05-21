@@ -54,6 +54,8 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+pupil_corrected = [];
+sts = -1;
 
 %% add inpus checks
 % add load file
@@ -61,8 +63,9 @@ end
 % get pupil and gaze channels
 [lsts, pupil_data, infos, pos_of_channel] = pspm_load_channel(fn, 'pupil');
 if lsts ~= 1 
-  warning('ID:invalid_input', 'All input arrays must have the same sizes');
-  return, end
+  warning('ID:invalid_input', 'Could not load pupil channel.')
+  return; 
+end
 [lsts, gaze_x_data, gaze_y_data] = pspm_load_gaze(fn, pupil_data.header.chantype);
 if lsts ~= 1; return; end
 
