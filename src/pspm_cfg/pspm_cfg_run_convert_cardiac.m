@@ -34,7 +34,8 @@ for i = 1:numel(job.pp_type)
         sr = job.pp_type{i}.hb2hp.sr;
         options = struct();
         options.channel = chan;
-        options.limit = job.pp_type{i}.hb2hp.limit;
+        options.limit_lower = job.pp_type{i}.hb2hp.limit.lower; % same convention as in pspm_options
+        options.limit_upper = job.pp_type{i}.hb2hp.limit.upper;
         options = pspm_update_struct(options, job, 'channel_action');
         [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options);
       case 'ecg2hp'

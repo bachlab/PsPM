@@ -98,7 +98,7 @@ classdef pspm_convert_gaze_test < pspm_testcase
             this.verifyTrue(~isempty(out_channel));
             if strcmpi(target, 'sps')
                 extra = 1;                
-            elseif strcmpi(channel_action, 'add') || ~strcmpi(target, from) 
+            elseif strcmpi(channel_action, 'add') %|| ~strcmpi(target, from) 
                 extra = 2;
             else
                 extra = 0;

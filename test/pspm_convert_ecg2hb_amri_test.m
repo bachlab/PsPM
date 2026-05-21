@@ -20,9 +20,38 @@ end
 methods(Test)
 function check_if_heartbeat_channel_is_saved(this)
   [sts, out_channel] = pspm_convert_ecg2hb_amri(this.input_filename);
-  load(this.input_filename);
+  [sts, infos, data, filestruct] = pspm_load_data(this.input_filename);
 
   this.verifyEqual(data{out_channel}.header.chantype, 'hb');
+end
+function test_write_channel_add_replace(this)
+  % restore file
+  sts = copyfile(this.backup_filename, this.input_filename);
+  assert(sts == 1);
+  
+  o.channel_action = 'add';
+  [sts, out_channel] = pspm_convert_ecg2hb_amri(this.input_filename,o);
+  [sts, infos, data, filestruct] = pspm_load_data(this.input_filename);
+
+  this.verifyEqual(data{out_channel}.header.chantype, 'hb');
+  this.verifyEqual(numel(data), 2);
+
+   o.channel_action = 'add';
+  [sts, out_channel] = pspm_convert_ecg2hb_amri(this.input_filename,o);
+  [sts, infos, data, filestruct] = pspm_load_data(this.input_filename);
+
+  this.verifyEqual(data{out_channel}.header.chantype, 'hb');
+  this.verifyEqual(numel(data), 3);
+
+  o.channel_action = 'replace';
+  [sts, out_channel] = pspm_convert_ecg2hb_amri(this.input_filename,o);
+  [sts, infos, data, filestruct] = pspm_load_data(this.input_filename);
+
+  this.verifyEqual(data{out_channel}.header.chantype, 'hb');
+  this.verifyEqual(numel(data), 3);
+
+
+
 end
 end
 

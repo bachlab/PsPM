@@ -174,6 +174,40 @@ classdef pspm_convert_ecg2hb_test < pspm_testcase
         this.valid_input(filename, chan_struct, num_channels);
       end
     end
+    function channel_action_add_replace_one_file(this)
+      fn_original = this.testdata{1}.filename;
+      [pathstr, name, ext] = fileparts(fn_original);
+      fn = fullfile(pathstr, [name, '_single', ext]);
+      copyfile(fn_original, fn);
+    
+
+      % Check copied file
+      [nsts, ~, data] = pspm_load_data(fn);
+      this.verifyEqual(nsts, 1);
+      n_channels = numel(data);
+    
+      % First add one hb channel
+      options.channel_action = 'add';
+      [sts, outch_add] = pspm_convert_ecg2hb(fn, options);
+      this.verifyEqual(sts, 1);
+    
+      [nsts, ~, data] = pspm_load_data(fn);
+      this.verifyEqual(nsts, 1);
+      this.verifyEqual(numel(data), n_channels + 1);
+    
+      % Then replace on the same file
+      options.channel_action = 'replace';
+      [sts, outch_replace] = pspm_convert_ecg2hb(fn, options);
+      this.verifyEqual(sts, 1);
+    
+      [nsts, ~, data] = pspm_load_data(fn);
+      this.verifyEqual(nsts, 1);
+      this.verifyEqual(numel(data), n_channels + 1);
+      this.verifyEqual(outch_replace, outch_add);
+
+      % remove copied file
+      delete(fn);
+    end
   end
 end
 function max_num = max_beats_in_k_seconds(seconds, k)
