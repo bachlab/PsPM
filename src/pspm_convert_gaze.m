@@ -114,7 +114,7 @@ end
 [lsts, alldata.infos, alldata.data] = pspm_load_data(fn);
 if lsts < 1, return, end
 channelunits_list = cellfun(@(x) x.header.units, alldata.data, 'uni', false);
-channels_correct_units = find(contains(channelunits_list, from));
+channels_correct_units = find(strcmpi(channelunits_list, from));
 channeltypes = {'gaze_x', 'gaze_y'};
 data = {};
 for i = 1:numel(channel)
@@ -163,7 +163,7 @@ for i = 1:numel(channel)
     if strcmpi(conversion.from, 'pixel')
         [data{i}.data, data{i}.header.range] = pspm_convert_pixel2unit_core(data{i}.data, data{i}.header.range, screen_length{i});
     elseif ~strcmpi(conversion.from, 'degree')
-        [lsts, data{i}.data] = pspm_convert_unit(data{i}.data, data{i}.header.units, 'mm');
+        [lsts, data{i}.data] = pspm_convert_unit(data{i}.data, data{i}.header.units, 'mm'); % target?
         if lsts < 1, return, end
     end
     if ~ismember(target, {'degree', 'sps'})
@@ -184,7 +184,7 @@ if ismember(target, {'degree', 'sps'})
         if numel(data_x) == 1 && data_x == 0, return; end
     else
         data_x_range = data{1}.header.range;
-        data_y_range = data{1}.header.range;
+        data_y_range = data{2}.header.range; % 2 not 1
     end
 end
 if strcmp(target, 'degree')

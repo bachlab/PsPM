@@ -10,7 +10,7 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Format
 %   [sts, channel_index] = pspm_pupil_correct_eyelink(fn, options)
 % ● Arguments
-%   *          fn : Path to a PsPM imported Eyelink data it can be either a string or a struct.
+%   *          fn : Path to a PsPM imported Eyelink data must    string .
 %   ┌─────options
 %   ├────────mode : Conversion mode. Must be one of 'auto' or 'manual'. If 'auto', then
 %   │               optimized conversion parameters in Table 3 of the reference will be used. In
@@ -74,7 +74,7 @@ default_params(625) = [183, -230, 625, -76, 156, 937];
 
 %% input checks
 
-if ~ischar(fn) % need something for cell()
+if ~ischar(fn)
   warning('ID:invalid_input', 'Data file must be a char.');
   return;
 end
@@ -128,7 +128,7 @@ if ~strcmp(gaze_x_data.header.units, 'mm') || ~strcmp(gaze_y_data.header.units, 
         'Gaze channels needs to be in (mm). Convert gaze first with pspm_convert_gaze and re-run pspm_pupil_correct_eyelink.');
     return
 end
-% 
+
 % gaze_x_mm = gaze_x_data.data;
 % gaze_y_mm = gaze_y_data.data;
 % pupil = pupil_data.data;

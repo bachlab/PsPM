@@ -88,6 +88,11 @@ if ~any(ismember(size(pupil), 1)) || ~any(ismember(size(gaze_x_mm), 1)) || ~any(
   warning('ID:invalid_input', 'All input arrays must be 1D');
   return;
 end
+if ~strcmpi(gaze_x_data.header.units, 'mm') || ~strcmpi(gaze_y_data.header.units, 'mm')
+  warning('ID:invalid_input', ...
+    'Gaze channels must be in mm. Convert gaze first with pspm_convert_gaze.');
+  return;
+end
 all_fieldnames = {'C_x', 'C_y', 'C_z', 'S_x', 'S_y', 'S_z'};
 names_concat = sprintf('%s, ', all_fieldnames{:});
 if ~all(isfield(geometry_setup, all_fieldnames))
