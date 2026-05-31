@@ -14,11 +14,12 @@ function theta = pspm_get_rf(fn, events, outfile, channel, options)
 %               SPM style onsets file with one event type, or (3) an epochs file
 %               (see pspm_dcm or pspm_get_epochs).
 %   * outfile : (optional) a file to write the response function to
-%   * channel : (optional) data channel (default: look for first SCR channel)
+%   * channel : (optional) data channel (default: look for first SCR channel) 
 %   * options : [struct] to be passed on to pspm_dcm
 % ● History
 %   Introduced in PsPM 3.0
 %   Written in 2008-2015 by Dominik R Bach (Wellcome Trust Centre for Neuroimaging)
+%   Updated in 2026 by Bernhard A. von Raußendorf
 
 %% initialise
 global settings
@@ -26,7 +27,8 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-rf = [];
+rf = []; %  in the m-function can be removed
+theta = [];
 
 %% check input
 if nargin < 1
@@ -40,28 +42,73 @@ if isempty(outfile) || ~ischar(outfile)
   [pth infn ext] = fileparts(fn);
   outfile = fullfile(pth, ['RF_', infn, ext]);
 end
-if nargin < 4
+if nargin < 4 || isempty(channel)
   channel = 'scr';
 end
+if nargin < 5 || isempty(options)
+  options = struct();
+end
+
 
 %% call DCM
 options = pspm_options(options, 'get_rf');
 % options.getrf = 1;
 %try options.nosave, catch, options.nosave = 1; end
-options.channel = channel;
-[foo dcm] = pspm_dcm(fn, '', events, options);
-if numel(dcm{1}.prior.posterior) == 2
-  % based on eSCR
-  theta = dcm{1}.prior.posterior(2).muTheta(1:7)';
-else
-  % based on aSCR (i. e. updated RF)
-  theta = dcm{1}.prior.posterior(3).muTheta(1:7)';
+if options.invalid
+  warning('options invalid') % change!
+  return;
 end
 
+% prepare timing for pspm_dcm -> maybe change!
+if isnumeric(events)
+  if isvector(events)
+    events = {events(:)};
+  else
+    events = {events};
+  end
+end
+
+model.datafile  = {fn};
+model.timing    = {events};
+model.channel   = channel;
+model.modelfile = [tempname, '.mat'];
+
+[dsts, dcm] = pspm_dcm(model, options);
+if dsts < 1 || isempty(dcm)
+  warning('RF estimation failed in pspm_dcm.'); % change!
+  return;
+end
+
+% options.channel = channel;
+% [foo dcm] = pspm_dcm(fn, '', events, options);
+
+
+if iscell(dcm)
+  dcm_rf = dcm{1};
+else
+  dcm_rf = dcm;
+end
+
+if numel(dcm_rf.prior.posterior) == 2
+  % based on eSCR
+  theta = dcm_rf.prior.posterior(2).muTheta(1:7)';
+else
+  % based on aSCR (i. e. updated RF)
+  theta = dcm_rf.prior.posterior(3).muTheta(1:7)';
+end
+
+% if numel(dcm{1}.prior.posterior) == 2
+%   % based on eSCR
+%   theta = dcm{1}.prior.posterior(2).muTheta(1:7)';
+% else
+%   % based on aSCR (i. e. updated RF)
+%   theta = dcm{1}.prior.posterior(3).muTheta(1:7)';
+% end
+
 %% write response function to file
-if ~isempty(outfile)
+if ~isempty(outfile) % should never be empty!
   [pth fn ext] = fileparts(outfile);
-  c = clock;
+  c = clock; % timestamp
   job{1}  = sprintf('function [rf, theta] = %s(td)', fn);
   job{2}  = '%-----------------------------------------------------------------------';
   job{3}  = ['% Response function created by pspm_get_rf, ', date, sprintf('  %02.0f:%02.0f', c(4:5))];
@@ -82,9 +129,17 @@ if ~isempty(outfile)
   job{18} = sprintf('rf = Xt(1, :);');
   job{19} = sprintf('rf = rf/max(rf);');
   job{20} = sprintf('rf = rf(:);');
-  job = strvcat(job');
+  % job = strvcat(job'); 
+  % outfile = fullfile(pth, [fn, '.m']);
+  % dlmwrite(outfile, job, 'delimiter', '');
   outfile = fullfile(pth, [fn, '.m']);
-  dlmwrite(outfile, job, 'delimiter', '');
+
+  fid = fopen(outfile, 'w');
+  fprintf(fid, '%s\n', job{:});
+  fclose(fid);
 end
+
 sts = 1;
 return
+
+end

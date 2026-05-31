@@ -731,6 +731,26 @@ if sts < 1
     return
 end
 
+%% temp rf solution
+% In RF-only mode, pspm_dcm_inv returns RF posterior information but no
+% trial-wise session field dcm.sn. Therefore skip stats/name assembly.
+if options.getrf
+  dcm.dcmname = model.modelfile; 
+  dcm.modelfile = model.modelfile;
+  dcm.input = model;
+  dcm.options = options;
+  dcm.warnings = warnings;
+  dcm.modeltype = 'dcm';
+  dcm.modality = settings.modalities.dcm;
+
+  if ~options.nosave
+    save(model.modelfile, 'dcm');
+  end
+
+  sts = 1;
+  return
+end
+
 %% 7 Assemble stats & names
 dcm.stats = [];
 cTrl = 0;
