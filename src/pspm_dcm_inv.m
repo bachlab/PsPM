@@ -29,11 +29,11 @@ function [sts, dcm] = pspm_dcm_inv(model, options)
 %   │                 from pspm_dcm, but calculated into .missing_data (created
 %   │                 in pspm_dcm and then transferred to pspm_dcm_inv.
 %   └─.constrained: [optional] Constrain dispersion of flexible responses.
-%                 The value stated here refers to the SD in seconds. 
-%                 Minimum and default value: 0.3 s. For each estimated
-%                 response, the upper limit of the dispersion is the
-%                 minimum of this value and 1/2 the duration of the flexible
-%                 response window.
+%                     The value stated here refers to the SD in seconds. 
+%                     If set to the default of 0.3 s, dispersion is assumed to 
+%                     be fixed. Otherwise, for each estimated response, the upper 
+%                     limit of the dispersion is the minimum of this value and 
+%                      1/2 the duration of the flexible response window.
 %   ┌───────options
 %   ├─────────.eSCR:  [optional] contains the data to estimate RF from
 %   ├─────────.aSCR:  [optional] contains the data to adjust the RF to
@@ -113,7 +113,7 @@ try model.trlstart; catch, warning('Trial starts not defined.'); return; end
 try model.trlstop; catch, warning('Trial ends not defined.'); return; end
 try model.iti; catch, warning('ITIs not defined.'); return; end
 try model.norm; catch, model.norm = 0; end
-try model.constrained; catch, model.constrained = settings.dcm{1}.sigma_offset; end
+try model.constrained; catch, model.constrained = 0.3; end
 
 
 try model.aSCR; catch, model.aSCR = 0; end
@@ -134,8 +134,6 @@ if options.invalid
 end
 try invopt.DisplayWin = options.dispwin; catch, invopt.DisplayWin = 1; end
 try invopt.GnFigs = options.dispsmallwin; catch, invopt.GnFigs = 0; end
-sigma_offset_temp = settings.dcm{1}.sigma_offset;
-try settings.dcm{1}.sigma_offset = options.aSCR_sigma_offset; catch; end
 
 % set general priors and initial conditions
 % -------------------------------------------------------------------------
@@ -383,7 +381,7 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
   for k = 1:aSCRno
     u(5 + k, :)                 = model.flexevents(k, 1);
     u(5 + aSCRno + k, :)        = model.flexevents(k, 2);            % aSCR mean upper bound
-    u(5 + 2 * aSCRno + k, :) = min(diff(model.flexevents(k, :))/2, model.constrained) - settings.dcm{1}.sigma_offset; % aSCR SD upper bound
+    u(5 + 2 * aSCRno + k, :) = min(diff(model.flexevents(k, :))/2, model.constrained) - options.aSCR_sigma_offset; % aSCR SD upper bound
  end
   for k = 1:eSCRno
     u(5 + 3 * aSCRno + k, :)    = model.fixevents(k);                % eSCR onset
@@ -400,7 +398,7 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
 
   % if flexible response dispersion is fixed, set prior precision to
   % infinity
-  if model.constrained == settings.dcm{1}.sigma_offset
+  if model.constrained == 0.3
     aSCRindx = theta_n + 3 * ((1:aSCRno) - 1) + 2;
     for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end
   end
@@ -598,7 +596,7 @@ if ~options.getrf
         aSCR_ln(1:aSCRno, trl) = foo(:, 1); % save first trial for transformation of parameter values into seconds
         % - get aSCR SD upper bound (zero for dummy events, fixed SD for constrained models)
         upper_bound = min([foo(:)/2, repmat(model.constrained, [numel(foo), 1])], [], 2);
-        u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(upper_bound, [1, size(u, 2)]) - settings.dcm{1}.sigma_offset;
+        u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(upper_bound, [1, size(u, 2)]) - options.aSCR_sigma_offset;
         % tidy up
         clear aSCR_on foo aSCR_dummy
       else
@@ -826,8 +824,8 @@ if ~options.getrf
       for k = 1:aSCRno
         sig.G0 = aSCR_ln(k, trl);
         aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);
-        sig.G0 = min(aSCR_ln(k, trl)/2, model.constrained) - settings.dcm{1}.sigma_offset;
-        aTheta(trl).s(k) = sigm(aTheta(trl).s(k), sig) + settings.dcm{1}.sigma_offset;
+        sig.G0 = min(aSCR_ln(k, trl)/2, model.constrained) - options.aSCR_sigma_offset;
+        aTheta(trl).s(k) = sigm(aTheta(trl).s(k), sig) + options.aSCR_sigma_offset;
       end
       aTheta(trl).a = newzfactor .* exp(aTheta(trl).a) ./ eSCR_unit;
       eTheta(trl).a = newzfactor .* exp(eTheta(trl).a) ./ eSCR_unit;
@@ -900,7 +898,6 @@ end
 
 %% (7) clear up
 % ========================================================================
-settings.dcm{1}.sigma_offset = sigma_offset_temp;
 dcm.invmodel = model;
 sts = 1;
 return

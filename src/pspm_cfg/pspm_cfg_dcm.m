@@ -143,9 +143,10 @@ lasttrialfiltering.val  = {7};
 lasttrialfiltering.strtype  = 'r';
 lasttrialfiltering.num      = [1 1];
 lasttrialfiltering.help = pspm_cfg_help_format('pspm_dcm', 'model.lasttrialcutoff');
+
 % constrained model
 constrained_model       = cfg_entry;
-constrained_model.name  ='Constraints on flexible response dispersion';
+constrained_model.name  = 'Maximum Dispersion (Standard Deviation) for Flexible Responses [s]';
 constrained_model.tag   ='constr_model'; % is mapped to model.constrained in pspm_cfg_run_dcm
 constrained_model.val   = {0.3};
 constrained_model.strtype = 'r';

@@ -81,10 +81,10 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             Default: 0.
 %   └─.constrained: [optional] Constrain dispersion of flexible responses.
 %                 The value stated here refers to the SD in seconds. 
-%                 Minimum and default value: 0.3 s. For each estimated
-%                 response, the upper limit of the dispersion is the
-%                 minimum of this value and 1/2 the duration of the flexible
-%                 response window.
+%                 If set to the default of 0.3 s, dispersion is assumed to 
+%                 be fixed. Otherwise, for each estimated response, the upper 
+%                 limit of the dispersion is the minimum of this value and 
+%                 1/2 the duration of the flexible response window.
 %   ┌────options
 %   ├─.crfupdate: [0/1] Re-estimate RF parameters from canonical SCRF, 
 %   │             or use pre-estimated RF parameters. This can be used when

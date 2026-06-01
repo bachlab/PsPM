@@ -114,10 +114,10 @@ function [model, options] = pspm_check_model(model, options, modeltype)
 %   │             independently (excluding NaN values). Default as 2.
 %   ├.constrained: [optional, DCM (modeltype) only] Constrain dispersion of flexible responses.
 %   │             The value stated here refers to the SD in seconds. 
-%   │             Minimum and default value: 0.3 s. For each estimated
-%   │             response, the upper limit of the dispersion is the
-%   │             minimum of this value and 1/2 the duration of the flexible
-%   │             response window.
+%   │             If set to the default of 0.3 s, dispersion is assumed to 
+%   │             be fixed. Otherwise, for each estimated response, the upper 
+%   │             limit of the dispersion is the minimum of this value and 
+%   │             1/2 the duration of the flexible response window.
 %   └────method : [optional, SF (modeltype) only] [string/cell_array]
 %                   [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %                   [cell_array] a cell array of methods mentioned above.
