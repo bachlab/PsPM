@@ -446,7 +446,7 @@ end
 
 
 % Could be implemented in the future  
-function [participants_data, column_headings] = read_participants_data(dataset_path)
+function [participants_data, column_headings] = read_participants_data(dataset_path) % not used?
     % Imports the participant data from participants.tsv (independent the participiants.json)   
     participants_data = {};
     column_headings = {};

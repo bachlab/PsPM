@@ -7,7 +7,7 @@ function [data_file, json_file] = find_bids_file( ...
 %
 %   Inputs:
 %       ses_path   - session directory
-%       suffix     - file suffix to search (e.g. 'events.tsv')
+%       suffix     - file suffix to search (e.g. 'events.tsv.gz')
 %       task_id    - task label (optional)
 %       run_id     - run label (optional)
 %       filters    - additional BIDS entity filters (optional)
