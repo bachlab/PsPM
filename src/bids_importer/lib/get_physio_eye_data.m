@@ -132,12 +132,12 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
     data = {};
     sr = 1;                % default fallback
     has_headings = true;
-    col_types = {'double', 'double', 'char', 'char', 'char'};
+    col_types = {'double', 'double', 'char', 'char', 'char'}; % should 4 and 5 not be double?
 
     % Read JSON metadata
     event_json = extract_json_as_struct(events_json_filepath);
 
-    if noColumnField
+    if noColumnField 
         headings = fieldnames(event_json).';
     elseif isfield(event_json, 'Columns')
         headings = event_json.Columns;
@@ -148,7 +148,7 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
     % Read TSV / TSV.GZ
     marker_tsv_data_table = read_data_from_tsv( ...
         events_tsv_filepath, ...
-        false, ...
+        false, ... % should be true?! maybe this is the reasone the first line is imported?
         headings.', ...
         col_types ...
     );
@@ -176,9 +176,9 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
     end
     
     if has_event_type
-        event_type = string(marker_tsv_data_table.event_type);
+        event_type = string(marker_tsv_data_table.event_type); % char?
     else
-        event_type = string(marker_tsv_data_table.trial_type);
+        event_type = string(marker_tsv_data_table.trial_type); % char?
     end
 
     if ~ismember('message', marker_tsv_data_table.Properties.VariableNames)
@@ -207,7 +207,7 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
             end
         end
     elseif isfield(event_json, 'SamplingFrequency')
-        sr_candidate = event_json.SamplingFrequency;
+        sr_candidate = event_json.SamplingFrequency; %
         if isnumeric(sr_candidate) && isscalar(sr_candidate) && sr_candidate > 0
             sr = sr_candidate;
         end

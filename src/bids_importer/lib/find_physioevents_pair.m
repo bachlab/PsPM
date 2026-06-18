@@ -5,7 +5,7 @@ function [ev_tsv, ev_json] = find_physioevents_pair(candidate_paths, task_id, ru
 %   <stem>.json
 %   <stem>.tsv OR <stem>.tsv.gz
 % And also allow optional recording entity:
-%   <stem>_recording-eye1.json, etc. (if you want)
+%   <stem>_recording-eye1.json, etc. (if you want) ?
 
 ev_json = "";
 ev_tsv  = "";

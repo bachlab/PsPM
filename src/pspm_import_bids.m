@@ -358,7 +358,7 @@ for i = 1:length(subject_list)
                     
                 % Aligns all channels
                 fprintf("Clip to shortest duration\n");
-                [asts, ses.data, duration] = pspm_clip_channels_to_shortest(ses.data);
+                [asts, ses.data, duration] = pspm_clip_channels_to_shortest(ses.data); % needs the duration!
                 if asts ~= 1; continue; end
                 fprintf("New duration: %.2f seconds\n", duration);
                 ses.infos.duration = duration;

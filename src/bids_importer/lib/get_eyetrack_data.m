@@ -8,9 +8,9 @@ function [sts, eye_data_cell] = get_eyetrack_data(candidate_paths, task_id, run_
 %
 % Expected file naming:
 %   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye1_physio.json
-%   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye1_physio.tsv
+%   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye1_physio.tsv.gz
 %   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye2_physio.json
-%   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye2_physio.tsv
+%   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye2_physio.tsv.gz
 %
 % Example:
 %   [eye_data, dur, info] = get_eye_data('sub-CalinetWuerzburg01','01','FearAcquisition', '/path/to/physio');
@@ -21,7 +21,7 @@ function [sts, eye_data_cell] = get_eyetrack_data(candidate_paths, task_id, run_
     if isstring(eye_files)
         eye_files = cellstr(eye_files);
     end
-    if ischar(eye_files)
+    if ischar(eye_files) % ?
         eye_files = {eye_files};
     end
 
