@@ -40,7 +40,7 @@ end
     run_id ...
 );
 
-if strlength(events_json_filepath) > 0 && strlength(events_tsv_filepath) > 0
+if isfile(events_json_filepath) && isfile(events_tsv_filepath)  % if strlength(events_json_filepath) > 0 && strlength(events_tsv_filepath) > 0
 
     % read physioevents.tsv.gz
     fprintf('PEVs:\t%s\n', events_tsv_filepath);
@@ -131,7 +131,7 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
 
     data = {};
     sr = 1;                % default fallback
-    has_headings = true;
+    has_headings = false;
     col_types = {'double', 'double', 'char', 'char', 'char'}; % should 4 and 5 not be double?
 
     % Read JSON metadata
@@ -148,39 +148,37 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
     % Read TSV / TSV.GZ
     marker_tsv_data_table = read_data_from_tsv( ...
         events_tsv_filepath, ...
-        false, ... % should be true?! maybe this is the reasone the first line is imported?
+        has_headings, ... % true
         headings.', ...
         col_types ...
     );
 
     if ~istable(marker_tsv_data_table)
         warning('Could not read physio events table from %s', events_tsv_filepath);
-        data = -1;
+        data = [];
         return
     end
 
     required_vars = {'onset', 'duration'};
     if ~all(ismember(required_vars, marker_tsv_data_table.Properties.VariableNames))
         warning('Physio events table is missing required columns in %s', events_tsv_filepath);
-        data = -1;
+        data = [];
         return
     end
     
     has_event_type = ismember('event_type', marker_tsv_data_table.Properties.VariableNames);
     has_trial_type = ismember('trial_type', marker_tsv_data_table.Properties.VariableNames);
-    
-    if ~has_event_type && ~has_trial_type
+
+
+    if ~has_event_type && has_trial_type
+        marker_tsv_data_table.Properties.VariableNames{ strcmp(marker_tsv_data_table.Properties.VariableNames, 'trial_type') } = 'event_type';
+    elseif ~has_event_type && ~has_trial_type
         warning('Physio events table must contain either "event_type" or "trial_type" in %s', events_tsv_filepath);
-        data = -1;
+        data = [];
         return
     end
-    
-    if has_event_type
-        event_type = string(marker_tsv_data_table.event_type); % char?
-    else
-        event_type = string(marker_tsv_data_table.trial_type); % char?
-    end
 
+    event_type = string(marker_tsv_data_table.event_type);
     if ~ismember('message', marker_tsv_data_table.Properties.VariableNames)
         marker_tsv_data_table.message = repmat({''}, height(marker_tsv_data_table), 1);
     end
@@ -191,7 +189,7 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
             && ~any(strcmp(marker_tsv_data_table.event_type, 'saccade')) ...
             && ~any(strcmp(marker_tsv_data_table.event_type, 'fixation'))
         warning('No physio events found in %s', events_tsv_filepath);
-        data = -1;
+        data = [];
         return
     end
 
@@ -219,18 +217,19 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
     
     idx_data = ~idx_header;
     
-    onsets = marker_tsv_data_table.onset(idx_data);
-    duration = marker_tsv_data_table.duration(idx_data);
+    onsets = marker_tsv_data_table.onset(idx_data); % in s
+    duration = marker_tsv_data_table.duration(idx_data); % in s
     event_type = event_type(idx_data);
 
     if isempty(onsets)
         warning('No usable physio events found in %s', events_tsv_filepath);
-        data = -1;
+        data = [];
         return
     end
 
     % Shift first usable event to zero
-    onsets = onsets - onsets(1);
+    onsets   = onsets - onsets(1); % CHANGE BACK ALLWAYS SECONDS
+    % duration = duration ;          % CHANGE BACK ALLWAYS SECONDS
 
     signal_names = {'blink', 'saccade', 'fixation'};
     channel_names = {'blink_c', 'saccade_c', 'fixation_c'};

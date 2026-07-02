@@ -36,12 +36,12 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %       sub-<sub>/
 %       └── ses-01
 %           └── beh
-%              ├── sub-<sub>_ses-01_events.json
-%              ├── sub-<sub>_ses-01_events.tsv
-%              ├── sub-<sub>_ses-01_recording-eye1_physio.json
-%              ├── sub-<sub>_ses-01_recording-eye1_physio.tsv.gz
-%              ├── sub-<sub>_ses-01_recording-eye2_physio.json
-%              └── sub-<sub>_ses-01_recording-eye2_physio.tsv.gz
+%              ├── sub-<subID>_ses-<ses>_events.json
+%              ├── sub-<subID>_ses-<ses>_events.tsv
+%              ├── sub-<subID>_ses-<ses>_recording-eye1_physio.json
+%              ├── sub-<subID>_ses-<ses>_recording-eye1_physio.tsv.gz
+%              ├── sub-<subID>_ses-<ses>_recording-eye2_physio.json
+%              └── sub-<subID>_ses-<ses>_recording-eye2_physio.tsv.gz
 %
 % ● Format
 %   [sts, outfile] = pspm_import_bids(dataset_path, save_path)
@@ -254,7 +254,7 @@ for i = 1:length(subject_list)
             end
 
             % If none found → process the session once without a task name
-            if ~isempty(task_id)
+            if ~isempty(task_id) % always true!
                 fprintf('Task:\t%s\n', task_id);
             end
             % loop over runs
@@ -262,7 +262,7 @@ for i = 1:length(subject_list)
 
                 run_id = run_ids{r};
                 if ~isempty(run_id)
-                    fprintf('Run:\trun-%d\n', run_id);
+                    fprintf('Run:\trun-%s\n', run_id);
                 end
 
                 %% Processing start         
@@ -286,7 +286,7 @@ for i = 1:length(subject_list)
                 );
 
                 %% Get events
-                % *events file can be in 'beh' or 'physio' folder | prioritize
+                % *events.tsv (not *physioevents.tsv.gz) file can be in 'beh' or 'physio' folder | prioritize
                 % 'beh'
                 [events_tsv_filepath, events_json_filepath] = find_bids_file( ...
                     ses_path, ...
@@ -301,7 +301,7 @@ for i = 1:length(subject_list)
                     marker_chan{1} = get_marker_data( ...
                         events_json_filepath, ...
                         events_tsv_filepath, ...
-                        true ...
+                        false ... % it has a column
                     );
                 else
                     marker_chan = [ ];
@@ -356,10 +356,13 @@ for i = 1:length(subject_list)
                     ses.infos.(fn{ii}) = event_json.(fn{ii});
                 end
                     
-                % Aligns all channels
-                fprintf("Clip to shortest duration\n");
-                [asts, ses.data, duration] = pspm_clip_channels_to_shortest(ses.data); % needs the duration!
+                % % Aligns all channels
+                % fprintf("Clip to shortest duration\n");
+                % [asts, ses.data, duration] = pspm_clip_channels_to_shortest(ses.data); % needs the duration!
+
+                [asts, ses.data, duration] = align_channels(ses.data);
                 if asts ~= 1; continue; end
+
                 fprintf("New duration: %.2f seconds\n", duration);
                 ses.infos.duration = duration;
 
@@ -367,15 +370,15 @@ for i = 1:length(subject_list)
                 parts = {sprintf('pspm_%s', char(subject_full_id))};
                 
                 if ~isempty(session_id)
-                    parts{end+1} = sprintf('ses-%s', char(session_id));
+                    parts{end+1} = sprintf('ses-%s', char(session_id)); %#ok<AGROW>
                 end
                 
                 if ~isempty(task_id) && numel(task_ids) > 1
-                    parts{end+1} = sprintf('task-%s', char(task_id));
+                    parts{end+1} = sprintf('task-%s', char(task_id)); %#ok<AGROW>
                 end
                 
                 if ~isempty(run_id) && numel(run_ids) > 1
-                    parts{end+1} = sprintf('run-%d', run_id);
+                    parts{end+1} = sprintf('run-%s', run_id); %#ok<AGROW>
                 end
                 
                 ses_filename = [strjoin(parts, '_') '.mat'];
@@ -663,21 +666,33 @@ end
 
 function run_ids = get_bids_run_ids(search_dirs, subject_full_id, session_id, task_id)
 % Returns cell array of run strings like {'01','02'} or {} if none.
+%
+% Works for both:
+%   sub-01/ses-01/physio/sub-01_ses-01_task-X_run-01_*.tsv*
+%   sub-01/physio/sub-01_task-X_run-01_*.tsv*
+%
+% Also supports missing task_id:
+%   sub-01_run-01_*.tsv*
+%   sub-01_ses-01_run-01_*.tsv*
 
 run_ids = {};
+entities = {char(subject_full_id)};
 
-% Build stem up to task (if any)
-if isempty(task_id)
-    stem = sprintf('%s_ses-%s_', subject_full_id, session_id);
-else
-    stem = sprintf('%s_ses-%s_task-%s_', subject_full_id, session_id, task_id);
+if ~isempty(session_id)
+    entities{end+1} = sprintf('ses-%s', char(session_id)); %#ok<AGROW>
 end
+
+if ~isempty(task_id)
+    entities{end+1} = sprintf('task-%s', char(task_id)); %#ok<AGROW>
+end
+
+stem = [strjoin(entities, '_') '_'];
 
 for k = 1:numel(search_dirs)
     d = search_dirs{k};
     if ~isfolder(d), continue; end
 
-    % look for any run-XX entity after stem
+    % Look for any run-XX entity after the subject/session/task stem
     files = dir(fullfile(d, [stem 'run-*_*.tsv*']));
     names = {files.name};
 
@@ -690,4 +705,58 @@ for k = 1:numel(search_dirs)
 end
 
 run_ids = unique(run_ids, 'stable');
+end
+
+
+function [sts, data, new_duration] = align_channels(data)
+sts = -1;
+num_channels = length(data); % the marker channels have to be taken away
+startTimes = zeros(num_channels,1);
+
+% Determine start time for each channel (assume 0 if missing)
+for i = 1:num_channels
+    if isfield(data{i}.header, 'StartTime')
+        startTimes(i) = data{i}.header.StartTime; %  assuming seconds
+    else
+        startTimes(i) = 0;
+        data{i}.header.StartTime = 0;
+    end
+end
+
+global_min = min(startTimes(~isnan(startTimes))); % excludes marker
+finalLengths = zeros(num_channels,1);
+
+for i = 1:num_channels        
+    shift_sec = data{i}.header.StartTime - global_min;
+
+    % Check if this channel is an event channel.
+    if isfield(data{i}, 'markerinfo')
+        data{i}.data = data{i}.data - global_min; 
+        data{i}.header.StartTime = data{i}.data(1); 
+    else
+        if ~isfield(data{i}.header, 'sr')
+            warning('ID:non_existent_field','Channel %d is missing sampling rate (sr) in its header. This will lead to probelms later.', i);
+            continue;
+        end
+        sr = data{i}.header.sr;
+        numPad = round(shift_sec * sr);
+
+        % Prepadded zeros to the data vector. 
+        data{i}.data = [zeros(numPad, 1); data{i}.data];
+
+        % Record the new length.
+        finalLengths(i) = length(data{i}.data)/sr;
+        data{i}.header.StartTime = 0;
+    end    
+end
+
+% Padding at the end
+[sts, data, new_duration] = pspm_align_channels(data); % can the fprint be turned off?
+
+if sts ~= 1 % if all are the same size does it give en error?
+    warning('ID:channel_alignment_failed','Channel alignment failed.');  
+    return
+end
+
+
 end

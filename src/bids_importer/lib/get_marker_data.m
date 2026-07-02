@@ -8,7 +8,7 @@ col_types = {'double', 'double', 'char', 'char', 'char'};
 % Get the marker json
 marker_json = extract_json_as_struct(events_json_filepath);
 
-if noColumnField 
+if ~noColumnField 
     headings = fieldnames(marker_json).';
 elseif isfield(marker_json, 'Columns')
     headings = marker_json.Columns;
