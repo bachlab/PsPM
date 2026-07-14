@@ -11,6 +11,7 @@ function [sts, outchannel] = pspm_remove_epochs(datafile, channel, epochfile, op
 %   * epochfile:  a filename which defines the epoch to be set to NaN. The epochs must
 %                 be in seconds. This parameter is passed to pspm_get_timing().
 %   * timeunits:  timeunits of the epochfile.
+%
 %   ┌───options
 %   ├─.channel_action: ['add'/'replace'] Defines whether new channels should be added or
 %   │                  corresponding channels should be replaced. The default value is 'add'.
@@ -43,10 +44,11 @@ if options.invalid
   return
 end
 [lsts, ~, data, filestruct] = pspm_load_data(datafile, channel);
-pos_of_channels = filestruct.posofchannels;
 if lsts < 1
+  warning('ID:invalid_input','The file could not be loaded')
   return;
 end
+pos_of_channels = filestruct.posofchannels;
 
 [lsts, ep] = pspm_get_timing('epochs', epochfile, 'seconds');
 if lsts < 1
@@ -57,7 +59,7 @@ end
 % expands the epoch if  options.expand_epochs exists
 if isfield(options,'expand_epochs')
     if numel(options.expand_epochs) ~= 2 || ~isnumeric(options.expand_epochs)
-        warning('Expansion must be a 2-element vector [pre, post].');
+        warning('ID:invalid_epochs','Expansion must be a 2-element vector [pre, post].');
     else
         [psts, ep] = pspm_expand_epochs(ep, options.expand_epochs);
         if psts < 1
@@ -98,4 +100,4 @@ end
 
 [sts, out] = pspm_write_channel(datafile, data, options.channel_action, ...
     struct('channel', pos_of_channels));
-outchanel = out.channel;
+outchannel = out.channel;
