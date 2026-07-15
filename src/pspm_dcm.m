@@ -122,9 +122,6 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             Default: 2 s.
 %   ├───.sclpost: SCR-change-free interval after last event of a trial.
 %   │             Default: 5 s.
-%   ├.aSCR_sigma_offset:
-%   │             Minimum dispersion (standard deviation) for flexible
-%   │             responses, in seconds. Default: 0.1 s.
 %   ├─.dispwin:   [0/1] Display progress plot. Default: display.
 %   ├─.dispsmallwin: [0/1]
 %   │             Display intermediate progress plots.
@@ -225,7 +222,7 @@ end
 % all the below should be re-factored into pspm_options -------------------
 % numeric fields
 num_fields = {'depth', 'sfpre', 'sfpost', 'sffreq', 'sclpre', ...
-  'sclpost', 'aSCR_sigma_offset'};
+  'sclpost'};
 % logical fields
 bool_fields = {'crfupdate', 'indrf', 'getrf', 'dispwin', ...
   'dispsmallwin', 'nosave'};

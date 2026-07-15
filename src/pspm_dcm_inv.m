@@ -55,10 +55,6 @@ function [sts, dcm] = pspm_dcm_inv(model, options)
 %   │                 scl-change-free window before first event.
 %   ├──────.sclpost:  [optional, numeric, default: 5, unit: second]
 %   │                 scl-change-free window after last event.
-%   ├─.aSCR_sigma_offset:
-%   │                 [optional, numeric, default: 0.1, unit: second]
-%   │                 minimum dispersion (standard deviation) for flexible
-%   │                 responses.
 %   ├──────.dispwin:  [optional, bool, default as 1]
 %   │                 display progress window.
 %   └─.dispsmallwin:  [optional, bool, default as 0]
@@ -134,6 +130,8 @@ if options.invalid
 end
 try invopt.DisplayWin = options.dispwin; catch, invopt.DisplayWin = 1; end
 try invopt.GnFigs = options.dispsmallwin; catch, invopt.GnFigs = 0; end
+
+sigma_offset = settings.dcm{1}.aSCR_sigma_offset; %  offset for aSCR sigma to constrain the amplitude/sd trade-off
 
 % set general priors and initial conditions
 % -------------------------------------------------------------------------
@@ -381,7 +379,7 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
   for k = 1:aSCRno
     u(5 + k, :)                 = model.flexevents(k, 1);
     u(5 + aSCRno + k, :)        = model.flexevents(k, 2);            % aSCR mean upper bound
-    u(5 + 2 * aSCRno + k, :) = min(diff(model.flexevents(k, :))/2, model.constrained) - options.aSCR_sigma_offset; % aSCR SD upper bound
+    u(5 + 2 * aSCRno + k, :) = min(diff(model.flexevents(k, :))/2, model.constrained) - sigma_offset; % aSCR SD upper bound
  end
   for k = 1:eSCRno
     u(5 + 3 * aSCRno + k, :)    = model.fixevents(k);                % eSCR onset
@@ -596,7 +594,7 @@ if ~options.getrf
         aSCR_ln(1:aSCRno, trl) = foo(:, 1); % save first trial for transformation of parameter values into seconds
         % - get aSCR SD upper bound (zero for dummy events, fixed SD for constrained models)
         upper_bound = min([foo(:)/2, repmat(model.constrained, [numel(foo), 1])], [], 2);
-        u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(upper_bound, [1, size(u, 2)]) - options.aSCR_sigma_offset;
+        u(5 + 2 * u(2, 1) + (1:u(2, 1)), :) = repmat(upper_bound, [1, size(u, 2)]) - sigma_offset;
         % tidy up
         clear aSCR_on foo aSCR_dummy
       else
@@ -824,8 +822,8 @@ if ~options.getrf
       for k = 1:aSCRno
         sig.G0 = aSCR_ln(k, trl);
         aTheta(trl).m(k) = sigm(aTheta(trl).m(k), sig);
-        sig.G0 = min(aSCR_ln(k, trl)/2, model.constrained) - options.aSCR_sigma_offset;
-        aTheta(trl).s(k) = sigm(aTheta(trl).s(k), sig) + options.aSCR_sigma_offset;
+        sig.G0 = min(aSCR_ln(k, trl)/2, model.constrained) - sigma_offset;
+        aTheta(trl).s(k) = sigm(aTheta(trl).s(k), sig) + sigma_offset;
       end
       aTheta(trl).a = newzfactor .* exp(aTheta(trl).a) ./ eSCR_unit;
       eTheta(trl).a = newzfactor .* exp(eTheta(trl).a) ./ eSCR_unit;
