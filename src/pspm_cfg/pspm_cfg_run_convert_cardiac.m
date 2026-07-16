@@ -1,5 +1,7 @@
 function out = pspm_cfg_run_convert_cardiac(job)
 % Updated on 26-03-2024 by Teddy
+% Updated on 16-07-2026 by Bernhard von Raußendorf
+
 fn = job.datafile{1};
 outputs = cell(size(job.pp_type));
 for i = 1:numel(job.pp_type)
@@ -28,26 +30,22 @@ for i = 1:numel(job.pp_type)
         options = pp_field.opt;
         options.channel = chan;
         options = pspm_update_struct(options, job, 'channel_action');
-        winfo = struct();
         [sts, outchannel] = pspm_convert_ecg2hb_amri(fn, options);
       case 'hb2hp'
         sr = job.pp_type{i}.hb2hp.sr;
         options = struct();
         options.channel = chan;
-        options.limit_lower = job.pp_type{i}.hb2hp.limit.lower; % same convention as in pspm_options
-        options.limit_upper = job.pp_type{i}.hb2hp.limit.upper;
+        options.limit_lower = job.pp_type{i}.hb2hp.limit_lower; % same convention as in pspm_options
+        options.limit_upper = job.pp_type{i}.hb2hp.limit_upper; % same convention as in pspm_options
         options = pspm_update_struct(options, job, 'channel_action');
         [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options);
       case 'ecg2hp'
-        sr = job.pp_type{i}.ecg2hp.sr;
+        sr = job.pp_type{i}.ecg2hp.hb2hp.sr;
         % copy options
         options = struct();
-        options = pspm_update_struct(options, ...
-                                     job.pp_type{i}.ecg2hp.opt, ...
-                                     {'minhr', ...
-                                      'maxhr', ...
-                                      'semi', ...
-                                      'twthresh'});
+        options = pspm_update_struct(options, job.pp_type{i}.ecg2hp.opt, {'semi', 'twthresh'});
+        options.minHR = job.pp_type{i}.ecg2hp.opt.minhr;
+        options.maxHR = job.pp_type{i}.ecg2hp.opt.maxhr;
         % set replace
         options = pspm_update_struct(options, job, {'channel_action'});
         options.channel = chan;
@@ -55,12 +53,13 @@ for i = 1:numel(job.pp_type)
         [sts, outchannel] = pspm_convert_ecg2hb(fn, options);
         if sts ~= -1
           % replace channel
-          options.channel_action = 'replace';
-          options = pspm_update_struct(options, ...
-              job.pp_type{i}.ecg2hp, ...
-              'limit');
+          options = struct(); 
           options.channel = outchannel;
-          % call ecg2hp
+          options.channel_action = 'replace';
+          options.limit_lower = job.pp_type{i}.ecg2hp.hb2hp.limit_lower;
+          options.limit_upper = job.pp_type{i}.ecg2hp.hb2hp.limit_upper;
+
+          % call hb2hp
           [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options);
         end
       case 'ppg2hb'

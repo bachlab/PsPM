@@ -82,7 +82,7 @@ classdef pspm_convert_ecg2hb_test < pspm_testcase
             % check if data is equally distributed
             % for a heartbeat it should be less than 2s
             % otherwise there is something odd
-            if std(diff(d)) > 2,
+            if std(diff(d)) > 2
               warning('Abnormal high standard deviation (more than 2s) of time between heartbeats');
             end
             % check if last data point also corresponds to the

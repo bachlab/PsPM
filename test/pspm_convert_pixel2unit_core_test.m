@@ -1,7 +1,7 @@
 classdef pspm_convert_pixel2unit_core_test < matlab.unittest.TestCase
 % Unit tests for pspm_convert_pixel2unit_core
 % ● Description
-% unittest class for the pspm_convert_ecg2hb function
+% unittest class for the pspm_convert_pixel2unit_core_test function
 % ● Authorship
 % (C) 2026 Bernhard von Raußendorf (University of Bonn)
 methods (Test)

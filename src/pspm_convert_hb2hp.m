@@ -24,10 +24,6 @@ function [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options)
 %   │                 Defines whether heart rate signal
 %   │                 should be added or the corresponding preprocessed
 %   │                 channel should be replaced.
-%   ├─────────.limit: [struct]
-%   │                 Specifies upper and lower limit for heart
-%   │                 periods. If the limit is exceeded, the values will
-%   │                 be ignored/removed and interpolated.
 %   ├───.limit_upper: [numeric]
 %   │                 Specifies the upper limit of the
 %   │                 heart periods in seconds. Default is 2.

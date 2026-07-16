@@ -1,8 +1,10 @@
 classdef pspm_convert_ppg2hb_test < pspm_testcase
+% * Description
+%   Unittest class for the pspm_convert_ppg2hb function
 
 properties
-original_filename = '/home/bernd/git/PsPM/test/DatenZumTesten/ppg/pspm_SCAN_test.mat';
-input_filename = '/home/bernd/git/PsPM/test/DatenZumTesten/ppg/totest_pspm_SCAN_test.mat';
+original_filename = '/home/hanno/git/PsPM/test/DatenZumTesten/ppg/pspm_SCAN_test.mat';
+input_filename = '/home/hanno/git/PsPM/test/DatenZumTesten/ppg/totest_pspm_SCAN_test.mat';
 end
 
 methods (TestClassSetup)

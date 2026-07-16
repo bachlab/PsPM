@@ -1,6 +1,8 @@
 function pp_heart_data = pspm_cfg_convert_cardiac
 
 % Updated 27-Mar-2024 by Teddy
+% Updated 16-Jul-2026 by Bernhard von Raußendorf
+
 
 %% Standard items
 datafile         = pspm_cfg_selector_datafile;
@@ -140,7 +142,7 @@ hb2hp_sr.strtype    = 'r';
 
 limit_upper         = cfg_entry;
 limit_upper.name    = 'Upper limit';
-limit_upper.tag     = 'upper';
+limit_upper.tag     = 'limit_upper';
 limit_upper.strtype = 'r';
 limit_upper.num     = [1 1];
 limit_upper.val     = {2};
@@ -148,22 +150,16 @@ limit_upper.help    = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.limit_
 
 limit_lower         = cfg_entry;
 limit_lower.name    = 'Lower limit';
-limit_lower.tag     = 'lower';
+limit_lower.tag     = 'limit_lower';
 limit_lower.strtype = 'r';
 limit_lower.num     = [1 1];
 limit_lower.val     = {.2};
 limit_lower.help    = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.limit_lower');
 
-limit               = cfg_branch;
-limit.name          = 'Limit';
-limit.tag           = 'limit';
-limit.val           = {limit_upper, limit_lower};
-limit.help          = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.limit');
-
 hb2hp               = cfg_exbranch;
 hb2hp.name          = 'Convert heart beat to heart period';
 hb2hp.tag           = 'hb2hp';
-hb2hp.val           = {hb2hp_sr, hb_chan, limit};
+hb2hp.val           = {hb2hp_sr, hb_chan, limit_upper, limit_lower};
 hb2hp.help          = pspm_cfg_help_format('pspm_convert_hb2hp');
 
 %% ppg2hb
@@ -188,10 +184,52 @@ ppg2hb.tag          = 'ppg2hb';
 ppg2hb.val          = {ppg_chan, ppg2hb_method};
 ppg2hb.help         = pspm_cfg_help_format('pspm_convert_ppg2hb');
 
+%% ECG directly to heart period
+
+ecg2hp_sr            = cfg_entry;
+ecg2hp_sr.name       = 'Sample rate';
+ecg2hp_sr.tag        = 'sr';
+ecg2hp_sr.help       = pspm_cfg_help_format('pspm_convert_hb2hp', 'sr');
+ecg2hp_sr.num        = [1 1];
+ecg2hp_sr.val        = {10};
+ecg2hp_sr.strtype    = 'r';
+
+ecg2hp_limit_upper         = cfg_entry;
+ecg2hp_limit_upper.name    = 'Upper limit';
+ecg2hp_limit_upper.tag     = 'limit_upper';
+ecg2hp_limit_upper.strtype = 'r';
+ecg2hp_limit_upper.num     = [1 1];
+ecg2hp_limit_upper.val     = {2};
+ecg2hp_limit_upper.help    = pspm_cfg_help_format( 'pspm_convert_hb2hp', 'options.limit_upper');
+
+ecg2hp_limit_lower         = cfg_entry;
+ecg2hp_limit_lower.name    = 'Lower limit';
+ecg2hp_limit_lower.tag     = 'limit_lower';
+ecg2hp_limit_lower.strtype = 'r';
+ecg2hp_limit_lower.num     = [1 1];
+ecg2hp_limit_lower.val     = {0.2};
+ecg2hp_limit_lower.help    = pspm_cfg_help_format('pspm_convert_hb2hp', 'options.limit_lower');
+
+% Visual and structural branch for the second conversion step
+ecg2hp_hb2hp         = cfg_branch;
+ecg2hp_hb2hp.name    = 'Convert heart beat to heart period';
+ecg2hp_hb2hp.tag     = 'hb2hp';
+ecg2hp_hb2hp.val     = { ecg2hp_sr, ecg2hp_limit_upper, ecg2hp_limit_lower};
+ecg2hp_hb2hp.help    = pspm_cfg_help_format( 'pspm_convert_hb2hp');
+
+% Complete ECG -> HB -> HP operation
+ecg2hp         = cfg_exbranch;
+ecg2hp.name    = 'Convert ECG to heart period';
+ecg2hp.tag     = 'ecg2hp';
+ecg2hp.help    = { ['First converts ECG to heart beats using Pan & Tompkins, ', ...
+                    'and then converts heart beats to heart period.'] };
+
+ecg2hp.val = { ecg_chan, ecg2hb_opt,  ecg2hp_hb2hp };
+%% pp
 pp_type             = cfg_choice;
 pp_type.name        = 'Type of preprocessing';
 pp_type.tag         = 'pp_type';
-pp_type.values      = {ecg2hb, ecg2hb_amri, hb2hp, ppg2hb};
+pp_type.values      = {ecg2hb, ecg2hb_amri, hb2hp, ecg2hp, ppg2hb };
 pp_type.help        = {};
 
 pp                  = cfg_repeat;

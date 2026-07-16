@@ -31,23 +31,49 @@ classdef pspm_pupil_correct_test < pspm_testcase
       opt.S_x = 1;
       opt.S_y = 1;
       this.verifyWarning(@()pspm_pupil_correct(data, opt), 'ID:invalid_input');
+
       opt.S_z = 'a';
       this.verifyWarning(@()pspm_pupil_correct(data, opt), 'ID:invalid_input');
+
       opt.S_z = 5;
       pupil = 'abc';
+      % gaze_x = 1:3;
+      % gaze_y = 10:12;
+      data.data{1}.data   = pupil;
       this.verifyWarning(@()pspm_pupil_correct(data, opt), 'ID:invalid_input');
+
       pupil = 1:3;
       gaze_x = 'abc';
+      % gaze_y = 10:12;
+      data.data{1}.data   = pupil;
+      data.data{2}.data   = gaze_x;
+     
       this.verifyWarning(@()pspm_pupil_correct(data, opt), 'ID:invalid_input');
+
+      % pupil = 1:3;
       gaze_x = 1:3;
       gaze_y = 'abc';
+
+      data.data{2}.data   = gaze_x;
+      data.data{3}.data   = gaze_y;
       this.verifyWarning(@()pspm_pupil_correct(data,  opt), 'ID:invalid_input');
-      gaze_y = 1:3;
+
       pupil = 1:100;
+      % gaze_x = 1:3;
+      gaze_y = 1:3;
+
+      data.data{1}.data   = pupil;
+      data.data{3}.data   = gaze_y;  
       this.verifyWarning(@()pspm_pupil_correct(data,  opt), 'ID:invalid_input');
+
       pupil = 8:10;
       gaze_x = ones(10);
+      % gaze_y = 1:3;
+
+      data.data{1}.data   = pupil;
+      data.data{2}.data   = gaze_x;
       this.verifyWarning(@()pspm_pupil_correct(data,  opt), 'ID:invalid_input');
+
     end
     function looking_directly_at_camera_doesnt_change_pupil(this)
       N = 1000;
@@ -115,8 +141,10 @@ classdef pspm_pupil_correct_test < pspm_testcase
       assert(sts == 1);
       % observed same pupil data when looking further from camera
       % Hence, original pupil must be larger.
-      data.data{2}.data = repmat(opt.C_x - opt.S_x, 1, N) - 10; % gaze_x
-      data.data{3}.data = repmat(opt.S_y - opt.C_y, 1, N) + 5; % gaze_y
+      data.data{2}.data = (repmat(opt.C_x - opt.S_x, 1, N) - 10)'; % gaze_x
+      data.data{3}.data = (repmat(opt.S_y - opt.C_y, 1, N) + 5)';  % gaze_y
+
+
       [sts, pupil_corr_far] = pspm_pupil_correct(data, opt);
       assert(sts == 1);
       this.verifyTrue(all(pupil_corr_far > pupil_corr_close));

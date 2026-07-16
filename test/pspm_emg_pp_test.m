@@ -1,7 +1,14 @@
 classdef pspm_emg_pp_test < pspm_testcase
 % * Description
 %   Unittest class for the pspm_emg_pp function
-
+ 
+% properties
+%     original_filename = fullfile(fileparts(mfilename('fullpath')), '..', ...
+%         'ImportTestData', 'ecg2hb', 'test_ecg_outlier_data_short_hb.mat');
+% 
+%     input_filename = fullfile(fileparts(mfilename('fullpath')), '..', ...
+%         'ImportTestData', 'ecg2hb', 'totest_test_ecg_outlier_data_short_hb.mat');
+% end
 properties
 original_filename = '/home/bernd/git/PsPM/test/DatenZumTesten/emg/pspm_TM012face.mat';
 input_filename    = '/home/bernd/git/PsPM/test/DatenZumTesten/emg/totest_pspm_TM012face.mat';
