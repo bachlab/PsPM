@@ -26,6 +26,7 @@ function [sts, out] = pspm_expand_epochs(varargin)
 % ● History
 %   Introduced in PsPM 7.0
 %   Written in 2024 by Bernhard Agoué von Raußendorf
+%   Updated in 2026 by Bernhard Agoué von Raußendorf
 
 % Initialise
 % -------------------------------------------------------------------------
@@ -100,6 +101,9 @@ end
 
 % finalise options structure
 options = pspm_options(options, 'expand_epochs');
+if options.invalid
+    return
+end
 
 % check if expansion vector is valid
 if   ~isnumeric(expansion)  || numel(expansion) ~= 2 || expansion(1) < 0 || expansion(2) < 0

@@ -90,7 +90,7 @@ function InValidEpochsFormatError(this)
     this.verifyLessThan(sts,1)
     % Test non-numeric epochs
     cell_epochs = {[1,2]; [3,4]};
-    [sts , ~] = pspm_expand_epochs(invalid_epochs, this.expansion,options);
+    [sts , ~] = pspm_expand_epochs(cell_epochs, this.expansion,options);
     this.verifyLessThan(sts,1)
 
 end

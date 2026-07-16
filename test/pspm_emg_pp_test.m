@@ -1,17 +1,10 @@
 classdef pspm_emg_pp_test < pspm_testcase
 % * Description
 %   Unittest class for the pspm_emg_pp function
- 
-% properties
-%     original_filename = fullfile(fileparts(mfilename('fullpath')), '..', ...
-%         'ImportTestData', 'ecg2hb', 'test_ecg_outlier_data_short_hb.mat');
-% 
-%     input_filename = fullfile(fileparts(mfilename('fullpath')), '..', ...
-%         'ImportTestData', 'ecg2hb', 'totest_test_ecg_outlier_data_short_hb.mat');
-% end
+
 properties
-original_filename = '/home/bernd/git/PsPM/test/DatenZumTesten/emg/pspm_TM012face.mat';
-input_filename    = '/home/bernd/git/PsPM/test/DatenZumTesten/emg/totest_pspm_TM012face.mat';
+    original_filename = fullfile('ImportTestData', 'emg', 'pspm_TM012face.mat');
+    input_filename = fullfile('ImportTestData', 'emg', 'totest_pspm_TM012face.mat');
 end
 
 methods (TestClassSetup)
@@ -22,18 +15,18 @@ end
 end
 
 methods (TestMethodSetup)
-function reset_input_file(this)
-[sts, msg] = copyfile(this.original_filename, this.input_filename);
-this.assertTrue(sts, msg);
-end
+    function reset_input_file(this)
+    [sts, msg] = copyfile(this.original_filename, this.input_filename);
+    this.assertTrue(sts, msg);
+    end
 end
 
 methods (TestClassTeardown)
-function cleanup(this)
-if exist(this.input_filename, 'file') == 2
-    delete(this.input_filename);
-end
-end
+    function cleanup(this)
+    if exist(this.input_filename, 'file') == 2
+        delete(this.input_filename);
+    end
+    end
 end
 
 methods (Test)
@@ -49,87 +42,87 @@ this.verifyWarning(@() pspm_emg_pp(fn, options), ...
 end
 
 function basic_preprocessing(this)
-fn = this.input_filename;
-
-options = struct();
-options.channel = 'emg';
-options.channel_action = 'add';
-options.mains_freq = 50;
-
-[nsts, ~, data, filestruct] = pspm_load_data(fn);
-this.verifyEqual(nsts, 1);
-
-[sts, outchannel] = pspm_emg_pp(fn, options);
-
-this.verifyEqual(sts, 1);
-this.verifyTrue(isnumeric(outchannel));
-this.verifyGreaterThan(outchannel, 0);
-
-[nsts, infos, data] = pspm_load_data(fn);
-this.verifyEqual(nsts, 1);
-
-this.verifyEqual(numel(data), filestruct.numofchan + 1);
-this.verifyEqual(data{outchannel}.header.chantype, 'emg_pp');
-this.verifyGreaterThan(numel(data{outchannel}.data), 0);
-this.verifyTrue(all(isfinite(data{outchannel}.data)));
-
-% this.verifyTrue(isfield(infos, 'history'));
-% this.verifyTrue(contains(infos.history{end}, 'EMG preprocessing'));
-% this.verifyTrue(contains(infos.history{end}, 'Output channeltype: emg_pp'));
+    fn = this.input_filename;
+    
+    options = struct();
+    options.channel = 'emg';
+    options.channel_action = 'add';
+    options.mains_freq = 50;
+    
+    [nsts, ~, data, filestruct] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+    
+    [sts, outchannel] = pspm_emg_pp(fn, options);
+    
+    this.verifyEqual(sts, 1);
+    this.verifyTrue(isnumeric(outchannel));
+    this.verifyGreaterThan(outchannel, 0);
+    
+    [nsts, infos, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+    
+    this.verifyEqual(numel(data), filestruct.numofchan + 1);
+    this.verifyEqual(data{outchannel}.header.chantype, 'emg_pp');
+    this.verifyGreaterThan(numel(data{outchannel}.data), 0);
+    this.verifyTrue(all(isfinite(data{outchannel}.data)));
+    
+    % this.verifyTrue(isfield(infos, 'history'));
+    % this.verifyTrue(contains(infos.history{end}, 'EMG preprocessing'));
+    % this.verifyTrue(contains(infos.history{end}, 'Output channeltype: emg_pp'));
 end
 
 function channel_action_add_replace(this)
-fn = this.input_filename;
-
-options = struct();
-options.channel = 'emg';
-options.channel_action = 'add';
-options.mains_freq = 50;
-
-[nsts, ~, data, filestruct] = pspm_load_data(fn);
-this.verifyEqual(nsts, 1);
-
-% add emg_pp
-[sts, outch_add] = pspm_emg_pp(fn, options);
-this.verifyEqual(sts, 1);
-
-[nsts, ~, data] = pspm_load_data(fn);
-this.verifyEqual(nsts, 1);
-this.verifyEqual(numel(data), filestruct.numofchan + 1);
-this.verifyEqual(data{outch_add}.header.chantype, 'emg_pp');
-
-% repace emg_pp
-options.channel_action = 'replace';
-[sts, outch_replace] = pspm_emg_pp(fn, options);
-this.verifyEqual(sts, 1);
-
-[nsts, ~, data] = pspm_load_data(fn);
-this.verifyEqual(nsts, 1);
-
-this.verifyEqual(numel(data), filestruct.numofchan + 1);
-this.verifyEqual(outch_replace, outch_add);
-this.verifyEqual(data{outch_replace}.header.chantype, 'emg_pp');
+    fn = this.input_filename;
+    
+    options = struct();
+    options.channel = 'emg';
+    options.channel_action = 'add';
+    options.mains_freq = 50;
+    
+    [nsts, ~, data, filestruct] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+    
+    % add emg_pp
+    [sts, outch_add] = pspm_emg_pp(fn, options);
+    this.verifyEqual(sts, 1);
+    
+    [nsts, ~, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+    this.verifyEqual(numel(data), filestruct.numofchan + 1);
+    this.verifyEqual(data{outch_add}.header.chantype, 'emg_pp');
+    
+    % repace emg_pp
+    options.channel_action = 'replace';
+    [sts, outch_replace] = pspm_emg_pp(fn, options);
+    this.verifyEqual(sts, 1);
+    
+    [nsts, ~, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+    
+    this.verifyEqual(numel(data), filestruct.numofchan + 1);
+    this.verifyEqual(outch_replace, outch_add);
+    this.verifyEqual(data{outch_replace}.header.chantype, 'emg_pp');
 end
 
 function channel_action_replace(this)
-fn = this.input_filename;
-
-options = struct();
-options.channel = 'emg';
-options.channel_action = 'replace';
-options.mains_freq = 50;
-
-[nsts, ~, data, filestruct] = pspm_load_data(fn);
-this.verifyEqual(nsts, 1);
-
-% replace emg_pp
-[sts, outch] = pspm_emg_pp(fn, options);
-this.verifyEqual(sts, 1);
-
-[nsts, ~, data] = pspm_load_data(fn);
-this.verifyEqual(nsts, 1);
-this.verifyEqual(numel(data), filestruct.numofchan + 1);
-this.verifyEqual(data{outch}.header.chantype, 'emg_pp');
+    fn = this.input_filename;
+    
+    options = struct();
+    options.channel = 'emg';
+    options.channel_action = 'replace';
+    options.mains_freq = 50;
+    
+    [nsts, ~, data, filestruct] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+    
+    % replace emg_pp
+    [sts, outch] = pspm_emg_pp(fn, options);
+    this.verifyEqual(sts, 1);
+    
+    [nsts, ~, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+    this.verifyEqual(numel(data), filestruct.numofchan + 1);
+    this.verifyEqual(data{outch}.header.chantype, 'emg_pp');
 
 
 end

@@ -57,8 +57,13 @@ end
 pupil_corrected = [];
 sts = -1;
 
-%% add inpus checks
-% add load file
+%% inputs checks
+if ~(ischar(fn) || isstruct(fn))
+    warning('ID:invalid_input', 'Need file name string as first input.'); return;  
+elseif nargin < 2
+    warning('ID:invalid_input', 'geometry_setup input are missing .'); return;  
+end
+
 
 % get pupil and gaze channels
 [lsts, pupil_data, infos, pos_of_channel] = pspm_load_channel(fn, 'pupil');

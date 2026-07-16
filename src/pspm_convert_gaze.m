@@ -78,6 +78,16 @@ elseif distance_required && (~isfield(conversion, 'screen_distance') || ~isnumer
     return
 end
 
+% No conversion from degree to metric possible for now
+metric_units = {'mm', 'cm', 'm', 'inches'};
+if strcmpi(conversion.from, 'degree') && ...
+        ismember(conversion.target, metric_units)
+    warning('ID:invalid_input', ...
+        'Conversion from degree to metric units is not supported.');
+    return
+end
+
+
 % bring conversion field names to workspace
 names = fieldnames(conversion);
 for i=1:length(names)
@@ -163,13 +173,22 @@ for i = 1:numel(channel)
     if strcmpi(conversion.from, 'pixel')
         [data{i}.data, data{i}.header.range] = pspm_convert_pixel2unit_core(data{i}.data, data{i}.header.range, screen_length{i});
     elseif ~strcmpi(conversion.from, 'degree')
-        [lsts, data{i}.data] = pspm_convert_unit(data{i}.data, data{i}.header.units, 'mm'); % target?
+
+        source_unit = data{i}.header.units;
+        [lsts, data{i}.data        ] = pspm_convert_unit(data{i}.data, data{i}.header.units, 'mm'); 
         if lsts < 1, return, end
+        % [lsts, data{i}.header.range] = pspm_convert_unit(data{i}.header.range, source_unit, 'mm'); % also converts the range
+        % if lsts < 1, return, end
+
     end
     if ~ismember(target, {'degree', 'sps'})
-        [lsts, data{i}.data] = pspm_convert_unit(data{i}.data, 'mm', target);
+
+        [lsts, data{i}.data        ] = pspm_convert_unit(data{i}.data, 'mm', target);
         if lsts < 1, return, end
+        % [lsts, data{i}.header.range] = pspm_convert_unit( data{i}.header.range, 'mm', target); % also converts the range
+        % if lsts < 1, return, end
         data{i}.header.units = target;
+
     else
         data{i}.header.units = 'mm';
     end
@@ -207,5 +226,13 @@ else
     outdata = data;
 end
 
-[sts, out] = pspm_write_channel(fn, outdata, options.channel_action, struct('channel', pos_of_channel));
+write_options = struct();
+if strcmpi(target, 'sps')
+    write_options.channel = 0;
+else
+    write_options.channel = pos_of_channel;
+end
+
+[sts, out] = pspm_write_channel(fn, outdata, options.channel_action, write_options);
+
 outchannel = out.channel;

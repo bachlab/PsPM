@@ -459,7 +459,7 @@ if ~isempty(options.missing_epochs_filename)
     options = autofill(options, 'channel',                0,          '*Int*Char'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
     options = autofill(options, 'prefix',                '',          '*Char'           );
-    if ~isfield('options','msg')
+    if ~isfield(options,'msg')
       options.msg = '';
     else
       if ~ischar(options.msg) && ~isstruct(options.msg)
