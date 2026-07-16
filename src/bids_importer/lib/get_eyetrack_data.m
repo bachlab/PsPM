@@ -13,7 +13,8 @@ function [sts, eye_data_cell] = get_eyetrack_data(candidate_paths, task_id, run_
 %   <subject_id>_ses-<session_id>_task-<task_name>_recording-eye2_physio.tsv.gz
 %
 % Example:
-%   [eye_data, dur, info] = get_eye_data('sub-CalinetWuerzburg01','01','FearAcquisition', '/path/to/physio');
+%   [eye_data, dur, info] =
+%   get_eye_data('sub-CalinetWuerzburg01','01','FearAcquisition', '/path/to/physio'); !
 
 %% Find all 'tsv.gz' files in session directory
     eye_files = find_eye_files(candidate_paths, task_id, run_id);
@@ -81,10 +82,10 @@ function [sts, eye_data_cell] = get_eyetrack_data(candidate_paths, task_id, run_
         entry.meta = eye_meta;
         entry.table = eye_table;
         entry.signal = signal;
-        entry.source = struct( ...
-            'json_file', eye_json_filepath, ...
-            'tsv_file',  eye_tsv_filepath ...
-        );
+        entry.source.file = {
+            char(eye_json_filepath)
+            char(eye_tsv_filepath)
+        };
 
         eye_data_cell{i} = entry;
     end

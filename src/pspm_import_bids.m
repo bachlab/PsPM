@@ -235,6 +235,10 @@ for i = 1:length(subject_list)
         % Look for any event JSON in the beh and physio folders
         task_ids = get_bids_task_ids(physio_search_dirs);
        
+        if isempty(task_ids)
+            task_ids = {''};
+        end
+
         % loop over tasks
         for t = 1:numel(task_ids)
 
@@ -298,7 +302,7 @@ for i = 1:length(subject_list)
                 % read events
                 if isfile(events_json_filepath) && isfile(events_tsv_filepath)
                     fprintf('Events:\t%s\n', events_tsv_filepath);
-                    marker_chan{1} = get_marker_data( ...
+                    marker_chan = get_marker_data( ...
                         events_json_filepath, ...
                         events_tsv_filepath, ...
                         false ... % it has a column
@@ -312,11 +316,21 @@ for i = 1:length(subject_list)
                 % events_json_filepath contains relevant info about stimulus presentation;
                 event_json = extract_json_as_struct(events_json_filepath);
                 
+                evsts = check_stimulus_presentation_fields(event_json);
+                if evsts < 1
+                    warning('ID:missing_stimulus_presentation', ...
+                        ['Required StimulusPresentation fields are missing in:\n%s\n' ...
+                        'Please check the events JSON file.'], events_json_filepath );
+                    %continue
+                end
+
                 %% Build the file structure
+                ses = struct();
                 dt = datetime('now'); 
                 ses.infos.importdate = sprintf('%.2d.%.2d.%.2d', dt.Day, dt.Month, dt.Year); % same as import_eyelink and importviewpoint; 
         
                 % infos.source
+
                 ses.infos.source = struct();
                 ses.infos.source.type = 'BIDS (json/tsv)';
                 ses.infos.source.file = {};
@@ -333,13 +347,17 @@ for i = 1:length(subject_list)
                     ses.infos.source.file = [ses.infos.source.file; physio_eye_infos.source.file];
                 end
                 
-                if ~isempty(dataset_description); infos.DatasetDescription = dataset_description; end
+                % Dataset description if available
+                if ~isempty(dataset_description); ses.infos.DatasetDescription = dataset_description; end
                 
-                % data
+                % Data
                 ses.data = {};
                 
                 % Ensure column cell arrays
-                marker_chan      = marker_chan(:);
+                if ~isempty(marker_chan)
+                    marker_chan  = {marker_chan(:)};                    
+                end
+                
                 physio_data      = physio_data(:);
                 physio_eye_data  = physio_eye_data(:);
                 
@@ -384,7 +402,7 @@ for i = 1:length(subject_list)
                 ses_filename = [strjoin(parts, '_') '.mat'];
                                    
                 ses_filepath            = fullfile(save_path, ses_filename);
-                outfile{end+1}          = char(ses_filepath); 
+                outfile{end+1}          = char(ses_filepath); %#ok<AGROW>
                 ses.infos.importfile    = char(ses_filepath); 
                 
                 %% Verify output structure
@@ -394,7 +412,8 @@ for i = 1:length(subject_list)
                     warning('ID:could_not_be_saved','The file struture has a problem'); % better warning text
                     continue; 
                 end
-        
+
+
                 %  saves as pspm file (overwrite)
                 data  = ses.data;
                 infos = ses.infos;
@@ -412,7 +431,7 @@ for i = 1:length(subject_list)
     nSubjects = nSubjects + 1;
 end % close subj loop
 
-rmpath(libpath); % What if the function breaks at another path
+rmpath(libpath); 
 sts = 1;
 
 %% footer
@@ -566,9 +585,10 @@ end
 function pspm_bids_importer_header(dataset_path, nSubjects, save_path)
 
 % Detect PsPM version if available
-pspm_ver = "unknown";
 try
     pspm_ver = string(pspm_version);
+catch
+    pspm_ver = "unknown";
 end
 
 timestamp = string(datetime('now','Format','yyyy-MM-dd HH:mm:ss'));
@@ -751,7 +771,7 @@ for i = 1:num_channels
 end
 
 % Padding at the end
-[sts, data, new_duration] = pspm_align_channels(data); % can the fprint be turned off?
+[sts, data, new_duration] = pspm_align_channels(data); 
 
 if sts ~= 1 % if all are the same size does it give en error?
     warning('ID:channel_alignment_failed','Channel alignment failed.');  
@@ -760,3 +780,5 @@ end
 
 
 end
+
+

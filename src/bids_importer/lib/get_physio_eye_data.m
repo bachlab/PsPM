@@ -21,6 +21,16 @@ num_eyes = length(eye_data_cell);
 
 %% Build eye channels
 eye_channels = build_pspm_eye_channels(eye_data_cell);
+
+
+% checks if header.ranges exists
+[rsts , eye_channels] = check_gaze_range_fields(eye_channels);
+if rsts < 1
+    paths = strjoin(cellstr(string(candidate_paths)), '\n');
+    warning('ID:missing_gaze_range', ['Required GazeRange fields are missing for %s, ses-%s.\n' ...
+         'Please check the eye-tracking JSON file(s) in:\n%s'], subject_id, session_id, paths );
+end
+
 data = eye_channels;
 
 % Determine a StartTime reference for events
@@ -228,8 +238,8 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
     end
 
     % Shift first usable event to zero
-    onsets   = onsets - onsets(1); % CHANGE BACK ALLWAYS SECONDS
-    % duration = duration ;          % CHANGE BACK ALLWAYS SECONDS
+    onsets   = onsets - onsets(1); 
+   
 
     signal_names = {'blink', 'saccade', 'fixation'};
     channel_names = {'blink_c', 'saccade_c', 'fixation_c'};
@@ -300,4 +310,37 @@ function best_eye = eye_with_smaller_nan_ratio(data, eyes_observed)
         best_eye = 'l'; % if equal set 'l'
       end
     end
+end
+
+function [sts, data] = check_gaze_range_fields(data)
+%CHECK_GAZE_RANGE_FIELDS Remove gaze channels without header.range.
+%
+% Outputs:
+%   sts         1 if all gaze channels are valid, otherwise -1.
+%   data        Input channel list with invalid gaze channels removed.
+
+sts = 1;
+missing_idx = [];
+
+for i = 1:numel(data)
+    if ~isfield(data{i}, 'header') || ~isfield(data{i}.header, 'chantype')
+        continue
+    end
+
+    channel_name = string(data{i}.header.chantype);
+
+    is_gaze_channel  = startsWith(channel_name, "gaze_");
+    is_range_missing = ~isfield(data{i}.header, 'range') || isempty(data{i}.header.range);
+
+    if is_gaze_channel && is_range_missing
+        missing_idx(end + 1) = i; %#ok<AGROW>
+    end
+end
+
+if ~isempty(missing_idx)
+    sts = -1;
+
+    % Remove all invalid channels at once
+    data(missing_idx) = [];
+end
 end

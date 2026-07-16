@@ -8,6 +8,12 @@ col_types = {'double', 'double', 'char', 'char', 'char'};
 % Get the marker json
 marker_json = extract_json_as_struct(events_json_filepath);
 
+sts = check_stimulus_presentation_fields(marker_json);
+if sts < 1
+    marker_data = [];
+    return
+end
+
 if ~noColumnField 
     headings = fieldnames(marker_json).';
 elseif isfield(marker_json, 'Columns')
@@ -42,5 +48,8 @@ marker_data.header.chantype = 'marker';
 marker_data.header.units = 'events';
 marker_data.header.sr = 1; % allways 1 
 marker_data.header.StartTime = marker_data.data(1); 
+
+
+
 
 end
