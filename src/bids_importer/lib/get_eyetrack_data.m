@@ -66,14 +66,30 @@ function [sts, eye_data_cell] = get_eyetrack_data(candidate_paths, task_id, run_
         % Read metadata
         eye_meta = extract_json_as_struct(eye_json_filepath);
 
+        % StartTime is required for eye-tracking data
+        if ~isfield(eye_meta, 'StartTime') || isempty(eye_meta.StartTime) || ~isnumeric(eye_meta.StartTime) || ~isscalar(eye_meta.StartTime) || ...
+                ~isfinite(eye_meta.StartTime) % against NaN
+            warning('ID:missing_eye_start_time', ['Required StartTime is missing or invalid in:\n%s\n' 'This eye recording will not be imported.'], eye_json_filepath);
+            continue;
+        end
+        
+        % Columns metadata is required because the TSV has no header row
+        if ~isfield(eye_meta, 'Columns') || isempty(eye_meta.Columns)
+            warning('ID:missing_eye_columns', ...
+                ['Required Columns metadata is missing in:\n%s\n' ...
+                'This eye recording will not be imported.'], ...
+                eye_json_filepath);
+            continue;
+        end
+
         % Read samples
         headings = eye_meta.Columns;
         col_types = repmat({'double'}, 1, numel(headings));
 
         eye_table = read_data_from_tsv( ...
             eye_tsv_filepath, ...
-            false, ...
-            headings.', ...
+            false, ...       % TSV has no header row
+            headings.', ...  % headings come from JSON
             col_types ...
         );
 

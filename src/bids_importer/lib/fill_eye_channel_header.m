@@ -15,6 +15,7 @@ function hdr = fill_eye_channel_header(hdr, m, kind)
 %   hdr  : struct
 %       Channel header to be updated. The function may set/overwrite:
 %         - hdr.sr          : sampling rate (Hz)
+%         - m.StartTime (numeric scalar)
 %         - hdr.Description : channel description (text)
 %         - hdr.units       : physical units (string)
 %         - hdr.range       : valid data range [min max]
@@ -69,6 +70,9 @@ function hdr = fill_eye_channel_header(hdr, m, kind)
 if isfield(m, 'SamplingFrequency') && ~isempty(m.SamplingFrequency)
     hdr.sr = m.SamplingFrequency;
 end
+
+% StartTime was already validated in get_eyetrack_data
+hdr.StartTime = double(m.StartTime);
 
 switch kind
     case 'pupil'

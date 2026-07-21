@@ -22,26 +22,46 @@ num_eyes = length(eye_data_cell);
 %% Build eye channels
 eye_channels = build_pspm_eye_channels(eye_data_cell);
 
+if isempty(eye_channels)
+    warning('ID:no_valid_eye_channels', ...
+        'No valid eye-tracking channels could be created.');
+    sts = -1;
+    return;
+end
 
 % checks if header.ranges exists
 [rsts , eye_channels] = check_gaze_range_fields(eye_channels);
 if rsts < 1
     paths = strjoin(cellstr(string(candidate_paths)), '\n');
-    warning('ID:missing_gaze_range', ['Required GazeRange fields are missing for %s, ses-%s.\n' ...
-         'Please check the eye-tracking JSON file(s) in:\n%s'], subject_id, session_id, paths );
+    warning('ID:missing_gaze_range', ['Required GazeRange fields are missing for %s, ses-%s.\n' 'Please check the eye-tracking JSON file(s) in:\n%s'], subject_id, session_id, paths );
 end
+% Stop if gaze-range validation removed every eye channel
+if isempty(eye_channels)
+    warning('ID:no_valid_eye_channels', ['No valid eye-tracking channels remain after '  'gaze-range validation.']);
+    sts = -1;
+    data = {};
+    return;
+end
+
 
 data = eye_channels;
 
-% Determine a StartTime reference for events
-if ~isempty(data) && isfield(data{1}.header, 'StartTime')
-    startTimeRef = data{1}.header.StartTime;
-else
-    startTimeRef = 0;
-    for i = 1:numel(data)
-        data{i}.header.StartTime = 0;
-    end
+% Verify StartTime in every generated eye channel
+has_valid_start_time = cellfun( @(channel) isfield(channel, 'header') && ...
+               isfield(channel.header, 'StartTime') && ...
+               isnumeric(channel.header.StartTime) && ...
+               isscalar(channel.header.StartTime) && ...
+               isfinite(channel.header.StartTime), ...
+                data );
+
+if isempty(data) || ~all(has_valid_start_time)
+    warning('ID:missing_eye_start_time',  ['One or more eye-tracking channels have no valid StartTime.\n' 'Eye-tracking data will not be imported.']);
+    data = {};
+    sts = -1;
+    return;
 end
+
+startTimeRef = data{1}.header.StartTime;
 
 %% Physioevents search dirs
 [events_tsv_filepath, events_json_filepath] = find_physioevents_pair( ...
@@ -102,7 +122,7 @@ for i = 1:numel(eye_data_cell)
     end
 end
 
-if strlength(events_json_filepath) > 0
+if isfile(events_json_filepath) && isfile(events_tsv_filepath) % strlength(events_json_filepath) > 0
     file_paths{end+1,1} = char(events_json_filepath);
     file_paths{end+1,1} = char(events_tsv_filepath);
 end

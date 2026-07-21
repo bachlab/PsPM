@@ -34,11 +34,16 @@ for i = 1:num_signals
     end
 
     fprintf('%s:\t%s\n', signal, physio_tsv_filepath);
-    %% Collect file paths for infos
-    file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
 
     % Read JSON metadata
     physio_json = extract_json_as_struct(physio_json_filepath);
+
+    % StartTime is required for continuous physiology
+    if ~isfield(physio_json, 'StartTime') || isempty(physio_json.StartTime) || ~isnumeric(physio_json.StartTime) ||  ~isscalar(physio_json.StartTime) || ~isfinite(physio_json.StartTime)
+        warning('ID:missing_physio_start_time', ['Required StartTime is missing or invalid in:\n%s\n' 'This physiological recording will not be imported.'],  physio_json_filepath);
+        continue;
+    end
+
 
     % Read columns and format into cell to string doesn't get separated
     headings = physio_json.Columns;  
@@ -59,12 +64,11 @@ for i = 1:num_signals
     );
     
     % Create channel struct
-
     chan = struct();
     chan.header = struct();
     chan.header.chantype = signal;
     chan.header.sr = physio_json.SamplingFrequency; 
-    chan.header.StartTime = physio_json.StartTime; 
+    chan.header.StartTime = double(physio_json.StartTime);
 
     % Access Units field inside the signal-specific structure
     if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units')  
@@ -76,6 +80,9 @@ for i = 1:num_signals
 
     % Assign data
     chan.data = physio_data_table.(headings{strcmp(headings, signal)});
+
+    % Collect file paths for infos
+    file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
 
     % Add to physio data cell array 
     physio_data{cell_index,1} = chan; %#ok<*AGROW> 

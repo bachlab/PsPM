@@ -9,7 +9,8 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %     • multiple tasks per session (e.g., Acquisition, Extinction, Habituation)
 %     • separate beh/ and physio/ folders
 %     • optional task- entities (task-<name>) in filenames
-%     • sessions with or without behavioral events
+%     • behavioral events are required for each imported task/run
+%     • physioevents files are optional
 %
 %   Example supported layout (multi-task session, no 'beh' folder):
 %
@@ -54,7 +55,7 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %
 % ● Output
 %            outfile:  cell array of full paths to generated PsPM .mat files
-%                sts:  status flag (1 = success, 0 = failure)
+%                sts:  status flag (1 = success, -1 = failure)
 %
 % ● History
 %   Introduced in PsPM 7.0
@@ -105,7 +106,7 @@ if nargin > 2;  warning('More than two inputs have been provided; any additional
 % Adds libs to the path
 libpath = pspm_path('bids_importer','lib');
 addpath(libpath); 
-
+path_cleanup = onCleanup(@() rmpath(libpath)); 
 
 %% 2. Read meta information & Add paths to the right variables ------------------------------------------------
 
@@ -123,24 +124,28 @@ sub_mode = startsWith(currentFolder, 'sub-');
 
 % dataset mode
 if dataset_mode
-    % Get list of subject directories (assumes names start with 'sub-')
+    % Full BIDS dataset root
     subject_list = dir(fullfile(dataset_path, 'sub-*'));
     subject_list = subject_list([subject_list.isdir]);
 
-% sub or ses to be imported 
-else
-   % subject or session mode
-    if ses_mode
-        sub_path = fileparts(dataset_path); % one level above ses-*
-        ses_path = dataset_path;
-    elseif sub_mode 
-        sub_path = dataset_path; 
-    end
+elseif ses_mode
+    % Single session folder
+    ses_path = dataset_path;
+    sub_path = fileparts(dataset_path);
 
-    % dataset_path now becomes the real dataset path 
-    dataset_path = fileparts(sub_path); 
-       
-    [~, subject_list(1).name] = fileparts(sub_path); % only one subject
+    dataset_path = fileparts(sub_path);
+    [~, subject_list(1).name] = fileparts(sub_path);
+
+elseif sub_mode
+    % Single subject folder
+    sub_path = dataset_path;
+
+    dataset_path = fileparts(sub_path);
+    [~, subject_list(1).name] = fileparts(sub_path);
+
+else
+    error('ID:invalid_input', ['dataset_path must be:\n' '  - a BIDS dataset root containing dataset_description.json,\n' ...
+         '  - a sub-* folder, or\n'  '  - a ses-* folder.']);
 end
 
 % imports dataset description 
@@ -152,12 +157,9 @@ if isempty(subject_list)
 end
 
 % output folder (save_path)
-if nargin<2 || ~(isstring(save_path) || ischar(save_path))
-    % save_path = [dataset_path, filesep, 'out'];
+if nargin<2 || ~(isstring(save_path) || ischar(save_path)) || isempty(save_path) || strlength(string(save_path)) == 0
     save_path = fullfile(dataset_path, "out");
-    disp(save_path);
-    % warning("ID:nonexistent_folder","No or invalid save path specified; using '%s' instead.", save_path);
-    warning("ID:nonexistent_folder: No or invalid save path specified; using '%s' instead.", save_path);
+    warning('ID:nonexistent_folder', 'No or invalid save path specified; using ''%s'' instead.',  save_path);
 end
       
 %% Start message
@@ -269,8 +271,65 @@ for i = 1:length(subject_list)
                     fprintf('Run:\trun-%s\n', run_id);
                 end
 
-                %% Processing start         
-                % read in physio data
+                %%% ============ Processing start ====================== %%%
+
+                %% Get events
+                % *events.tsv (not *physioevents.tsv.gz) file can be in 'beh' or 'physio' folder | prioritize
+                % 'beh'
+                [events_tsv_filepath, events_json_filepath] = find_bids_file( ...
+                    ses_path, ...
+                    'events.tsv', ...
+                    task_id, ...
+                    run_id ...
+                    );
+
+                %% Require both event files
+                % no events files
+                if isempty(events_json_filepath) || ...
+                        isempty(events_tsv_filepath) || ...
+                        ~isfile(events_json_filepath) || ...
+                        ~isfile(events_tsv_filepath)
+
+                    warning('ID:nonexistent_file', ...
+                        ['Required behavioral event files are missing for ' ...
+                        'task "%s", run "%s". Skipping this run.'], ...
+                        task_id, ...
+                        run_id);
+                    continue
+                end
+
+                fprintf('Events:\t%s\n', events_tsv_filepath);
+
+                %% Read and validate event metadata
+                event_json = extract_json_as_struct(events_json_filepath);
+
+                evsts = check_stimulus_presentation_fields(event_json);
+
+                if evsts < 1
+                    warning('ID:missing_stimulus_presentation', ...
+                        ['Required StimulusPresentation fields are missing in:\n%s\n' ...
+                        'Skipping this run.'], ...
+                        events_json_filepath);
+
+                    continue
+                end
+
+                %% Create marker channel only after validation
+                marker_chan = get_marker_data( ...
+                    events_json_filepath, ...
+                    events_tsv_filepath, ...
+                    false ... % TSV contains column headings
+                    );
+
+                if isempty(marker_chan)
+                    warning('ID:invalid_events', ...
+                        'No valid marker data could be read from %s. Skipping this run.', ...
+                        events_tsv_filepath);
+                    continue;
+                end
+
+                
+                %% read in physio data
                 physio_path = fullfile(ses_path, 'physio');
                 [~, physio_data, physio_infos] = get_physio_data( ...
                     physio_path, ...
@@ -289,39 +348,10 @@ for i = 1:length(subject_list)
                     run_id ...
                 );
 
-                %% Get events
-                % *events.tsv (not *physioevents.tsv.gz) file can be in 'beh' or 'physio' folder | prioritize
-                % 'beh'
-                [events_tsv_filepath, events_json_filepath] = find_bids_file( ...
-                    ses_path, ...
-                    'events.tsv', ...
-                    task_id, ...
-                    run_id ...
-                );
-            
-                % read events
-                if isfile(events_json_filepath) && isfile(events_tsv_filepath)
-                    fprintf('Events:\t%s\n', events_tsv_filepath);
-                    marker_chan = get_marker_data( ...
-                        events_json_filepath, ...
-                        events_tsv_filepath, ...
-                        false ... % it has a column
-                    );
-                else
-                    marker_chan = [ ];
-                    warning('ID:nonexistent_file','File not found: %s', events_json_filepath); 
-                    warning('ID:nonexistent_file','File not found: %s', events_tsv_filepath);  
-                end
-    
-                % events_json_filepath contains relevant info about stimulus presentation;
-                event_json = extract_json_as_struct(events_json_filepath);
-                
-                evsts = check_stimulus_presentation_fields(event_json);
-                if evsts < 1
-                    warning('ID:missing_stimulus_presentation', ...
-                        ['Required StimulusPresentation fields are missing in:\n%s\n' ...
-                        'Please check the events JSON file.'], events_json_filepath );
-                    %continue
+                % At least one physiological or eye-tracking channel is required
+                if isempty(physio_data) && isempty(physio_eye_data)
+                    warning('ID:no_physiological_data', ['No physiological or eye-tracking data were found for ' 'task "%s", run "%s". Skipping this run.'], task_id, run_id);
+                    continue;
                 end
 
                 %% Build the file structure
@@ -402,7 +432,6 @@ for i = 1:length(subject_list)
                 ses_filename = [strjoin(parts, '_') '.mat'];
                                    
                 ses_filepath            = fullfile(save_path, ses_filename);
-                outfile{end+1}          = char(ses_filepath); %#ok<AGROW>
                 ses.infos.importfile    = char(ses_filepath); 
                 
                 %% Verify output structure
@@ -418,6 +447,9 @@ for i = 1:length(subject_list)
                 data  = ses.data;
                 infos = ses.infos;
                 save(ses_filepath,'infos', 'data');
+
+                outfile{end+1} = char(ses_filepath);
+
                 fprintf('Saved PsPM-file to ''%s''\n', ses_filepath);
                 fprintf('\n--------------------------------------------------------------------------------\n');
 
@@ -431,8 +463,12 @@ for i = 1:length(subject_list)
     nSubjects = nSubjects + 1;
 end % close subj loop
 
-rmpath(libpath); 
-sts = 1;
+if nRuns > 0
+    sts = 1;
+else
+    sts = -1;
+    warning('ID:no_runs_imported', 'No runs were successfully imported.');
+end
 
 %% footer
 pspm_bids_importer_footer( ...
@@ -613,7 +649,11 @@ function pspm_bids_importer_footer(nSubjects, nSessions, nRuns, nTasks, output_d
 
 timestamp = string(datetime('now', 'Format', 'yyyy-MM-dd HH:mm:ss'));
 fprintf('================================================================================\n');
-fprintf('  BIDS Import Completed Successfully\n');
+if nRuns > 0
+    fprintf('  BIDS Import Completed Successfully\n');
+else
+    fprintf('  BIDS Import Completed Without Output\n');
+end
 fprintf('--------------------------------------------------------------------------------\n');
 
 if nargin >= 1 && ~isempty(nSubjects)
