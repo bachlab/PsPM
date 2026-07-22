@@ -1,9 +1,9 @@
 function [sts, data, infos] = get_physio_eye_data(candidate_paths, subject_id, session_id, task_id, run_id)
-
 sts = -1;
 data = {};
 infos = struct();
 infos.source = struct();
+physioevents_imported = false;
 
 %% Process eye data
 [ests, eye_data_cell] = get_eyetrack_data( ...
@@ -85,6 +85,7 @@ if isfile(events_json_filepath) && isfile(events_tsv_filepath)  % if strlength(e
             data_events{i}.header.StartTime = startTimeRef;
         end
         data = [data, data_events.'];
+        physioevents_imported = true;
     end
 else
     parts = {subject_id};
@@ -109,22 +110,37 @@ end
 %% Build infos.source.file
 file_paths = {};
 
+% for i = 1:numel(eye_data_cell)
+%     if isfield(eye_data_cell{i}, 'source') && isfield(eye_data_cell{i}.source, 'file')
+%         sf = eye_data_cell{i}.source.file;
+%         if iscell(sf)
+%             for k = 1:numel(sf)
+%                 file_paths{end+1,1} = char(sf{k}); %#ok<AGROW>
+%             end
+%         else
+%             file_paths{end+1,1} = char(sf); %#ok<AGROW>
+%         end
+%     end
+% end
 for i = 1:numel(eye_data_cell)
     if isfield(eye_data_cell{i}, 'source') && isfield(eye_data_cell{i}.source, 'file')
+        
         sf = eye_data_cell{i}.source.file;
         if iscell(sf)
-            for k = 1:numel(sf)
-                file_paths{end+1,1} = char(sf{k}); %#ok<AGROW>
-            end
+            % Keep JSON and TSV together as one source pair
+            file_paths{end+1,1} = cellfun( @char, sf(:).', 'UniformOutput', false );
         else
-            file_paths{end+1,1} = char(sf); %#ok<AGROW>
+            file_paths{end+1,1} = {char(sf)};
         end
     end
 end
 
-if isfile(events_json_filepath) && isfile(events_tsv_filepath) % strlength(events_json_filepath) > 0
-    file_paths{end+1,1} = char(events_json_filepath);
-    file_paths{end+1,1} = char(events_tsv_filepath);
+
+if physioevents_imported
+    file_paths{end+1,1} = {
+        char(events_json_filepath), ...
+        char(events_tsv_filepath)
+    };
 end
 
 infos.source.file = file_paths;

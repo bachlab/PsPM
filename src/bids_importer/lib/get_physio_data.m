@@ -82,7 +82,7 @@ for i = 1:num_signals
     chan.data = physio_data_table.(headings{strcmp(headings, signal)});
 
     % Collect file paths for infos
-    file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
+    file_paths{cell_index,1} = {char(physio_json_filepath), char(physio_tsv_filepath)};
 
     % Add to physio data cell array 
     physio_data{cell_index,1} = chan; %#ok<*AGROW> 

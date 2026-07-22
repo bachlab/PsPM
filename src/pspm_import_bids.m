@@ -271,7 +271,7 @@ for i = 1:length(subject_list)
                     fprintf('Run:\trun-%s\n', run_id);
                 end
 
-                %%% ============ Processing start ====================== %%%
+                %%% ============ Processing start =============== %%%
 
                 %% Get events
                 % *events.tsv (not *physioevents.tsv.gz) file can be in 'beh' or 'physio' folder | prioritize
@@ -283,49 +283,54 @@ for i = 1:length(subject_list)
                     run_id ...
                     );
 
-                %% Require both event files
-                % no events files
-                if isempty(events_json_filepath) || ...
-                        isempty(events_tsv_filepath) || ...
-                        ~isfile(events_json_filepath) || ...
-                        ~isfile(events_tsv_filepath)
 
-                    warning('ID:nonexistent_file', ...
-                        ['Required behavioral event files are missing for ' ...
-                        'task "%s", run "%s". Skipping this run.'], ...
+                %% Optional behavioral events
+                marker_chan = [];
+                event_json = struct();
+                behavioral_events_imported = false;
+                
+                if ~isempty(events_json_filepath) && ...
+                        ~isempty(events_tsv_filepath) && ...
+                        isfile(events_json_filepath) && ...
+                        isfile(events_tsv_filepath)
+                
+                    fprintf('Events:\t%s\n', events_tsv_filepath);
+                
+                    %% Read event metadata
+                    event_json = extract_json_as_struct(events_json_filepath);
+                
+                    evsts = check_stimulus_presentation_fields(event_json);
+                
+                    if evsts < 1
+                        warning('ID:missing_stimulus_presentation', ...
+                            ['Required StimulusPresentation fields are missing in:\n%s\n' ...
+                             'Continuing without behavioral events.'], ...
+                            events_json_filepath);
+                
+                    else
+                        %% Create marker channel
+                        marker_chan = get_marker_data( ...
+                            events_json_filepath, ...
+                            events_tsv_filepath, ...
+                            false ... % TSV contains column headings
+                        );
+                
+                        if isempty(marker_chan)
+                            warning('ID:invalid_events', ...
+                                ['No valid marker data could be read from:\n%s\n' ...
+                                 'Continuing without behavioral events.'], ...
+                                events_tsv_filepath);
+                        else
+                            behavioral_events_imported = true;
+                        end
+                    end
+                
+                else
+                    warning('ID:no_behavioral_events', ...
+                        ['No behavioral event files were found for ' ...
+                         'task "%s", run "%s". Continuing without marker data.'], ...
                         task_id, ...
                         run_id);
-                    continue
-                end
-
-                fprintf('Events:\t%s\n', events_tsv_filepath);
-
-                %% Read and validate event metadata
-                event_json = extract_json_as_struct(events_json_filepath);
-
-                evsts = check_stimulus_presentation_fields(event_json);
-
-                if evsts < 1
-                    warning('ID:missing_stimulus_presentation', ...
-                        ['Required StimulusPresentation fields are missing in:\n%s\n' ...
-                        'Skipping this run.'], ...
-                        events_json_filepath);
-
-                    continue
-                end
-
-                %% Create marker channel only after validation
-                marker_chan = get_marker_data( ...
-                    events_json_filepath, ...
-                    events_tsv_filepath, ...
-                    false ... % TSV contains column headings
-                    );
-
-                if isempty(marker_chan)
-                    warning('ID:invalid_events', ...
-                        'No valid marker data could be read from %s. Skipping this run.', ...
-                        events_tsv_filepath);
-                    continue;
                 end
 
                 
@@ -364,6 +369,13 @@ for i = 1:length(subject_list)
                 ses.infos.source = struct();
                 ses.infos.source.type = 'BIDS (json/tsv)';
                 ses.infos.source.file = {};
+
+                if behavioral_events_imported
+                    ses.infos.source.file{end+1,1} = {
+                        char(events_json_filepath), ...
+                        char(events_tsv_filepath)
+                        };
+                end
                 
                 if exist('physio_infos', 'var') && ~isempty(physio_infos) && ...
                         isfield(physio_infos, 'source') && isfield(physio_infos.source, 'file') && ...
@@ -398,10 +410,15 @@ for i = 1:length(subject_list)
                 ses = pspm_update_nan_stats(ses);
     
                 % populate fields from json
-                fprintf("Adding info from %s to channel headers\n", events_json_filepath);
-                fn = fieldnames(event_json);
-                for ii = 1:numel(fn)
-                    ses.infos.(fn{ii}) = event_json.(fn{ii});
+                if behavioral_events_imported
+                    fprintf("Adding info from %s to session metadata\n", ...
+                        events_json_filepath);
+                
+                    fn = fieldnames(event_json);
+                
+                    for ii = 1:numel(fn)
+                        ses.infos.(fn{ii}) = event_json.(fn{ii});
+                    end
                 end
                     
                 % % Aligns all channels
