@@ -1,4 +1,4 @@
-    function pspm_peakscore(datafile, regfile, modelfile, timeunits, normalize, chan, options)
+function [sts, glm] = pspm_peakscore(datafile, regfile, modelfile, timeunits, normalize, chan, options)
 
 % pspm_peakscore calculates event-related responses by scoring the peak
 % response against a pre-stimulus baseline. The input is similar to
@@ -50,7 +50,7 @@
 % $Rev$
 
 global settings;
-if isempty(settings), pspm_init; end;
+if isempty(settings), pspm_init; end
 
 % check input arguments
 if nargin<1
@@ -373,9 +373,10 @@ save(modelfile, 'glm');
 %-------------------------------------------------------------------------
 
 fprintf(' done. \n');
+sts = 1;
 
 % cleanup
-clear glm scr
+clear scr
 return
 
 %-------------------------------------------------------------------------

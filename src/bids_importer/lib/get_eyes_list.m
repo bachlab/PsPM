@@ -1,30 +1,16 @@
-function eyes = get_eyes_list(physio_folder_path)
-% Get list of all files in the directory
-files = dir(physio_folder_path);
+function eyes = get_eyes_list(files)
 
-% Initialize an empty cell array to store eye types
 eyes = {};
 
-% filter for files
-files = files(~[files.isdir]);
+for i = 1:numel(files)
+    filename = files{i};
 
-% Loop through each file in the directory
-for i = 1:length(files)
-    % Get the filename
-    filename = files(i).name;
+    token = regexp(filename, 'recording-(eye\d+)', 'tokens', 'once');
 
-    % Check if the filename matches the expected pattern
-    % We assume that the file name contains '_recording-eye' followed by a number and '_physio.tsv'
-    expression = 'recording-eye(\d)_physio.tsv';
-    match = regexp(filename, expression, 'tokens');
-
-    % If there is a match, extract the eye type
-    if ~isempty(match)
-        eyeType = ['eye' match{1}{1}]; % Extract '1' from 'eye1' and form 'eye1'
-        eyes{end+1} = eyeType; % Add to the list of eyes
+    if ~isempty(token)
+        eyes{end+1} = token{1};
     end
 end
 
-% Get unique list of eyes
 eyes = unique(eyes);
 end
