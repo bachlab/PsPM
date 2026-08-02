@@ -1,15 +1,15 @@
-function [sts , physio_data, infos] = get_physio_data(subject_id, session_id, task_name, physio_path)
+function [sts , physio_data, infos] = get_physio_data(physio_path, subject_id, session_id, task_id, run_id)
 % Returns a  cell array where each cell contains a struct with fields header and data (and markerinfo for events)
 % Also returns physio_info_data needed to create 'info' struct
 % UPDATE HELPTEXT
 
 %% Initialize the physio data cell array
-sts = -1;
-physio_data = {}; 
-file_paths = {}; 
-infos.source.file = {};
-physio_signals = {'ecg','ppg', 'scr'};
-num_signals = length(physio_signals);
+sts                 = -1;
+physio_data         = {}; 
+file_paths          = {}; 
+infos.source.file   = {};
+physio_signals      = {'ecg', 'ppg', 'scr'};
+num_signals         = length(physio_signals);
 
 
 % Index to keep track of the cell array
@@ -18,41 +18,57 @@ cell_index = 1;
 for i = 1:num_signals   
 
     signal = physio_signals{i};
+
+    % find modality-specific physio file
+    [physio_tsv_filepath, physio_json_filepath] = find_physio_file( ...
+        physio_path, ...
+        signal, ...
+        task_id, ...
+        run_id ...
+    );
     
-    % Construct filenames
-    physio_json_filename = sprintf('%s_ses-%s_recording-%s_physio.json', subject_id, session_id, signal);
-    physio_tsv_filename  = sprintf('%s_ses-%s_recording-%s_physio.tsv', subject_id, session_id, signal);
-    physio_json_filepath = fullfile(physio_path, physio_json_filename);
-    physio_tsv_filepath  = fullfile(physio_path, physio_tsv_filename);
-
-
-    % Check if files exist  
+    %% Check if files exist  
     % The warning could be confusing 
     if ~isfile(physio_json_filepath) || ~isfile(physio_tsv_filepath)
         continue; 
     end
-   
-    
-    % Collect file paths for infos
-    file_paths{cell_index,1} = {physio_json_filepath,physio_tsv_filepath};
+
+    fprintf('%s:\t%s\n', signal, physio_tsv_filepath);
 
     % Read JSON metadata
     physio_json = extract_json_as_struct(physio_json_filepath);
 
-    % Read TSV data
-    headings = physio_json.Columns;  
-    col_types = repmat({'double'}, 1, length(headings));
-    physio_data_table = read_data_from_tsv(physio_tsv_filepath, false, headings.', col_types);
-    
- 
-    % Create channel struct
+    % StartTime is required for continuous physiology
+    if ~isfield(physio_json, 'StartTime') || isempty(physio_json.StartTime) || ~isnumeric(physio_json.StartTime) ||  ~isscalar(physio_json.StartTime) || ~isfinite(physio_json.StartTime)
+        warning('ID:missing_physio_start_time', ['Required StartTime is missing or invalid in:\n%s\n' 'This physiological recording will not be imported.'],  physio_json_filepath);
+        continue;
+    end
 
+
+    % Read columns and format into cell to string doesn't get separated
+    headings = physio_json.Columns;  
+
+    if ischar(headings)
+        headings = {headings};   % wrap into cell array
+    elseif isstring(headings)
+        headings = cellstr(headings);
+    end
+    
+    % read TSV file
+    col_types = repmat({'double'}, 1, length(headings));
+    physio_data_table = read_data_from_tsv( ...
+        physio_tsv_filepath, ...
+        false, ...
+        headings.', ...
+        col_types ...
+    );
+    
+    % Create channel struct
     chan = struct();
-    % header chantype, sr, StartTime and units
     chan.header = struct();
     chan.header.chantype = signal;
     chan.header.sr = physio_json.SamplingFrequency; 
-    chan.header.StartTime = physio_json.StartTime; 
+    chan.header.StartTime = double(physio_json.StartTime);
 
     % Access Units field inside the signal-specific structure
     if isfield(physio_json, signal) && isfield(physio_json.(signal), 'Units')  
@@ -63,22 +79,24 @@ for i = 1:num_signals
     end 
 
     % Assign data
-    chan.data = physio_data_table.(headings{1});
+    chan.data = physio_data_table.(headings{strcmp(headings, signal)});
+
+    % Collect file paths for infos
+    file_paths{cell_index,1} = {char(physio_json_filepath), char(physio_tsv_filepath)};
 
     % Add to physio data cell array 
-    physio_data{cell_index,1} = chan;
+    physio_data{cell_index,1} = chan; %#ok<*AGROW> 
 
     % index
     cell_index = cell_index +1;
 end
 
 if isempty(physio_data)
-    fprintf(">No physio data ('ecg','ppg','scr') were imported for subject %s, session %s.", subject_id, session_id);
+    fprintf(">No physio data ('ecg','ppg','scr') were imported for %s, ses-%s.\n", subject_id, session_id);
     return
 end
 
 infos.source.file = file_paths;
-
 sts = 1;
 
 end
