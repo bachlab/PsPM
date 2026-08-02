@@ -3,7 +3,7 @@ function [ev_tsv, ev_json] = find_physioevents_pair(candidate_paths, task_id, ru
 %   sub-999_ses-01_task-fearconditioning_physioevents
 % It will match:
 %   <stem>.json
-%   <stem>.tsv OR <stem>.tsv.gz
+%   <stem>.tsv.gz
 % And also allow optional recording entity:
 %   <stem>_recording-eye1.json, etc. (if you want) ?
 

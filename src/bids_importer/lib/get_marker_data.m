@@ -73,9 +73,5 @@ end
 marker_data.header.chantype = 'marker';
 marker_data.header.units = 'events';
 marker_data.header.sr = 1; % allways 1 
-marker_data.header.StartTime = marker_data.data(1); 
-
-
-
-
+marker_data.header.StartTime = 0;
 end

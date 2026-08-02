@@ -61,7 +61,18 @@ if isempty(data) || ~all(has_valid_start_time)
     return;
 end
 
-startTimeRef = data{1}.header.StartTime;
+% Verify that all generated eye channels use the same StartTime
+start_times = cellfun(@(channel)  double(channel.header.StartTime), data);
+start_time_tolerance = max(     1e-9,   10 * eps(max(abs(start_times)))    );
+
+if any(abs(start_times - start_times(1)) > start_time_tolerance)
+    warning('ID:inconsistent_eye_start_time',  ['Eye-tracking channels have different StartTime values.\n'   'Eye-tracking data will not be imported.']);
+    data = {};
+    sts = -1;
+    return;
+end
+
+startTimeRef = start_times(1);
 
 %% Physioevents search dirs
 [events_tsv_filepath, events_json_filepath] = find_physioevents_pair( ...
@@ -70,6 +81,7 @@ startTimeRef = data{1}.header.StartTime;
     run_id ...
 );
 
+% only one can be imported!?
 if isfile(events_json_filepath) && isfile(events_tsv_filepath)  % if strlength(events_json_filepath) > 0 && strlength(events_tsv_filepath) > 0
 
     % read physioevents.tsv.gz
@@ -83,6 +95,14 @@ if isfile(events_json_filepath) && isfile(events_tsv_filepath)  % if strlength(e
     if ~isempty(data_events)
         for i = 1:numel(data_events)
             data_events{i}.header.StartTime = startTimeRef;
+            % For monocular data, use the imported eye side
+            if num_eyes == 1 && ismember(data_events{i}.header.chantype, {'blink_c', 'saccade_c'})
+                eye_side = lower(data{1}.header.chantype(end));
+    
+                if ismember(eye_side, ['l', 'r'])
+                    data_events{i}.header.chantype(end) = eye_side;
+                end
+            end            
         end
         data = [data, data_events.'];
         physioevents_imported = true;
@@ -110,18 +130,6 @@ end
 %% Build infos.source.file
 file_paths = {};
 
-% for i = 1:numel(eye_data_cell)
-%     if isfield(eye_data_cell{i}, 'source') && isfield(eye_data_cell{i}.source, 'file')
-%         sf = eye_data_cell{i}.source.file;
-%         if iscell(sf)
-%             for k = 1:numel(sf)
-%                 file_paths{end+1,1} = char(sf{k}); %#ok<AGROW>
-%             end
-%         else
-%             file_paths{end+1,1} = char(sf); %#ok<AGROW>
-%         end
-%     end
-% end
 for i = 1:numel(eye_data_cell)
     if isfield(eye_data_cell{i}, 'source') && isfield(eye_data_cell{i}.source, 'file')
         
@@ -201,14 +209,14 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
 
     if ~istable(marker_tsv_data_table)
         warning('Could not read physio events table from %s', events_tsv_filepath);
-        data = [];
+        data = {};
         return
     end
 
     required_vars = {'onset', 'duration'};
     if ~all(ismember(required_vars, marker_tsv_data_table.Properties.VariableNames))
         warning('Physio events table is missing required columns in %s', events_tsv_filepath);
-        data = [];
+        data = {};
         return
     end
     
@@ -220,7 +228,7 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
         marker_tsv_data_table.Properties.VariableNames{ strcmp(marker_tsv_data_table.Properties.VariableNames, 'trial_type') } = 'event_type';
     elseif ~has_event_type && ~has_trial_type
         warning('Physio events table must contain either "event_type" or "trial_type" in %s', events_tsv_filepath);
-        data = [];
+        data = {};
         return
     end
 
@@ -230,12 +238,13 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
     end
 
     % Checks if it is a proper physio eye event data
-    if ~any(ismember(marker_tsv_data_table.Properties.VariableNames, {'blink', 'message'})) ...
-            && ~any(strcmp(marker_tsv_data_table.event_type, 'blink')) ...
-            && ~any(strcmp(marker_tsv_data_table.event_type, 'saccade')) ...
-            && ~any(strcmp(marker_tsv_data_table.event_type, 'fixation'))
-        warning('No physio events found in %s', events_tsv_filepath);
-        data = [];
+    event_type = lower(strtrim(string(marker_tsv_data_table.event_type)));
+    supported_events = ["blink", "saccade", "fixation"];
+    has_supported_event = any(ismember(event_type, supported_events));
+    if ~has_supported_event
+        warning('ID:no_physio_events', ...
+                ['No blink, saccade, or fixation events were found in:\n%s'],events_tsv_filepath);
+        data = {};
         return
     end
 
@@ -251,15 +260,14 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
             end
         end
     elseif isfield(event_json, 'SamplingFrequency')
-        sr_candidate = event_json.SamplingFrequency; %
+        sr_candidate = event_json.SamplingFrequency; 
         if isnumeric(sr_candidate) && isscalar(sr_candidate) && sr_candidate > 0
             sr = sr_candidate;
         end
     end
 
     % Remove header/config rows if present
-    idx_header = strcmp(event_type, 'n/a') & ...
-                 ~strcmp(string(marker_tsv_data_table.message), 'CS');
+    idx_header = strcmp(event_type, 'n/a') &  ~strcmp(string(marker_tsv_data_table.message), 'CS');
     
     idx_data = ~idx_header;
     
@@ -269,23 +277,29 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
 
     if isempty(onsets)
         warning('No usable physio events found in %s', events_tsv_filepath);
-        data = [];
+        data = {};
         return
     end
 
-    % Shift first usable event to zero
-    onsets   = onsets - onsets(1); 
-   
 
-    signal_names = {'blink', 'saccade', 'fixation'};
-    channel_names = {'blink_c', 'saccade_c', 'fixation_c'};
+    
+    supported_signals = ["blink", "saccade", "fixation"];
+    supported_channels = ["blink_c", "saccade_c", "fixation_c"];
+
+    present_mask = ismember(supported_signals,  unique(event_type) );
+
+    signal_names = supported_signals(present_mask);
+    channel_names = supported_channels(present_mask);
 
     % Determine output length in samples
     end_times = onsets + duration;
     n_samples = max(1, ceil(max(end_times) * sr));
 
     for s = 1:numel(signal_names)
-        idx_signal = strcmp(event_type, signal_names{s});
+        signal_name = signal_names(s);
+        channel_name = channel_names(s);
+        
+        idx_signal = event_type == signal_name;
 
         data_signal = zeros(n_samples, 1);
 
@@ -305,10 +319,10 @@ function data = get_physio_events_data(events_json_filepath, events_tsv_filepath
 
         data{s,1}.data = data_signal;
         data{s,1}.header = struct();
-        data{s,1}.header.chantype = channel_names{s};
-        data{s,1}.header.units = signal_names{s};
+        data{s,1}.header.chantype = char(channel_name);
+        data{s,1}.header.units = char(signal_name);
         data{s,1}.header.sr = sr;
-        data{s,1}.header.StartTime = 0;
+        data{s,1}.header.StartTime = 0; % Correct time will be added later -> startTimeRef
     end
 end
 

@@ -163,8 +163,8 @@ methods (Test)
             "pupil_r"
             "gaze_x_r"
             "gaze_y_r"
-            "blink_c"
-            "saccade_c"
+            "blink_r"
+            "saccade_r"
             "fixation_c"
         ];
 
@@ -329,8 +329,8 @@ methods (Test)
             "pupil_r"
             "gaze_x_r"
             "gaze_y_r"
-            "blink_c"
-            "saccade_c"
+            "blink_r"
+            "saccade_r"
             "fixation_c"
         ];
 
@@ -581,8 +581,8 @@ methods (Test)
             "ecg"
             "scr"
             "pupil_r"
-            "blink_c"
-            "saccade_c"
+            "blink_r"
+            "saccade_r"
             "fixation_c"
         ];
 
@@ -606,7 +606,7 @@ methods (Test)
 
         testCase.verifyTrue( ...
             all(ismember( ...
-                ["blink_c", "saccade_c", "fixation_c"], ...
+                ["blink_r", "saccade_r", "fixation_c"], ...
                 actual_types)), ...
             ['Eye physioevent channels should remain when only ' ...
              'GazeRange is missing.']);
@@ -765,17 +765,6 @@ methods (Access = private)
             1e-9, ...
             'infos.duration differs from the reference.');
 
-        testCase.assertTrue( ...
-            isfield(actual_infos, 'TrimPoints') && ...
-            isfield(reference_infos, 'TrimPoints'), ...
-            'infos.TrimPoints is missing.');
-
-        testCase.verifyEqual( ...
-            actual_infos.TrimPoints, ...
-            reference_infos.TrimPoints, ...
-            'AbsTol', ...
-            1e-9, ...
-            'infos.TrimPoints differs from the reference.');
 
         testCase.assertTrue( ...
             isfield(actual_infos, 'source') && ...

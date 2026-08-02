@@ -9,7 +9,7 @@ function [sts, outfile] = pspm_import_bids(dataset_path, save_path)
 %     • multiple tasks per session (e.g., Acquisition, Extinction, Habituation)
 %     • separate beh/ and physio/ folders
 %     • optional task- entities (task-<name>) in filenames
-%     • behavioral events are required for each imported task/run
+%     • behavioral events are optional 
 %     • physioevents files are optional
 %
 %   Example supported layout (multi-task session, no 'beh' folder):
@@ -800,29 +800,30 @@ for i = 1:num_channels
     end
 end
 
-global_min = min(startTimes(~isnan(startTimes))); % excludes marker
-finalLengths = zeros(num_channels,1);
+is_marker = cellfun(@(x) isfield(x, 'markerinfo'), data);
+
+global_min = min(startTimes(~is_marker & isfinite(startTimes)));
+
 
 for i = 1:num_channels        
     shift_sec = data{i}.header.StartTime - global_min;
 
     % Check if this channel is an event channel.
     if isfield(data{i}, 'markerinfo')
-        data{i}.data = data{i}.data - global_min; 
-        data{i}.header.StartTime = data{i}.data(1); 
+        if ~isempty(data{i}.data)
+            data{i}.data = data{i}.data - global_min;
+        end
+        data{i}.header.StartTime = 0;
     else
         if ~isfield(data{i}.header, 'sr')
-            warning('ID:non_existent_field','Channel %d is missing sampling rate (sr) in its header. This will lead to probelms later.', i);
-            continue;
+          warning('ID:non_existent_field', 'Channel %d is missing sampling rate (sr).', i);
+          return;
         end
         sr = data{i}.header.sr;
         numPad = round(shift_sec * sr);
 
         % Prepadded zeros to the data vector. 
         data{i}.data = [zeros(numPad, 1); data{i}.data];
-
-        % Record the new length.
-        finalLengths(i) = length(data{i}.data)/sr;
         data{i}.header.StartTime = 0;
     end    
 end
