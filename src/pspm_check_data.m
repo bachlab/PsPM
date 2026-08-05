@@ -26,8 +26,17 @@ end
 % check infos
 if nargin > 1
     flag_infos = 0;
-    if ~isstruct(infos) || isempty(fieldnames(infos)) || ~isfield(infos, 'duration')
-        warning('ID:invalid_data_structure', 'Invalid infos structure.');
+    msg = '';
+    if ~isstruct(infos)
+        msg = ".infos is not a struct";
+    elseif isempty(fieldnames(infos))
+        msg = ".infos is empty";
+    elseif ~isfield(infos, 'duration')
+        msg = ".infos does not contain duration";
+    end
+
+    if ~isempty(msg)
+        warning('ID:invalid_data_structure', 'Invalid infos structure: %s.', msg);
         return
     end
 else
