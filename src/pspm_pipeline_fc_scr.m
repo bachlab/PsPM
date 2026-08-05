@@ -210,18 +210,28 @@ model.missing = missing;
 model.timing = timing;
 
 if strcmpi(method, '2026_short')
-    model.constrained = 1;
+    model.constrained = 0.3; % not boolean anymore model.constrained = 1;
     % filter
     model.filter = settings.dcm{1}.filter;
     model.filter.direction = 'uni';
+
 elseif strcmpi(method, '2026_long_uni')
-    % this is a hidden option in pspm_dcm_inv (upper bound in s)
-    model.constrained_upper = 1; 
+    % this is a hidden option in pspm_dcm_inv (upper bound in s) % not
+    % anymore!
+    % Estimate dispersion, maximum 1 s
+    model.constrained = 1; % new convention not -> model.constrained_upper = 1; 
     % filter
     model.filter = settings.dcm{1}.filter;
     model.filter.direction = 'uni';
+
 elseif strcmpi(method, '2026_long_bi')
-    % default model
+    % default model -> default is now 'direction', 'uni'
+
+    % Estimate dispersion, only limited by half the response window
+    model.constrained = Inf; % because -> min(window_length / 2, Inf) 
+
+    model.filter = settings.dcm{1}.filter;
+    model.filter.direction = 'bi';
 end
 
 %% Setup options

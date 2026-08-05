@@ -397,8 +397,8 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
   % if flexible response dispersion is fixed, set prior precision to
   % infinity
   if model.constrained == 0.3
-    aSCRindx = theta_n + 3 * ((1:aSCRno) - 1) + 2;
-    for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end
+    aSCRindx = theta_n + 3 * ((1:aSCRno) - 1) + 2; % gets the dispersion indices!
+    for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end % why not 'n = aSCRindx' already happens in l.395 (6 lines above)
   end
 
   priors.SigmaX0 = zeros(dim.n);
@@ -740,7 +740,7 @@ if ~options.getrf
       for n = [aSCR_dummyind eSCR_dummyind], priors.SigmaTheta(n, n) = 0; end
       % allow no uncertainty for aSCR dispersion of model is
       % constrained
-      if model.constrained
+      if model.constrained == 0.3 % no not boolean anymore
         aSCR_ind = theta_n  + (1:3:(3 * aSCRno * adepth)) + 1;
         for n = aSCR_ind
           priors.SigmaTheta(n, n) = 0;

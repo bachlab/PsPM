@@ -55,7 +55,7 @@ options = pspm_options(options, 'get_rf');
 % options.getrf = 1;
 %try options.nosave, catch, options.nosave = 1; end
 if options.invalid
-  warning('options invalid') % change!
+  warning('ID:invalid_input', 'Invalid options provided.')
   return;
 end
 
@@ -75,7 +75,7 @@ model.modelfile = [tempname, '.mat'];
 
 [dsts, dcm] = pspm_dcm(model, options);
 if dsts < 1 || isempty(dcm)
-  warning('RF estimation failed in pspm_dcm.'); % change!
+  warning('ID:rf_estimation_failed', 'Response function estimation failed during DCM inversion.');  
   return;
 end
 
@@ -134,7 +134,11 @@ if ~isempty(outfile) % should never be empty!
   % dlmwrite(outfile, job, 'delimiter', '');
   outfile = fullfile(pth, [fn, '.m']);
 
-  fid = fopen(outfile, 'w');
+  [fid, errmsg] = fopen(outfile, 'w');
+  if fid < 0
+      warning('ID:cannot_write', 'Could not open output file for writing: %s. %s', outfile, errmsg);
+      return;
+  end
   fprintf(fid, '%s\n', job{:});
   fclose(fid);
 end

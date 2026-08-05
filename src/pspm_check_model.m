@@ -314,11 +314,12 @@ if strcmpi(modeltype, 'dcm')
     elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
         warning('ID:invalid_input', 'Channel number must be numeric or SCR.'); return;
     end
-
+    
+    sigma_min = settings.dcm{1}.aSCR_sigma_offset;
     if ~isfield(model, 'constrained')
         model.constrained = 0.3;
-    elseif ~isnumeric(model.constrained) || model.constrained < settings.aSCR_sigma_offset
-        warning('ID:invalid_input', 'Flexible response dispersion must be numeric and larger than the minimum value specified in the settings, which is %0.1f s.', settings.aSCR_sigma_offset); return;
+    elseif ~isnumeric(model.constrained) || isnan(model.constrained) || ~isscalar(model.constrained) || model.constrained <= sigma_min 
+        warning('ID:invalid_input', 'Flexible response dispersion must be numeric and larger than the minimum value specified in the settings, which is %0.1f s.', sigma_min); return;
     end
 
     if ~isfield(model, 'substhresh')

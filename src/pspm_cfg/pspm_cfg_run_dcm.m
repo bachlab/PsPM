@@ -96,12 +96,6 @@ if isfield(job, 'disp_options')
     options = pspm_update_struct(options, job.disp_options, {'dispwin','dispsmallwin'});
 end
 
-% accept both cfg tag and pspm_dcm option field name
-if isfield(job.inv_options, 'aSCR_sigma_offset') % in case user orients by pspm_dcm
-    options.aSCR_sigma_offset = job.inv_options.aSCR_sigma_offset;
-elseif isfield(job.inv_options, 'ascr_sigma_offset')
-    options.aSCR_sigma_offset = job.inv_options.ascr_sigma_offset;
-end
 
 % condition and event names
 if isfield(options, 'trlnames')

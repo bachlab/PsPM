@@ -270,20 +270,10 @@ sclpost.num     = [1 1];
 sclpost.val     = {5};
 sclpost.help    = pspm_cfg_help_format('pspm_dcm', 'options.sclpost');
 
-% minimum dispersion (standard deviation) for flexible responses
-ascr_sigma_offset         = cfg_entry;
-ascr_sigma_offset.name    = 'Minimum Dispersion (Standard Deviation) for Flexible Responses [s]';
-ascr_sigma_offset.tag     = 'ascr_sigma_offset'; % is mapped to options.aSCR_sigma_offset in pspm_cfg_run_dcm
-ascr_sigma_offset.strtype = 'r';
-ascr_sigma_offset.num     = [1 1];
-ascr_sigma_offset.val     = {0.1};
-ascr_sigma_offset.help    = pspm_cfg_help_format('pspm_dcm', 'options.aSCR_sigma_offset');
-ascr_sigma_offset.hidden = true;
-
 inv_options         = cfg_branch;
 inv_options.name    = 'Inversion Options';
 inv_options.tag     = 'inv_options';
-inv_options.val     = {depth, sfpre, sfpost, sffreq, sclpre, sclpost, ascr_sigma_offset};
+inv_options.val     = {depth, sfpre, sfpost, sffreq, sclpre, sclpost};
 inv_options.help    = {''};
 
 
