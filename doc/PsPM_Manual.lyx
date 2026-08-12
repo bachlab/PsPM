@@ -5668,7 +5668,7 @@ Supports the import of any original Labchart (.adicht) file.
  this import is restricted to Windows systems only and does not work on any other operating system.
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Paragraph*
 Labchart exported (up to v.
  7.1)
 \end_layout
@@ -5678,12 +5678,12 @@ Export data to matlab format (plugin for the LabChart software,
  available from www.adinstruments.com)
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Paragraph*
 Labchart exported (v.
  7.2 and higher)
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Paragraph*
 VarioPort
 \end_layout
 
@@ -5702,7 +5702,15 @@ Mindmedia Biotrace exported
 \end_layout
 
 \begin_layout Paragraph*
-BrainVision
+BrainVision 
+\end_layout
+
+\begin_layout Standard
+Files are imported using FieldTrip fileio functions.
+ To import events from a separate marker file (.vmrk),
+ add a marker channel to the BrainVision import.
+ PsPM will then automatically read the marker file referenced by the BrainVision header (.vhdr).
+ The marker file does not need to be imported separately.
 \end_layout
 
 \begin_layout Paragraph*
@@ -5715,7 +5723,7 @@ Requires an ActiveX Plugin provided by the manufacturer and contained in the sub
  
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Paragraph*
 Windaq (PsPM Version)
 \end_layout
 
