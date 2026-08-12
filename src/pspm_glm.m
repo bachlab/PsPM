@@ -139,8 +139,9 @@
 %       (2016). Modelling fear-conditioned bradycardia in humans.
 %       Psychophysiology, 53, 930-939.
 %   [9] GLM for reward-conditioned bradycardia:
-%       Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (under review). Measuring
-%       human Pavlovian appetitive conditioning and memory retention.
+%       Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (2025). Measuring human
+%       Pavlovian reward conditioning and memory retention after consolidation.
+%       Psychophysiology, 62, e70058.
 %   * Respiration analysis
 %  [10] GLM for evoked respiratory responses:
 %       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model
