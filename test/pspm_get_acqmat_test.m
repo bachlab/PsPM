@@ -28,5 +28,35 @@ classdef pspm_get_acqmat_test < pspm_get_superclass
       import = this.assign_chantype_number(import);
       this.verifyWarning(@()pspm_get_acqmat(fn, import), 'ID:channel_not_contained_in_file');
     end
+    function nonzero_start_sample(this)
+    
+      inputdata = load('ImportTestData/acq/Acq_exported_SCR_Marker.mat');
+    
+      % Simulate AcqKnowledge export starting later in original recording
+      first_sample = 1001;
+      last_sample = min(2000, size(inputdata.data, 1));
+    
+      inputdata.data = inputdata.data(first_sample:last_sample, :);
+      inputdata.start_sample = inputdata.start_sample + ...
+        (first_sample - 1) * inputdata.isi;
+    
+      fn = [tempname '.mat'];
+      save(fn, '-struct', 'inputdata');
+      cleaner = onCleanup(@() delete(fn));
+    
+      import{1} = struct('type', 'scr', 'channel', 1);
+      import{2} = struct('type', 'marker', 'channel', 2);
+      import = this.assign_chantype_number(import);
+    
+      [sts, output, sourceinfo] = this.verifyWarning( ...
+        @() pspm_get_acqmat(fn, import), ...
+        'ID:acqmat_nonzero_start');
+    
+        this.verifyEqual(sts, 1);
+        this.verifyEqual(sourceinfo.start_sample, inputdata.start_sample);
+        this.verifyEqual(sourceinfo.start_sample_unit, inputdata.isi_units);
+        this.verifyEqual(output{1}.data, double(inputdata.data(:, 1)));
+    
+    end
   end
 end
