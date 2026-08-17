@@ -1,9 +1,13 @@
 function [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import)
 % ● Description
 %   pspm_get_brainvis imports BrainVision files using FieldTrip fileio
-%   functions.
-%   This function has not been tested on sample files. Always check your 
-%   imported data before using it. 
+%   functions. To import BrainVision marker events, include a marker channel
+%   in the import structure. PsPM then reads the corresponding marker file
+%   (*.vmrk) referenced by the BrainVision header (*.vhdr) automatically.
+%   The marker file does not need to be imported separately.
+%
+%   This function has not been tested on sample files. Always check your
+%   imported data before using it.
 % ● Format
 %   [sts, import, sourceinfo] = pspm_get_brainvis(datafile, import);
 % ● Arguments
