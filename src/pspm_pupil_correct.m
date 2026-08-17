@@ -1,13 +1,13 @@
-function [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
+function [sts, pupil_corrected] = pspm_pupil_correct(fn, geometry_setup)
 % ● Description
 %   pspm_pupil_correct performs pupil foreshortening error (PFE) correction for arbitrary
 %   eye tracker measurements according to equations (3) and (4) in [1].
 % ● Format
-%   [sts, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, geometry_setup)
+%   [sts, pupil_corrected] = pspm_pupil_correct(fn, geometry_setup)
 % ● Arguments
-%   *        pupil: Numeric array containing pupil diameter. (Unit: any unit)
-%   *    gaze_x_mm: Numeric array containing gaze x positions. (Unit: mm)
-%   *    gaze_y_mm: Numeric array containing gaze y positions. (Unit: mm)
+%   *  fn :         The filename, can be either a string or a struct,
+%                   containing pupil diameter(unit: any unit) and the corresponding
+%                   gaze x and gaze y data in positions (unit: mm)
 %   ┌─geometry_setup
 %   ├─────────.C_x: Horizontal displacement of the center of camera lens,
 %   │               i.e. how much to the left or to the right the camera
@@ -54,7 +54,29 @@ global settings
 if isempty(settings)
   pspm_init;
 end
+pupil_corrected = [];
 sts = -1;
+
+%% inputs checks
+if ~(ischar(fn) || isstruct(fn))
+    warning('ID:invalid_input', 'Need file name string as first input.'); return;  
+elseif nargin < 2
+    warning('ID:invalid_input', 'geometry_setup input are missing .'); return;  
+end
+
+
+% get pupil and gaze channels
+[lsts, pupil_data, infos, pos_of_channel] = pspm_load_channel(fn, 'pupil');
+if lsts ~= 1 
+  warning('ID:invalid_input', 'Could not load pupil channel.')
+  return; 
+end
+[lsts, gaze_x_data, gaze_y_data] = pspm_load_gaze(fn, pupil_data.header.chantype);
+if lsts ~= 1; return; end
+
+pupil = pupil_data.data; 
+gaze_x_mm = gaze_x_data.data;
+gaze_y_mm = gaze_y_data.data;
 
 % input checks
 % -------------------------------------------------------------------------
@@ -64,11 +86,16 @@ if ~isnumeric(pupil) || ~isnumeric(gaze_x_mm) || ~isnumeric(gaze_y_mm)
 end
 same_sizes = all(size(pupil) == size(gaze_x_mm)) && all(size(gaze_x_mm) == size(gaze_y_mm));
 if ~same_sizes
-  warning('ID:invalid_input', 'All input arrays must have the same sizes');
+  warning('ID:invalid_input', 'All input channels must have the same sizes');
   return;
 end
 if ~any(ismember(size(pupil), 1)) || ~any(ismember(size(gaze_x_mm), 1)) || ~any(ismember(size(gaze_y_mm), 1))
   warning('ID:invalid_input', 'All input arrays must be 1D');
+  return;
+end
+if ~strcmpi(gaze_x_data.header.units, 'mm') || ~strcmpi(gaze_y_data.header.units, 'mm')
+  warning('ID:invalid_input', ...
+    'Gaze channels must be in mm. Convert gaze first with pspm_convert_gaze.');
   return;
 end
 all_fieldnames = {'C_x', 'C_y', 'C_z', 'S_x', 'S_y', 'S_z'};

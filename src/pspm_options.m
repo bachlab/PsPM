@@ -328,10 +328,6 @@ switch FunName
     options = autofill(options, 'S_x',                    0,          '*Num'            );
     options = autofill(options, 'S_y',                    0,          '*Num'            );
     options = autofill(options, 'S_z',                    0,          '*Num'            );
-    options = autofill(options, 'screen_size_mm',         [43.5,...
-                                                           29.9],     '*Num'            );
-    options = autofill(options, 'screen_size_px',         [1920,...
-                                                           1080],     '*Num'            );
   case 'pupil_pp'
     % 2.37 pspm_pupil_pp --
     options = autofill_channel_action(options);
@@ -459,7 +455,7 @@ if ~isempty(options.missing_epochs_filename)
     options = autofill(options, 'channel',                0,          '*Int*Char'  );
     options = autofill(options, 'delete',                 'last',     {'first','all'}   );
     options = autofill(options, 'prefix',                '',          '*Char'           );
-    if ~isfield('options','msg')
+    if ~isfield(options,'msg')
       options.msg = '';
     else
       if ~ischar(options.msg) && ~isstruct(options.msg)

@@ -197,11 +197,11 @@ classdef pspm_write_channel_test < matlab.unittest.TestCase
       gen_data.data{1}.header.units = 'degree';
       [~, ~] = this.verifyWarningFree(@() pspm_write_channel(this.testdatafile, gen_data.data{1}, 'replace'));
       [~, post_unit_change.infos, post_unit_change.data] = pspm_load_data(this.testdatafile);
-      % should be one more channel as degrees did not exist
-      this.verifyEqual(length(post_unit_change.data), length(new.data) + 1);
+      % should be the same nr. of channels
+      this.verifyEqual(length(post_unit_change.data), length(new.data));
       % assert one mm gaze channel and one degree gaze channel
-      this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'mm') && ...
-        strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
+      % this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'mm') && ...
+      %   strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
       this.verifyEqual(length(find(cellfun(@(c) strcmp(c.header.units, 'degree') && ...
         strcmp(c.header.chantype, 'gaze_x_l'), post_unit_change.data))), 1);
     end

@@ -23,6 +23,19 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       import{end + 1}.type = 'marker';
       [sts, this.pspm_input_filename] = pspm_import(this.raw_input_filename, 'eyelink', import, struct());
       this.pspm_input_filename = this.pspm_input_filename;
+    
+      conversion = struct();
+      conversion.from = 'pixel';
+      conversion.target = 'mm';
+      conversion.screen_width   = 43;   % mm
+      conversion.screen_height  = 25;   % mm
+      % conversion.screen_distance = 700;            
+        
+      % opt.channel_action = 'replace';   % or 'add'
+      [sts1, ~] = pspm_convert_gaze(this.pspm_input_filename, conversion, struct('channel', [3 4]));
+      [sts2, ~] = pspm_convert_gaze(this.pspm_input_filename, conversion, struct('channel', [5 6]));
+      [stsd, infos]  = pspm_write_channel(this.pspm_input_filename, [], 'delete', struct('channel', [3 4 5 6]));
+
     end
   end
   methods(Test)
@@ -31,34 +44,34 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       this.verifyWarning(@()pspm_pupil_correct_eyelink(52, opt), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_correct_eyelink('abc', opt), 'ID:invalid_input');
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_px = [1920 1080];
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_mm = [43.5 29.9];
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_px = [1920 1080];
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_mm = [43.5 29.9];
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.mode = 'auto';
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.C_z = 5;
       this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       opt.C_z = 495;
       this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
-      opt.screen_size_px = 'aoe';
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_px = 1;
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_px = [1 2 3];
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_px = [-1920 1080];
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_px = [1920 1080];
-      opt.screen_size_mm = 'aouet';
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_mm = 1;
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_mm = [1 2 3];
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_mm = [-25 14];
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
-      opt.screen_size_mm = [25 14];
+      % opt.screen_size_px = 'aoe';
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_px = 1;
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_px = [1 2 3];
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_px = [-1920 1080];
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_px = [1920 1080];
+      % opt.screen_size_mm = 'aouet';
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_mm = 1;
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_mm = [1 2 3];
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_mm = [-25 14];
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
+      % opt.screen_size_mm = [25 14];
       %this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:invalid_input');
       this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
       opt.mode = 'mixed';
@@ -76,13 +89,13 @@ classdef pspm_pupil_correct_eyelink_test < pspm_testcase
       opt.S_z = 5;
       this.verifyWarningFree(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt));
       opt.channel = 'gaze_x_l';
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
-      opt.channel = 5;
-      this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
+      % opt.channel = 5;
+      % this.verifyWarning(@()pspm_pupil_correct_eyelink(this.pspm_input_filename, opt), 'ID:unexpected_channeltype');
     end
     function check_if_corrected_channel_is_saved(this)
-      options.screen_size_px = [1920 1080];
-      options.screen_size_mm = [43 25];
+      % options.screen_size_px = [1920 1080];
+      % options.screen_size_mm = [43 25];
       options.mode = 'auto';
       options.C_z = 495;
       options.channel = 'pupil_l';

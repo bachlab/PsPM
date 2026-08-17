@@ -4,17 +4,13 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 %   correction specifically for data recorded and imported with an SR Research
 %   Eyelink eyetracker, following the steps described in reference [1]. 
 %   For details of the exact scaling, see pspm_pupil_correct.
-%   In order to perform PFE, we need both pupil and gaze data. If the gaze data
-%   in the given file is in pixels, we need information about the screen
-%   dimensions and resolution to calculate the pixel to milimeter ratio. On the
-%   other hand, if the gaze data is in mm, cm, inches, etc., there is no need
-%   to enter any screen size related information. If the gaze data is in pixels
-%   and screen information is not given, the function emits a warning and exits
-%   early. 
+%   In order to perform PFE, we need both pupil and gaze data. 
+%   Gaze data must be provided in mm. If gaze data is not in mm, 
+%   it needs to be convert first using pspm_convert_gaze.
 % ● Format
 %   [sts, channel_index] = pspm_pupil_correct_eyelink(fn, options)
 % ● Arguments
-%   *          fn : Path to a PsPM imported Eyelink data.
+%   *          fn : Path to a PsPM imported Eyelink data must    string .
 %   ┌─────options
 %   ├────────mode : Conversion mode. Must be one of 'auto' or 'manual'. If 'auto', then
 %   │               optimized conversion parameters in Table 3 of the reference will be used. In
@@ -26,12 +22,6 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 %   │               use 'auto' mode, your camera-screen-eye setup must match exactly one
 %   │               of the three sample setups given in the reference.
 %   ├─────────C_z : See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
-%   ├screen_size_px:[optional] Screen size (width x height). This field is required only
-%   │               if the gaze data in the given PsPM file is in pixels. (Unit: pixel)
-%   ├screen_size_mm:[optional] Screen size (width x height). This field is required only
-%   │               if the gaze data in the given PsPM file is in pixels. (Unit: mm)
-%   │               [See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a>
-%   │               if you need inch to mm conversion.]
 %   ├─────────C_x : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────C_y : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
 %   ├─────────S_x : [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>
@@ -69,6 +59,10 @@ if isempty(settings)
 end
 sts = -1;
 outchannel = 0;
+
+if nargin < 2 || isempty(options)
+  options = struct();
+end
 
 %% Default values
 
@@ -114,6 +108,7 @@ if strcmpi(options.mode, 'auto')
   end
 end
 
+
 %% load data
 alldata = struct();
 [sts_load, alldata.infos, alldata.data] = pspm_load_data(fn);
@@ -128,45 +123,21 @@ if lsts ~= 1; return; end
 %% conditionally mandatory input checks
 old_channeltype = pupil_data.header.chantype;
 
-if strcmp(gaze_x_data.header.units, 'pixel') || strcmp(gaze_y_data.header.units, 'pixel')
-  if ~isfield(options, 'screen_size_px')
-    warning('ID:invalid_input', 'options struct must contain ''screen_size_px''');
-    return;
-  end
-  if ~isfield(options, 'screen_size_mm')
-    warning('ID:invalid_input', 'options struct must contain ''screen_size_mm''');
-    return;
-  end
-  if ~isnumeric(options.screen_size_px) ||...
-      ~all(size(options.screen_size_px) == [1 2]) ||...
-      any(options.screen_size_px <= 0)
-    warning('ID:invalid_input',...
-      'options.screen_size_px must be a numeric array of size [1 2]');
-    return;
-  end
-  if ~isnumeric(options.screen_size_mm) ||...
-      ~all(size(options.screen_size_mm) == [1 2]) ||...
-      any(options.screen_size_mm <= 0)
-    warning('ID:invalid_input',...
-      'options.screen_size_mm must be a numeric array of size [1 2]');
-    return;
-  end
-else
-  options.screen_size_mm = [NaN NaN];
-  options.screen_size_px = [NaN NaN];
+if ~strcmp(gaze_x_data.header.units, 'mm') || ~strcmp(gaze_y_data.header.units, 'mm')
+    warning('ID:invalid_input', ... % change the ID:
+        'Gaze channels needs to be in (mm). Convert gaze first with pspm_convert_gaze and re-run pspm_pupil_correct_eyelink.');
+    return
 end
 
-%% gaze conversion
-gaze_x_mm = get_gaze_in_mm(gaze_x_data.data,...
-  gaze_x_data.header.units, options.screen_size_mm(1),...
-  options.screen_size_px(1));
-gaze_y_mm = get_gaze_in_mm(gaze_y_data.data,...
-  gaze_y_data.header.units, options.screen_size_mm(2),...
-  options.screen_size_px(2));
-pupil = pupil_data.data;
+% gaze_x_mm = gaze_x_data.data;
+% gaze_y_mm = gaze_y_data.data;
+% pupil = pupil_data.data;
+
+outdata.infos = infos;
+outdata.data  = {pupil_data; gaze_x_data; gaze_y_data};
 
 %% correction
-[sts_pupil_correct, pupil_corrected] = pspm_pupil_correct(pupil, gaze_x_mm, gaze_y_mm, options);
+[sts_pupil_correct, pupil_corrected] = pspm_pupil_correct(outdata, options);
 if sts_pupil_correct ~= 1; return; end
 
 %% save data
@@ -186,11 +157,6 @@ outchannel = out_id.channel;
 sts = 1;
 return
 
-function gaze_mm = get_gaze_in_mm(gaze_data, units, side_mm, side_px)
-if strcmp(units, 'pixel')
-  gaze_mm = gaze_data * (side_mm / side_px);
-else
-  [~, gaze_mm] = pspm_convert_unit(gaze_data, units, 'mm');
-end
+
 
 
