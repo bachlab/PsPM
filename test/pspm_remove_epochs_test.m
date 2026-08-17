@@ -256,13 +256,13 @@ methods(Test)
     
     function EventDataAddTestExpandEpochs(this)
         % Test removing epochs on event data (markers)
-        options = struct('channel_action', 'replace', 'expand_epochs', [1, 1]);
+        options = struct('channel_action', 'add', 'expand_epochs', [1, 1]);
         copyfile(this.backup_event_filename, this.event_filename); % Ensure fresh file
 
         % Run the function
         [sts, out_channel] = pspm_remove_epochs(this.event_filename, 1, this.epochs_filename, options);
         this.verifyEqual(sts, 1);
-        this.verifyEqual(out_channel, 1);
+        this.verifyEqual(out_channel, 2);
 
         % Load the data
         [~, ~, data] = pspm_load_data(this.event_filename, out_channel);

@@ -51,7 +51,7 @@ end
 sts = -1;
 sigma = 0.3;  % std for event-related and spontaneous sudomotor input function
 sigma_SCL = 1;% std for SCL changes
-sigma_offset = settings.dcm{1}.sigma_offset; %  offset for aSCR sigma to constrain the amplitude/sd trade-off
+sigma_offset = settings.dcm{1}.aSCR_sigma_offset; %  offset for aSCR sigma to constrain the amplitude/sd trade-off
 Theta_n = 7;  % number of parameters for the output function (the rest is for the input function)
 
 try
