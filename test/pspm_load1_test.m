@@ -267,6 +267,19 @@ classdef pspm_load1_test < matlab.unittest.TestCase
         end
       end
     end
+    function test_action_cond_invalid_values(this)
+        model.modelfile = 'test.mat';
+        model.modeltype = 'dcm';
+        model.modality = 'scr';
+        model.stats = [1 2; NaN 4; 3 4];
+        model.names = {'parameter 1', 'parameter 2'};
+        model.trlnames = {'CS+', 'CS+', 'CS-'};
+    
+        [sts, data] = this.verifyWarning( @() pspm_load1(model, 'cond'), 'ID:invalid_condition_values');
+    
+        this.verifyEqual(sts, 1);
+        this.verifyEqual(data.stats, [1 3; 3 4]);
+    end
     function test_action_all(this)
       for i=1:numel(this.modelfiles)
         f = this.modelfiles{i};

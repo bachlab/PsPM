@@ -748,8 +748,18 @@ for iSn = 1:numel(model.datafile)
   end
   % set disabled trials to NaN (trials during missing data stretches or
   % that are too close to session end)
-  dcm.stats(cTrl + find(trls(:, 1) == 0), :) = NaN;
+  disabled_trials = find(trls(:, 1) == 0);
+  dcm.stats(cTrl + disabled_trials, :) = NaN;
+
+  if ~isempty(disabled_trials)
+      warning('ID:inestimable_trials', ['%d trial(s) in data file ''%s'' could not be estimated '  'and were set to NaN. Trial indices: %s'], ...
+            numel(disabled_trials), ...
+            model.datafile{iSn}, ...
+            mat2str(disabled_trials(:)'));
+      [warnings{end+1, 2}, warnings{end+1, 1}] = lastwarn;
+  end
   cTrl = cTrl + size(trls, 1);
+
 end
 dcm.names = {};
 for iEvnt = 1:numel(dcm.sn{1}.a(1).a)
