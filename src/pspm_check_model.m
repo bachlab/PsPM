@@ -112,8 +112,12 @@ function [model, options] = pspm_check_model(model, options, modeltype)
 %   ├.substhresh: [optional, DCM (modeltype) only] Minimum duration (in seconds) of NaN
 %   │             periods to cause splitting up into subsessions which get evaluated
 %   │             independently (excluding NaN values). Default as 2.
-%   ├.constrained: [optional, DCM (modeltype) only] Constrained model for flexible
-%   │             responses which have fixed dispersion (0.3 s SD) but flexible latency.
+%   ├.constrained: [optional, DCM (modeltype) only] Constrain dispersion of flexible responses.
+%   │             The value stated here refers to the SD in seconds. 
+%   │             If set to the default of 0.3 s, dispersion is assumed to 
+%   │             be fixed. Otherwise, for each estimated response, the upper 
+%   │             limit of the dispersion is the minimum of this value and 
+%   │             1/2 the duration of the flexible response window.
 %   └────method : [optional, SF (modeltype) only] [string/cell_array]
 %                   [string] either 'auc', 'scl', 'dcm' (default), or 'mp'.
 %                   [cell_array] a cell array of methods mentioned above.
@@ -310,11 +314,12 @@ if strcmpi(modeltype, 'dcm')
     elseif ~isnumeric(model.channel) && ~strcmp(model.channel,'scr')
         warning('ID:invalid_input', 'Channel number must be numeric or SCR.'); return;
     end
-
+    
+    sigma_min = settings.dcm{1}.aSCR_sigma_offset;
     if ~isfield(model, 'constrained')
-        model.constrained = 0;
-    elseif ~any(ismember(model.constrained, [0, 1]))
-        warning('ID:invalid_input', 'Constrained model must be specified as 0 or 1.'); return;
+        model.constrained = 0.3;
+    elseif ~isnumeric(model.constrained) || isnan(model.constrained) || ~isscalar(model.constrained) || model.constrained <= sigma_min 
+        warning('ID:invalid_input', 'Flexible response dispersion must be numeric and larger than the minimum value specified in the settings, which is %0.1f s.', sigma_min); return;
     end
 
     if ~isfield(model, 'substhresh')

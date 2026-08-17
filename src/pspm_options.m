@@ -119,8 +119,6 @@ switch FunName
     options = autofill(options, 'overwrite',              2,          [0,1]             );
   case 'dcm'
     % 2.16 pspm_dcm --
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '>=', 0           );
-    % minimum dispersion (standard deviation) for flexible responses (second)
     options = autofill(options, 'crfupdate',              0,          '*Num'            );
     % update CRF priors to observed SCRF, or use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );
@@ -156,8 +154,6 @@ switch FunName
     % condition descriptions)
   case 'dcm_inv'
     % 2.17 pspm_dcm_inv --
-    options = autofill(options, 'aSCR_sigma_offset',      0.1,        '*Num'            );
-    % minimum dispersion (standard deviation) for flexible responses (second)
     options = autofill(options, 'crfupdate',              0,          '*Num'            );
     % update CRF priors to observed SCRF, or use pre-estimated priors, default to use pre-estimated priors
     options = autofill(options, 'crfupdate',              0,          1                 );

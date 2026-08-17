@@ -64,8 +64,8 @@ filter = pspm_cfg_selector_filter('run', job.data_options.filter);
 if isstruct(filter)
     model.filter = filter;
 end
-% normalization, subsession threshold
-model = pspm_update_struct(model, job.data_options, {'norm', 'substhresh'});
+% normalization, subsession threshold, lasttrialcutoff
+model = pspm_update_struct(model, job.data_options, {'norm', 'substhresh', 'lasttrialcutoff'});
 % constrained model
 model.constrained = job.data_options.constr_model;
 % channel number
@@ -77,6 +77,10 @@ if isfield(job.resp_options.rf, 'disabled')
 else
     options.rf = job.resp_options.rf.datafile;
 end
+
+
+
+
 % options
 options = pspm_update_struct(options, job.resp_options, {'crfupdate',...
                                                          'indrf',...
@@ -86,10 +90,13 @@ options = pspm_update_struct(options, job.inv_options, {'depth',...
                                                         'sfpost',...
                                                         'sffreq',...
                                                         'sclpre',...
-                                                        'sclpost',...
-                                                        'ascr_sigma_offset',...
-                                                        'dispwin',...
-                                                        'dispsmallwin'});
+                                                        'sclpost'});
+
+if isfield(job, 'disp_options')
+    options = pspm_update_struct(options, job.disp_options, {'dispwin','dispsmallwin'});
+end
+
+
 % condition and event names
 if isfield(options, 'trlnames')
   options.trlnames = [options.trlnames{:}]; % collapse over sessions
