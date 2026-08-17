@@ -2,16 +2,16 @@ function [bs, x] = pspm_bf_hprf_rew(td)
 % ● Description
 %   This function implements a canonical gamma response function for
 %   reward-conditioned heart period responses, based on exps 1-2 in Xia*, 
-%   Liu*, et al. (2024).
+%   Liu*, et al. (2025).
 % ● Format
 %   [bs, x] = pspm_bf_hprf_fc(TD)
 % ● Arguments
 %   *    td : time resolution in second.
 % ● References
 %   GLM for reward-conditioned bradycardia:
-%   Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (2024). Measuring
-%   human Pavlovian appetitive conditioning and memory retention.
-%   Pre-print.
+%   Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (2025). Measuring human
+%   Pavlovian reward conditioning and memory retention after consolidation.
+%   Psychophysiology, 62, e70058.
 % ● History
 %   Introduced in PsPM 7.0
 %   Written in 2021 by Oliver Keats Kälin and Yanfang Xia (University of Zurich)
