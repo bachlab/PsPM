@@ -269,6 +269,18 @@ switch action
     else
       for iCond = 1:numel(indata.(mdltype).condnames)
         condindx = strcmpi(indata.(mdltype).condnames{iCond}, indata.(mdltype).trlnames);
+
+        cond_stats = indata.(mdltype).stats(condindx, :);
+        nan_rows = find(any(isnan(cond_stats), 2));
+
+        if ~isempty(nan_rows)
+          warning('ID:invalid_condition_values', ['Condition ''%s'' in first-level model ''%s'' contains %d row(s) with NaN values. ', 'NaN values were omitted when computing condition statistics.'], ...
+            indata.(mdltype).condnames{iCond}, ...
+            indata.(mdltype).modelfile, ...
+            numel(nan_rows));
+        end
+
+
         data.stats(iCond, :) = mean(indata.(mdltype).stats(condindx, :), 1, 'omitnan');
       end
       data.names = indata.(mdltype).names;

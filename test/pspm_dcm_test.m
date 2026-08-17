@@ -146,7 +146,12 @@ classdef pspm_dcm_test < pspm_testcase
           'trlnames', {trialnames},...
           'eventnames', {eventnames} ...
           );
-        this.verifyWarningFree(@() pspm_dcm(model, options));
+        this.verifyWarning(  @() pspm_dcm(model, options), 'ID:inestimable_trials');
+        result = load(fn, 'dcm');
+        nan_trials = find(all(isnan(result.dcm.stats), 2));
+        this.verifyEqual(nan_trials, 5);
+        this.verifyTrue(any(strcmp( result.dcm.warnings(:, 1), 'ID:inestimable_trials')));
+
       end
     end
     function test_hra1_flex_cs_missing(this)
@@ -168,7 +173,13 @@ classdef pspm_dcm_test < pspm_testcase
           'trlnames', {trialnames},...
           'eventnames', {eventnames} ...
           );
-        this.verifyWarningFree(@() pspm_dcm(model, options));
+
+        this.verifyWarning(  @() pspm_dcm(model, options), 'ID:inestimable_trials');
+        result = load(fn, 'dcm');
+        nan_trials = find(all(isnan(result.dcm.stats), 2));
+        this.verifyEqual(nan_trials, [1; 2; 3; 5]);
+        this.verifyTrue(any(strcmp( result.dcm.warnings(:, 1), 'ID:inestimable_trials')));
+
       end
     end
     function test_hra1_flex_cs_nan(this)
@@ -189,7 +200,12 @@ classdef pspm_dcm_test < pspm_testcase
           'trlnames', {trialnames},...
           'eventnames', {eventnames} ...
           );
-        this.verifyWarningFree(@() pspm_dcm(model, options));
+        this.verifyWarning(  @() pspm_dcm(model, options), 'ID:inestimable_trials');
+        result = load(fn, 'dcm');
+        nan_trials = find(all(isnan(result.dcm.stats), 2));
+        this.verifyEqual(nan_trials, 5);
+        this.verifyTrue(any(strcmp( result.dcm.warnings(:, 1), 'ID:inestimable_trials')));
+
       end
     end
     function [timing, eventnames, trialnames] = ...
