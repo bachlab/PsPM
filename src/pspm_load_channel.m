@@ -15,7 +15,7 @@ function [sts, data_struct, infos, pos_of_channel, chantype_sts] = ...
 %               ▶ char
 %                 'marker'  returns the first marker channel
 %                           (see settings for permissible channel types)
-%                 any other channel type (e.g. 'scr')
+%                           any other channel type (e.g. 'scr')
 %                           returns the last channel of the respective type
 %                           (see settings for permissible channel types)
 %                 'pupil', 'sps', 'gaze_x', 'gaze_y', 'blink', 'saccade',

@@ -35,6 +35,21 @@ classdef pspm_pp_test < matlab.unittest.TestCase
       this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
       delete(fn);
     end
+    function median_test_add(this)
+      %generate testdata
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
+      fn = 'testfile549813.mat';
+      pspm_testdata_gen(channels, 10, fn);
+      %filter one channel
+      [sts, outchannel] = pspm_pp('median', fn, 3, 50, struct('channel_action', 'add'));
+      this.verifyTrue(sts == 1);
+      [sts, infos, data, filestruct] = pspm_load_data(fn, 'none');
+      this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
+      this.verifyTrue(filestruct.numofchan == numel(channels)+1, 'the returned file does not contain one more channels as the inputfile');
+      delete(fn);
+    end
     function butter_test(this)
       %generate testdata
       channels{1}.chantype = 'scr';
@@ -49,6 +64,22 @@ classdef pspm_pp_test < matlab.unittest.TestCase
       [sts, infos, data, filestruct] = pspm_load_data(fn, 'none');
       this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
       this.verifyTrue(filestruct.numofchan == numel(channels), 'the returned file contains not as many channels as the inputfile');
+      delete(fn);
+    end
+    function butter_test_add(this)
+      %generate testdata
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'scr';
+      fn = 'testfile549814.mat';
+      pspm_testdata_gen(channels, 10, fn);
+      %filter one channel
+      filt = struct('hporder', 1, 'lporder', 1, 'hpfreq', 1, 'lpfreq', 4, 'down', 8);
+      [sts, outchannel] = pspm_pp('butter', fn, 'scr', filt, struct('channel_action', 'add'));
+      this.verifyTrue(sts == 1);
+      [sts, infos, data, filestruct] = pspm_load_data(fn, 'none');
+      this.verifyTrue(sts == 1, 'the returned file couldn''t be loaded');
+      this.verifyTrue(filestruct.numofchan == numel(channels)+1, 'the returned file does not contain one more channels as the inputfile');
       delete(fn);
     end
   end

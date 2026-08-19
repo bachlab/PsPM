@@ -75,7 +75,7 @@ classdef pspm_dcm_test < pspm_testcase
       % options
       % numeric fields
       num_fields = {'depth', 'sfpre', 'sfpost', 'sffreq', 'sclpre', ...
-        'sclpost', 'aSCR_sigma_offset'};
+        'sclpost'};
       for f = 1:numel(num_fields)
         fl = num_fields{f};
         values = {'a', {}};

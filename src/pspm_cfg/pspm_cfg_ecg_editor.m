@@ -48,7 +48,7 @@ llim.help           = {};
 %% Limits
 lim                 = cfg_branch;
 lim.name            = 'Limit';
-lim.tag             = 'limit';
+lim.tag             = 'limits';
 lim.val             = {ulim, llim};
 lim.help            = pspm_cfg_help_format('pspm_ecg_editor', 'options.limits');
 
@@ -58,7 +58,7 @@ factor.name         = 'Factor';
 factor.tag          = 'factor';
 factor.strtype      = 'r';
 factor.num          = [1 1];
-factor.val          = {2};
+factor.val          = {1};
 factor.help         = pspm_cfg_help_format('pspm_ecg_editor', 'options.factor');
 
 %% Faulty detection

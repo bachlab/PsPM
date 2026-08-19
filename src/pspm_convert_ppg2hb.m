@@ -1,4 +1,4 @@
-function [ sts, outchannel ] = pspm_convert_ppg2hb( fn , options )
+function [ sts, outchannel ] = pspm_convert_ppg2hb(fn , options )
 % ● Description
 %   pspm_convert_ppg2hb converts a pulse oxymeter channel to heartbeats.
 %   Two methods are available: (1) Template-matching algorithm (method 
@@ -26,7 +26,7 @@ function [ sts, outchannel ] = pspm_convert_ppg2hb( fn , options )
 %   │                 resulting 'hb' channel separately.
 %   ├───.diagnostics: [true/FALSE]
 %   │                 displays some debugging information
-%   ├.channel_action: ['add'/'replace', 'replace']
+%   ├.channel_action: ['add'/'replace', 'add']
 %   │                 Defines whether the interpolated
 %   │                 data should be added or the corresponding channel
 %   │                 should be replaced.
@@ -67,6 +67,8 @@ outchannel = [];
 % -------------------------------------------------------------------------
 if nargin < 1
   warning('ID:invalid_input', 'No input. Don''t know what to do.'); return;
+elseif ~ischar(fn) 
+  warning('ID:invalid_input', 'Need file name char as first input.'); return;  
 elseif nargin < 2
   options = struct();
   options.channel = 'ppg';
@@ -84,14 +86,14 @@ fprintf('Heartbeat detection for %s ... \n', fn);
 % get data
 % -------------------------------------------------------------------------
 [nsts, data, infos, pos_of_channel] = pspm_load_channel(fn, options.channel, 'ppg');
-if nsts == -1, return; end
+if nsts < 1, return; end
 
 ppg = data.data;
 sr = data.header.sr;
 
 % process missing data
 nan_index = isnan(ppg);
-if ~isempty(nan_index)
+if any(nan_index)
   ppg(nan_index) = 0;
 end
 
@@ -131,12 +133,12 @@ if strcmpi(options.method, 'heartpy')
     py_removed =  py.array.array('d',(wd{'removed_beats'}));
     peak_list = double(py_peak_list) ;
     rejected_peaks = double(py_removed);
-    msg = sprintf(['Heart beat detection from PPG with cross correlation ',...
+    msg = sprintf(['Heart beat detection from PPG with HeartPy ',...
       'HB-timeseries added to data on %s'],...
-      date);
+      datetime("today"));
     hb = peak_list(:) / sr;
   catch
-    msg = sprintf('HeartPy did not find any heart beats on %s', date);
+    msg = sprintf('HeartPy did not find any heart beats on %s', datetime("today"));
     hb = [];
   end
 else
@@ -236,7 +238,7 @@ end
 %--------------------------------------------------------------------------
 % save data
 fprintf('Saving data.');
-msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeseries added to data on %s', date);
+msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeseries added to data on %s', datetime("today"));
 
 newdata.data = hb(:);
 newdata.header.sr = 1;
@@ -245,13 +247,13 @@ newdata.header.chantype = 'hb';
 
 write_options = struct();
 write_options.msg = msg;
-write_options.channel = pos_of_channel;
+% write_options.channel = pos_of_channel;
+write_options.channel = 0;
 
 % Replace last existing channel or save as new channel
 [nsts, nout] = pspm_write_channel(fn, newdata, options.channel_action, write_options);
-if ~nsts
-  return
-end
+if nsts < 1; return; end
+
 % user output
 fprintf('  done.\n');
 sts = 1;

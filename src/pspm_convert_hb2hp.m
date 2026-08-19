@@ -24,14 +24,10 @@ function [sts, outchannel] = pspm_convert_hb2hp(fn, sr, options)
 %   │                 Defines whether heart rate signal
 %   │                 should be added or the corresponding preprocessed
 %   │                 channel should be replaced.
-%   ├─────────.limit: [struct]
-%   │                 Specifies upper and lower limit for heart
-%   │                 periods. If the limit is exceeded, the values will
-%   │                 be ignored/removed and interpolated.
-%   ├─────────.upper: [numeric]
+%   ├───.limit_upper: [numeric]
 %   │                 Specifies the upper limit of the
 %   │                 heart periods in seconds. Default is 2.
-%   └─────────.lower: [numeric]
+%   └───.limit_lower: [numeric]
 %                     Specifies the lower limit of the
 %                     heart periods in seconds. Default is 0.2.
 % ● Outputs
@@ -70,14 +66,14 @@ end
 % get data
 % -------------------------------------------------------------------------
 [nsts, data, dinfos] = pspm_load_channel(fn, options.channel, 'hb');
-if nsts == -1, return; end
+if nsts < 1, return; end
 
 
 % interpolate
 % -------------------------------------------------------------------------
 hb  = data.data;
 ibi = diff(hb);
-idx = find(ibi > options.limit.lower & ibi < options.limit.upper);
+idx = find(ibi > options.limit_lower & ibi < options.limit_upper);
 hp = 1000 * ibi; % in ms
 newt = (1/sr):(1/sr):dinfos.duration;
 try
@@ -103,7 +99,7 @@ newdata.header.chantype = 'hp';
 o.msg.prefix = 'Heart beat converted to heart period and';
 try
   [nsts,winfos] = pspm_write_channel(fn, newdata, options.channel_action, o);
-  if nsts == -1, return;
+  if nsts < 1, return;
   end
 catch
   warning('ID:invalid_input', 'call of pspm_write_channel failed');

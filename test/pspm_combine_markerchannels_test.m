@@ -70,5 +70,25 @@ classdef pspm_combine_markerchannels_test < matlab.unittest.TestCase
       this.verifyTrue(fstruct.numofchan == 7, 'the output has a different size');
       delete(fn)
     end
+    function test_combine_specific_channel_number_zero(this)
+      fn = pspm_find_free_fn(this.fn1, '.mat');
+      channels{1}.chantype = 'scr';
+      channels{2}.chantype = 'hb';
+      channels{3}.chantype = 'marker';
+      channels{4}.chantype = 'marker';
+      channels{5}.chantype = 'marker';
+      channels{6}.chantype = 'marker';
+      channels{7}.chantype = 'marker';
+      channels{8}.chantype = 'marker';
+      channels{9}.chantype = 'marker';
+      pspm_testdata_gen(channels, this.duration1, fn);
+      % test defaultly combining all marker channels
+      sts = pspm_combine_markerchannels(fn, struct('marker_chan_num', 0));
+      this.verifyTrue(sts == 1, 'the function run successfully');
+      [sts_out, ~, ~, fstruct] = pspm_load_data(fn, 'none');
+      this.verifyTrue(sts_out == 1, 'the processed file couldn''t be loaded');
+      this.verifyTrue(fstruct.numofchan == numel(channels)+1, 'the output has a different size');
+      delete(fn)
+    end
   end
 end

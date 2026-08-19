@@ -22,7 +22,7 @@ global settings
 if isempty(settings)
   pspm_init;
 end
-sts = -1; gaze_x = []; gaze_y = [];
+sts = -1; gaze_x = []; gaze_y = []; 
 
 % check laterality identifier
 if ismember(chantype, {'r', 'l', 'c', ''})
@@ -32,6 +32,7 @@ else
     if eyests < 1, return, end
 end
 
+neweye = '';
 if ~strcmpi(eye, '')
     neweye = ['_', eye];
 end

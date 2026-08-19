@@ -17,6 +17,12 @@ classdef pspm_resp_pp_test < pspm_testcase
       assert(sts == 1);
     end
   end
+  methods(TestMethodSetup)
+    function restore_before_each_test(this)
+     sts = copyfile(this.backup_filename, this.input_filename);
+     assert(sts == 1);
+    end
+  end
   methods(Test)
     function invalid_input(this)
       % no argument
@@ -60,6 +66,45 @@ classdef pspm_resp_pp_test < pspm_testcase
         this.verifyThat(old_data{i}.data, IsEqualTo(new_data{i}.data, 'Within', RelativeTolerance(1e-10)));
       end
     end
+    function replace_original_channel_with_single_output(this)
+      [sts, ~, data_before] = pspm_load_data(this.input_filename);
+      assert(sts == 1);
+      assert(numel(data_before) == 1);
+      assert(strcmpi(data_before{1}.header.chantype, 'resp'));
+
+      % add
+      options = this.options;
+      options.channel = this.resp_channel;
+      options.datatype = {'rp'};
+      options.channel_action = 'add';
+
+      [sts, outchannel] = pspm_resp_pp(this.input_filename, this.sampling_rate, options);
+      assert(sts == 1);
+      assert(isequal(outchannel, 2));
+
+      [sts, ~, data_after] = pspm_load_data(this.input_filename);
+      assert(sts == 1);
+      assert(numel(data_after) == 2);
+      assert(strcmpi(data_after{2}.header.chantype, 'rp'));
+      assert(data_after{2}.header.sr == this.sampling_rate);
+      assert(~isempty(data_after{2}.data));
+
+      % replace
+      options.channel_action = 'replace';
+
+      [sts, outchannel] = pspm_resp_pp(this.input_filename, this.sampling_rate, options);
+      assert(sts == 1);
+      assert(isequal(outchannel, 2));
+
+      [sts, ~, data_after] = pspm_load_data(this.input_filename);
+      assert(sts == 1);
+      assert(numel(data_after) == 2);
+      assert(strcmpi(data_after{2}.header.chantype, 'rp'));
+      assert(data_after{2}.header.sr == this.sampling_rate);
+      assert(~isempty(data_after{2}.data));
+
+
+    end
     % TODO: Write more tests
   end
   methods(TestClassTeardown)
@@ -67,6 +112,10 @@ classdef pspm_resp_pp_test < pspm_testcase
       sts = copyfile(this.backup_filename, this.input_filename);
       assert(sts == 1);
       delete(this.backup_filename);
+      
+      if exist(this.backup_filename, 'file')
+        delete(this.backup_filename);
+      end
     end
   end
 end

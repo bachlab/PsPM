@@ -111,7 +111,7 @@ if ~strcmpi(channel_action, 'add')
         for iChannel = 1:numel(newdata)
             warning off
             [sts, ~, pos_of_channels] = pspm_select_channels(data, ...
-                newdata{iChannel}.header.chantype, newdata{iChannel}.header.units);
+                newdata{iChannel}.header.chantype);
             warning on
             if sts < 1
                 channeli(iChannel) = 0;
@@ -132,8 +132,7 @@ if ~strcmpi(channel_action, 'add')
                 warning off
                 sts = pspm_select_channels( ...
                     data(options.channel(iChannel)), ...
-                    newdata{iChannel}.header.chantype, ...
-                    newdata{iChannel}.header.units);
+                    newdata{iChannel}.header.chantype);
                 warning on
                 if sts < 1
                     channeli(iChannel) = 0;
