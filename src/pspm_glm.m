@@ -143,8 +143,8 @@
 %       Psychophysiology, 62, e70058.
 %   * Respiration analysis
 %  [10] GLM for evoked respiratory responses:
-%       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model for event-
-%       related respiration responses. Journal of Neuroscience Methods, 270, 147–155.
+%       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model for
+%       event-related respiration responses. Journal of Neuroscience Methods, 270, 147–155.
 %  [11] GLM for fear-conditioned respiration amplitude responses:
 %       Castegnetti G, Tzovara A, Staib M, Gerster S, Bach DR (2017).
 %       Assessing fear learning via conditioned respiratory amplitude

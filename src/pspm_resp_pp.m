@@ -38,8 +38,8 @@ function [sts, outchannel] = pspm_resp_pp(fn, sr, options)
 %   *  channel_index: index of channel containing the processed data
 %
 % ● References
-%   [1] Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model for event-
-%       related respiration responses. Journal of Neuroscience Methods, 270, 147–155.
+%   [1] Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model for
+%       event-related respiration responses. Journal of Neuroscience Methods, 270, 147–155.
 %
 % ● History
 %   Introduced in PsPM 3.0
