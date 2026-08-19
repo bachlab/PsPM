@@ -21,8 +21,8 @@ By default, screen centre is assumed as fixation point. If an explicit fixation 
 
 ## Format
 
-`[sts, channel_index] = pspm_find_valid_fixations(fn, bitmap, options)` or
-`[sts, channel_index] = pspm_find_valid_fixations(fn, circle_degree, distance, unit, options)`
+`[sts, channel_index, fn] = pspm_find_valid_fixations(fn, bitmap, options)` or
+`[sts, channel_index, fn] = pspm_find_valid_fixations(fn, circle_degree, distance, unit, options)`
 
 
 ## Arguments
@@ -37,15 +37,25 @@ By default, screen centre is assumed as fixation point. If an explicit fixation 
 | options | See following fields. |
 | options.fixation_point | A nx2 vector containing x and y of the fixation point (with respect to the given resolution, and in the eyetracker coordinate system). n should equal either 1 (constant fixation point) or the length of the actual data. If resolution is not defined the values are given in percent. Therefore (0.5 0.5) would correspond to the middle of the screen. Default is (0.5 0.5). Only taken into account if there is no bitmap. |
 | options.resolution | Resolution with which the fixation point is defined (Maximum value of the x and y coordinates). This can be the screen resolution in pixels (e.g. (1280 1024)) or the width and height of the screen in cm (e.g. (50 30)). Default is (1 1). Only taken into account if there is no bitmap. |
+| options.screen_dim | Only considered if .plot_gaze_coords is passed; used plot the gaze data and circle on the actual screen dimensions rather than using auto scaling. Input should follow the format: [x_dim, y_dim]. |
 | options.plot_gaze_coords | Define whether to plot the gaze coordinates for visual inspection of the validation process. Default is false. |
 | options.channel_action | Define whether to add or replace the data. Default is 'add'. Possible values are 'add' or 'replace'. |
 | options.add_invalid | [0/1] If this option is enabled, an extra channel will be written containing information about the valid samples. Data points equal to 1 correspond to invalid fixation. Default is not to add this channel. |
 | options.channel | Choose channels in which the data should be set to NaN during invalid fixations. This can be a channel number, any channel type including 'pupil' (which will select a channel according to the precedence order specified in pspm_load_channel), or 'both', which will work on 'pupil_r' and 'pupil_l' and then update channel statistics and best eye. The selected channel must be an eyetracker channel, and the file must contain the corresponding gaze channel(s) in the correct units: distance units for mode "fixation" and distance or pixel units for mode "bitmap". Default is 'pupil'. |
 
 
+## Outputs
+
+| Variable | Definition |
+|:--|:--|
+| sts | Status flag: 1 = success, -1 = error. |
+| pos_of_channel | Index/indices of modified or newly added channels. |
+| fn | Unchanged if called with a filename (data is saved); updated data structure if called with a data structure. |
+
+
 ## References
 
-[1] Korn CW & Bach DR (2016). A solid frame for the window on cognition: Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.
+[1] Korn CW & Bach DR (2016). A solid frame for the window on cognition: Modeling event-related pupil responses. Journal of Vision, 16(3), 28.
 
 
 

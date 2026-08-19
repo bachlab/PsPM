@@ -12,7 +12,9 @@ pspm_pupil_correct_eyelink performs pupil foreshortening error (PFE) correction 
 
 For details of the exact scaling, see pspm_pupil_correct.
 
-In order to perform PFE, we need both pupil and gaze data. If the gaze data in the given file is in pixels, we need information about the screen dimensions and resolution to calculate the pixel to milimeter ratio. On the other hand, if the gaze data is in mm, cm, inches, etc., there is no need to enter any screen size related information. If the gaze data is in pixels and screen information is not given, the function emits a warning and exits early. 
+In order to perform PFE, we need both pupil and gaze data. 
+
+Gaze data must be provided in mm. If gaze data is not in mm, it needs to be convert first using pspm_convert_gaze.
 
 
 ## Format
@@ -24,12 +26,10 @@ In order to perform PFE, we need both pupil and gaze data. If the gaze data in t
 
 | Variable | Definition |
 |:--|:--|
-| fn | Path to a PsPM imported Eyelink data. |
+| fn | Path to a PsPM imported Eyelink data must string . |
 | options | See following fields. |
 | options.mode | Conversion mode. Must be one of 'auto' or 'manual'. If 'auto', then optimized conversion parameters in Table 3 of the reference will be used. In 'auto' mode, options struct must contain C_z parameter described below. Further, C_z must be one of 495, 525 or 625. The other parameters will be set according to which of these three C_z is equal to. If 'manual', then all of C_x, C_y, C_z, S_x, S_y, S_z fields must be provided according to your recording setup. Note that in order to use 'auto' mode, your camera-screen-eye setup must match exactly one of the three sample setups given in the reference. |
 | options.C_z | See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>. |
-| options.screen_size_px | [optional] Screen size (width x height). This field is required only if the gaze data in the given PsPM file is in pixels. (Unit: pixel). |
-| options.screen_size_mm | [optional] Screen size (width x height). This field is required only if the gaze data in the given PsPM file is in pixels. (Unit: mm) [See <a href="matlab:help pspm_convert_unit">pspm_convert_unit</a> if you need inch to mm conversion.]. |
 | options.C_x | [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>. |
 | options.C_y | [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>. |
 | options.S_x | [optional] See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>. |
@@ -48,7 +48,7 @@ In order to perform PFE, we need both pupil and gaze data. If the gaze data in t
 
 ## References
 
-[1] Hayes, Taylor R., and Alexander A. Petrov (2016). Mapping and correcting the influence of gaze position on pupil size measurements. Behavior Research Methods 48.2, 510-527.
+[1] Hayes TR & Petrov AA (2016). Mapping and correcting the influence of gaze position on pupil size measurements. Behavior Research Methods, 48(2), 510–527.
 
 
 

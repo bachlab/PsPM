@@ -27,15 +27,22 @@ Two methods are available: (1) Template-matching algorithm (method "classic"): F
 | options.method | 'classic' (default) or 'heartpy'. |
 | options.channel | [optional, numeric/string, default: 'ppg', i.e. last PPG channel in the file] Channel type or channel ID to be preprocessed. Channel can be specified by its index (numeric) in the file, or by channel type (string). If there are multiple channels with this type, only the last one will be processed. If you want to process several PPG channels in a PsPM file, call this function multiple times with the index of each channel. In this case, set the option 'channel_action' to 'add', to store each resulting 'hb' channel separately. |
 | options.diagnostics | [true/FALSE] displays some debugging information. |
-| options.channel_action | ['add'/'replace', 'replace'] Defines whether the interpolated data should be added or the corresponding channel should be replaced. |
+| options.channel_action | ['add'/'replace', 'add'] Defines whether the interpolated data should be added or the corresponding channel should be replaced. |
 | options.missing | allows to specify missing (e. g. artefact) epochs in the data file. See pspm_get_timing for epoch definition. This must always be specified in SECONDS. These epochs will be set to 0 for the detection. Default: no missing values. |
 | options.lsm | [integer] for method 'classic' large spikes mode compensates for large spikes while generating template by removing the [integer] largest percentile of spikes from consideration. |
 | options.python_path | [char] for method 'heartpy' The path where python can be found. Mandatory if python environment is not yet set up. |
 
 
+## Outputs
+
+| Variable | Definition |
+|:--|:--|
+| channel_index | index of channel containing the processed data. |
+
+
 ## References
 
-[1] van Gent, P, Farah, H, van Nes, N, & van Arem, B. (2019) Heartpy:  A novel heart rate algorithm for the analysis of noisy signals.  Transportation Research Part F: Traffic Psychology and Behaviour 66,  368–378. 
+[1] van Gent P, Farah H, van Nes N, van Arem B (2019). HeartPy: A novel heart rate algorithm for the analysis of noisy signals. Transportation Research Part F: Traffic Psychology and Behaviour, 66, 368–378.
 
 
 

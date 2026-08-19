@@ -44,7 +44,7 @@ pspm_convert_ecg2hb_amri performs R-peak detection from an ECG signal using the 
 
 ## References
 
-[1] Liu, Zhongming, et al. "Statistical feature extraction for artifact removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012): 2073-2087.
+[1] Liu Z, de Zwart JA, van Gelderen P, Kuo LW, Duyn JH (2012). Statistical feature extraction for artifact removal from concurrent fMRI-EEG recordings. NeuroImage, 59(3), 2073–2087.
 
 
 
