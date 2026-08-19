@@ -65,7 +65,7 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   │             maximum in a step. Default: 0.1
 %   ├.baseline_jump:
 %   │             [Optional] A numerical value to determine how many times of data
-%   │             jumpping will be considered for detecting baseline
+%   │             jumping will be considered for detecting baseline
 %   │             alteration. For example, when .baseline is set to be 2,
 %   │             if the maximum value of the window is more than 2 times
 %   │             than the 5% percentile of the values in the window, such
@@ -90,7 +90,7 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   *  missing_epochs_file: file that contains the missing epochs
 % ● Internal Functions
 %   filter_to_epochs
-%                 Return the start and end points of epoches (2D array) by the
+%                 Return the start and end points of epochs (2D array) by the
 %                 given filter (1D array).
 % ● Key Variables of Internal Functions
 %   filt          A filtering array consisting of 0 and 1 for selecting data
@@ -106,10 +106,10 @@ function [sts, out] = pspm_scr_pp(datafile, options)
 %   Updated in 2020      by Samuel Maxwell (UCL)
 %              2021-2024 by Teddy
 % ● References
-% [1] Kleckner IR et al. (2018). "Simple, Transparent, and Flexible 
-%     Automated Quality Assessment Procedures for Ambulatory Electrodermal 
-%     Activity Data. IEEE Transactions on Biomedical Engineering, 65 (7), 
-%     1460-1467.
+% [1] Kleckner IR, Jones RM, Wilder-Smith O, Wormwood JB, Akcakaya M, Quigley KS,
+%     Lord C, Goodwin MS (2018). Simple, Transparent, and Flexible Automated Quality
+%     Assessment Procedures for Ambulatory Electrodermal Activity Data. IEEE Transactions
+%     on Biomedical Engineering, 65(7), 1460–1467.
 
 %% Initialise
 global settings

@@ -97,8 +97,8 @@ function [sts, outchannel] = pspm_pupil_pp (fn, options)
 % ● Outputs
 %   * channel_index: index of channel containing the processed data.
 % ● References
-%   [1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size
-%       data: Guidelines and code." Behavior research methods (2018): 1-7.
+%   [1] Kret ME & Sjak-Shie EE (2019). Preprocessing pupil size data: Guidelines and code.
+%       Behavior Research Methods, 51, 1336–1342.
 %   [2]  https://github.com/ElioS-S/pupil-size
 % ● History
 %   Introduced in PsPM version ?

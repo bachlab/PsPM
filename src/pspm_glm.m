@@ -132,30 +132,27 @@
 %       Psychophysiology, 54, 330-343.
 %   * Heart rate/period analysis
 %   [7] GLM for evoked heart period responses:
-%       Paulus PC, Castegnetti G, & Bach DR (2016). Modeling event-related
-%       heart period responses. Psychophysiology, 53, 837-846.
+%       Paulus PC, Castegnetti G, Bach DR (2016). Modeling event-related heart period
+%       responses. Psychophysiology, 53, 837–846.
 %   [8] GLM for fear-conditioned bradycardia:
-%       Castegnetti G, Tzovara A, Staib M, Paulus PC, Hofer N, & Bach DR
-%       (2016). Modelling fear-conditioned bradycardia in humans.
-%       Psychophysiology, 53, 930-939.
+%       Castegnetti G, Tzovara A, Staib M, Paulus PC, Hofer N, Bach DR (2016). Modeling
+%       fear-conditioned bradycardia in humans. Psychophysiology, 53, 930–939.
 %   [9] GLM for reward-conditioned bradycardia:
 %       Xia Y, Liu H, Kälin OK, Gerster S, Bach DR (2025). Measuring human
 %       Pavlovian reward conditioning and memory retention after consolidation.
 %       Psychophysiology, 62, e70058.
 %   * Respiration analysis
 %  [10] GLM for evoked respiratory responses:
-%       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model
-%       for event-related respiration responses. Journal of Neuroscience
-%       Methods, 270, 174-155.
+%       Bach DR, Gerster S, Tzovara A, Castegnetti G (2016). A linear model for event-
+%       related respiration responses. Journal of Neuroscience Methods, 270, 147–155.
 %  [11] GLM for fear-conditioned respiration amplitude responses:
 %       Castegnetti G, Tzovara A, Staib M, Gerster S, Bach DR (2017).
 %       Assessing fear learning via conditioned respiratory amplitude
 %       responses. Psychophysiology, 54, 215-223.
 %   * Startle eye-blink analysis
 %  [12] GLM for startle eye-blink responses:
-%       Khemka S, Tzovara A, Gerster S, Quednow B and Bach DR (2017)
-%       Modeling Startle Eyeblink Electromyogram to Assess
-%       Fear Learning. Psychophysiology
+%       Khemka S, Tzovara A, Gerster S, Quednow BB, Bach DR (2017). Modeling startle
+%       eyeblink electromyogram to assess fear learning. Psychophysiology, 54, 204–214.
 %   * Eye gaze analysis
 %  [13] GLM for saccadic scanpath speed:
 %       Xia Y, Melinščak F, Bach DR (2020). Saccadic scanpath length: an

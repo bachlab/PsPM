@@ -44,8 +44,8 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %                     processed data (if options.fn is not provided) or 
 %                     the output file name(s)
 % ● References
-%   Korn CW & Bach DR (2016). A solid frame for the window on cognition:
-%   Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.
+%   Korn CW & Bach DR (2016). A solid frame for the window on cognition: Modeling
+%   event-related pupil responses. Journal of Vision, 16(3), 28.
 %
 % ● History
 %   Introduced In PsPM 3.1

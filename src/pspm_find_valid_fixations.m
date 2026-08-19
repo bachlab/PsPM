@@ -84,8 +84,8 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %   *             fn : Unchanged if called with a filename (data is saved);
 %                      updated data structure if called with a data structure
 % ● References
-%   [1]  Korn CW & Bach DR (2016). A solid frame for the window on cognition:
-%        Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.
+%   [1] Korn CW & Bach DR (2016). A solid frame for the window on cognition: Modeling
+%       event-related pupil responses. Journal of Vision, 16(3), 28.
 % ● Developer
 %   Additional i/o options for recursive calls are not included in the help.
 %   (1) fn can be a data structure as permitted by pspm_load_data,

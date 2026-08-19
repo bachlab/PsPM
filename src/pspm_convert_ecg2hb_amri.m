@@ -56,9 +56,9 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   *            sts: status marker showing whether the function works normally.
 %   *  channel_index: index of channel containing the processed data
 % ● References
-%   [1] Liu, Zhongming, et al. "Statistical feature extraction for artifact
-%       removal from concurrent fMRI-EEG recordings." Neuroimage 59.3 (2012):
-%       2073-2087.
+%   [1] Liu Z, de Zwart JA, van Gelderen P, Kuo LW, Duyn JH (2012). Statistical feature
+%       extraction for artifact removal from concurrent fMRI-EEG recordings. NeuroImage,
+%       59(3), 2073–2087.
 %   [2] http://www.amri.ninds.nih.gov/software.html
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
