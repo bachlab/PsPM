@@ -26,7 +26,7 @@ Gaze data must be provided in mm. If gaze data is not in mm, it needs to be conv
 
 | Variable | Definition |
 |:--|:--|
-| fn | Path to a PsPM imported Eyelink data must string . |
+| fn | Path to a PsPM-imported EyeLink data file. Must be a char. |
 | options | See following fields. |
 | options.mode | Conversion mode. Must be one of 'auto' or 'manual'. If 'auto', then optimized conversion parameters in Table 3 of the reference will be used. In 'auto' mode, options struct must contain C_z parameter described below. Further, C_z must be one of 495, 525 or 625. The other parameters will be set according to which of these three C_z is equal to. If 'manual', then all of C_x, C_y, C_z, S_x, S_y, S_z fields must be provided according to your recording setup. Note that in order to use 'auto' mode, your camera-screen-eye setup must match exactly one of the three sample setups given in the reference. |
 | options.C_z | See <a href="matlab:help pspm_pupil_correct">pspm_pupil_correct</a>. |
