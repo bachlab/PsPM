@@ -10,7 +10,7 @@ function [sts, outchannel] = pspm_pupil_correct_eyelink(fn, options)
 % ● Format
 %   [sts, channel_index] = pspm_pupil_correct_eyelink(fn, options)
 % ● Arguments
-%   *          fn : Path to a PsPM imported Eyelink data must    string .
+%   *          fn : Path to a PsPM-imported EyeLink data file. Must be a char.
 %   ┌─────options
 %   ├────────mode : Conversion mode. Must be one of 'auto' or 'manual'. If 'auto', then
 %   │               optimized conversion parameters in Table 3 of the reference will be used. In
