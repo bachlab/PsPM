@@ -29,12 +29,21 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
-sourceinfo = [];
+sourceinfo = struct();
 
 % load data
 % -------------------------------------------------------------------------
 inputdata = load(datafile);
 
+% store original recording offset
+sourceinfo.start_sample = inputdata.start_sample;
+sourceinfo.start_sample_unit = inputdata.isi_units;
+
+if inputdata.start_sample ~= 0
+  warning('ID:acqmat_nonzero_start', ...
+    'AcqKnowledge data starts at %g %s relative to the original recording.', ...
+    inputdata.start_sample, strtrim(inputdata.isi_units));
+end
 
 % extract individual channels
 % -------------------------------------------------------------------------
@@ -58,10 +67,6 @@ for k = 1:numel(import)
     import{k}.sr = 1000/inputdata.isi;
   else
     warning('\nUnsupported modality - please notify the developers.\n'); return;
-  end
-
-  if inputdata.start_sample ~= 0
-    warning('\nUnsupported sampling scheme - please notify the developers.\n'); return;
   end
 
   % get data & data units
