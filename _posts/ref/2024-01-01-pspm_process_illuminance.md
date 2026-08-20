@@ -46,7 +46,7 @@ The illuminance file should be a .mat file with a vector variable called Lx. In 
 
 ## References
 
-Korn CW & Bach DR (2016). A solid frame for the window on cognition: Modelling event-related pupil responses. Journal of Vision, 16:28,1-6.
+Korn CW & Bach DR (2016). A solid frame for the window on cognition: Modeling event-related pupil responses. Journal of Vision, 16(3), 28.
 
 
 

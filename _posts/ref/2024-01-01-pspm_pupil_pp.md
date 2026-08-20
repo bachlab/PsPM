@@ -8,9 +8,9 @@ permalink: /ref/pspm_pupil_pp
 
 ## Description
 
-pspm_pupil_pp preprocesses pupil diameter signals given in any unit of measurement, with a possibility of combining left/right pupil. 
+pspm_pupil_pp preprocesses pupil diameter signals provided in millimeters (mm), with the option to combine left and right pupil data.
 
-It performs the steps described in [1]. This function uses a modified version of [2]. The modified version with a list of changes from the original is shipped with PsPM under pupil-size directory.
+If the measurement unit is not 'mm' but one of the supported units ('cm', 'dm', 'm', 'km', 'in', 'inches'), it will be automatically converted to mm. It performs the steps described in [1]. This function uses a modified version of [2]. The modified version with a list of changes from the original is shipped with PsPM under pupil-size directory.
 
 Pupil preprocessing is performed in three main steps: 1. In the first step, the "valid" samples are determined. Samples that are not valid are not used in the second step. Determining valid samples is done by the following procedures: (a) Range filtering: Pupil size values outside a predefined range are considered invalid. This range is configurable.
 
@@ -61,7 +61,7 @@ Pupil preprocessing is performed in three main steps: 1. In the first step, the 
 
 ## References
 
-[1] Kret, Mariska E., and Elio E. Sjak-Shie. "Preprocessing pupil size data: Guidelines and code." Behavior research methods (2018): 1-7.
+[1] Kret ME & Sjak-Shie EE (2019). Preprocessing pupil size data: Guidelines and code. Behavior Research Methods, 51, 1336–1342.
 
 
 

@@ -39,12 +39,12 @@ If a missing epochs filename is specified, the detected epochs will be written t
 | options.deflection_threshold | [Optional] Define an threshold in original data units for a slope to pass to be considered in the filter. This is useful, for example, with oscillatory wave data due to limited A/D bandwidth. The slope may be steep due to a jump between voltages but we likely do not want to consider this to be filtered. A value of 0.1 would filter oscillatory behaviour with threshold less than 0.1v but not greater. Default: 0.1. |
 | options.data_island_threshold | [Optional] A float in seconds to determine the maximum length of data between NaN epochs. Islands of data shorter than this threshold will be removed. Default: 0 s - no effect on filter. |
 | options.expand_epochs | [Optional] A float in seconds to determine by how much data on the flanks of artefact epochs will be removed. Default: 0.5 s. |
-| options.clipping_step_size | [Optional] A numerical value specifying the step size in moving average algorithm for detecting clipping. Default: 10. |
-| options.clipping_window_size | [Optional] A numerical value specifying the window size in moving average algorithm for detecting clipping. Default: 100. |
+| options.clipping_step_size | [Optional] A numerical value specifying the step size in moving average algorithm for detecting clipping. Default: 10 s. |
+| options.clipping_window_size | [Optional] A numerical value specifying the window size in moving average algorithm for detecting clipping. Default: 100 s. |
 | options.clipping_threshold | [Optional] A float between 0 and 1 specifying the proportion of local maximum in a step. Default: 0.1. |
-| options.baseline_jump | [Optional] A numerical value to determine how many times of data jumpping will be considered for detecting baseline alteration. For example, when .baseline is set to be 2, if the maximum value of the window is more than 2 times than the 5% percentile of the values in the window, such periods will be considered as baseline alteration. Default: 1.5. |
+| options.baseline_jump | [Optional] A numerical value to determine how many times of data jumping will be considered for detecting baseline alteration. For example, when .baseline is set to be 2, if the maximum value of the window is more than 2 times than the 5% percentile of the values in the window, such periods will be considered as baseline alteration. Default: 1.5. |
 | options.include_baseline | [Optional] A bool value to determine if detected baseline alteration will be included in the calculated clippings. Default: 0 (not to include baseline alteration in clippings). |
-| options.overwrite | [logical] (0 or 1) [Optional] Define whether to overwrite existing missing epochs files or not (default). Will only be used if options.missing_epochs_filename is specified. |
+| options.overwrite | [logical] (0 or 1 or 2) [Optional] Define whether to overwrite existing missing epochs files or not (default). Will only be used if options.missing_epochs_filename is specified. |
 | options.channel_action | [Optional] Accepted values: 'add'/'replace' Defines whether the new channel should be added or the previous outputs of this function should be replaced. Default: 'add'. Will not be used if options.missing_epochs_filename is specified. |
 
 
@@ -58,7 +58,7 @@ If a missing epochs filename is specified, the detected epochs will be written t
 
 ## References
 
-[1] Kleckner IR et al. (2018). "Simple, Transparent, and Flexible  Automated Quality Assessment Procedures for Ambulatory Electrodermal  Activity Data. IEEE Transactions on Biomedical Engineering, 65 (7),  1460-1467.
+[1] Kleckner IR, Jones RM, Wilder-Smith O, Wormwood JB, Akcakaya M, Quigley KS, Lord C, Goodwin MS (2018). Simple, Transparent, and Flexible Automated Quality Assessment Procedures for Ambulatory Electrodermal Activity Data. IEEE Transactions on Biomedical Engineering, 65(7), 1460–1467.
 
 
 
