@@ -45,10 +45,9 @@ function [ sts, outchannel ] = pspm_convert_ppg2hb(fn , options )
 % ● Outputs
 %   *  channel_index: index of channel containing the processed data
 % ● References
-%   [1] van Gent, P, Farah, H, van Nes, N, & van Arem, B. (2019) Heartpy: 
-%   A novel heart rate algorithm for the analysis of noisy signals. 
-%   Transportation Research Part F: Traffic Psychology and Behaviour 66, 
-%   368–378. 
+%   [1] van Gent P, Farah H, van Nes N, van Arem B (2019). HeartPy: A novel heart rate
+%       algorithm for the analysis of noisy signals. Transportation Research Part F: Traffic
+%       Psychology and Behaviour, 66, 368–378.
 % ● History
 %   Introduced in PsPM 3.1
 %   Written in 2016 by Samuel Gerster (University of Zurich)

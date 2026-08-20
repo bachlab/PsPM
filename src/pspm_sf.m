@@ -73,12 +73,12 @@ function [sts, sf] = pspm_sf(model, options)
 %       causal modelling of spontaneous fluctuations in skin conductance.
 %       Psychophysiology, 48, 252-257.
 %   [2] MP approximation:
-%       Bach DR, Staib M (2015). A matching pursuit algorithm for inferring
-%       tonic sympathetic arousal from spontaneous skin conductance
-%       fluctuations. Psychophysiology, 52, 1106-12.
+%       Bach DR & Staib M (2015). A matching pursuit algorithm for inferring tonic
+%       sympathetic arousal from spontaneous skin conductance fluctuations. Psychophysiology, 52,
+%       1106–1112.
 %   [3] AUC for SF:
 %       Bach DR, Friston KJ, Dolan RJ (2010). Analytic measures for the
-%       quantification of arousal from spontanaeous skin conductance
+%       quantification of arousal from spontaneous skin conductance
 %       fluctuations. International Journal of Psychophysiology, 76, 52-55.
 %
 % ● Developer
