@@ -9,7 +9,7 @@ if isempty(settings), pspm_init; end;
 
 vars = struct();
 vars.modality = 'HPR';
-vars.modspec = 'hp_fc';
+vars.modspec = 'hp_rew';
 
 % load default settings
 glm_hp_rew = pspm_cfg_glm(vars);
