@@ -8,7 +8,7 @@
 %   analysis of fMRI data. 
 %   The user specifies events for different conditions. These are used to 
 %   estimate the mean response amplitude per condition. These mean 
-%   amplitudes can later be expored for statistical analysis, using 
+%   amplitudes can later be exported for statistical analysis, using 
 %   pspm_export.
 % ● Format
 %   [sts, glm] = pspm_glm(model, options)
