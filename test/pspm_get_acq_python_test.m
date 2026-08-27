@@ -1,6 +1,6 @@
 classdef pspm_get_acq_python_test < pspm_get_superclass
   % ● Description
-  % unittest class for the pspm_get_mat function
+  % unittest class for the pspm_get_acq_python function
   % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
@@ -60,10 +60,6 @@ classdef pspm_get_acq_python_test < pspm_get_superclass
       this.verifyWarning(@()pspm_get_acq_python(fn, import), 'ID:channel_not_contained_in_file');
     end
     function get_acq_returns_same_data_as_acqknowledge_exported_mat_python(this)
-      global settings
-      if isempty(settings), pspm_init; end
-      % test for import 7 with multiple sampling rate !!!!!!!!!
-
       fpath_acq = 'ImportTestData/acq/impedance_acq.acq';
       import_acq = {struct( ...
         'type', 'scr', ...
@@ -81,6 +77,20 @@ classdef pspm_get_acq_python_test < pspm_get_superclass
       import matlab.unittest.constraints.RelativeTolerance
       this.verifyThat(orig_data, IsEqualTo(acq_data, 'Within', RelativeTolerance(1e-10)));
     end
+     function imports_channels_with_different_sample_rates(this)
+    
+      fn = this.testcases{7}.pth;
+      import = this.testcases{7}.import;
+      import = this.assign_chantype_number(import);
+    
+      [sts, import, ~] = pspm_get_acq_python(fn, import);
+    
+      this.verifyEqual(sts, 1);
+    
+      expected_sr = [250, 1000, 1000, 1000, 1000, 1000];
+    
+      for k = 1:numel(import);  this.verifyEqual(import{k}.sr, expected_sr(k)); end
+     end
   end
 end
 

@@ -3,7 +3,7 @@ function [sts, header, data] = acqread_python(filename)
 %   acqread_python read data from acq files by calling bioread package.
 %   see https://github.com/uwmadison-chm/bioread
 % ● Format
-%   [sts, data] = acqread_python(filename)
+%   [sts, header, data] = acqread_python(filename)
 % ● Arguments
 %   filename: the ACQ data file to import
 %     import: the import struct of importing settings
