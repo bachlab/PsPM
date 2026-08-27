@@ -77,7 +77,7 @@ classdef pspm_get_acq_python_test < pspm_get_superclass
       import matlab.unittest.constraints.RelativeTolerance
       this.verifyThat(orig_data, IsEqualTo(acq_data, 'Within', RelativeTolerance(1e-10)));
     end
-     function imports_channels_with_different_sample_rates(this)
+    function imports_channels_with_different_sample_rates(this)
     
       fn = this.testcases{7}.pth;
       import = this.testcases{7}.import;
@@ -90,7 +90,30 @@ classdef pspm_get_acq_python_test < pspm_get_superclass
       expected_sr = [250, 1000, 1000, 1000, 1000, 1000];
     
       for k = 1:numel(import);  this.verifyEqual(import{k}.sr, expected_sr(k)); end
-     end
+    end
+    
+    function invalid_acq_file_returns_negative_status(this)
+      fn = [tempname, '.acq'];
+      fid = fopen(fn, 'w');
+      fwrite(fid, 'this is not an ACQ file');
+      fclose(fid);
+      cleanupObj = onCleanup(@() delete(fn));
+    
+      import = {struct('type', 'scr', 'channel', 1)};
+      import = this.assign_chantype_number(import);
+    
+      sts = [];
+    
+      this.verifyWarning( ...
+        @call_importer, ...
+        'PsPM:acqread_python');
+    
+      this.verifyLessThan(sts, 1);
+    
+      function call_importer
+        [sts, ~, ~] = pspm_get_acq_python(fn, import);
+      end
+    end
   end
 end
 

@@ -16,15 +16,29 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+header = [];
+data = [];
 %% Initialise python
 if ~isfield(settings, 'python_path')
   psts = pspm_check_python;
 else
   psts = pspm_check_python(settings.python_path);
 end
+if psts < 1; return; end
+
+[msts, ~] = pspm_check_python_modules('bioread');
+if msts < 1;   return; end
+
 %% Set the Python environment and the filename
 py_filename = py.str(filename);
-acq_data = py.bioread.read(py_filename); % Load the data using Bioread
+
+try
+    acq_data = py.bioread.read(py_filename);
+catch ME
+    warning('PsPM:acqread_python', 'Could not read ACQ file using bioread: %s', ME.message);
+    return;
+end
+
 raw = struct();
 %% Iterate through each channel
 for idx = 1:length(acq_data.channels)
