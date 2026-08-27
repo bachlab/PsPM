@@ -63,7 +63,7 @@ for idx = 1:length(acq_data.channels)
 end
 data = raw.data;
 header = struct();
-header.samples_per_second = unique([raw.samples_per_second{:}]);
+header.samples_per_second = double(acq_data.samples_per_second); % base sampling rate later sr = sampling rate/ frequency_divider 
 header.szCommentText = raw.name;
 header.szUnitsText = raw.units;
 header.frequency_divider = [raw.frequency_divider{:}]; % sample rate divider for individual channels
