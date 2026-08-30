@@ -5,6 +5,12 @@ if isempty(settings), pspm_init; end
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
 datafile = job.datatype.(datatype).datafile{1};
+
+% Configure Python for ACQ/bioread import
+if strcmpi(datatype, 'acq_python')
+  settings.python_path = job.datatype.(datatype).Bioread.pypath{1};
+end
+
 % Import
 n = size(job.datatype.(datatype).importtype,2); % Nr. of channels
 % Check if multioption is off
@@ -75,9 +81,6 @@ for i = 1:n
     if isfield(job.datatype.(datatype), 'smi_target_unit')
       import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
       import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
-    end
-    if isfield(job.datatype, 'acq_any')
-        settings.python_path = job.datatype.(datatype).Bioread.pypath{1};
     end
     import{i} = pspm_update_struct(import{i}, ...
                                    job.datatype.(datatype), ...
