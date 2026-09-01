@@ -158,6 +158,19 @@ if options.invalid
     return
 end
 
+% Add optional SMI event file
+sourcefile = datafile;
+if strcmpi(datatype, 'smi') && isfield(options, 'eventfile') && ~isempty(options.eventfile)
+    if ~ischar(options.eventfile)
+        warning('ID:invalid_input', 'SMI event file needs to be a string.');
+        return
+    elseif ~exist(options.eventfile, 'file')
+        warning('ID:nonexistent_file', 'Input file %s does not exist.', options.eventfile);
+        return
+    end
+    sourcefile = {datafile, options.eventfile};
+end
+
 %% 3 Check import jobs
 % 3.1 determine datatype
 datatype = find(strcmpi(datatype, {settings.import.datatypes.short}));
@@ -236,7 +249,7 @@ if ~settings.developmode
     fprintf('\n\xBB Importing %s: ', datafile);
 end
 % 4.1 pass over to import function if datafile exists, otherwise next file
-[lsts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, datafile, import);
+[lsts, import, sourceinfo] = feval(settings.import.datatypes(datatype).funct, sourcefile, import);
 if lsts < 1
     fprintf('\nImport unsuccesful for file %s.\n', datafile);
     return;
@@ -267,7 +280,7 @@ for blk = 1:blkno
     [pth, fn, ~] = fileparts(datafile);
     infos.source = sourceinfo{blk};
     infos.source.type = settings.import.datatypes(datatype).long;
-    infos.source.file = datafile;
+    infos.source.file = sourcefile;
     infos.importdate = date;
     % 4.3.3 align data length
     [lsts, data, duration] = pspm_align_channels(data);

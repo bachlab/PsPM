@@ -4,7 +4,12 @@ global settings
 if isempty(settings), pspm_init; end
 datatype = fieldnames(job.datatype);
 datatype = datatype{1};
-datafile = job.datatype.(datatype).datafile{1};
+if strcmpi(datatype, 'smi')
+    smifiles = job.datatype.(datatype).datafile{1};
+    datafile = smifiles{1};
+else
+    datafile = job.datatype.(datatype).datafile{1};
+end
 
 % Configure Python for ACQ/bioread import
 if strcmpi(datatype, 'acq_python')
@@ -63,7 +68,7 @@ for i = 1:n
     end
   end
   % Check if eytracker distance is available
-  if ~isempty(regexpi(type, 'pupil'))
+  if ~isempty(regexpi(type{1}, 'pupil'))
     if isfield(job.datatype.(datatype), 'eyelink_trackdist')
       transfer = job.datatype.(datatype).eyelink_trackdist;
       distance_unit = job.datatype.(datatype).distance_unit;
@@ -75,22 +80,37 @@ for i = 1:n
         import{i}.distance_unit = '';
       end
     end
+  end
+
+  % Gaze conversion options
+  if ~isempty(regexpi(type{1}, 'gaze'))
     if isfield(job.datatype.(datatype), 'viewpoint_target_unit')
       import{i}.target_unit = job.datatype.(datatype).viewpoint_target_unit;
     end
+
     if isfield(job.datatype.(datatype), 'smi_target_unit')
       import{i}.target_unit = job.datatype.(datatype).smi_target_unit;
       import{i}.stimulus_resolution = job.datatype.(datatype).smi_stimulus_resolution;
     end
-    import{i} = pspm_update_struct(import{i}, ...
-                                   job.datatype.(datatype), ...
-                                   {'channel_names_line',...
-                                    'delimiter',...
-                                    'exclude_columns',...
-                                    'header_lines'});
   end
+
+  % Only if the fields exist
+  import{i} = pspm_update_struct(import{i}, ...
+      job.datatype.(datatype), ...
+      {'channel_names_line',...
+      'delimiter',...
+      'exclude_columns',...
+      'header_lines'});
+
 end
+
+% options
 options = struct();
 options = pspm_update_struct(options, job, 'overwrite');
+
+if strcmpi(datatype, 'smi') && numel(smifiles) > 1
+    options.eventfile = smifiles{2};
+end
+
 [sts, out] = pspm_import(datafile, datatype, import, options);
 out = {out}; % convert to cell for dependency handling of file names
