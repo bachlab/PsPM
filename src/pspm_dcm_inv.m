@@ -181,8 +181,19 @@ aSCRno = size(model.events{1}{1}, 2);
 eSCRno = size(model.events{2}{1}, 2);
 
 % aSCR priors --
+% remember that m and s are given in terms of log-transform minus offset
+% that is, 0 is the middle of the permitted interval, -inf at the lower
+% bound and inf at the upper bound
 prior.aTheta.m = zeros(1, aSCRno);
-prior.aTheta.s = zeros(1, aSCRno);
+if model.constrained == 0.3
+    % fix aSCR SD at upper bound, which corresponds to the value of model.constrained = 0.3
+    prior.aTheta.s = 100 * ones(1, aSCRno); 
+else
+    % set aSCR SD prior to the middle of the permitted interval; this will be
+    % updated later
+    prior.aTheta.s = zeros(1, aSCRno);      
+end
+
 prior.aTheta.a = log(0.25) * ones(1, aSCRno);
 
 % shorten variable names --
@@ -397,8 +408,8 @@ if (numel(model.meanSCR) > 1) && (~options.getrf)
   % if flexible response dispersion is fixed, set prior precision to
   % infinity
   if model.constrained == 0.3
-    aSCRindx = theta_n + 3 * ((1:aSCRno) - 1) + 2; % gets the dispersion indices!
-    for n = 1:theta_n, priors.SigmaTheta(n, n) = 0; end % why not 'n = aSCRindx' already happens in l.395 (6 lines above)
+    aSCRindx = theta_n + 3 * ((1:aSCRno) - 1) + 2; % gets the dispersion indices
+    for n = aSCRindx, priors.SigmaTheta(n, n) = 0; end 
   end
 
   priors.SigmaX0 = zeros(dim.n);
