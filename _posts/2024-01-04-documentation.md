@@ -54,7 +54,7 @@ Psychology, 103*, 63-88.
 
 ### Non-linear model for event-related SCR
 This model is used, e.g. for
-conditioned (anticiaptory) responses in fear conditioning. It assumes that the onset
+conditioned (anticipatory) responses in fear conditioning. It assumes that the onset
 of the neural response is not precisely known, and estimates onset,
 dispersion, and amplitude of the response. Non-linear model
 inversion is accomplished in the computational framework of the [Variational Bayes approach](https://doi.org/10.1371/journal.pcbi.1003441).
