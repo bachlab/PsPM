@@ -30,8 +30,15 @@ This is useful in processing missing data epochs. The function can take a missin
 | channel | Channel identifier accepted by pspm_load_channel. |
 | expansion | A 2-element vector with positive numbers [pre, post]. |
 | options | See following fields. |
-| options.overwrite | Define if already existing files should be overwritten. Default ist 2. (Only used if input is epochs file.). |
+| options.overwrite | Define if already existing files should be overwritten. Default is 2. (Only used if input is epochs file.). |
 | options.channel_action | Channel action, add / replace existing data data (default: add). |
+
+
+## Outputs
+
+| Variable | Definition |
+|:--|:--|
+| channel_index | index of channel containing the processed data. |
 
 
 [Back to index](/PsPM/ref/)

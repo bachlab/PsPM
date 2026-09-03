@@ -8,7 +8,7 @@ permalink: /ref/pspm_find_valid_fixations
 
 ## Description
 
-pspm_find_valid_fixations finds deviations from a specified gaze fixation area. The primary usage of this function is to improve analyis of pupil size. Pupil size data will be incorrect when gaze is not in forward direction, due to foreshortening error. This function allows excluding pupil data points with too large foreshortening. To do so, it acts on one (or two) pupil channel(s), together with the associated x/y gaze channels which must have been converted to the correct units (distance units, or pixel units for bitmap fixation).
+pspm_find_valid_fixations finds deviations from a specified gaze fixation area. The primary usage of this function is to improve analysis of pupil size. Pupil size data will be incorrect when gaze is not in forward direction, due to foreshortening error. This function allows excluding pupil data points with too large foreshortening. To do so, it acts on one (or two) pupil channel(s), together with the associated x/y gaze channels which must have been converted to the correct units (distance units, or pixel units for bitmap fixation).
 
 After finding the invalid fixations from the gaze channels, the corresponding data values in the pupil channel are set to NaN. In this usage of the function, a circle around fixation point defines the valid fixations. Note: an alternative or complement to this strategy is to explicitly correct the pupil foreshortening error, see pspm_pupil_correct and pspm_pupil_correct_eyelink.
 
@@ -30,7 +30,7 @@ By default, screen centre is assumed as fixation point. If an explicit fixation 
 | Variable | Definition |
 |:--|:--|
 | fn | The actual data file containing the eyelink recording with gaze data converted to cm. |
-| bitmap | A nxm matrix of the same size as the display, with 1 for valid and 0 for invalid gaze points. IMPORTANT: the bitmap has to be defined in terms of the eyetracker coordinate system, i.e. bitmap(1,1) must correpond to the origin of the eyetracker coordinate system, and must be of the same size as the display. |
+| bitmap | A nxm matrix of the same size as the display, with 1 for valid and 0 for invalid gaze points. IMPORTANT: the bitmap has to be defined in terms of the eyetracker coordinate system, i.e. bitmap(1,1) must correspond to the origin of the eyetracker coordinate system, and must be of the same size as the display. |
 | circle_degree | Size of boundary circle given in degree visual angles. |
 | distance | Distance between eye and screen in length units. |
 | unit | Unit in which distance is given. |
