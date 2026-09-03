@@ -73,7 +73,7 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 % ● Outputs
 %   *  channel_index : index of channel containing the processed data
 %   ┌───────────info
-%   ├───.snd_markers : vector of begining of sound sound events
+%   ├───.snd_markers : vector of beginning of sound events
 %   └────────.delays : vector of delays between markers and detected sounds. Only
 %                      available with option 'diagnostics' turned on.
 % ● History
