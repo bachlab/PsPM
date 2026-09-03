@@ -5,7 +5,7 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 %   of startle sounds for GLM-based analysis of startle eye blink data. The
 %   detected events are written into a marker channel. 
 %   A sound is detected as event if it is longer than 10 ms, and events are
-%   recognized as distinct if they are at least 50 ms appart. Various
+%   recognized as distinct if they are at least 50 ms apart. Various
 %   options allow customizing the algorithm to specific experimental
 %   settings. In particular, events can be constrained to be in the
 %   vicinity of event markers, and/or a desired number of events can be 
@@ -40,7 +40,7 @@ function [sts, outchannel, outinfos] = pspm_find_sounds(fn, options)
 %   ├──────.mindelay : [number] Lower limit (in seconds) of the window in which
 %   │                  pspm_find_sounds will accept sounds as relating to a marker.
 %   │                  Default is 0 s.
-%   ├──────────.plot : [0(default) or 1] Display a histogramm of the delays found and a plot
+%   ├──────────.plot : [0(default) or 1] Display a histogram of the delays found and a plot
 %   │                  with the detected sound, the trigger and the onset of the sound
 %   │                  events. These are color coded for delay, from green (smallest
 %   │                  delay) to red (longest). Forces the 'diagnostics' option to true.
