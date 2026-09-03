@@ -45,7 +45,7 @@ function tam = pspm_tam(model, options)
 %   ├.std_exp_cond: [optional] allows to specify the standard experimental condition
 %   │               as a string or an index in timing.names.
 %   │               if specified this experimental condition will be
-%   │               substracted from all the other conditions.
+%   │               subtracted from all the other conditions.
 %   │               DEFAULT: 'none'
 %   └───.norm_max:  [optional] set the first peak at 1 before model fitting.
 %                   DEFAULT: 0 (not normalize)

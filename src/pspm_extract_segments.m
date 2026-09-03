@@ -37,11 +37,11 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   ├────────────.length: Length of the segments in the specified 'timeunits'.
 %   │                     The default value is 10.
 %   ├──────────────.plot: [0/1] Plot mean values (solid) and standard error of
-%   │                     the mean (dashed) will be ploted. Default is no plot.
+%   │                     the mean (dashed) will be plotted. Default is no plot.
 %   ├────────.outputfile: Define filename to store segments. If is equal
 %   │                     to '', no file will be written. Default is 0.
 %   ├─────────.overwrite: Define if already existing files should be
-%   │                     overwritten. Default ist 0.
+%   │                     overwritten. Default is 0.
 %   ├───.marker_chan_num: Optional if timeunits are 'markers'. Channel
 %   │                     identifier for the marker channel. Default: first
 %   │                     marker channel in the file.
@@ -49,7 +49,7 @@ function [sts, out] = pspm_extract_segments(method, data, varargin)
 %   │                     data file. See pspm_get_timing for epoch definition;
 %   │                     specify a cell array for multiple input files. This
 %   │                     must always be specified in SECONDS. if method is
-%   │                     'model', then this option overides the missing
+%   │                     'model', then this option overrides the missing
 %   │                     values given in the model
 %   │                     Default: no missing values
 %   ├────────.nan_output: ['screen', filename, or 'none'] Output

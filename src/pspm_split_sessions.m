@@ -12,7 +12,7 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   first session and the end of the last session.
 %   In addition, the function can split a (missing) epochs file associated
 %   with the original PsPM file to the same limits.
-%   The individual session dat will be written to new files with a suffix 
+%   The individual session data will be written to new files with a suffix 
 %   '_sn' and the session number.
 % ● Format
 %   [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, options)
@@ -45,7 +45,7 @@ function [sts, newdatafile, newepochfile] = pspm_split_sessions(datafile, option
 %   │                    file. Markers within the suffix period will be dropped.
 %   ├───────.randomITI : [default:0]
 %   │                    Tell the function to use all the markers to evaluate the mean
-%   │                    distance between them. Usefull for random ITI since it reduces
+%   │                    distance between them. Useful for random ITI since it reduces
 %   │                    the variance.
 %   ├─────────.verbose : [default:1] printing processing messages.
 %   └─────────.missing : Optional name of an epoch file, e.g. containing a missing epochs

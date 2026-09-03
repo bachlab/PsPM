@@ -93,7 +93,7 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             only recommended for long inter-trial-intervals and 
 %   │             should be used with caution. In reference 2, this option 
 %   │             lead to worse quality of the trial-by-trial amplitude 
-%   │             estimation (potenetially due to overfitting the data 
+%   │             estimation (potentially due to overfitting the data 
 %   │             available to estimate the response function).
 %   │             Default: 0.
 %   ├─────.getrf: Only estimate response function, do not do trial-wise DCM.
@@ -104,7 +104,7 @@ function [sts, dcm] = pspm_dcm(model, options)
 %   │             progress trial-by-trial and consider this number of 
 %   │             trials into the future, until the last trial of a session. 
 %   │             If this parameter is larger than the number of trials in 
-%   │             a session, the entire sessin will be inverted at 
+%   │             a session, the entire session will be inverted at 
 %   │             the same time. In reference 2, this parameter (set to 2
 %   │             or 3) had no impact on the quality of the estimation. 
 %   │             Unpublished data suggest that if a session with 24 trials 

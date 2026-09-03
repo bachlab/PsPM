@@ -1,7 +1,7 @@
 function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 % ● Description
 %   pspm_convert_ecg2hb_amri performs R-peak detection from an ECG signal using the steps
-%   decribed in R-peak detection section of [1]. This function uses a modified version of
+%   described in R-peak detection section of [1]. This function uses a modified version of
 %   the original amri_eeg_rpeak.m code that can be obtained from [2]. The modified version with a list
 %   of changes made is provided with PsPM in the amri_eegfmri directory.
 % ● Format
@@ -24,7 +24,7 @@ function [sts, out_channel] = pspm_convert_ecg2hb_amri(fn, options)
 %   │                 Choose which signal will be used as the input to the core R-peak
 %   │                 detection steps.
 %   │                 (1) If 'ecg', filtered ECG signal will be used.
-%   │                 (2) If 'teo', Teager Enery Operator will be applied to the filtered
+%   │                 (2) If 'teo', Teager Energy Operator will be applied to the filtered
 %   │                     ECG signal before feeding it to R-peak finding part.
 %   │                 (3) If 'auto', the option that results in the higher maximal
 %   │                     auto-correlation will be used.

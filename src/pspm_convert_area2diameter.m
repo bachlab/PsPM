@@ -10,7 +10,7 @@ function [sts, outchannel] = pspm_convert_area2diameter(varargin)
 %   [sts, channel_index]  = pspm_convert_area2diameter(fn, options)
 %   [sts, converted_data] = pspm_convert_area2diameter(area)
 % ● Arguments
-%   *            fn : a numeric vector of milimeter values
+%   *            fn : a numeric vector of millimeter values
 %   *          area : a numeric vector of area values (the unit is not important)
 %   ┌───────options :
 %   ├──────.channel : [optional][numeric/string] [Default: 'both']
