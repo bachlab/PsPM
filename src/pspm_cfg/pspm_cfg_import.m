@@ -306,20 +306,23 @@ for datatype_i=1:length(fileoptions)
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
     input_file = cfg_files;
-    input_file.name = 'Sample and optional Event Files';
+    input_file.name = 'Sample File and optional Event File';
     input_file.num = [1 2];
     input_file.tag = 'datafile';
+    input_file.help = {['Select the SMI files in the following order: ', ...
+        'first the sample file, then optionally the corresponding event file. ', ...
+        'If only one file is selected, it must be the sample file.']};
     if strcmpi(ext, 'any')
-      event_file.filter ='.*';
+        input_file.filter = '.*';
     else
-      event_file.filter  = ['.*\.(' ext '|' upper(ext) ')$'];
+        input_file.filter = ['.*\.(' ext '|' upper(ext) ')$'];
     end
 
-    datafile         = cfg_repeat;
-    datafile.name    = 'Data File(s)';
-    datafile.tag     = 'datafile';
-    datafile.num     = [1 Inf];
-    datafile.values  = {input_file};
+    datafile = cfg_repeat;
+    datafile.name = 'Data File(s)';
+    datafile.tag = 'datafile';
+    datafile.num = [1 2];
+    datafile.values = {input_file};
   end
 
   datatype_item{datatype_i}       = cfg_branch;
@@ -347,7 +350,7 @@ for datatype_i=1:length(fileoptions)
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'smi'))
     datatype_item{datatype_i}.val = ...
-      [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
+        [datatype_item{datatype_i}.val, {smi_target_unit, smi_stimulus_resolution}];
   end
 
   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'txt'))
@@ -365,10 +368,10 @@ for datatype_i=1:length(fileoptions)
       [datatype_item{datatype_i}.val, {delimiter,header_lines,channel_names_line,exclude_columns}];
   end
 
-   if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq_any'))
-     datatype_item{datatype_i}.val = ...
-       [datatype_item{datatype_i}.val, {acq_import_python}];
-   end
+  if any(strcmpi(settings.import.datatypes(datatype_i).short, 'acq_python'))
+    datatype_item{datatype_i}.val = ...
+      [datatype_item{datatype_i}.val, {acq_import_python}];
+  end
 end
 
 %% Data type

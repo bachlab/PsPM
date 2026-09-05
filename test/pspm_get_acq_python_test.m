@@ -1,11 +1,11 @@
-classdef pspm_get_acq_test < pspm_get_superclass
+classdef pspm_get_acq_python_test < pspm_get_superclass
   % ● Description
-  % unittest class for the pspm_get_mat function
+  % unittest class for the pspm_get_acq_python function
   % ● Authorship
   % (C) 2013 Linus Rüttimann (University of Zurich)
   properties
     testcases;
-    fhandle = @pspm_get_acq
+    fhandle = @pspm_get_acq_python
   end
   methods
     function define_testcases(this)
@@ -57,30 +57,62 @@ classdef pspm_get_acq_test < pspm_get_superclass
       import{1} = struct('type', 'scr'   , 'channel', 1);
       import{2} = struct('type', 'marker', 'channel', 2);
       import = this.assign_chantype_number(import);
-      this.verifyWarning(@()pspm_get_acq(fn, import), 'ID:channel_not_contained_in_file');
+      this.verifyWarning(@()pspm_get_acq_python(fn, import), 'ID:channel_not_contained_in_file');
     end
     function get_acq_returns_same_data_as_acqknowledge_exported_mat_python(this)
-      global settings
-      if isempty(settings), pspm_init; end
-      % the path below is for unix (mac & linux) only
-      % please specify for windows manually if you are using windows
-      settings.python_path = '/usr/local/bin/python3.11';
       fpath_acq = 'ImportTestData/acq/impedance_acq.acq';
-      import = {struct( ...
+      import_acq = {struct( ...
         'type', 'scr', ...
         'channel', 1, ...
         'transfer', 'none', ...
-        'typeno', 1, ...
-        )};
-      [sts, import, sourceinfo] = pspm_get_acq_python(fpath_acq, import);
+        'typeno', 1 ...
+         )};
+      [sts, import_acq, sourceinfo] = pspm_get_acq_python(fpath_acq, import_acq);
       this.verifyEqual(sts, 1);
-      acq_data = import{1}.data;
+      acq_data = import_acq{1}.data;
       fpath_mat = 'ImportTestData/acq/impedance_mat.mat';
       orig_data = load(fpath_mat);
       orig_data = orig_data.data(:, 1);
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
       this.verifyThat(orig_data, IsEqualTo(acq_data, 'Within', RelativeTolerance(1e-10)));
+    end
+    function imports_channels_with_different_sample_rates(this)
+    
+      fn = this.testcases{7}.pth;
+      import = this.testcases{7}.import;
+      import = this.assign_chantype_number(import);
+    
+      [sts, import, ~] = pspm_get_acq_python(fn, import);
+    
+      this.verifyEqual(sts, 1);
+    
+      expected_sr = [250, 1000, 1000, 1000, 1000, 1000];
+    
+      for k = 1:numel(import);  this.verifyEqual(import{k}.sr, expected_sr(k)); end
+    end
+    
+    function invalid_acq_file_returns_negative_status(this)
+      fn = [tempname, '.acq'];
+      fid = fopen(fn, 'w');
+      fwrite(fid, 'this is not an ACQ file');
+      fclose(fid);
+      cleanupObj = onCleanup(@() delete(fn));
+    
+      import = {struct('type', 'scr', 'channel', 1)};
+      import = this.assign_chantype_number(import);
+    
+      sts = [];
+    
+      this.verifyWarning( ...
+        @call_importer, ...
+        'PsPM:acqread_python');
+    
+      this.verifyLessThan(sts, 1);
+    
+      function call_importer
+        [sts, ~, ~] = pspm_get_acq_python(fn, import);
+      end
     end
   end
 end

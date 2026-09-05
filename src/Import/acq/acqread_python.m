@@ -3,7 +3,7 @@ function [sts, header, data] = acqread_python(filename)
 %   acqread_python read data from acq files by calling bioread package.
 %   see https://github.com/uwmadison-chm/bioread
 % ● Format
-%   [sts, data] = acqread_python(filename)
+%   [sts, header, data] = acqread_python(filename)
 % ● Arguments
 %   filename: the ACQ data file to import
 %     import: the import struct of importing settings
@@ -16,15 +16,29 @@ if isempty(settings)
   pspm_init;
 end
 sts = -1;
+header = [];
+data = [];
 %% Initialise python
 if ~isfield(settings, 'python_path')
   psts = pspm_check_python;
 else
   psts = pspm_check_python(settings.python_path);
 end
+if psts < 1; return; end
+
+[msts, ~] = pspm_check_python_modules('bioread');
+if msts < 1;   return; end
+
 %% Set the Python environment and the filename
 py_filename = py.str(filename);
-acq_data = py.bioread.read(py_filename); % Load the data using Bioread
+
+try
+    acq_data = py.bioread.read(py_filename);
+catch ME
+    warning('PsPM:acqread_python', 'Could not read ACQ file using bioread: %s', ME.message);
+    return;
+end
+
 raw = struct();
 %% Iterate through each channel
 for idx = 1:length(acq_data.channels)
@@ -63,7 +77,7 @@ for idx = 1:length(acq_data.channels)
 end
 data = raw.data;
 header = struct();
-header.samples_per_second = unique([raw.samples_per_second{:}]);
+header.samples_per_second = double(acq_data.samples_per_second); % base sampling rate later sr = sampling rate/ frequency_divider 
 header.szCommentText = raw.name;
 header.szUnitsText = raw.units;
 header.frequency_divider = [raw.frequency_divider{:}]; % sample rate divider for individual channels
