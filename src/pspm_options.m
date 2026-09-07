@@ -268,6 +268,7 @@ switch FunName
   case 'import'
     %% 2.29 pspm_import
     options = autofill(options, 'overwrite',              2,          [0,1]             );
+    options = autofill(options, 'eventfile',             '',         '*Char'            );
   case 'interpolate'
     % 2.30 pspm_interpolate --
     options = autofill_channel_action(options);

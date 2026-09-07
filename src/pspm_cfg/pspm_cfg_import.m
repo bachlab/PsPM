@@ -321,7 +321,7 @@ for datatype_i=1:length(fileoptions)
     datafile = cfg_repeat;
     datafile.name = 'Data File(s)';
     datafile.tag = 'datafile';
-    datafile.num = [1 2];
+    datafile.num = [1 1];
     datafile.values = {input_file};
   end
 

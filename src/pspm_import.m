@@ -57,9 +57,12 @@ function [sts, outfile] = pspm_import(datafile, datatype, import, options)
 %   └────────.delimiter : for delimiter separated values, value used as delimiter for
 %                         file read.
 %   ┌───────────options
-%   └────────.overwrite : overwrite existing files by default. [logical] (0 or 1)
-%                         Define whether to overwrite existing output files or not.
-%                         Default value: determined by pspm_overwrite.
+%   ├────────.overwrite : overwrite existing files by default. [logical] (0 or 1)
+%   │                     Define whether to overwrite existing output files or not.
+%   │                     Default value: determined by pspm_overwrite.
+%   └────────.eventfile : [optional, char] SMI event file corresponding
+%                         to the sample file. Only used for SMI imports.
+
 % ● Outputs
 %   *           outfile : [char] name of a .mat file on the input file path containing the
 %                         imported data. For datatypes that support multiple sessions
@@ -275,7 +278,7 @@ for blk = 1:blkno
         if isfield(import{blk}{k}, 'minfreq'), data{k}.header.minfreq = import{blk}{k}.minfreq; end
     end
     if any(lsts < 1), fprintf('\nData conversion unsuccesful for job %02.0f file %s.\n', ...
-            find(slts < 1), datafile); return; end
+            find(lsts < 1), datafile); return; end
     % 4.3.2 collect infos and save
     [pth, fn, ~] = fileparts(datafile);
     infos.source = sourceinfo{blk};
