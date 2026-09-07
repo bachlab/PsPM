@@ -14,7 +14,7 @@ Splitting can be automated, based on regularly incoming markers (e.g. trial mark
 
 In addition, the function can split a (missing) epochs file associated with the original PsPM file to the same limits.
 
-The individual session dat will be written to new files with a suffix '_sn' and the session number.
+The individual session data will be written to new files with a suffix '_sn' and the session number.
 
 
 ## Format
@@ -35,7 +35,7 @@ The individual session dat will be written to new files with a suffix '_sn' and 
 | options.splitpoints | [Vector of integer] Explicitly specify start of each session in terms of markers, excluding the first session which is assumed to start with the first marker. |
 | options.prefix | [numeric, unit:second, default: 0] Defines how many seconds of data before start trim point should also be included. Negative values required. First marker will be at t = - prefix for all sessions. Markers within the prefix period will be dropped. |
 | options.suffix | [positive numeric, unit:second, default: mean marker distance in the file] Defines how many seconds of data after the end trim point should be included. Last marker will be at t = duration (of session) - suffix for all sessions. If set to 0, suffix will be set to the mean marker distance across the entire file. Markers within the suffix period will be dropped. |
-| options.randomITI | [default:0] Tell the function to use all the markers to evaluate the mean distance between them. Usefull for random ITI since it reduces the variance. |
+| options.randomITI | [default:0] Tell the function to use all the markers to evaluate the mean distance between them. Useful for random ITI since it reduces the variance. |
 | options.verbose | [default:1] printing processing messages. |
 | options.missing | Optional name of an epoch file, e.g. containing a missing epochs definition in s. This is then split accordingly. |
 

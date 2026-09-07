@@ -38,13 +38,21 @@ The output can also be written to a matlab file.
 | options | See following fields. |
 | options.timeunits | 'seconds' (default), 'samples' or 'markers'. In 'model' mode the value will be ignored and taken from the model file. In case a data vector is passed as input, timeunits must be 'samples' or 'seconds'. |
 | options.length | Length of the segments in the specified 'timeunits'. The default value is 10. |
-| options.plot | [0/1] Plot mean values (solid) and standard error of the mean (dashed) will be ploted. Default is no plot. |
+| options.plot | [0/1] Plot mean values (solid) and standard error of the mean (dashed) will be plotted. Default is no plot. |
 | options.outputfile | Define filename to store segments. If is equal to '', no file will be written. Default is 0. |
-| options.overwrite | Define if already existing files should be overwritten. Default ist 0. |
+| options.overwrite | Define if already existing files should be overwritten. Default is 0. |
 | options.marker_chan_num | Optional if timeunits are 'markers'. Channel identifier for the marker channel. Default: first marker channel in the file. |
-| options.missing | allows to specify missing (e. g. artefact) epochs in the data file. See pspm_get_timing for epoch definition; specify a cell array for multiple input files. This must always be specified in SECONDS. if method is 'model', then this option overides the missing values given in the model Default: no missing values. |
+| options.missing | allows to specify missing (e. g. artefact) epochs in the data file. See pspm_get_timing for epoch definition; specify a cell array for multiple input files. This must always be specified in SECONDS. if method is 'model', then this option overrides the missing values given in the model Default: no missing values. |
 | options.nan_output | ['screen', filename, or 'none'] Output NaN ratios of the trials for each condition. Values can be printed on the screen or written to a matlab file. Default is no NaN output. |
 | options.norm | If 1, z-scores the entire data time series (default: 0). |
+
+
+## Outputs
+
+| Variable | Definition |
+|:--|:--|
+| sts | Status flag. |
+| segments | [1 x c] cell array, with one struct per condition c. Each condition contains the following fields: data, mean, std, sem, trial_nan_percent, and total_nan_percent. |
 
 
 [Back to index](/PsPM/ref/)

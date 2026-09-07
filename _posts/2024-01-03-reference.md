@@ -48,11 +48,11 @@ Convert pupil size from arbitrary units into metric units.
 
 [`pspm_convert_ecg2hb`](pspm_convert_ecg2hb)
 
-Covert ECG data into heart beat time stamps using a modified Pan & Tompkins algorithm.
+Convert ECG data into heart beat time stamps using a modified Pan & Tompkins algorithm.
 
 [`pspm_convert_ecg2hb_amri`](pspm_convert_ecg2hb_amri)
 
-Covert ECG data into heart beat time stamps using the AMRI algorithm.
+Convert ECG data into heart beat time stamps using the AMRI algorithm.
 
 [`pspm_convert_gaze`](pspm_convert_gaze)
 

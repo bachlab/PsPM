@@ -8,7 +8,7 @@ permalink: /ref/pspm_convert_ecg2hb_amri
 
 ## Description
 
-pspm_convert_ecg2hb_amri performs R-peak detection from an ECG signal using the steps decribed in R-peak detection section of [1]. This function uses a modified version of the original amri_eeg_rpeak.m code that can be obtained from [2]. The modified version with a list of changes made is provided with PsPM in the amri_eegfmri directory.
+pspm_convert_ecg2hb_amri performs R-peak detection from an ECG signal using the steps described in R-peak detection section of [1]. This function uses a modified version of the original amri_eeg_rpeak.m code that can be obtained from [2]. The modified version with a list of changes made is provided with PsPM in the amri_eegfmri directory.
 
 
 ## Format
@@ -24,7 +24,7 @@ pspm_convert_ecg2hb_amri performs R-peak detection from an ECG signal using the 
 | fn | [string] Path to the PsPM file which contains the pupil data. |
 | options | See following fields. |
 | options.channel | [optional, numeric/string, default: 'ecg', i.e. last ECG channel in the file] Channel type or channel ID to be preprocessed. Channel can be specified by its index (numeric) in the file, or by channel type (string). If there are multiple channels with this type, only the last one will be processed. If you want to detect R-peaks for several ECG channels in a PsPM file, call this function multiple times with the index of each channel. In this case, set the option 'channel_action' to 'add', to store each resulting 'hb' channel separately. |
-| options.signal_to_use | ['ecg'/'teo'/'auto', default as 'auto'] Choose which signal will be used as the input to the core R-peak detection steps. (1) If 'ecg', filtered ECG signal will be used. (2) If 'teo', Teager Enery Operator will be applied to the filtered ECG signal before feeding it to R-peak finding part. (3) If 'auto', the option that results in the higher maximal auto-correlation will be used. |
+| options.signal_to_use | ['ecg'/'teo'/'auto', default as 'auto'] Choose which signal will be used as the input to the core R-peak detection steps. (1) If 'ecg', filtered ECG signal will be used. (2) If 'teo', Teager Energy Operator will be applied to the filtered ECG signal before feeding it to R-peak finding part. (3) If 'auto', the option that results in the higher maximal auto-correlation will be used. |
 | options.hrrange | [numeric 2-element vector, unit: beats per minute] Minimum and maximum heartbeat rates (BPM) to use in the algorithm. Default is 20-200 bpm. |
 | options.ecg_bandpass | [numeric, unit: Hz] Minimum and maximum frequencies to use during bandpass filter of the raw ECG signal to construct filtered ECG signal. Default is 0.5-40 Hz. |
 | options.teo_bandpass | [numeric 2-element vector, unit: Hz] Minimum and maximum frequencies to use during bandpass filter of filtered ECG signal to construct TEO input signal. Default is 8-40 Hz. |
