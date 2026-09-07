@@ -2,7 +2,7 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 % ● Description
 %   pspm_find_valid_fixations finds deviations from a specified gaze
 %   fixation area. The primary usage of this function is to improve
-%   analyis of pupil size. Pupil size data will be incorrect when gaze is
+%   analysis of pupil size. Pupil size data will be incorrect when gaze is
 %   not in forward direction, due to foreshortening error. This function
 %   allows excluding pupil data points with too large foreshortening. To do
 %   so, it acts on one (or two) pupil channel(s), together with the
@@ -34,7 +34,7 @@ function [sts, pos_of_channel, fn] = pspm_find_valid_fixations(fn, varargin)
 %   *         bitmap : A nxm matrix of the same size as the display, with 1
 %                      for valid and 0 for invalid gaze points. IMPORTANT: the bitmap has to
 %                      be defined in terms of the eyetracker coordinate system, i.e.
-%                      bitmap(1,1) must correpond to the origin of the eyetracker
+%                      bitmap(1,1) must correspond to the origin of the eyetracker
 %                      coordinate system, and must be of the same size as
 %                      the display.
 %   *  circle_degree : Size of boundary circle given in degree visual angles.

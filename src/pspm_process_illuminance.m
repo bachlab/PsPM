@@ -22,7 +22,7 @@ function [sts, out] = pspm_process_illuminance(ldata, sr, options)
 %                     [or directly specify ldata as a vector].
 %   *             sr: Sample rate in Hz of the input illuminance data.
 %   ┌────────options
-%   ├────────────.fn: [filename] Ff specified ldata{i,j} will be saved to a file
+%   ├────────────.fn: [filename] If specified ldata{i,j} will be saved to a file
 %   │                 with filename options.fn{i,j} into the variable 'R'.
 %   ├─────.overwrite: [logical] (0 or 1)
 %   │                 Define whether to overwrite existing output files or not.
