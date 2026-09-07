@@ -108,7 +108,7 @@ try
     data = import_smi(datafile{1});
   end
 catch err
-  warning(err.identifier, err.message);
+  warning(err.identifier, '%s', err.message);
   return;
 end
 if numel(data) > 1
