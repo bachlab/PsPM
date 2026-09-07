@@ -127,5 +127,36 @@ classdef pspm_get_smi_test < pspm_get_superclass
         end
       end
     end
+    % import with pspm_import
+    function smi_eventfile(this)
+        this.setup_path;
+    
+        import{1}.type = 'pupil_l';
+        import{2}.type = 'blink_l';
+
+        options = struct();
+        options.eventfile = this.event_file;
+        options.overwrite = 1;
+
+        [sts, outfile] = pspm_import(this.sample_file, 'smi', import, options);
+
+        this.verifyEqual(sts, 1);
+        this.verifyEqual(pspm_load_data(outfile, 'none'), 1);
+
+        delete(outfile);
+    end
+    function smi_nonexistent_eventfile(this)
+        this.setup_path;
+
+        import{1}.type = 'pupil_l';
+        import{2}.type = 'blink_l';
+
+        options = struct();
+        options.eventfile = fullfile('ImportTestData', 'smi', 'does_not_exist.txt');
+
+        [sts, ~] = pspm_import(this.sample_file, 'smi', import, options);
+
+        this.verifyEqual(sts, -1);
+    end
   end
 end

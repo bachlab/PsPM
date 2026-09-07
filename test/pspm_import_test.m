@@ -20,7 +20,7 @@ classdef pspm_import_test <  matlab.unittest.TestCase
       datatype = 'smr';
       datafile = 5;
       this.verifyWarning(@()pspm_import(datafile, datatype, import), ...
-      'ID:invalid_input', 'invalid_input test 4'); %no char filname
+      'ID:invalid_input', 'invalid_input test 4'); %no char filename
     end
     function invalid_import_struct(this)
       tc = pspm_get_biograph_test;

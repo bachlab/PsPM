@@ -11,7 +11,7 @@ model.modelspec = 'ps_fc';
 % basis function
 bf = fieldnames(job.bf);
 bf = bf{1};
-if any(strcmp(bf,{'psrf_fc0', 'psrf_fc1', 'psrf_fc2'}))
+if any(strcmp(bf,{'psrf_fc0', 'psrf_fc1', 'psrf_fc2', 'psrf_fc3'}))
   model.bf.fhandle = str2func('pspm_bf_psrf_fc');
   switch bf
     case 'psrf_fc0'

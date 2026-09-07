@@ -30,7 +30,11 @@ if isempty(settings)
 end
 sts = -1;
 sourceinfo = [];
-addpath(pspm_path('Import','acq'));
+
+acqPath = pspm_path('Import','acq');
+addpath(acqPath);
+cleanupObj = onCleanup(@() rmpath(acqPath)); 
+
 [lsts, header, inputdata] = acqread_python(datafile);
 % there might be a glitch in bioread itself ...
 if lsts < 1 || all(cellfun('isempty', inputdata))
@@ -75,7 +79,6 @@ for k = 1:numel(import)
     import{k}.marker = 'continuous';
   end
 end
-%% Clear path and return
-rmpath(pspm_path('Import','acq'));
+%% return
 sts = 1;
 return
