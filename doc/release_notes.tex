@@ -1651,23 +1651,158 @@ channel but markervalues from the last, has been fixed.
 
 
 
-
-
-
 \section{PsPM Version 7.1.0}
 
 \subsection*{General}
+\begin{itemize}
+\item The help text in PsPM has been standardised, reviewed and corrected.
+\item The PsPM manual has been updated.
+\item The PsPM website and online documentation have been updated.
+\end{itemize}
 
 \subsection*{GUI}
+\begin{itemize}
+\item The review GUI has been updated and prevents duplicate model loading.
+\item Long channel descriptions in \texttt{pspm\_display} are displayed on multiple lines.
+\item Text-file import in the batch interface now supports delimiter selection and files with arbitrary extensions.
+\item The DCM review figure layout and labelling have been improved.
+\end{itemize}
 
 \subsection*{New Features}
+\begin{itemize}
+\item A new BIDS importer has been introduced and substantially expanded to import BIDS-formatted datasets into PsPM.
+\item A new standard pipeline for fear-conditioned skin conductance response (SCR) analysis has been introduced.
+\end{itemize}
 
 \subsection*{Improvements}
+\begin{itemize}
+
+\item \texttt{pspm\_pupil\_pp}
+\begin{itemize}
+\item Pupil data in supported non-mm units are automatically converted to millimetres before preprocessing.
+\end{itemize}
+
+\item \texttt{pspm\_scr\_pp}
+\begin{itemize}
+\item Clipping window and step-size options are now specified in seconds.
+\end{itemize}
+
+\item \texttt{pspm\_pull\_zenodo}
+\begin{itemize}
+\item Dataset download handling has been generalised.
+\end{itemize}
+
+\item \texttt{pspm\_load\_data}
+\begin{itemize}
+\item Non-event channel data are automatically converted to double precision when loaded.
+\end{itemize}
+
+\item Pupil correction
+\begin{itemize}
+\item \texttt{pspm\_pupil\_correct} now accepts a PsPM file or data structure and loads the required pupil and gaze channels internally.
+\item \texttt{pspm\_pupil\_correct\_eyelink} now checks that gaze data are provided in millimetres and otherwise instructs the user to convert them with \texttt{pspm\_convert\_gaze}.
+\end{itemize}
+
+\item Cardiac preprocessing
+\begin{itemize}
+\item Direct ECG-to-heart-period conversion has been added as an option to the batch interface.
+\end{itemize}
+
+\item \texttt{pspm\_ledalab}
+\begin{itemize}
+\item Custom Ledalab optimisation, export and additional input arguments can now be specified.
+\end{itemize}
+
+\item Non-linear SCR modelling
+\begin{itemize}
+\item Flexible-response dispersion handling and model defaults have been updated.
+\end{itemize}
+
+\item \texttt{pspm\_get\_acqmat}
+\begin{itemize}
+\item The AcqKnowledge import function now supports segmented MAT files with non-zero recording offsets.
+\end{itemize}
+
+\item DCM
+\begin{itemize}
+\item Warnings now identify trials that could not be estimated and indicate when NaN values are omitted from condition-level statistics.
+\end{itemize}
+
+\item NaN handling
+\begin{itemize}
+\item Legacy NaN-handling functions have been replaced with MATLAB's \texttt{omitnan} syntax.
+\end{itemize}
+
+\end{itemize}
 
 \subsection*{Bug fixes}
+\begin{itemize}
+
+\item BIDS importer
+\begin{itemize}
+\item Fixed output-path and metadata handling.
+\item Fixed the gaze-channel \texttt{range} header field.
+\end{itemize}
+
+\item \texttt{pspm\_logical2epochs}
+\begin{itemize}
+\item Fixed handling of epochs extending to the final sample of a logical vector.
+\end{itemize}
+
+\item \texttt{pspm\_scr\_pp}
+\begin{itemize}
+\item Fixed the variable name stored in missing-epoch output files.
+\item Fixed the clipping-filter logic.
+\end{itemize}
+
+\item AcqKnowledge import
+\begin{itemize}
+\item Fixed Python/bioread import handling and sampling-rate processing.
+\end{itemize}
+
+\item \texttt{pspm\_get\_smr}
+\begin{itemize}
+\item Fixed import of empty SMR channels so that they are retained instead of removed.
+\end{itemize}
+
+\item Pupil and gaze processing
+\begin{itemize}
+\item \texttt{pspm\_convert\_au2unit}: Corrected area-based pupil-size conversion and output handling.
+\item \texttt{pspm\_convert\_gaze}: Fixed gaze-channel unit matching and y-axis range handling.
+\item \texttt{pspm\_find\_valid\_fixations}: Fixed gaze-channel unit detection and the suggested gaze-conversion function.
+\end{itemize}
+
+\item \texttt{pspm\_data\_editor}
+\begin{itemize}
+\item Fixed output assignment from the data editor.
+\end{itemize}
+
+\item \texttt{pspm\_remove\_epochs}
+\begin{itemize}
+\item Fixed the function return value and improved warning handling.
+\end{itemize}
+
+\item GLM
+\begin{itemize}
+\item Fixed the HP reward-conditioning GLM configuration and runner.
+\item Fixed several GLM batch-runner issues.
+\end{itemize}
+
+\item Import
+\begin{itemize}
+\item Fixed several batch and import issues, including SMI sample/event-file handling.
+\end{itemize}
+
+\end{itemize}
 
 \subsubsection*{New test functions}
-
+\begin{itemize}
+\item \texttt{pspm\_import\_bids\_test}
+\item \texttt{pspm\_convert\_pixel2unit\_core\_test}
+\item \texttt{pspm\_convert\_ppg2hb\_test}
+\item \texttt{pspm\_emg\_pp\_test}
+\item \texttt{pspm\_remove\_epochs\_test}
+\end{itemize}
 
 
 
