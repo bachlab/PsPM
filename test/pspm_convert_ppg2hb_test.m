@@ -41,6 +41,17 @@ options = struct();
 options.method = 'wrong_method';
 this.verifyWarning(@() pspm_convert_ppg2hb(this.input_filename, options), 'ID:invalid_input');
 
+
+options = struct('channel_action', 'wrong');
+this.verifyWarning( @() pspm_convert_ppg2hb(this.input_filename, options), 'ID:invalid_input');
+
+options = struct('lsm', 1000);
+this.verifyWarning( @() pspm_convert_ppg2hb(this.input_filename, options), 'ID:invalid_input'); 
+
+options = struct('diagnostics', 2);
+this.verifyWarning( @() pspm_convert_ppg2hb(this.input_filename, options), 'ID:invalid_input');
+
+
 end
 
 function basic_conversion_classic(this)
@@ -129,6 +140,7 @@ outdata.infos = infos;
 outdata.data = data;
 outdata.options.overwrite = 1;
 
+
 nsts = pspm_load_data(fn, outdata);
 this.verifyEqual(nsts, 1);
 
@@ -140,5 +152,131 @@ options.diagnostics = false;
 
 this.verifyWarning(@() pspm_convert_ppg2hb(fn, options), 'ID:NoPulse');
 end
+
+function one_pulse_found(this)
+
+    fn = this.input_filename;
+
+    [nsts, infos, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+
+    for i = 1:numel(data)
+        if strcmpi(data{i}.header.chantype, 'ppg')
+            data{i}.data(:) = 0;
+
+            middle_sample = round(numel(data{i}.data) / 2);
+            data{i}.data(middle_sample) = 1;
+
+            break;
+        end
+    end
+
+    outdata.infos = infos;
+    outdata.data = data;
+    outdata.options.overwrite = 1;
+
+    nsts = pspm_load_data(fn, outdata);
+    this.verifyEqual(nsts, 1);
+
+    options = struct();
+    options.method = 'classic';
+    options.channel = 'ppg';
+    options.channel_action = 'add';
+    options.diagnostics = false;
+
+    this.verifyWarning( @() pspm_convert_ppg2hb(fn, options), 'ID:OnePulse');
+
+end
+
+function selects_last_ppg_channel_by_default(this)
+
+    fn = this.input_filename;
+
+    [nsts, infos, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+
+    % Find an existing valid PPG channel.
+    ppg_index = [];
+
+    for i = 1:numel(data)
+        if strcmpi(data{i}.header.chantype, 'ppg')
+            ppg_index = i;
+            break;
+        end
+    end
+
+    this.assertFalse(isempty(ppg_index));
+
+    % Add a second PPG channel containing no pulses.
+    second_ppg = data{ppg_index};
+    second_ppg.data(:) = 0;
+
+    data{end + 1} = second_ppg;
+
+    outdata.infos = infos;
+    outdata.data = data;
+    outdata.options.overwrite = 1;
+
+    nsts = pspm_load_data(fn, outdata);
+    this.verifyEqual(nsts, 1);
+
+    options = struct();
+    options.method = 'classic';
+    options.channel = 'ppg';
+    options.channel_action = 'add';
+    options.diagnostics = false;
+
+    % Default 'ppg' must select the last PPG channel.
+    this.verifyWarning( @() pspm_convert_ppg2hb(fn, options), 'ID:NoPulse');
+
+end
+
+function selects_ppg_channel_by_index(this)
+    fn = this.input_filename;
+
+    [nsts, infos, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+
+    ppg_index = [];
+
+    for i = 1:numel(data)
+        if strcmpi(data{i}.header.chantype, 'ppg')
+            ppg_index = i;
+            break;
+        end
+    end
+
+    this.assertFalse(isempty(ppg_index));
+
+    % Add invalid second PPG channel.
+    second_ppg = data{ppg_index};
+    second_ppg.data(:) = 0;
+    data{end + 1} = second_ppg;
+
+    outdata.infos = infos;
+    outdata.data = data;
+    outdata.options.overwrite = 1;
+
+    nsts = pspm_load_data(fn, outdata);
+    this.verifyEqual(nsts, 1);
+
+    options = struct();
+    options.method = 'classic';
+    options.channel = ppg_index;
+    options.channel_action = 'add';
+    options.diagnostics = false;
+
+    [sts, outchannel] = pspm_convert_ppg2hb(fn, options);
+
+    this.verifyEqual(sts, 1);
+    this.verifyGreaterThan(outchannel, 0);
+
+    [nsts, ~, data] = pspm_load_data(fn);
+    this.verifyEqual(nsts, 1);
+
+    this.verifyEqual(data{outchannel}.header.chantype, 'hb');
+
+end
+
 end
 end
