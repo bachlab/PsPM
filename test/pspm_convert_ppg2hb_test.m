@@ -428,7 +428,7 @@ function heartpy_rejects_invalid_peak(this)
     options.diagnostics = false;
 
     [sts, outchannel] = pspm_convert_ppg2hb(fn, options);
-    this.verifyEqual(sts, 1);
+    this.assertEqual(sts, 1);
 
     [nsts, ~, data] = pspm_load_data(fn);
     this.verifyEqual(nsts, 1);
