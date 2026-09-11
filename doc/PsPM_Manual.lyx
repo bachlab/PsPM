@@ -5473,6 +5473,15 @@ User Guide
 \end_layout
 
 \begin_layout Section
+System requirements
+\end_layout
+
+\begin_layout Standard
+PsPM is tested with Matlab 2020b and higher.
+ Most command-line functions will also run in previous Matlab versions.
+\end_layout
+
+\begin_layout Section
 File types
 \end_layout
 
