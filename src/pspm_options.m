@@ -108,7 +108,8 @@ switch FunName
     options = autofill_channel_action(options);
     options = autofill(options, 'channel',                'ppg',     '*Int*Char'        );
     options = autofill(options, 'diagnostics',            0,          1                 );
-    options = autofill(options, 'lsm',                    0,          [0,100-10^-10]    );
+    options = autofill(options, 'lsm',                    0,         'integer>=', 0     );
+    options = autofill(options, 'lsm',                    0,          '<', 100          );
     options = autofill(options, 'method',                 'classic',  {'classic', 'heartpy'});
     options = autofill(options, 'python_path',            '',         '*Char'           );
     options = autofill(options, 'missing',                {},         '*Char*Num'       );
