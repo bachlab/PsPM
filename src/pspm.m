@@ -41,17 +41,12 @@ elseif ismac
     end
   end
 else % Linux
-  if release_date_current < release_date_linux % MATLAB 2022
-    msgbox(['PsPM UI is not supported by this version of MATLAB. ',...
-      'Please consider updating your MATLAB to 2022a for Linux or newer, ',...
-      'or alternatively using scripts only.']);
-    % pspm_guide
+  if verLessThan('matlab', '9.9')  % before MATLAB R2020b
+    msgbox(['The PsPM App Designer UI is not supported by this version of MATLAB. ', ...
+        'Starting the legacy PsPM GUIDE interface instead.']);
+    pspm_guide
   else
-    if release_date_current < release_date_appdesigner_cutoff % MATLAB 2018
-      pspm_appdesigner2019
-    else
-      pspm_appdesigner
-    end
+    pspm_appdesigner
   end
 end
 return

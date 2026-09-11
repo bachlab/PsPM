@@ -5473,6 +5473,35 @@ User Guide
 \end_layout
 
 \begin_layout Section
+System requirements
+\end_layout
+
+\begin_layout Standard
+PsPM should be used with Matlab 2020b or higher.
+ We recommend using a newer Matlab version whenever possible.
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset VSpace defskip
+\end_inset
+
+The following Matlab toolboxes are required for full PsPM functionality:
+\end_layout
+
+\begin_layout Itemize
+Statistics and Machine Learning Toolbox
+\end_layout
+
+\begin_layout Itemize
+Signal Processing Toolbox
+\end_layout
+
+\begin_layout Standard
+These toolboxes can be installed together with Matlab or added to an existing Matlab installation.
+\end_layout
+
+\begin_layout Section
 File types
 \end_layout
 
