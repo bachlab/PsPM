@@ -128,13 +128,12 @@ if strcmpi(options.method, 'heartpy')
   try
     tup = py.heartpy.process(filtered_ppg, pyargs('sample_rate', sr));
     wd = tup{1};
-    m = tup{2};
+    % m = tup{2};
     
     py_peak_list =  py.array.array('d',(wd{'peaklist'}));
     binary_peak_list = double(py.array.array('d', wd{'binary_peaklist'}));
  
-    peak_list = double(py_peak_list) ;
-    % rejected_peaks = double(py_removed);
+    peak_list = double(py_peak_list);
     peak_list = peak_list(logical(binary_peak_list));
 
     msg = sprintf(['Heart beat detection from PPG with HeartPy ',...

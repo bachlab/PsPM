@@ -60,7 +60,7 @@ this.verifyWarning( @() pspm_convert_ppg2hb(this.input_filename, options), 'ID:i
 
 end
 
-function basic_conversion_classic(this,method)
+function basic_conversion(this,method)
 
  if strcmp(method, 'heartpy')
     psts = pspm_check_python;
@@ -105,6 +105,15 @@ this.verifyTrue(all(diff(data{outchannel}.data) > 0));
 end
 
 function channel_action_add_replace(this,method)
+
+if strcmp(method, 'heartpy')
+    psts = pspm_check_python;
+    this.assumeEqual(psts, 1, 'Python is not available.');
+
+    [psts, ~] = pspm_check_python_modules('heartpy');
+    this.assumeEqual(psts, 1, 'HeartPy is not available.');
+end
+
 fn = this.input_filename;
 
 options = struct();
