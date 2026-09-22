@@ -162,7 +162,7 @@ oldsr = sr;
 
 % Checking if the sampling rate is the same for all samples.
 if n_file > 1 && any(diff(sr) > 0)
-  if model.filter.down > min(sr)) ||...                                    % if filter.down is less than the minimal sr
+  if (model.filter.down > min(sr)) ||...                                    % if filter.down is less than the minimal sr
       strcmpi(model.filter.down,'none')                                    % if filter.down is none
     model.filter.down = min(sr);
     fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n')
@@ -239,19 +239,19 @@ baseline_index = floor(sr(1)*model.baseline)+1;
 if exist('std_exp_cond','var')
   tmp_data = [segm{:,std_exp_cond.ind}];
 
-  std_exp_cond.data = nanmean([tmp_data.mean],2);
-  std_exp_cond.std = nanmean([tmp_data.std],2);
-  std_exp_cond.sem = nanmean([tmp_data.sem],2);
+  std_exp_cond.data = mean([tmp_data.mean],2, 'omitnan'); %nanmean([tmp_data.mean],2);
+  std_exp_cond.std =  mean([tmp_data.std],2, 'omitnan');
+  std_exp_cond.sem =  mean([tmp_data.sem],2, 'omitnan');
 end
 
 for i=1:n_exp_cond
 
   tmp_data = [segm{:,i}];
 
-  tmp_data_new.data = nanmean([tmp_data.mean],2);
-  tmp_data_new.std = nanmean([tmp_data.std],2);
-  tmp_data_new.sem = nanmean([tmp_data.sem],2);
-  tmp_data_new.t = nanmean([tmp_data.t],2);
+  tmp_data_new.data = mean([tmp_data.mean],2, 'omitnan');
+  tmp_data_new.std = mean([tmp_data.std],2, 'omitnan');
+  tmp_data_new.sem = mean([tmp_data.sem],2, 'omitnan');
+  tmp_data_new.t = mean([tmp_data.t],2, 'omitnan');
 
   % Subtracting the standard experimental condition
   if exist('std_exp_cond','var') && i~=std_exp_cond.ind
