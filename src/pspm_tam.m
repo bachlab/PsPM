@@ -1,4 +1,4 @@
-function tam = pspm_tam(model, options)
+function [sts, tam] = pspm_tam(model, options)
 % ● Description
 %   TAM stands for Trial Average Model and allows to fit models on trial-averaged data.
 %   pspm_tam starts by extracting and averaging signal segments of length `model.window`
@@ -161,10 +161,11 @@ end
 oldsr = sr;
 
 % Checking if the sampling rate is the same for all samples.
-if n_file > 1 && any(diff(sr) > 0)
-  if (model.filter.down > min(sr)) ||...                                    % if filter.down is less than the minimal sr
-      strcmpi(model.filter.down,'none')                                    % if filter.down is none
-    model.filter.down = min(sr);
+if n_file > 1 && any(diff(sr) ~= 0)    % not any(diff(sr) > 0) 
+  if (ischar(model.filter.down) && strcmpi(model.filter.down, 'none'))  || ...    % if filter.down is none         
+     (isnumeric(model.filter.down) && model.filter.down > min(sr))                            % if filter.down is less than the minimal sr
+    
+      model.filter.down = min(sr);
     fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n')
   end
 else
@@ -194,14 +195,14 @@ for k=1:n_file
     extrsgopt.marker_chan = markers(k);
   end
 
-  [lsts, s] = pspm_extract_segments('manual', y(k), sr(k), model.timing(k), extrsgopt);
+  [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), model.timing{k}, extrsgopt); % 'markers'???
   if lsts<1, warning('ID:error_extract_segments','An error occured in pspm_extract_segments.'); return; end
 
   for i=1:n_exp_cond
-    tmp_data.mean = s.segments{i,1}.mean;
-    tmp_data.std = s.segments{i,1}.std;
-    tmp_data.sem = s.segments{i,1}.sem;
-    tmp_data.t = s.segments{i,1}.t;
+    tmp_data.mean = s.segments{i,1}.mean; % why not eg 50x1 
+    tmp_data.std = s.segments{i,1}.std;% why not eg 50x1
+    tmp_data.sem = s.segments{i,1}.sem;% why not eg 50x1
+    tmp_data.t = s.segments{i,1}.t; 
     % a cell array of struct and of size (n_file x n_exp_cond) where each
     % line correspond to a given file and each column to an
     % experimental condition
@@ -228,8 +229,9 @@ for i = 1:n_exp_cond
 end
 
 % changing the sampling rate
-sr = model.filter.down*ones(size(sr));
-
+if isnumeric(model.filter.down)
+    sr = model.filter.down * ones(size(sr)); % needs to be tested
+end
 
 %% Determining mean values
 fprintf('Preparing for fitting ...\n')
@@ -271,7 +273,7 @@ for i=1:n_exp_cond
     tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up
   end
 
-  mean{1,i} = tmp_data_new;
+  mean_data{1,i} = tmp_data_new;
 
   clear tmp_data tmp_data_new tmp_max tmp_max_ind
 end
@@ -280,7 +282,7 @@ end
 fprintf('Fitting ...\n')
 
 for i=1:n_exp_cond
-  raw_y = mean{1,i}.data;
+  raw_y = mean_data{1,i}.data;
 
   n = model.window;
   td = n / length(raw_y);
@@ -299,7 +301,7 @@ for i=1:n_exp_cond
   % Minimization of RSS
   warning off all
   [~, fitted{1,i}.optargs, fitted{1,i}.fval, sts, fmincon_output] = ...
-    evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)');
+    evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)'); % lb ub for opt.
   warning on all
   if sts == 0
     warning('ID:fmincon',['During the fitting process, ''fmincon'' exceeded', ...
@@ -320,7 +322,7 @@ for i=1:n_exp_cond
   % Calculating the predicted signal that will be included in the output structure
   fitted{1,i}.data = predicted_y(fitted{1,i}.optargs);
   % Cutting away tail
-  tmp_y = mean{1,i}.data;
+  tmp_y = mean_data{1,i}.data;
   fitted{1,i}.data(size(tmp_y,1)+1:end) = [];
 
 end
@@ -336,9 +338,15 @@ tam.input.sr      = num2cell(oldsr(:).');
 tam.bf            = model.bf;
 tam.if            = model.if;
 
+% Check if filtered
+no_lp = ischar(model.filter.lpfreq) && strcmpi(model.filter.lpfreq, 'none');
+no_hp = ischar(model.filter.hpfreq) && strcmpi(model.filter.hpfreq, 'none');
+no_down = ischar(model.filter.down) && strcmpi(model.filter.down, 'none');
+filtered = ~(no_lp && no_hp && no_down);
+
 % Collecting fitting data
-tmp_mean = [mean{1,:}];
-tam.data.Y        = {tmp_mean.data};
+tmp_mean = [mean_data{1,:}];
+tam.data.Y        = {tmp_mean.data}; % measured data
 tam.data.X        = {tmp_mean.t};
 tam.data.std      = {tmp_mean.std};
 tam.data.sem      = {tmp_mean.sem};
@@ -358,12 +366,12 @@ end
 tmp_fitted = [fitted{1,:}];
 tam.fit.Y         = {tmp_fitted.data};
 tam.fit.X         = {tmp_mean.t};
-tam.fit.rss       = {tmp_fitted.fval};  % RSS (residual sum square)
+tam.fit.rss       = {tmp_fitted.fval};  
 tam.fit.args      = {tmp_fitted.optargs};
 tam.fit.sr        = num2cell(sr(:).');
 
 tam.infos.duration     = model.window;
-tam.infos.durationinfo = 'duration in seconds';
+tam.infos.durationinfo = 'duration in seconds'; % not allways true! -> timeunits='samples'
 
 tam.timing        = model.timing;
 

@@ -519,8 +519,15 @@ if ~isfield(model, 'filter')
     end
 end
 
-if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-    warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
+if ~isfield(model.filter, 'down')
+    warning('ID:invalid_input', 'Filter structure needs a ''down'' field.'); return;
+end
+
+valid_down = (isnumeric(model.filter.down) && isscalar(model.filter.down) && isfinite(model.filter.down) && model.filter.down > 0) ...
+          || (ischar(model.filter.down) &&   strcmpi(model.filter.down, 'none'));
+
+if ~valid_down    
+    warning('ID:invalid_input',  'Filter structure needs a positive numeric ''down'' field or ''none''.'); return;
 end
 
 
