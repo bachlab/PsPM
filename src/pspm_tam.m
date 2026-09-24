@@ -12,7 +12,7 @@ function [sts, tam] = pspm_tam(model, options)
 %   ├─────.timing:  a multiple condition file name (single session) OR
 %   │               a cell array of multiple condition file names OR
 %   │               a struct (single session) with fields .names, .onsets,
-%   │               and (optional) .durations OR
+%   │               and (optional) duration OR
 %   │               a cell array of struct OR
 %   │               a struct with fields 'markerinfos', 'markervalues',
 %   │               'names' OR
@@ -83,6 +83,7 @@ function [sts, tam] = pspm_tam(model, options)
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
 %   Maintained in 2022 by Teddy
+%   Maintained in 2026 by Bernhard A. von Raußendorf
 % ● Developer
 %   The fitting process is a residual least square minimisation where the
 %   predicted value is calculated as following:
@@ -126,6 +127,18 @@ if model.invalid || options.invalid
     return
 end
 
+% 2.3 check ....
+std_exp_cond = [];
+
+if ~(ischar(model.std_exp_cond) && strcmpi(model.std_exp_cond, 'none'))
+    if ischar(model.std_exp_cond)
+        std_exp_cond.ind = find(strcmpi( model.std_exp_cond, model.timing{1}.names), 1);
+    else
+        std_exp_cond.ind = model.std_exp_cond;
+    end
+    std_exp_cond.name = model.timing{1}.names{std_exp_cond.ind};
+end
+
 %% Loading files
 
 fprintf('Computing Trial Average Model: %s \n', model.modelfile);
@@ -163,7 +176,7 @@ oldsr = sr;
 % Checking if the sampling rate is the same for all samples.
 if n_file > 1 && any(diff(sr) ~= 0)    % not any(diff(sr) > 0) 
   if (ischar(model.filter.down) && strcmpi(model.filter.down, 'none'))  || ...    % if filter.down is none         
-     (isnumeric(model.filter.down) && model.filter.down > min(sr))                            % if filter.down is less than the minimal sr
+     (isnumeric(model.filter.down) && model.filter.down > min(sr))                % if filter.down is less than the minimal sr
     
       model.filter.down = min(sr);
     fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n')
@@ -202,7 +215,7 @@ for k=1:n_file
     tmp_data.mean = s.segments{i,1}.mean; % why not eg 50x1 
     tmp_data.std = s.segments{i,1}.std;% why not eg 50x1
     tmp_data.sem = s.segments{i,1}.sem;% why not eg 50x1
-    tmp_data.t = s.segments{i,1}.t; 
+    tmp_data.t = s.segments{i,1}.t; % 
     % a cell array of struct and of size (n_file x n_exp_cond) where each
     % line correspond to a given file and each column to an
     % experimental condition
@@ -215,33 +228,44 @@ clear extrsg tmp_data s lsts
 
 %% Downsample the data
 % if a filter was specified or if the data differ in sr
-fprintf('Filtering ...\n')
+
+fprintf('Filtering ...\n') % maybe only if there is a filtering?
+
+
+fields = {'mean', 'std', 'sem'};
 for i = 1:n_exp_cond
     for k = 1:n_file
+        model.filter.sr = sr(k); % adds the corresponding sr to the filer
+        
+        for f = 1:numel(fields)
+            field = fields{f};
+            [lsts, segm{k,i}.(field), new_sr(k)] = pspm_prepdata(segm{k,i}.(field), model.filter);
+            if lsts < 1; warning('ID:error_prepdata', 'An error occured in pspm_prepdata.');  return; end
+        end
+        [llsts, segm{k,i}.t , new_sr(k) ] = pspm_downsample(segm{k,i}.t,  sr(k), new_sr(k) ); % does not need to be filtered!
+        if llsts < 1; warning('ID:error_downsample', 'An error occured in pspm_downsample.');  return; end
 
-        model.filter.sr = sr(k);
-
-        [lsts, segm{k,i}, ~] = structfun(@(x) pspm_prepdata(x, model.filter),segm{k,i},'UniformOutput',false);
-        if any(structfun(@(x) x<1,lsts)), warning('ID:error_prepdata','An error occured in pspm_prepdata.'); return; end
-
-        clear new_sr lsts
     end
 end
 
-% changing the sampling rate
-if isnumeric(model.filter.down)
-    sr = model.filter.down * ones(size(sr)); % needs to be tested
-end
+sr = new_sr; % maybe test upstream if all new_sr are the same!
+% % changing the sampling rate
+% if isnumeric(model.filter.down)
+%     sr = model.filter.down * ones(size(new_sr)); % needs to be tested why not the values of prepdata?
+% end
+
+clear new_sr
 
 %% Determining mean values
 fprintf('Preparing for fitting ...\n')
 
 baseline_index = floor(sr(1)*model.baseline)+1;
 
-if exist('std_exp_cond','var')
+
+if ~isempty(std_exp_cond)
   tmp_data = [segm{:,std_exp_cond.ind}];
 
-  std_exp_cond.data = mean([tmp_data.mean],2, 'omitnan'); %nanmean([tmp_data.mean],2);
+  std_exp_cond.data = mean([tmp_data.mean],2, 'omitnan');
   std_exp_cond.std =  mean([tmp_data.std],2, 'omitnan');
   std_exp_cond.sem =  mean([tmp_data.sem],2, 'omitnan');
 end
@@ -256,7 +280,7 @@ for i=1:n_exp_cond
   tmp_data_new.t = mean([tmp_data.t],2, 'omitnan');
 
   % Subtracting the standard experimental condition
-  if exist('std_exp_cond','var') && i~=std_exp_cond.ind
+  if ~isempty(std_exp_cond) && i~=std_exp_cond.ind
     tmp_data_new.data = tmp_data_new.data - std_exp_cond.data;
     tmp_data_new.std = tmp_data_new.std + std_exp_cond.std;      % the error adds up
     tmp_data_new.sem = tmp_data_new.sem + std_exp_cond.sem;      % the error adds up
@@ -266,11 +290,12 @@ for i=1:n_exp_cond
   tmp_data_new.data = tmp_data_new.data - tmp_data_new.data(baseline_index);
 
   % Dividing by the max value
-  if model.norm_max
-    [tmp_max,tmp_max_ind] = max(tmp_data_new.data);
+  if model.norm_max 
+    [tmp_max,tmp_max_ind] = max(tmp_data_new.data); % this does not give us the first peak!!!
+    % maybe add     if tmp_max == 0 
     tmp_data_new.data = tmp_data_new.data/tmp_max;
-    tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up
-    tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up
+    tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
+    tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
   end
 
   mean_data{1,i} = tmp_data_new;
@@ -355,7 +380,7 @@ tam.data.filtered = filtered;
 tam.data.normd  = model.norm;
 tam.data.norm     = model.norm;
 
-if exist('std_exp_cond','var')
+if ~isempty(std_exp_cond)
   tam.data.std_exp_cond.name  = std_exp_cond.name;
   tam.data.std_exp_cond.ind   = std_exp_cond.ind;
 else
