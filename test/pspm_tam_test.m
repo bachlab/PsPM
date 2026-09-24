@@ -5,6 +5,10 @@ properties (TestParameter)
     nFiles = struct( ...
         'oneFile', 1, ...
         'twoFiles', 2);
+
+    stdExpCond = struct( ...
+        'byName', 'condition_A', ...
+        'byIndex', 1);
 end
 
 methods (Test)
@@ -266,7 +270,6 @@ function testLowpassFilterWithoutDownsampling(testCase)
 
 end
 
-
 function testTwoSessions(this)
 
     sr = 10;
@@ -388,7 +391,144 @@ function testTwoSessions(this)
 
 end
 
+function testStandardExperimentalCondition(testCase, stdExpCond)
 
+    sr = 10;
+    duration = 60;
+    window = 5;
+
+    t = (0:1/sr:window-1/sr)';
+    baseResponse = exp(-((t - 2).^2) / (2 * 0.5^2));
+
+    % Standard condition A
+    responseA = 0.5 * baseResponse;
+
+    % Experimental condition B
+    responseB = 2 * baseResponse;
+
+    onsetsA = [10 30];
+    onsetsB = [20 40];
+
+    y = zeros(duration * sr, 1);
+
+    % Insert trials of condition A
+    for iTrial = 1:numel(onsetsA)
+
+        startSample = round(onsetsA(iTrial) * sr) + 1;
+        stopSample = startSample + numel(responseA) - 1;
+
+        y(startSample:stopSample) = ...
+            y(startSample:stopSample) + responseA;
+    end
+
+    % Insert trials of condition B
+    for iTrial = 1:numel(onsetsB)
+
+        startSample = round(onsetsB(iTrial) * sr) + 1;
+        stopSample = startSample + numel(responseB) - 1;
+
+        y(startSample:stopSample) = ...
+            y(startSample:stopSample) + responseB;
+    end
+
+    % Timing
+    timing.names = {'condition_A', 'condition_B'};
+    timing.onsets = {onsetsA, onsetsB};
+    timing.durations = { ...
+        zeros(size(onsetsA)), ...
+        zeros(size(onsetsB))};
+
+    % PsPM data file
+    data = cell(1,1);
+
+    data{1}.header = struct( ...
+        'chantype', 'pupil', ...
+        'sr', sr, ...
+        'units', 'a.u.');
+
+    data{1}.data = y(:);
+
+    infos.duration = duration;
+    infos.durationinfo = 'Duration in seconds';
+    infos.source = struct();
+
+    datafile = [tempname '.mat'];
+    save(datafile, 'data', 'infos');
+
+    testCase.addTeardown(@() deleteIfExists(datafile));
+
+    modelfile = [tempname '.mat'];
+    testCase.addTeardown(@() deleteIfExists(modelfile));
+
+    % Model
+    model = struct();
+
+    model.modelfile = modelfile;
+    model.datafile = {datafile};
+    model.timing = {timing};
+
+    model.timeunits = 'seconds';
+    model.window = window;
+    model.modelspec = 'dilation';
+    model.modality = 'pupil';
+    model.channel = 'pupil';
+
+    model.norm = 0;
+    model.baseline = 0;
+    model.norm_max = 0;
+
+    % Tested option
+    model.std_exp_cond = stdExpCond;
+
+    model.filter = struct( ...
+        'lpfreq', 'none', ...
+        'lporder', 1, ...
+        'hpfreq', 'none', ...
+        'hporder', 1, ...
+        'down', 'none', ...
+        'direction', 'bi');
+
+    options.overwrite = 1;
+
+    % Run TAM
+    [sts, tam] = pspm_tam(model, options);
+
+    testCase.verifyEqual(sts, 1);
+
+    % ----------------------------
+    % Expected output
+    % ----------------------------
+
+    % Standard condition A is NOT subtracted from itself.
+    expectedA = responseA - responseA(1);
+
+    % For B:
+    %
+    % B_new = B - A
+    %
+    expectedB = responseB - responseA;
+
+    % baseline correction happens afterwards
+    expectedB = expectedB - expectedB(1);
+
+    % Condition A stays unchanged apart from baseline
+    testCase.verifyEqual( ...
+        tam.data.Y{1}, ...
+        expectedA(:), ...
+        'AbsTol', 1e-10);
+
+    % Condition B must be B - A
+    testCase.verifyEqual( ...
+        tam.data.Y{2}, ...
+        expectedB(:), ...
+        'AbsTol', 1e-10);
+
+    % Check stored standard condition information
+    testCase.verifyEqual( tam.data.std_exp_cond.name, 'condition_A');
+
+    testCase.verifyEqual( tam.data.std_exp_cond.ind, 1);
+
+end
 end
 end
 

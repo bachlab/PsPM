@@ -212,10 +212,10 @@ for k=1:n_file
   if lsts<1, warning('ID:error_extract_segments','An error occured in pspm_extract_segments.'); return; end
 
   for i=1:n_exp_cond
-    tmp_data.mean = s.segments{i,1}.mean; % why not eg 50x1 
-    tmp_data.std = s.segments{i,1}.std;% why not eg 50x1
-    tmp_data.sem = s.segments{i,1}.sem;% why not eg 50x1
-    tmp_data.t = s.segments{i,1}.t; % 
+    tmp_data.mean = s.segments{i}.mean; % why not eg 50x1 
+    tmp_data.std = s.segments{i}.std;% why not eg 50x1
+    tmp_data.sem = s.segments{i}.sem;% why not eg 50x1
+    tmp_data.t = s.segments{i}.t; % 
     % a cell array of struct and of size (n_file x n_exp_cond) where each
     % line correspond to a given file and each column to an
     % experimental condition
