@@ -675,7 +675,102 @@ function testMarkerTimeunits(testCase, nFiles)
 
 end
 
+function testZscoreNormalization(testCase)
 
+    sr = 10;
+    duration = 50;
+    window = 5;
+
+    t = (0:1/sr:window-1/sr)';
+    response = exp(-((t - 2).^2) / (2 * 0.5^2));
+
+    onsets = [10 20 30];
+
+    y = zeros(duration * sr, 1);
+
+    for iTrial = 1:numel(onsets)
+        startSample = round(onsets(iTrial) * sr) + 1;
+        stopSample = startSample + numel(response) - 1;
+
+        y(startSample:stopSample) = ...
+            y(startSample:stopSample) + response;
+    end
+
+    timing.names = {'condition_1'};
+    timing.onsets = {onsets};
+    timing.durations = {zeros(size(onsets))};
+
+    data = cell(1,1);
+
+    data{1}.header = struct( ...
+        'chantype', 'pupil', ...
+        'sr', sr, ...
+        'units', 'a.u.');
+
+    data{1}.data = y(:);
+
+    infos.duration = duration;
+    infos.durationinfo = 'Duration in seconds';
+    infos.source = struct();
+
+    datafile = [tempname '.mat'];
+    save(datafile, 'data', 'infos');
+    testCase.addTeardown(@() deleteIfExists(datafile));
+    
+    % ----
+    modelfile = [tempname '.mat'];
+    testCase.addTeardown(@() deleteIfExists(modelfile));
+
+    model = struct();
+
+    model.modelfile = modelfile;
+    model.datafile = {datafile};
+    model.timing = {timing};
+
+    model.timeunits = 'seconds';
+    model.window = window;
+
+    model.modelspec = 'dilation';
+    model.modality = 'pupil';
+    model.channel = 'pupil';
+
+    % This is what we are testing
+    model.norm = 1;
+
+    model.baseline = 0;
+    model.norm_max = 0;
+
+    model.filter = struct( ...
+        'lpfreq', 'none', ...
+        'lporder', 1, ...
+        'hpfreq', 'none', ...
+        'hporder', 1, ...
+        'down', 'none', ...
+        'direction', 'bi');
+
+    options.overwrite = 1;
+
+    [sts, tam] = pspm_tam(model, options);
+
+    testCase.verifyEqual(sts, 1);
+
+    % Expected z-scoring of the COMPLETE continuous time series
+    mu = mean(y, 'omitnan');
+    sigma = std(y, 0, 'omitnan');
+
+    expected = (response - mu) / sigma;
+
+    % TAM subsequently baselines against the first point
+    expected = expected - expected(1);
+
+    testCase.verifyEqual( ...
+        tam.data.Y{1}, ...
+        expected(:), ...
+        'AbsTol', 1e-10);
+
+    testCase.verifyEqual(tam.data.norm, 1);
+
+end
 
 
 

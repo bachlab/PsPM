@@ -155,7 +155,7 @@ for iFile = 1:n_file
     % Filling up the data and the sampling rates
     y{iFile} = data.data(:);
     sr(iFile) = data.header.sr;
-    
+
     fprintf('.');
 end
 
@@ -174,15 +174,15 @@ else
   fprintf('\n');
 end
 
-%%  Zscoring the data ->  can be done by pspm_extract_segments ! what is with nans?
-if model.norm
-  fprintf('Zscoring ...\n')
-  n_file = numel(model.datafile);
-  for iFile = 1:n_file
-    % NANZSCORE found in src/ext/VBA/stats&plots
-    [y{iFile},~,~] = nannorm(y{iFile}); %nannorm??? -> nanzscore??
-  end
-end
+%%  Zscoring the data ->  will be done by pspm_extract_segments 
+% if model.norm
+%   fprintf('Zscoring ...\n')
+%   n_file = numel(model.datafile);
+%   for iFile = 1:n_file
+%     % NANZSCORE found in src/ext/VBA/stats&plots
+%     [y{iFile},~,~] = nanzscore(y{iFile}); %nannorm??? -> nanzscore??
+%   end
+% end
 
 %%  Extracting segments
 fprintf('Extracting segments ...\n')
@@ -191,6 +191,7 @@ fprintf('Extracting segments ...\n')
 extrsgopt.timeunits = model.timeunits;
 extrsgopt.length = model.window;       % segments of 'model.window' time unit long
 extrsgopt.plot = 0;                    % do not plot mean value and std
+extrsgopt.norm = model.norm;
 
 for k=1:n_file
   if strcmpi(model.timeunits, 'markers')
@@ -207,7 +208,6 @@ for k=1:n_file
 
       % In file mode the raw pupil data are loaded again,
       % so normalization must happen inside extract_segments.
-      fileopt.norm = model.norm;
       [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, model.channel, model.timing{k}, fileopt);
   else
       [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), model.timing{k}, extrsgopt); % wird es richtig gen znormed?
