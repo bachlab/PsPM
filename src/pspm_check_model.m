@@ -430,7 +430,7 @@ if strcmpi(modeltype, 'tam')
     model.baseline = 0;
   elseif ~isnumeric(model.baseline)
     warning('ID:invalid_input','''model.baseline'' has to be a numeric.'); return;
-  elseif model.baseline > model.window || model.baseline < 0
+  elseif model.baseline >= model.window || model.baseline < 0
     warning('ID:invalid_input',['''model.baseline'' has to be positive ',...
       'and smaller than ''model.window''.']); return;
   end
