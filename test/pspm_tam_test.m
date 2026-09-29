@@ -529,6 +529,156 @@ function testStandardExperimentalCondition(testCase, stdExpCond)
     testCase.verifyEqual( tam.data.std_exp_cond.ind, 1);
 
 end
+
+function testMarkerTimeunits(testCase, nFiles)
+
+    sr = 10;
+    duration = 50;
+    window = 5;
+
+    % Known trial response
+    t = (0:1/sr:window-1/sr)';
+    response = exp(-((t - 2).^2) / (2 * 0.5^2));
+
+    % Actual marker times in seconds
+    markerTimes = [10 20 30];
+
+    % Continuous pupil signal
+    y = zeros(duration * sr, 1);
+
+    for iTrial = 1:numel(markerTimes)
+
+        startSample = round(markerTimes(iTrial) * sr) + 1;
+        stopSample = startSample + numel(response) - 1;
+
+        y(startSample:stopSample) = ...
+            y(startSample:stopSample) + response;
+    end
+
+    % Timing uses marker NUMBERS, not seconds:
+    %
+    % marker 1 -> 10 s
+    % marker 2 -> 20 s
+    % marker 3 -> 30 s
+    timing.names = {'condition_1'};
+    timing.onsets = {[1 2 3]};
+    timing.durations = {zeros(1,3)};
+
+    % --------------------------------------------------
+    % Create one or two PsPM data files
+    % --------------------------------------------------
+
+    datafiles = cell(1, nFiles);
+
+    infos.duration = duration;
+    infos.durationinfo = 'Duration in seconds';
+    infos.source = struct();
+
+    for k = 1:nFiles
+
+        data = cell(1,2);
+
+        % Pupil channel
+        data{1}.header = struct( ...
+            'chantype', 'pupil', ...
+            'sr', sr, ...
+            'units', 'a.u.');
+
+        data{1}.data = y(:);
+
+        % Marker channel
+        data{2}.header = struct( ...
+            'chantype', 'marker', ...
+            'sr', 1, ...
+            'units', 'events');
+
+        data{2}.data = markerTimes(:);
+
+        datafiles{k} = [tempname '.mat'];
+
+        save(datafiles{k}, 'data', 'infos');
+
+        testCase.addTeardown( ...
+            @() deleteIfExists(datafiles{k}));
+    end
+
+    % --------------------------------------------------
+    % Model
+    % --------------------------------------------------
+
+    modelfile = [tempname '.mat'];
+    testCase.addTeardown(@() deleteIfExists(modelfile));
+
+    model = struct();
+
+    model.modelfile = modelfile;
+    model.datafile = datafiles;
+
+    % Same marker timing for every session
+    model.timing = repmat({timing}, 1, nFiles);
+
+    model.timeunits = 'markers';
+    model.window = window;
+
+    model.modelspec = 'dilation';
+    model.modality = 'pupil';
+    model.channel = 'pupil';
+
+    model.norm = 0;
+    model.baseline = 0;
+    model.norm_max = 0;
+
+    model.filter = struct( ...
+        'lpfreq', 'none', ...
+        'lporder', 1, ...
+        'hpfreq', 'none', ...
+        'hporder', 1, ...
+        'down', 'none', ...
+        'direction', 'bi');
+
+    % --------------------------------------------------
+    % Options
+    % --------------------------------------------------
+
+    options = struct();
+
+    options.overwrite = 1;
+
+    % Important part of this test:
+    % one marker-channel specification must work
+    % for one AND multiple data files.
+    options.marker_chan = 'marker';
+
+    % --------------------------------------------------
+    % Run TAM
+    % --------------------------------------------------
+
+    [sts, tam] = pspm_tam(model, options);
+
+    testCase.verifyEqual(sts, 1);
+
+    % --------------------------------------------------
+    % Expected result
+    % --------------------------------------------------
+
+    expected = response - response(1);
+
+    testCase.verifyEqual( ...
+        tam.data.Y{1}, ...
+        expected(:), ...
+        'AbsTol', 1e-10);
+
+    % Sampling rate must remain unchanged for every session
+    testCase.verifyEqual( ...
+        tam.data.sr, ...
+        repmat({sr}, 1, nFiles));
+
+end
+
+
+
+
+
 end
 end
 

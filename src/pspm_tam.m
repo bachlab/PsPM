@@ -40,7 +40,7 @@ function [sts, tam] = pspm_tam(model, options)
 %   ├───.baseline:  [optional] allows to specify a baseline in 'seconds' which is
 %   │               applied to the data before fitting the model. It has to
 %   │               be positive and smaller than model.window. If no baseline
-%   │               specified, data will be baselined wrt. the first datapoint.
+%   │               specified, data will be baselined wrt. the first data-point.
 %   │               DEFAULT: 0
 %   ├.std_exp_cond: [optional] allows to specify the standard experimental condition
 %   │               as a string or an index in timing.names.
@@ -155,18 +155,7 @@ for iFile = 1:n_file
     % Filling up the data and the sampling rates
     y{iFile} = data.data(:);
     sr(iFile) = data.header.sr;
-    fprintf('.');
-
-    % If the timeunits is markers
-    if strcmpi(model.timeunits, 'markers')
-        [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan{iFile}, 'marker');
-        if sts < 1
-            warning('ID:invalid_input','Could not load the specified marker channel.');
-            return;
-        end
-        markers{iFile} = data.data;
-    end
-
+    
     fprintf('.');
 end
 
@@ -179,19 +168,19 @@ if n_file > 1 && any(diff(sr) ~= 0)    % not any(diff(sr) > 0)
      (isnumeric(model.filter.down) && model.filter.down > min(sr))                % if filter.down is less than the minimal sr
     
       model.filter.down = min(sr);
-    fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n')
+    fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n') % when and where?
   end
 else
   fprintf('\n');
 end
 
-%%  Zscoring the data
+%%  Zscoring the data ->  can be done by pspm_extract_segments ! what is with nans?
 if model.norm
   fprintf('Zscoring ...\n')
   n_file = numel(model.datafile);
   for iFile = 1:n_file
-    % NANZSCORE found in src/VBA/stats&plots
-    [y{iFile},~,~] = nannorm(y{iFile});
+    % NANZSCORE found in src/ext/VBA/stats&plots
+    [y{iFile},~,~] = nannorm(y{iFile}); %nannorm??? -> nanzscore??
   end
 end
 
@@ -205,17 +194,33 @@ extrsgopt.plot = 0;                    % do not plot mean value and std
 
 for k=1:n_file
   if strcmpi(model.timeunits, 'markers')
-    extrsgopt.marker_chan = markers(k);
+      % marker channel for this session
+      if iscell(options.marker_chan)
+          marker_chan = options.marker_chan{k};
+      else
+          marker_chan = options.marker_chan;
+      end
+
+      % pspm_extract_segments uses a different option name
+      fileopt = extrsgopt;
+      fileopt.marker_chan_num = marker_chan;
+
+      % In file mode the raw pupil data are loaded again,
+      % so normalization must happen inside extract_segments.
+      fileopt.norm = model.norm;
+      [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, model.channel, model.timing{k}, fileopt);
+  else
+      [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), model.timing{k}, extrsgopt); % wird es richtig gen znormed?
+
   end
 
-  [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), model.timing{k}, extrsgopt); % 'markers'???
   if lsts<1, warning('ID:error_extract_segments','An error occured in pspm_extract_segments.'); return; end
 
   for i=1:n_exp_cond
-    tmp_data.mean = s.segments{i}.mean; % why not eg 50x1 
-    tmp_data.std = s.segments{i}.std;% why not eg 50x1
-    tmp_data.sem = s.segments{i}.sem;% why not eg 50x1
-    tmp_data.t = s.segments{i}.t; % 
+    tmp_data.mean = s.segments{i}.mean;  % why not eg 50x1 
+    tmp_data.std = s.segments{i}.std;    % why not eg 50x1
+    tmp_data.sem = s.segments{i}.sem;    % why not eg 50x1
+    tmp_data.t = s.segments{i}.t;        % 
     % a cell array of struct and of size (n_file x n_exp_cond) where each
     % line correspond to a given file and each column to an
     % experimental condition
@@ -396,7 +401,7 @@ tam.fit.args      = {tmp_fitted.optargs};
 tam.fit.sr        = num2cell(sr(:).');
 
 tam.infos.duration     = model.window;
-tam.infos.durationinfo = 'duration in seconds'; % not allways true! -> timeunits='samples'
+tam.infos.durationinfo = 'duration in seconds'; % not always true! -> timeunits='samples'
 
 tam.timing        = model.timing;
 
