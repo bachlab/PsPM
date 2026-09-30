@@ -115,6 +115,17 @@ if isempty(settings)
   pspm_init;
 end
 tam = struct();
+%% tmp filter check for testing
+
+if isfield(model, 'filter')
+    disp('Filter passed from batch:')
+    disp(model.filter)
+else
+    disp('Using default TAM filter:')
+    global settings
+    disp(settings.tam(strcmpi({settings.tam.modelspec}, model.modelspec)).filter)
+end
+
 
 %% 2 Check input
 % 2.1 check missing input --
