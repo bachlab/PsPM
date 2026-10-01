@@ -1,4 +1,4 @@
-    function [sts, glm] = pspm_glm(model, options)
+function [sts, glm] = pspm_glm(model, options)
 % ● Description
 %   pspm_glm specifies a within-subject general linear convolution model 
 %   (GLM) of predicted signals and calculates amplitude estimates for these 

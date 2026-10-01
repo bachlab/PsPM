@@ -125,6 +125,7 @@ classdef pspm_dcm_test < pspm_testcase
       test_hra1_flex_cs(this);
       test_hra1_flex_cs_missing(this);
       test_hra1_flex_cs_nan(this);
+      test_hra1_flex_cs_inestimable(this);
     end
   end
   methods 
@@ -207,6 +208,29 @@ classdef pspm_dcm_test < pspm_testcase
         this.verifyTrue(any(strcmp( result.dcm.warnings(:, 1), 'ID:inestimable_trials')));
 
       end
+    end
+    function test_hra1_flex_cs_inestimable(this)
+        % find free filename
+        fn = pspm_find_free_fn(this.modelfile_prfx, '_inestimable.mat');
+
+        [df, ~] = this.get_hra_files(1);
+        [timing, eventnames, trialnames] = this.extract_hra_timings(1);
+
+        model = struct( ...
+            'modelfile', fn, ...
+            'datafile', df, ...
+            'timing', {timing}, ...
+            ... % force the last trial to be marked as inestimable
+            'lasttrialcutoff', 1e6 ...
+            );
+
+        options = struct( ...
+            'dispwin', 0, ...
+            'trlnames', {trialnames}, ...
+            'eventnames', {eventnames} ...
+            );
+
+        this.verifyWarning( @() pspm_dcm(model, options), 'ID:inestimable_trials');
     end
     function [timing, eventnames, trialnames] = ...
         extract_hra_timings(this, subject)
