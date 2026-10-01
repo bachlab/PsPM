@@ -115,17 +115,16 @@ if isempty(settings)
   pspm_init;
 end
 tam = struct();
-%% tmp filter check for testing
-
-if isfield(model, 'filter')
-    disp('Filter passed from batch:')
-    disp(model.filter)
-else
-    disp('Using default TAM filter:')
-    global settings
-    disp(settings.tam(strcmpi({settings.tam.modelspec}, model.modelspec)).filter)
-end
-
+% %% tmp filter check for testing
+% 
+% if isfield(model, 'filter')
+%     disp('Filter passed from batch:')
+%     disp(model.filter)
+% else
+%     disp('Using default TAM filter:')
+%     global settings
+%     disp(settings.tam(strcmpi({settings.tam.modelspec}, model.modelspec)).filter)
+% end
 
 %% 2 Check input
 % 2.1 check missing input --
@@ -138,24 +137,33 @@ if model.invalid || options.invalid
     return
 end
 
-% 2.3 check ....
+%% Load timing definitions
+timing = model.timing;
+
+for iFile = 1:numel(timing)
+    if ischar(timing{iFile})
+        timing{iFile} = load(timing{iFile});
+    end
+end
+
+%% Standard experimental condition
 std_exp_cond = [];
 
 if ~(ischar(model.std_exp_cond) && strcmpi(model.std_exp_cond, 'none'))
     if ischar(model.std_exp_cond)
-        std_exp_cond.ind = find(strcmpi( model.std_exp_cond, model.timing{1}.names), 1);
+        std_exp_cond.ind = find(strcmpi( model.std_exp_cond, timing{1}.names), 1);
     else
         std_exp_cond.ind = model.std_exp_cond;
     end
-    std_exp_cond.name = model.timing{1}.names{std_exp_cond.ind};
+    std_exp_cond.name = timing{1}.names{std_exp_cond.ind};
 end
 
 %% Loading files
 
 fprintf('Computing Trial Average Model: %s \n', model.modelfile);
 
-n_exp_cond = numel(model.timing{1}.names);      % number of experimental conditions
-n_file = numel(model.datafile);                 % number of files
+n_exp_cond = numel(timing{1}.names);      % number of experimental conditions
+n_file = numel(model.datafile);           % number of files
 
 % Loading data and sr
 fprintf('Getting data .');
@@ -219,9 +227,9 @@ for k=1:n_file
 
       % In file mode the raw pupil data are loaded again,
       % so normalization must happen inside extract_segments.
-      [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, model.channel, model.timing{k}, fileopt);
+      [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, model.channel, timing{k}, fileopt);
   else
-      [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), model.timing{k}, extrsgopt); % wird es richtig gen znormed?
+      [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), timing{k}, extrsgopt); % wird es richtig gen znormed?
 
   end
 
@@ -419,7 +427,7 @@ tam.timing        = model.timing;
 tam.modeltype     = 'tam';
 tam.modality      = model.modality;
 
-tam.names         = model.timing{1}.names(:).';
+tam.names         = timing{1}.names(:).';
 
 % Saving structure
 savedata = struct('tam', tam);

@@ -416,6 +416,78 @@ function testBaselineEqualWindowIsInvalid(testCase)
 
 end
 
+
+function testThreeSessionsWithTimingFiles(testCase)
+
+    sr = 10;
+    duration = 50;
+    window = 5;
+    nFiles = 3;
+
+    t = (0:1/sr:window-1/sr)';
+    response = exp(-((t - 2).^2) / (2 * 0.5^2));
+    onsets = [10 20 30];
+
+    %% Create three PsPM data files
+    datafiles = testCase.createTestData( ...
+        nFiles, sr, duration, {response}, {onsets});
+
+    %% Create three timing files
+    timingfiles = cell(nFiles, 1);
+
+    names = {'condition_1'};
+    onsets = {[10 20 30]};
+    durations = {zeros(1,3)};
+
+    for k = 1:nFiles
+        timingfiles{k} = [tempname '.mat'];
+        save(timingfiles{k}, 'names', 'onsets', 'durations');
+
+        testCase.addTeardown( @() pspm_tam_test.deleteIfExists(timingfiles{k}));
+    end
+
+    %% Output model file
+    modelfile = [tempname '.mat'];
+    testCase.addTeardown( @() pspm_tam_test.deleteIfExists(modelfile));
+
+    %% TAM model
+    model = struct();
+    model.modelfile = modelfile;
+    model.datafile = datafiles;
+
+    % Important part of this regression test:
+    % model.timing contains FILENAMES, not timing structs.
+    model.timing = timingfiles;
+
+    model.timeunits = 'seconds';
+    model.window = window;
+    model.modelspec = 'dilation';
+    model.modality = 'pupil';
+    model.channel = 'pupil';
+    model.norm = 0;
+    model.baseline = 0;
+    model.norm_max = 0;
+
+    model.filter = struct( 'lpfreq', 'none', 'lporder', 1, 'hpfreq', 'none', 'hporder', 1, 'down', 'none', 'direction', 'bi');
+
+    options.overwrite = 1;
+
+    %% Run TAM
+    [sts, tam] = pspm_tam(model, options);
+
+    %% Verify
+    testCase.assertEqual(sts, 1);
+
+    testCase.verifyEqual( tam.names, {'condition_1'});
+
+    testCase.verifyEqual( tam.timing, timingfiles);
+
+    testCase.verifyEqual( tam.data.sr, repmat({sr}, 1, nFiles));
+
+end
+
+
+
 end
 
 
