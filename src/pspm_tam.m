@@ -34,7 +34,8 @@ function [sts, tam] = pspm_tam(model, options)
 %   │               If there is only one element specified, this element
 %   │               will be applied to each datafile.
 %   │               DEFAULT: last channel of 'pupil' data type
-%   ├───────.norm:  [optional] allows to specify whether data should be zscored or not
+%   ├───────.norm:  [optional] allows to specify whether data should be zscored or not 
+%   │               per-session! (!!
 %   │               DEFAULT: 1
 %   ├─────.filter:  [optional] filter settings; modality specific default
 %   ├───.baseline:  [optional] allows to specify a baseline in 'seconds' which is
@@ -193,7 +194,7 @@ else
   fprintf('\n');
 end
 
-%%  Zscoring the data ->  will be done by pspm_extract_segments 
+%%  Zscoring the data ->  will be done by pspm_extract_segments persession!!! check again?
 % if model.norm
 %   fprintf('Zscoring ...\n')
 %   n_file = numel(model.datafile);
@@ -235,11 +236,17 @@ for k=1:n_file
 
   if lsts<1, warning('ID:error_extract_segments','An error occured in pspm_extract_segments.'); return; end
 
+  condition_names = timing{1}.names; % all conditions need to be in the first timing file 
+  % maybe we should find all uniqe conditions in all timing files  !!!!
   for i=1:n_exp_cond
-    tmp_data.mean = s.segments{i}.mean;  % why not eg 50x1 
-    tmp_data.std = s.segments{i}.std;    % why not eg 50x1
-    tmp_data.sem = s.segments{i}.sem;    % why not eg 50x1
-    tmp_data.t = s.segments{i}.t;        % 
+
+    cond_ind = find(strcmpi(condition_names{i}, timing{k}.names), 1); % condition index
+    if isempty(cond_ind); segm{k,i} = []; continue; end % 
+
+    tmp_data.mean = s.segments{cond_ind}.mean;  % why not eg 50x1 
+    tmp_data.std = s.segments{cond_ind}.std;    % why not eg 50x1
+    tmp_data.sem = s.segments{cond_ind}.sem;    % why not eg 50x1
+    tmp_data.t = s.segments{cond_ind}.t;        % 
     % a cell array of struct and of size (n_file x n_exp_cond) where each
     % line correspond to a given file and each column to an
     % experimental condition
@@ -259,6 +266,9 @@ fprintf('Filtering ...\n') % maybe only if there is a filtering?
 fields = {'mean', 'std', 'sem'};
 for i = 1:n_exp_cond
     for k = 1:n_file
+
+        if isempty(segm{k,i}); continue; end % eg. missing condition!
+
         model.filter.sr = sr(k); % adds the corresponding sr to the filer
         
         for f = 1:numel(fields)
@@ -286,8 +296,12 @@ fprintf('Preparing for fitting ...\n')
 baseline_index = floor(sr(1)*model.baseline)+1;
 
 
-if ~isempty(std_exp_cond)
-  tmp_data = [segm{:,std_exp_cond.ind}];
+if ~isempty(std_exp_cond) % oddball in paper
+  
+  valid_sessions = ~cellfun( @isempty, segm(:,std_exp_cond.ind));
+  tmp_data = [segm{valid_sessions,std_exp_cond.ind}];
+ 
+  % tmp_data = [segm{:,std_exp_cond.ind}];
 
   std_exp_cond.data = mean([tmp_data.mean],2, 'omitnan');
   std_exp_cond.std =  mean([tmp_data.std],2, 'omitnan');
@@ -295,16 +309,19 @@ if ~isempty(std_exp_cond)
 end
 
 for i=1:n_exp_cond
+  
+  valid_sessions = ~cellfun(@isempty, segm(:,i));
 
-  tmp_data = [segm{:,i}];
+  % tmp_data = [segm{:,i}];
+  tmp_data = [segm{valid_sessions,i}];
 
   tmp_data_new.data = mean([tmp_data.mean],2, 'omitnan');
   tmp_data_new.std = mean([tmp_data.std],2, 'omitnan');
   tmp_data_new.sem = mean([tmp_data.sem],2, 'omitnan');
   tmp_data_new.t = mean([tmp_data.t],2, 'omitnan');
 
-  % Subtracting the standard experimental condition
-  if ~isempty(std_exp_cond) && i~=std_exp_cond.ind
+  % Subtracting the standard experimental condition % oddball in paper
+  if ~isempty(std_exp_cond) && i~=std_exp_cond.ind 
     tmp_data_new.data = tmp_data_new.data - std_exp_cond.data;
     tmp_data_new.std = tmp_data_new.std + std_exp_cond.std;      % the error adds up
     tmp_data_new.sem = tmp_data_new.sem + std_exp_cond.sem;      % the error adds up
@@ -315,7 +332,7 @@ for i=1:n_exp_cond
 
   % Dividing by the max value
   if model.norm_max 
-    [tmp_max,tmp_max_ind] = max(tmp_data_new.data); % this does not give us the first peak!!!
+    [tmp_max,tmp_max_ind] = max(tmp_data_new.data); % this does not give us FIRST PEAK but the highest value !!!
     % maybe add     if tmp_max == 0 
     tmp_data_new.data = tmp_data_new.data/tmp_max;
     tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
@@ -342,7 +359,7 @@ for i=1:n_exp_cond
   conv_y = [ raw_y ; zeros(size(raw_y,1)-1,size(raw_y,2))];
 
   % Predicted signal (LTI model)
-  predicted_y = @(x) conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).';
+  predicted_y = @(x) conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).'; % warum .'
 
   % Residual Sum Square (RSS) calculation (basically error btw conv_y and predicted_y)
   RSS = @(x) norm(conv_y - predicted_y(x), 2)^2;
@@ -350,7 +367,7 @@ for i=1:n_exp_cond
   % Minimization of RSS
   warning off all
   [~, fitted{1,i}.optargs, fitted{1,i}.fval, sts, fmincon_output] = ...
-    evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)'); % lb ub for opt.
+    evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)'); % lb ub for opt. why not Nelder–Mead / fminsearch.!!?? like in the paper?
   warning on all
   if sts == 0
     warning('ID:fmincon',['During the fitting process, ''fmincon'' exceeded', ...
@@ -404,7 +421,7 @@ tam.data.filtered = filtered;
 tam.data.normd  = model.norm;
 tam.data.norm     = model.norm;
 
-if ~isempty(std_exp_cond)
+if ~isempty(std_exp_cond) % oddball form paper
   tam.data.std_exp_cond.name  = std_exp_cond.name;
   tam.data.std_exp_cond.ind   = std_exp_cond.ind;
 else
