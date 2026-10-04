@@ -5497,6 +5497,10 @@ Statistics and Machine Learning Toolbox
 Signal Processing Toolbox
 \end_layout
 
+\begin_layout Itemize
+Optimization Toolbox
+\end_layout
+
 \begin_layout Standard
 These toolboxes can be installed together with Matlab or added to an existing Matlab installation.
 \end_layout
