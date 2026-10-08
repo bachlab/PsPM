@@ -161,7 +161,39 @@ classdef pspm_pupil_pp_test < pspm_testcase
         % not just an all-NaN fallback channel.
         this.verifyGreaterThan(sum(isfinite(result.data)), 0);
     end
+    function check_failed_interpolation_does_not_save_channel(this)
+        % Regression test: interpolation failure must not be reported
+        % as successful preprocessing.
 
+        sr = 2000;
+        duration = 10;
+        fn = [tempname '.mat'];
+
+        infos.duration = duration;
+        data = {struct( ...
+            'data', NaN(sr * duration, 1), ...
+            'header', struct( ...
+            'chantype', 'pupil_r', ...
+            'units', 'mm', ...
+            'sr', sr))};
+
+        save(fn, 'infos', 'data');
+        this.addTeardown(@() delete(fn));
+
+        opt = struct();
+        opt.channel = 1;
+        opt.channel_combine = 'none';
+        opt.channel_action = 'add';
+
+        [sts, out_chan] = pspm_pupil_pp(fn, opt);
+
+        [load_sts, ~, after] = pspm_load_data(fn);
+        this.assertEqual(load_sts, 1);
+
+        this.verifyEqual(sts, -1);
+        this.verifyEmpty(out_chan);
+        this.verifyEqual(numel(after), 1);
+    end
 
   end
   methods(TestClassTeardown)
