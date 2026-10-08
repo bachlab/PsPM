@@ -168,11 +168,17 @@ classdef ValidSamplesModel < handle
             % test only for even-bins hit. Those hits will signify that a
             % upsampled timestamp was within the tolerance of a valid
             % measured datapoint:
-            binz = bsxfun(@plus ...
-                ,valid_t_ms,[-1 1] .* notTouchingYouTolerance_ms)';
-            [~,binHits] = histc(t_upsampled.*1000 ...
-                , binz(:));
-            almostTouching = mod(binHits,2);
+        
+            % binz = bsxfun(@plus ...
+            %     ,valid_t_ms,[-1 1] .* notTouchingYouTolerance_ms)';
+            % [~,binHits] = histc(t_upsampled.*1000 ...
+            %     , binz(:));
+            % almostTouching = mod(binHits,2);
+        
+            % Unlike the legacy histc implementation, ismembertol also
+            % handles overlapping tolerance intervals.
+             almostTouching = ismembertol(t_upsampled.*1000,valid_t_ms...
+             ,notTouchingYouTolerance_ms,'DataScale',1);
             
             % Now actually set the upsampled timestamps that are really
             % close to the timestamps of the valid measured datapoints to

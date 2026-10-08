@@ -166,7 +166,6 @@ end
 % combine filters: 
 filt = filt_range & filt_slope & filt_clipping;
 
-
 %% Find data islands and expand artefact islands
 if isempty(find(filt==0, 1))
     warning('Epoch was empty based on the current settings.');
@@ -188,7 +187,7 @@ else
         % island threshold
         if options.data_island_threshold > 0
             epoch_duration = diff(data_epochs, 1, 2);
-            data_epochs(epoch_duration < options.data_island_threshold * sr, :) = [];
+            data_epochs(epoch_duration < options.data_island_threshold, :) = [];
         end
 
         % write back into data
