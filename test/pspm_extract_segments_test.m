@@ -185,8 +185,9 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
  function test_auto_mode_glm_with_markers(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-      load(fullfile('ImportTestData',  'fitted_models', 'glm_scr_cond_marker.mat'), 'glm');
-      load(fullfile('ImportTestData',  'fitted_models', 'glm_orig_data.mat'), 'data');
+      load(pspm_path('..','ImportTestData', 'fitted_models', 'glm_scr_cond_marker.mat'), 'glm');
+      % load(fullfile('ImportTestData',  'fitted_models', 'glm_scr_cond_marker.mat'), 'glm');
+      load(pspm_path('..','ImportTestData',  'fitted_models', 'glm_orig_data.mat'), 'data');
       if ~isfield(glm.input, 'channel') && isfield(glm.input, 'chan')
         glm.input.channel = glm.input.chan;
         glm.input = rmfield(glm.input,'chan'); % rename the field channel to chan
@@ -245,8 +246,11 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
     function test_auto_mode_glm_with_seconds(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_second.mat'], 'glm');
-      load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
+      load(pspm_path('..','ImportTestData', 'fitted_models', 'glm_scr_cond_second.mat'), 'glm');
+      load(pspm_path('..','ImportTestData' , 'fitted_models' , 'glm_orig_data.mat'), 'data');
+
+      % load(['ImportTestData' filesep 'fitted_models' filesep 'glm_scr_cond_second.mat'], 'glm');
+      % load(['ImportTestData' filesep 'fitted_models' filesep 'glm_orig_data.mat'], 'data');
       assert(numel(glm.input.timing) == 1);
       input_data = glm.input.data{1};
       this.verifyTrue(all(input_data == data{1}.data));
@@ -300,7 +304,8 @@ classdef pspm_extract_segments_test < matlab.unittest.TestCase
     function test_auto_mode_dcm(this)
       import matlab.unittest.constraints.IsEqualTo
       import matlab.unittest.constraints.RelativeTolerance
-      load(['ImportTestData' filesep 'fitted_models' filesep 'dcm_scr_trial.mat'], 'dcm');
+      % load(['ImportTestData' filesep 'fitted_models' filesep 'dcm_scr_trial.mat'], 'dcm');
+      load(pspm_path('..','ImportTestData', 'fitted_models', 'dcm_scr_trial.mat'), 'dcm');
       input_data = dcm.input.scr;
       sr = dcm.input.sr;
       trial_sizes = cumsum([60, 60, 38, 21]);
