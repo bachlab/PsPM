@@ -57,6 +57,18 @@ function PsPM_OpeningFcn(hObject, ~, handles, ~)
   handles.output = hObject;
   % Choose default command line output for tag_PsPM
   pspm_ui(hObject, handles, 'main');
+  
+  % Disables obsolete buttons
+  obsolete_buttons = { ...
+    'Contrast Manager', ...
+    'Second Level Model', ...
+    'Report Second Level'};
+
+  for i = 1:numel(obsolete_buttons)
+    set(findall(hObject, 'Type', 'uicontrol', ...
+      'String', obsolete_buttons{i}), 'Enable', 'off');
+  end
+  
   % Update handles structure
   guidata(hObject, handles);
   % UIWAIT makes tag_PsPM wait for user response (see UIRESUME)
