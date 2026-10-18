@@ -1,5 +1,5 @@
 function outfile = pspm_testdata_gen(channels, duration, filename)
-  % ● Description
+% ● Description
 % SCR_TESTDATA_GEN generates simple testdata
 %
 % The function generates testdata for multiple channels. For continuous

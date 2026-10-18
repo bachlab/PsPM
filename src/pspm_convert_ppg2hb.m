@@ -53,6 +53,7 @@ function [ sts, outchannel ] = pspm_convert_ppg2hb(fn , options )
 %   Written in 2016 by Samuel Gerster (University of Zurich)
 %                      Tobias Moser (University of Zurich)
 %   Updated in 2024 by Dominik Bach/Uzay Gokay (Uni Bonn)
+%   Updated in 2026 by Bernhard von Raußendorf (Uni Bonn)
 
 %% Initialise
 global settings
@@ -118,37 +119,42 @@ if strcmpi(options.method, 'heartpy')
   psts = pspm_check_python_modules('heartpy');
   if psts < 1, return; end
 
-  filtered_ppg = py.heartpy.filter_signal(ppg, ...
-    pyargs('cutoff', [1,20], ...
-    'filtertype',  'bandpass', ...
-    'sample_rate', sr, ...
-    'order', 3));
-  filtered_ppg = double(py.array.array('d',(filtered_ppg)));
   try
+    filtered_ppg = py.heartpy.filter_signal(ppg.', ...
+        pyargs('cutoff', [1,20], ...
+        'filtertype',  'bandpass', ...
+        'sample_rate', sr, ...
+        'order', 3));
+
+    filtered_ppg = double(py.array.array('d',(filtered_ppg)));
+  
     tup = py.heartpy.process(filtered_ppg, pyargs('sample_rate', sr));
     wd = tup{1};
-    m = tup{2};
+    
     py_peak_list =  py.array.array('d',(wd{'peaklist'}));
-    py_removed =  py.array.array('d',(wd{'removed_beats'}));
-    peak_list = double(py_peak_list) ;
-    rejected_peaks = double(py_removed);
+    binary_peak_list = double(py.array.array('d', wd{'binary_peaklist'}));
+ 
+    peak_list = double(py_peak_list);
+    peak_list = peak_list(logical(binary_peak_list));
+
     msg = sprintf(['Heart beat detection from PPG with HeartPy ',...
       'HB-timeseries added to data on %s'],...
       datetime("today"));
     hb = peak_list(:) / sr;
-  catch
-    msg = sprintf('HeartPy did not find any heart beats on %s', datetime("today"));
-    hb = [];
+catch ME
+    warning('ID:heartpy_error', 'HeartPy processing failed: %s', ME.message);
+    return;
   end
 else
   %% large spike mode
   if options.lsm
     fprintf('Entering large spikes mode. This might take some time.');
     % Look for all peaks lower than 200 bpm (multiple of two in heart rate
-    %  to compensate for absolute value and therefore twice as mani maxima)
+    % to compensate for absolute value and therefore twice as many maxima)
     [pks,pis] = findpeaks(abs(ppg),...
       'MinPeakDistance',30/200*sr);
-    % Ensure at least one spike is removed by adapting quantil to realistic
+    if isempty(pks),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end % to protect from 0/0 -> NaN
+    % Ensure at least one spike is removed by adapting quantile to realistic
     % values, given number of detected spikes
     q = floor(length(pks)*(1-options.lsm/100))/length(pks);
     % define large spikes index as last lsm percentile (or as adapted above)
@@ -181,6 +187,7 @@ else
   % handle possible errors
   if isempty(pis),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end
   if length(pis)==1,warning('ID:OnePulse', 'Only one pulse found, unable to calculate min_pulse_period.');return;end
+  if numel(pis)==2, warning('ID:TooFewPulses','At least three pulses are required to create a template.');return;end
 
   % get pulse period lower limit (assumed onset) as 30% of smalest period
   % before detected peaks
@@ -230,6 +237,8 @@ else
   [~,hb] = findpeaks(ppg_corr/max(ppg_corr),...
     sr,...
     'MinPeakdistance',min_pulse_period/sr);
+  msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeseries added to data on %s', datetime("today"));
+
 end
 
 
@@ -237,7 +246,6 @@ end
 %--------------------------------------------------------------------------
 % save data
 fprintf('Saving data.');
-msg = sprintf('Heart beat detection from ppg with cross correlation HB-timeseries added to data on %s', datetime("today"));
 
 newdata.data = hb(:);
 newdata.header.sr = 1;
