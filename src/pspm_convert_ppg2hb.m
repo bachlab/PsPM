@@ -119,13 +119,15 @@ if strcmpi(options.method, 'heartpy')
   psts = pspm_check_python_modules('heartpy');
   if psts < 1, return; end
 
-  filtered_ppg = py.heartpy.filter_signal(ppg.', ...
-    pyargs('cutoff', [1,20], ...
-    'filtertype',  'bandpass', ...
-    'sample_rate', sr, ...
-    'order', 3));
-  filtered_ppg = double(py.array.array('d',(filtered_ppg)));
   try
+    filtered_ppg = py.heartpy.filter_signal(ppg.', ...
+        pyargs('cutoff', [1,20], ...
+        'filtertype',  'bandpass', ...
+        'sample_rate', sr, ...
+        'order', 3));
+
+    filtered_ppg = double(py.array.array('d',(filtered_ppg)));
+  
     tup = py.heartpy.process(filtered_ppg, pyargs('sample_rate', sr));
     wd = tup{1};
     
@@ -148,11 +150,11 @@ else
   if options.lsm
     fprintf('Entering large spikes mode. This might take some time.');
     % Look for all peaks lower than 200 bpm (multiple of two in heart rate
-    %  to compensate for absolute value and therefore twice as mani maxima)
+    % to compensate for absolute value and therefore twice as many maxima)
     [pks,pis] = findpeaks(abs(ppg),...
       'MinPeakDistance',30/200*sr);
     if isempty(pks),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end % to protect from 0/0 -> NaN
-    % Ensure at least one spike is removed by adapting quantil to realistic
+    % Ensure at least one spike is removed by adapting quantile to realistic
     % values, given number of detected spikes
     q = floor(length(pks)*(1-options.lsm/100))/length(pks);
     % define large spikes index as last lsm percentile (or as adapted above)
@@ -185,6 +187,7 @@ else
   % handle possible errors
   if isempty(pis),warning('ID:NoPulse', 'No pulse found, nothing done.');return;end
   if length(pis)==1,warning('ID:OnePulse', 'Only one pulse found, unable to calculate min_pulse_period.');return;end
+  if numel(pis)==2, warning('ID:TooFewPulses','At least three pulses are required to create a template.');return;end
 
   % get pulse period lower limit (assumed onset) as 30% of smalest period
   % before detected peaks
