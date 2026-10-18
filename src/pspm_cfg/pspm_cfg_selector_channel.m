@@ -1,10 +1,10 @@
 function out = pspm_cfg_selector_channel(channame, varargin)
 % ● Description
-% pspm_cfg_channel_selector generates a standardised matlabbatch entry for 
+% pspm_cfg_selector_channel generates a standardised matlabbatch entry for
 % channel selection 
 % ● Format
-%   sts = pspm_cfg_channel_selector(channeltype)
-%   sts = pspm_cfg_channel_selector('run', job)
+%   sts = pspm_cfg_selector_channel(channeltype)
+%   sts = pspm_cfg_selector_channel('run', job)
 % ● Arguments
 % channeltype: (1) a channeltype string - generates a default channel of 
 %                  this type, and a numerical channel selector

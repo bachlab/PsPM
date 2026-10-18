@@ -346,7 +346,10 @@ try
 catch err
   % https://www.mathworks.com/matlabcentral/answers/225796-rethrow-a-whole-error-as-warning
   warning('ID:invalid_data_structure', getReport(err, 'extended', 'hyperlinks', 'on'));
-  smooth_signal.data = NaN(desired_output_samples, 1);
+  smooth_signal = [];
+  sts = -1;
+  rmpath(libpath{:});
+  return
 end
 rmpath(libpath{:});
 sts = 1;
