@@ -68,6 +68,8 @@ function [sts, tam] = pspm_tam(model, options)
 %                   Define whether to overwrite existing output files or not.
 %                   Default value: determined by pspm_overwrite.
 % ● Outputs
+%   * sts: sts = 1 indicates successful saving, including partial or failed fits.
+%          Check tam.fit.converged and tam.fit.status for optimization success.
 %   * tam: a structure 'tam' which is also written to file
 % ● References
 %   [1] Model development:
@@ -413,11 +415,23 @@ for i=1:n_exp_cond
   RSS = @(x) norm(conv_y - predicted_y(x), 2)^2;
 
   % Minimization of RSS
-  warning off all
-  [~, fitted{1,i}.optargs, fitted{1,i}.fval, fsts, fmincon_output] = ...
-    evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)'); % lb ub for opt. why not Nelder–Mead / fminsearch.!!?? like in the paper?
-  warning on all
-  if fsts == 0
+  % warning off all
+  % [~, fitted{1,i}.optargs, fitted{1,i}.fval, fsts, fmincon_output] = ...
+  %   evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)'); % lb ub for opt. why not Nelder–Mead / fminsearch.!!?? like in the paper?
+  % warning on all
+
+  % Suppress optimizer progress output without changing warning settings.
+  optimizer_options = optimset('Display', 'off'); % could be added to the options
+
+  [fitted{1,i}.optargs, fitted{1,i}.fval, fsts, fmincon_output] = ...
+      fmincon(RSS, model.if.args, [], [], [], [], model.if.lb, model.if.ub, [], optimizer_options);
+
+  % Record the optimization outcome for this condition.
+  fitted{1,i}.exitflag = fsts;
+  fitted{1,i}.output = fmincon_output;
+  fitted{1,i}.converged = fsts > 0 && isfinite(fitted{1,i}.fval);
+
+  if fsts == 0 % check all the flags again 
     warning('ID:fmincon',['During the fitting process, ''fmincon'' exceeded', ...
       ' the number of iterations or the number of function evaluations.', ...
       ' Try to change the initial arguments and bounds to improve the fitting.'])
@@ -433,6 +447,26 @@ for i=1:n_exp_cond
     disp(fmincon_output);
   end
 
+  % Mark failed fits and continue with the next condition.
+  if ~fitted{1,i}.converged
+    fitted{1,i}.data = NaN(size(raw_y));
+    fitted{1,i}.optargs = NaN(size(model.if.args));
+    fitted{1,i}.fval = NaN;
+    
+    % Select the reason why this fit was rejected.
+    if fsts > 0
+        failure_message = 'Objective value was not finite.';
+    else
+        failure_message = fitted{1,i}.output.message;
+    end
+
+    warning('ID:fmincon', ['Fit for condition "%s" failed (exitflag %d).\n' '%s\nContinuing with the next condition.'], ...
+        condition_names{i}, fitted{1,i}.exitflag, failure_message);
+
+    continue;
+  end
+
+  
   % Calculating the predicted signal that will be included in the output structure
   fitted{1,i}.data = predicted_y(fitted{1,i}.optargs);
   % Cutting away tail
@@ -484,6 +518,23 @@ tam.fit.rss       = {tmp_fitted.fval};
 tam.fit.args      = {tmp_fitted.optargs};
 tam.fit.sr        = num2cell(sr(:).');
 
+% Store optimization diagnostics for each condition. % really needed?
+% e.g. tam.names
+% {'standard', 'oddball', 'target'}
+tam.fit.converged = [tmp_fitted.converged];
+tam.fit.exitflag = [tmp_fitted.exitflag];
+tam.fit.output = {tmp_fitted.output};
+
+% Summarize fit success across conditions.
+if all(tam.fit.converged)
+    tam.fit.status = 'complete';
+elseif any(tam.fit.converged)
+    tam.fit.status = 'partial';
+else
+    tam.fit.status = 'failed';
+end
+
+
 tam.infos.duration     =  window_seconds(1);
 tam.infos.durationinfo = 'duration in seconds';
 
@@ -502,6 +553,22 @@ if sts == -1
   return;
 end
 %% User output
-fprintf('done. \n');
 sts = 1;
-return
+
+fprintf('\nTAM finished: %d/%d fits successful. Status: %s.\n', sum(tam.fit.converged), numel(tam.fit.converged), tam.fit.status);
+
+for c = 1:numel(tam.names)
+    if tam.fit.converged(c)
+        fprintf('  %s: OK (exitflag %d, RSS %.6g)\n', tam.names{c}, tam.fit.exitflag(c), tam.fit.rss{c});
+    else
+        fprintf('  %s: FAILED (exitflag %d)\n', tam.names{c}, tam.fit.exitflag(c));
+        if tam.fit.exitflag(c) > 0
+            fprintf('    Objective value was not finite.\n');
+        else
+            fprintf('    %s\n', strtrim(tam.fit.output{c}.message));
+        end
+    end
+end
+
+fprintf('Results saved to: %s\n', tam.modelfile);
+return;
