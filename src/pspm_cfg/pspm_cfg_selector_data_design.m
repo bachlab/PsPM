@@ -17,7 +17,10 @@ if strcmpi(modeltype, 'run')
         % datafile
         model.datafile{iSession,1} = job.session(iSession).datafile{1};
         % missing epochs
-        model.missing{1,iSession} = pspm_cfg_selector_missing_epochs('run', job.session(iSession));
+        % model.missing{1,iSession} = pspm_cfg_selector_missing_epochs('run', job.session(iSession));
+        if isfield(job.session(iSession), 'missing')
+            model.missing{1,iSession} = pspm_cfg_selector_missing_epochs('run', job.session(iSession));
+        end
         % data & design
         if isfield(job.session(iSession).data_design,'no_condition')
             model.timing = {};
@@ -120,7 +123,7 @@ switch modeltype
         else
             condfile.help = vertcat(helptext{[1, 3]});
         end
-    case 'extract'
+    case  {'extract', 'tam'}
         condfile.help = helptext{1};
 end
             
@@ -217,7 +220,7 @@ switch modeltype
         else
             condition.val     = {condname, onsets, pmod_rep};
         end
-    case 'extract'
+    case {'extract', 'tam'}
         condition.val     = {condname, onsets};
 end
 condition.help    = {''};
@@ -289,6 +292,8 @@ switch modeltype
         timing.values  = {condfile, condition_rep, marker_cond ,no_condition};
     case 'extract'
         timing.values  = {condfile, condition_rep, marker_cond};
+    case 'tam'
+        timing.values = {condfile, condition_rep};
 end
 
 timing.help    = {['Specify the timing of the events within the design matrix. Timing can '...
@@ -319,6 +324,8 @@ switch modeltype
         session.val    = {datafile, missing, timing, nuisancefile};
     case 'extract'
         session.val    = {datafile, missing, timing};
+    case 'tam'
+        session.val = {datafile, timing};
 end
 session.help   = {''};
 

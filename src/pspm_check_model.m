@@ -373,8 +373,15 @@ end
 %% 9. TAM-specific checks
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'tam')
-  if (~isfield(model, 'window') || isempty(model.window) || ~isnumeric(model.window))
-    warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
+  % Checking model.timeunits
+  if ~isfield(model, 'timeunits') || ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'samples', 'markers'})
+    warning('ID:invalid_input', 'TAM timeunits must be seconds, samples, or markers.');
+    return;
+  end
+  % Checking model.window
+  if ~isfield(model, 'window') || ~isnumeric(model.window) || ~isscalar(model.window) || ~isreal(model.window) || ...
+    ~isfinite(model.window) || model.window <= 0 || (strcmp(model.timeunits, 'samples') && model.window ~= fix(model.window))
+    warning('ID:invalid_input', 'Window must be a positive finite real scalar (integer for samples).');   return;
   elseif ~isfield(model, 'modelspec')
     model.modelspec = settings.tam(1).modelspec;
   elseif ~ismember(model.modelspec, {settings.tam.modelspec})
@@ -428,11 +435,10 @@ if strcmpi(modeltype, 'tam')
   % Checking baseline
   if ~isfield(model,'baseline')
     model.baseline = 0;
-  elseif ~isnumeric(model.baseline)
-    warning('ID:invalid_input','''model.baseline'' has to be a numeric.'); return;
-  elseif model.baseline > model.window || model.baseline < 0
-    warning('ID:invalid_input',['''model.baseline'' has to be positive ',...
-      'and smaller than ''model.window''.']); return;
+  elseif ~isnumeric(model.baseline) || ~isscalar(model.baseline) || ~isreal(model.baseline) || ~isfinite(model.baseline)
+    warning('ID:invalid_input','''model.baseline'' must be a finite real scalar in seconds.'); return;
+  elseif model.baseline < 0 || (~strcmp(model.timeunits, 'samples') && model.baseline >= model.window)   
+    warning('ID:invalid_input', 'Baseline must be nonnegative and smaller than the window duration.'); return;
   end
 
   % Checking standard experimental condition
@@ -441,22 +447,20 @@ if strcmpi(modeltype, 'tam')
     ' index corresponding to it.'];
   if ~isfield(model,'std_exp_cond')
     model.std_exp_cond = 'none';
-  elseif ~ischar(model.std_exp_cond) && ~isnumeric(model.std_exp_cond)
-    warning('ID:invalid_input',std_cond_war_msg); return;
   elseif ischar(model.std_exp_cond)
-    tmp_ind = cellfun(@(x) strcmpi(model.std_exp_cond,x), model.timing{1}.names);
-    if ~any(tmp_ind)
-      warning('ID:invalid_input',std_cond_war_msg); return;
-    end
-    std_exp_cond.name = model.std_exp_cond;
-    std_exp_cond.ind = find(tmp_ind);
+      % 'none' is explicitly allowed
+      if ~strcmpi(model.std_exp_cond, 'none')
+          tmp_ind = strcmpi(model.std_exp_cond, model.timing{1}.names);
+          if ~any(tmp_ind); warning('ID:invalid_input', std_cond_war_msg);   return;    end
+      end
   elseif isnumeric(model.std_exp_cond)
-    if model.std_exp_cond < 1 || ...
-        model.std_exp_cond > numel(model.timing{1}.names)
-      warning('ID:invalid_input',std_cond_war_msg); return;
-    end
-    std_exp_cond.name = model.timing{1}.names(model.std_exp_cond);
-    std_exp_cond.ind = model.std_exp_cond;
+      % Must be one valid scalar integer index
+      if ~isscalar(model.std_exp_cond) || ~isfinite(model.std_exp_cond) || ...
+          model.std_exp_cond < 1 || model.std_exp_cond > numel(model.timing{1}.names)
+          warning('ID:invalid_input', std_cond_war_msg); return;
+      end
+  else
+    warning('ID:invalid_input',std_cond_war_msg); return;  
   end
   clear std_cond_war_msg tmp_ind
 
@@ -519,8 +523,15 @@ if ~isfield(model, 'filter')
     end
 end
 
-if ~isfield(model.filter, 'down') || ~isnumeric(model.filter.down)
-    warning('ID:invalid_input', 'Filter structure needs a numeric ''down'' field.'); return;
+if ~isfield(model.filter, 'down')
+    warning('ID:invalid_input', 'Filter structure needs a ''down'' field.'); return;
+end
+
+valid_down = (isnumeric(model.filter.down) && isscalar(model.filter.down) && isfinite(model.filter.down) && model.filter.down > 0) ...
+          || (ischar(model.filter.down) &&   strcmpi(model.filter.down, 'none'));
+
+if ~valid_down    
+    warning('ID:invalid_input',  'Filter structure needs a positive numeric ''down'' field or ''none''.'); return;
 end
 
 

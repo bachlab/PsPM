@@ -75,6 +75,8 @@ function basic_conversion(this)
     [sts, infos, data, filestruct] = pspm_load_data(fn);
     this.verifyEqual(sts, 1);
     this.verifyEqual(data{outchannel}.header.chantype, 'hp');
+    this.verifyEqual(data{outchannel}.header.units, 'ms');
+    this.verifyEqual(data{outchannel}.header.sr, sr);
 end
 
 function selects_hb_channel_by_index(this)
@@ -133,7 +135,15 @@ function too_strict_limits_warning(this)
     options = struct('limit_lower', 10, 'limit_upper', 11);
     this.verifyWarning(@() pspm_convert_hb2hp(fn, sr, options), 'ID:too_strict_limits');
 end
+function invalid_channel_action(this)
+    fn = this.input_filename;
+    sr = 100;
 
+    options = struct();
+    options.channel_action = 'abc';
+
+    this.verifyWarning( @() pspm_convert_hb2hp(fn, sr, options), 'ID:invalid_input');
+end
 function add_replace_channel_action(this)
     fn = this.input_filename;
     sr = 1;

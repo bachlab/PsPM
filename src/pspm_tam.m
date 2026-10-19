@@ -1,4 +1,4 @@
-function tam = pspm_tam(model, options)
+function [sts, tam] = pspm_tam(model, options)
 % ● Description
 %   TAM stands for Trial Average Model and allows to fit models on trial-averaged data.
 %   pspm_tam starts by extracting and averaging signal segments of length `model.window`
@@ -12,7 +12,7 @@ function tam = pspm_tam(model, options)
 %   ├─────.timing:  a multiple condition file name (single session) OR
 %   │               a cell array of multiple condition file names OR
 %   │               a struct (single session) with fields .names, .onsets,
-%   │               and (optional) .durations OR
+%   │               and (optional) duration OR
 %   │               a cell array of struct OR
 %   │               a struct with fields 'markerinfos', 'markervalues',
 %   │               'names' OR
@@ -34,13 +34,14 @@ function tam = pspm_tam(model, options)
 %   │               If there is only one element specified, this element
 %   │               will be applied to each datafile.
 %   │               DEFAULT: last channel of 'pupil' data type
-%   ├───────.norm:  [optional] allows to specify whether data should be zscored or not
+%   ├───────.norm:  [optional] allows to specify whether data should be zscored or not 
+%   │               per-session! (!!
 %   │               DEFAULT: 1
 %   ├─────.filter:  [optional] filter settings; modality specific default
 %   ├───.baseline:  [optional] allows to specify a baseline in 'seconds' which is
 %   │               applied to the data before fitting the model. It has to
 %   │               be positive and smaller than model.window. If no baseline
-%   │               specified, data will be baselined wrt. the first datapoint.
+%   │               specified, data will be baselined wrt. the first data-point.
 %   │               DEFAULT: 0
 %   ├.std_exp_cond: [optional] allows to specify the standard experimental condition
 %   │               as a string or an index in timing.names.
@@ -67,6 +68,8 @@ function tam = pspm_tam(model, options)
 %                   Define whether to overwrite existing output files or not.
 %                   Default value: determined by pspm_overwrite.
 % ● Outputs
+%   * sts: sts = 1 indicates successful saving, including partial or failed fits.
+%          Check tam.fit.converged and tam.fit.status for optimization success.
 %   * tam: a structure 'tam' which is also written to file
 % ● References
 %   [1] Model development:
@@ -83,6 +86,7 @@ function tam = pspm_tam(model, options)
 %   Introduced In PsPM 4.2
 %   Written in 2020 by Ivan Rojkov (University of Zurich)
 %   Maintained in 2022 by Teddy
+%   Maintained in 2026 by Bernhard A. von Raußendorf
 % ● Developer
 %   The fitting process is a residual least square minimisation where the
 %   predicted value is calculated as following:
@@ -114,6 +118,18 @@ if isempty(settings)
   pspm_init;
 end
 tam = struct();
+sts = -1;
+
+% %% tmp filter check for testing
+% 
+% if isfield(model, 'filter')
+%     disp('Filter passed from batch:')
+%     disp(model.filter)
+% else
+%     disp('Using default TAM filter:')
+%     global settings
+%     disp(settings.tam(strcmpi({settings.tam.modelspec}, model.modelspec)).filter)
+% end
 
 %% 2 Check input
 % 2.1 check missing input --
@@ -126,33 +142,43 @@ if model.invalid || options.invalid
     return
 end
 
+%% Load timing definitions
+timing = model.timing;
+
+for iFile = 1:numel(timing)
+    if ischar(timing{iFile})
+        timing{iFile} = load(timing{iFile});
+    end
+end
+
+%% Standard experimental condition
+std_exp_cond = [];
+
+if ~(ischar(model.std_exp_cond) && strcmpi(model.std_exp_cond, 'none'))
+    if ischar(model.std_exp_cond)
+        std_exp_cond.ind = find(strcmpi( model.std_exp_cond, timing{1}.names), 1);
+    else
+        std_exp_cond.ind = model.std_exp_cond;
+    end
+    std_exp_cond.name = timing{1}.names{std_exp_cond.ind};
+end
+
 %% Loading files
 
 fprintf('Computing Trial Average Model: %s \n', model.modelfile);
 
-n_exp_cond = numel(model.timing{1}.names);      % number of experimental conditions
-n_file = numel(model.datafile);                 % number of files
+n_exp_cond = numel(timing{1}.names);      % number of experimental conditions
+n_file = numel(model.datafile);           % number of files
 
 % Loading data and sr
 fprintf('Getting data .');
 for iFile = 1:n_file
-    [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
-    if sts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
+    [lsts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
+    if lsts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
 
     % Filling up the data and the sampling rates
     y{iFile} = data.data(:);
     sr(iFile) = data.header.sr;
-    fprintf('.');
-
-    % If the timeunits is markers
-    if strcmpi(model.timeunits, 'markers')
-        [sts, data] = pspm_load_channel(model.datafile{iFile}, options.marker_chan{iFile}, 'marker');
-        if sts < 1
-            warning('ID:invalid_input','Could not load the specified marker channel.');
-            return;
-        end
-        markers{iFile} = data.data;
-    end
 
     fprintf('.');
 end
@@ -160,26 +186,52 @@ end
 % Old sampling rate
 oldsr = sr;
 
+% Check that the baseline lies inside each session's window in seconds.
+if strcmp(model.timeunits, 'samples')
+    window_seconds = model.window ./ oldsr;
+else
+    window_seconds = model.window;
+end
+if any(model.baseline >= window_seconds) % Reject a baseline outside the window in any session.
+    warning('ID:invalid_input', 'Baseline must be smaller than the window duration in seconds.');
+    return;
+end
+
+% Check for inconsistent window durations across sessions.
+if any(abs(window_seconds - window_seconds(1)) > 1e-10)
+    warning('ID:invalid_input', 'Sessions must have the same window duration in seconds.');
+    return;
+end
+
+% Convert one-based sample onsets to seconds for each session.
+if strcmp(model.timeunits, 'samples')
+    for k = 1:n_file
+        timing{k}.onsets = cellfun( @(onsets) (onsets - 1) / oldsr(k), timing{k}.onsets, 'UniformOutput', false);
+    end
+end
+
+
 % Checking if the sampling rate is the same for all samples.
-if n_file > 1 && any(diff(sr) > 0)
-  if model.filter.down > min(sr)) ||...                                    % if filter.down is less than the minimal sr
-      strcmpi(model.filter.down,'none')                                    % if filter.down is none
-    model.filter.down = min(sr);
-    fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n')
+if n_file > 1 && any(diff(sr) ~= 0)    % not any(diff(sr) > 0) 
+  if (ischar(model.filter.down) && strcmpi(model.filter.down, 'none'))  || ...    % if filter.down is none         
+     (isnumeric(model.filter.down) && model.filter.down > min(sr))                % if filter.down is less than the minimal sr
+    
+      model.filter.down = min(sr);
+    fprintf('\nSampling rate differs between sessions. Data will be downsampled.\n') % when and where?
   end
 else
   fprintf('\n');
 end
 
-%%  Zscoring the data
-if model.norm
-  fprintf('Zscoring ...\n')
-  n_file = numel(model.datafile);
-  for iFile = 1:n_file
-    % NANZSCORE found in src/VBA/stats&plots
-    [y{iFile},~,~] = nannorm(y{iFile});
-  end
-end
+%%  Zscoring the data ->  will be done by pspm_extract_segments persession!!! check again?
+% if model.norm
+%   fprintf('Zscoring ...\n')
+%   n_file = numel(model.datafile);
+%   for iFile = 1:n_file
+%     % NANZSCORE found in src/ext/VBA/stats&plots
+%     [y{iFile},~,~] = nanzscore(y{iFile}); %nannorm??? -> nanzscore??
+%   end
+% end
 
 %%  Extracting segments
 fprintf('Extracting segments ...\n')
@@ -187,21 +239,54 @@ fprintf('Extracting segments ...\n')
 % temporary structure which is deleted after extracting segments
 extrsgopt.timeunits = model.timeunits;
 extrsgopt.length = model.window;       % segments of 'model.window' time unit long
+
+% Use seconds for sample onsets that have already been converted.
+if strcmp(model.timeunits, 'samples')
+    extrsgopt.timeunits = 'seconds'; 
+end
+
 extrsgopt.plot = 0;                    % do not plot mean value and std
+extrsgopt.norm = model.norm;
 
 for k=1:n_file
+  % Pass the converted window duration for this session.
+  if strcmp(model.timeunits, 'samples')
+     extrsgopt.length = window_seconds(k);
+  end
+  
   if strcmpi(model.timeunits, 'markers')
-    extrsgopt.marker_chan = markers(k);
+      % marker channel for this session
+      if iscell(options.marker_chan)
+          marker_chan = options.marker_chan{k};
+      else
+          marker_chan = options.marker_chan;
+      end
+
+      % pspm_extract_segments uses a different option name
+      fileopt = extrsgopt;
+      fileopt.marker_chan_num = marker_chan;
+
+      % In file mode the raw pupil data are loaded again,
+      % so normalization must happen inside extract_segments.
+      [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, model.channel, timing{k}, fileopt);
+  else
+      [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), timing{k}, extrsgopt); % wird es richtig gen znormed?
+
   end
 
-  [lsts, s] = pspm_extract_segments('manual', y(k), sr(k), model.timing(k), extrsgopt);
   if lsts<1, warning('ID:error_extract_segments','An error occured in pspm_extract_segments.'); return; end
 
+  condition_names = timing{1}.names; % all conditions need to be in the first timing file 
+  % maybe we should find all uniqe conditions in all timing files  !!!!
   for i=1:n_exp_cond
-    tmp_data.mean = s.segments{i,1}.mean;
-    tmp_data.std = s.segments{i,1}.std;
-    tmp_data.sem = s.segments{i,1}.sem;
-    tmp_data.t = s.segments{i,1}.t;
+
+    cond_ind = find(strcmpi(condition_names{i}, timing{k}.names), 1); % condition index
+    if isempty(cond_ind); segm{k,i} = []; continue; end % 
+
+    tmp_data.mean = s.segments{cond_ind}.mean;  % why not eg 50x1 
+    tmp_data.std = s.segments{cond_ind}.std;    % why not eg 50x1
+    tmp_data.sem = s.segments{cond_ind}.sem;    % why not eg 50x1
+    tmp_data.t = s.segments{cond_ind}.t;        % 
     % a cell array of struct and of size (n_file x n_exp_cond) where each
     % line correspond to a given file and each column to an
     % experimental condition
@@ -214,64 +299,95 @@ clear extrsg tmp_data s lsts
 
 %% Downsample the data
 % if a filter was specified or if the data differ in sr
-fprintf('Filtering ...\n')
+
+fprintf('Filtering ...\n') % maybe only if there is a filtering?
+
+
+fields = {'mean', 'std', 'sem'};
 for i = 1:n_exp_cond
     for k = 1:n_file
 
-        model.filter.sr = sr(k);
+        if isempty(segm{k,i}); continue; end % e.g. missing condition!
 
-        [lsts, segm{k,i}, ~] = structfun(@(x) pspm_prepdata(x, model.filter),segm{k,i},'UniformOutput',false);
-        if any(structfun(@(x) x<1,lsts)), warning('ID:error_prepdata','An error occured in pspm_prepdata.'); return; end
-
-        clear new_sr lsts
+        model.filter.sr = sr(k); % adds the corresponding sr to the filer
+        
+        for f = 1:numel(fields)
+            field = fields{f};
+            [lsts, segm{k,i}.(field), new_sr(k)] = pspm_prepdata(segm{k,i}.(field), model.filter);
+            if lsts < 1; warning('ID:error_prepdata', 'An error occured in pspm_prepdata.');  return; end
+        end
+        
+        % Rebuild the time axis from the effective sample rate.
+        segm{k,i}.t = (1:numel(segm{k,i}.mean))' / new_sr(k);
     end
 end
 
-% changing the sampling rate
-sr = model.filter.down*ones(size(sr));
+% Check for inconsistent effective sample rates across sessions.
+if any(abs(new_sr - new_sr(1)) > 1e-10)
+    warning('ID:invalid_input', 'Sessions must have a common effective sample rate.');
+    return;
+end
+sr = new_sr; 
+% % changing the sampling rate
+% if isnumeric(model.filter.down)
+%     sr = model.filter.down * ones(size(new_sr)); % needs to be tested why not the values of prepdata?
+% end
 
+clear new_sr
 
 %% Determining mean values
 fprintf('Preparing for fitting ...\n')
 
 baseline_index = floor(sr(1)*model.baseline)+1;
 
-if exist('std_exp_cond','var')
-  tmp_data = [segm{:,std_exp_cond.ind}];
 
-  std_exp_cond.data = nanmean([tmp_data.mean],2);
-  std_exp_cond.std = nanmean([tmp_data.std],2);
-  std_exp_cond.sem = nanmean([tmp_data.sem],2);
+if ~isempty(std_exp_cond) % oddball in paper
+  
+  valid_sessions = ~cellfun( @isempty, segm(:,std_exp_cond.ind));
+  tmp_data = [segm{valid_sessions,std_exp_cond.ind}];
+ 
+  % tmp_data = [segm{:,std_exp_cond.ind}];
+
+  std_exp_cond.data = mean([tmp_data.mean],2, 'omitnan');
+  std_exp_cond.std =  mean([tmp_data.std],2, 'omitnan');
+  std_exp_cond.sem =  mean([tmp_data.sem],2, 'omitnan');
 end
 
 for i=1:n_exp_cond
+  
+  valid_sessions = ~cellfun(@isempty, segm(:,i));
 
-  tmp_data = [segm{:,i}];
+  % tmp_data = [segm{:,i}];
+  tmp_data = [segm{valid_sessions,i}];
 
-  tmp_data_new.data = nanmean([tmp_data.mean],2);
-  tmp_data_new.std = nanmean([tmp_data.std],2);
-  tmp_data_new.sem = nanmean([tmp_data.sem],2);
-  tmp_data_new.t = nanmean([tmp_data.t],2);
+  tmp_data_new.data = mean([tmp_data.mean],2, 'omitnan');
+  tmp_data_new.std = mean([tmp_data.std],2, 'omitnan');
+  tmp_data_new.sem = mean([tmp_data.sem],2, 'omitnan');
+  tmp_data_new.t = mean([tmp_data.t],2, 'omitnan');
 
-  % Subtracting the standard experimental condition
-  if exist('std_exp_cond','var') && i~=std_exp_cond.ind
+  % Subtracting the standard experimental condition % oddball in paper
+  if ~isempty(std_exp_cond) && i~=std_exp_cond.ind 
     tmp_data_new.data = tmp_data_new.data - std_exp_cond.data;
     tmp_data_new.std = tmp_data_new.std + std_exp_cond.std;      % the error adds up
     tmp_data_new.sem = tmp_data_new.sem + std_exp_cond.sem;      % the error adds up
   end
 
   % Baselining data
+  if baseline_index > numel(tmp_data_new.data) || ~isfinite(tmp_data_new.data(baseline_index))
+      warning('ID:invalid_input', 'Baseline sample must be observed and inside the extracted window.'); return;
+  end
   tmp_data_new.data = tmp_data_new.data - tmp_data_new.data(baseline_index);
 
   % Dividing by the max value
-  if model.norm_max
-    [tmp_max,tmp_max_ind] = max(tmp_data_new.data);
+  if model.norm_max 
+    [tmp_max,tmp_max_ind] = max(tmp_data_new.data); % this does not give us FIRST PEAK but the highest value !!!
+    % maybe add     if tmp_max == 0 
     tmp_data_new.data = tmp_data_new.data/tmp_max;
-    tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up
-    tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up
+    tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
+    tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
   end
 
-  mean{1,i} = tmp_data_new;
+  mean_data{1,i} = tmp_data_new;
 
   clear tmp_data tmp_data_new tmp_max tmp_max_ind
 end
@@ -280,10 +396,12 @@ end
 fprintf('Fitting ...\n')
 
 for i=1:n_exp_cond
-  raw_y = mean{1,i}.data;
+  raw_y = mean_data{1,i}.data;
 
-  n = model.window;
-  td = n / length(raw_y);
+  % Use the effective sample rate to define the fitting time grid.
+  td = 1 / sr(1); % seconds per sample
+  n = numel(raw_y) * td; % length of the window in seconds
+
 
   % Extending the size of the data vector in order to do the fitting,
   % because if size(raw_y)=[n 1], the convolution would produce a vector of
@@ -291,36 +409,68 @@ for i=1:n_exp_cond
   conv_y = [ raw_y ; zeros(size(raw_y,1)-1,size(raw_y,2))];
 
   % Predicted signal (LTI model)
-  predicted_y = @(x) conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).';
+  predicted_y = @(x) conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).'; % warum .'
 
   % Residual Sum Square (RSS) calculation (basically error btw conv_y and predicted_y)
   RSS = @(x) norm(conv_y - predicted_y(x), 2)^2;
 
   % Minimization of RSS
-  warning off all
-  [~, fitted{1,i}.optargs, fitted{1,i}.fval, sts, fmincon_output] = ...
-    evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)');
-  warning on all
-  if sts == 0
+  % warning off all
+  % [~, fitted{1,i}.optargs, fitted{1,i}.fval, fsts, fmincon_output] = ...
+  %   evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)'); % lb ub for opt. why not Nelder–Mead / fminsearch.!!?? like in the paper?
+  % warning on all
+
+  % Suppress optimizer progress output without changing warning settings.
+  optimizer_options = optimset('Display', 'off'); % could be added to the options
+
+  [fitted{1,i}.optargs, fitted{1,i}.fval, fsts, fmincon_output] = ...
+      fmincon(RSS, model.if.args, [], [], [], [], model.if.lb, model.if.ub, [], optimizer_options);
+
+  % Record the optimization outcome for this condition.
+  fitted{1,i}.exitflag = fsts;
+  fitted{1,i}.output = fmincon_output;
+  fitted{1,i}.converged = fsts > 0 && isfinite(fitted{1,i}.fval);
+
+  if fsts == 0 % check all the flags again 
     warning('ID:fmincon',['During the fitting process, ''fmincon'' exceeded', ...
       ' the number of iterations or the number of function evaluations.', ...
       ' Try to change the initial arguments and bounds to improve the fitting.'])
-  elseif sts == -1
+  elseif fsts == -1
     warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
       ' was terminated by an output function or a plot.']);
     fprintf('Here is the output of fmincon:\n');
     disp(fmincon_output);
-  elseif sts == -2
+  elseif fsts == -2
     warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
       ' hasn''t found any feasible point.']);
     fprintf('Here is the output of fmincon:\n');
     disp(fmincon_output);
   end
 
+  % Mark failed fits and continue with the next condition.
+  if ~fitted{1,i}.converged
+    fitted{1,i}.data = NaN(size(raw_y));
+    fitted{1,i}.optargs = NaN(size(model.if.args));
+    fitted{1,i}.fval = NaN;
+    
+    % Select the reason why this fit was rejected.
+    if fsts > 0
+        failure_message = 'Objective value was not finite.';
+    else
+        failure_message = fitted{1,i}.output.message;
+    end
+
+    warning('ID:fmincon', ['Fit for condition "%s" failed (exitflag %d).\n' '%s\nContinuing with the next condition.'], ...
+        condition_names{i}, fitted{1,i}.exitflag, failure_message);
+
+    continue;
+  end
+
+  
   % Calculating the predicted signal that will be included in the output structure
   fitted{1,i}.data = predicted_y(fitted{1,i}.optargs);
   % Cutting away tail
-  tmp_y = mean{1,i}.data;
+  tmp_y = mean_data{1,i}.data;
   fitted{1,i}.data(size(tmp_y,1)+1:end) = [];
 
 end
@@ -336,9 +486,15 @@ tam.input.sr      = num2cell(oldsr(:).');
 tam.bf            = model.bf;
 tam.if            = model.if;
 
+% Check if filtered
+no_lp = ischar(model.filter.lpfreq) && strcmpi(model.filter.lpfreq, 'none');
+no_hp = ischar(model.filter.hpfreq) && strcmpi(model.filter.hpfreq, 'none');
+no_down = ischar(model.filter.down) && strcmpi(model.filter.down, 'none');
+filtered = ~(no_lp && no_hp && no_down);
+
 % Collecting fitting data
-tmp_mean = [mean{1,:}];
-tam.data.Y        = {tmp_mean.data};
+tmp_mean = [mean_data{1,:}];
+tam.data.Y        = {tmp_mean.data}; % measured data
 tam.data.X        = {tmp_mean.t};
 tam.data.std      = {tmp_mean.std};
 tam.data.sem      = {tmp_mean.sem};
@@ -347,7 +503,7 @@ tam.data.filtered = filtered;
 tam.data.normd  = model.norm;
 tam.data.norm     = model.norm;
 
-if exist('std_exp_cond','var')
+if ~isempty(std_exp_cond) % oddball form paper
   tam.data.std_exp_cond.name  = std_exp_cond.name;
   tam.data.std_exp_cond.ind   = std_exp_cond.ind;
 else
@@ -358,11 +514,28 @@ end
 tmp_fitted = [fitted{1,:}];
 tam.fit.Y         = {tmp_fitted.data};
 tam.fit.X         = {tmp_mean.t};
-tam.fit.rss       = {tmp_fitted.fval};  % RSS (residual sum square)
+tam.fit.rss       = {tmp_fitted.fval};  
 tam.fit.args      = {tmp_fitted.optargs};
 tam.fit.sr        = num2cell(sr(:).');
 
-tam.infos.duration     = model.window;
+% Store optimization diagnostics for each condition. % really needed?
+% e.g. tam.names
+% {'standard', 'oddball', 'target'}
+tam.fit.converged = [tmp_fitted.converged];
+tam.fit.exitflag = [tmp_fitted.exitflag];
+tam.fit.output = {tmp_fitted.output};
+
+% Summarize fit success across conditions.
+if all(tam.fit.converged)
+    tam.fit.status = 'complete';
+elseif any(tam.fit.converged)
+    tam.fit.status = 'partial';
+else
+    tam.fit.status = 'failed';
+end
+
+
+tam.infos.duration     =  window_seconds(1);
 tam.infos.durationinfo = 'duration in seconds';
 
 tam.timing        = model.timing;
@@ -370,7 +543,7 @@ tam.timing        = model.timing;
 tam.modeltype     = 'tam';
 tam.modality      = model.modality;
 
-tam.names         = model.timing{1}.names(:).';
+tam.names         = timing{1}.names(:).';
 
 % Saving structure
 savedata = struct('tam', tam);
@@ -380,6 +553,22 @@ if sts == -1
   return;
 end
 %% User output
-fprintf('done. \n');
 sts = 1;
-return
+
+fprintf('\nTAM finished: %d/%d fits successful. Status: %s.\n', sum(tam.fit.converged), numel(tam.fit.converged), tam.fit.status);
+
+for c = 1:numel(tam.names)
+    if tam.fit.converged(c)
+        fprintf('  %s: OK (exitflag %d, RSS %.6g)\n', tam.names{c}, tam.fit.exitflag(c), tam.fit.rss{c});
+    else
+        fprintf('  %s: FAILED (exitflag %d)\n', tam.names{c}, tam.fit.exitflag(c));
+        if tam.fit.exitflag(c) > 0
+            fprintf('    Objective value was not finite.\n');
+        else
+            fprintf('    %s\n', strtrim(tam.fit.output{c}.message));
+        end
+    end
+end
+
+fprintf('Results saved to: %s\n', tam.modelfile);
+return;
