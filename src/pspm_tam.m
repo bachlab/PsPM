@@ -190,11 +190,24 @@ if strcmp(model.timeunits, 'samples')
 else
     window_seconds = model.window;
 end
-
 if any(model.baseline >= window_seconds) % Reject a baseline outside the window in any session.
     warning('ID:invalid_input', 'Baseline must be smaller than the window duration in seconds.');
     return;
 end
+
+% Check for inconsistent window durations across sessions.
+if any(abs(window_seconds - window_seconds(1)) > 1e-10)
+    warning('ID:invalid_input', 'Sessions must have the same window duration in seconds.');
+    return;
+end
+
+% Convert one-based sample onsets to seconds for each session.
+if strcmp(model.timeunits, 'samples')
+    for k = 1:n_file
+        timing{k}.onsets = cellfun( @(onsets) (onsets - 1) / oldsr(k), timing{k}.onsets, 'UniformOutput', false);
+    end
+end
+
 
 % Checking if the sampling rate is the same for all samples.
 if n_file > 1 && any(diff(sr) ~= 0)    % not any(diff(sr) > 0) 
@@ -224,10 +237,21 @@ fprintf('Extracting segments ...\n')
 % temporary structure which is deleted after extracting segments
 extrsgopt.timeunits = model.timeunits;
 extrsgopt.length = model.window;       % segments of 'model.window' time unit long
+
+% Use seconds for sample onsets that have already been converted.
+if strcmp(model.timeunits, 'samples')
+    extrsgopt.timeunits = 'seconds'; 
+end
+
 extrsgopt.plot = 0;                    % do not plot mean value and std
 extrsgopt.norm = model.norm;
 
 for k=1:n_file
+  % Pass the converted window duration for this session.
+  if strcmp(model.timeunits, 'samples')
+     extrsgopt.length = window_seconds(k);
+  end
+  
   if strcmpi(model.timeunits, 'markers')
       % marker channel for this session
       if iscell(options.marker_chan)
@@ -281,7 +305,7 @@ fields = {'mean', 'std', 'sem'};
 for i = 1:n_exp_cond
     for k = 1:n_file
 
-        if isempty(segm{k,i}); continue; end % eg. missing condition!
+        if isempty(segm{k,i}); continue; end % e.g. missing condition!
 
         model.filter.sr = sr(k); % adds the corresponding sr to the filer
         
@@ -290,13 +314,18 @@ for i = 1:n_exp_cond
             [lsts, segm{k,i}.(field), new_sr(k)] = pspm_prepdata(segm{k,i}.(field), model.filter);
             if lsts < 1; warning('ID:error_prepdata', 'An error occured in pspm_prepdata.');  return; end
         end
-        [llsts, segm{k,i}.t , new_sr(k) ] = pspm_downsample(segm{k,i}.t,  sr(k), new_sr(k) ); % does not need to be filtered!
-        if llsts < 1; warning('ID:error_downsample', 'An error occured in pspm_downsample.');  return; end
-
+        
+        % Rebuild the time axis from the effective sample rate.
+        segm{k,i}.t = (1:numel(segm{k,i}.mean))' / new_sr(k);
     end
 end
 
-sr = new_sr; % maybe test upstream if all new_sr are the same!
+% Check for inconsistent effective sample rates across sessions.
+if any(abs(new_sr - new_sr(1)) > 1e-10)
+    warning('ID:invalid_input', 'Sessions must have a common effective sample rate.');
+    return;
+end
+sr = new_sr; 
 % % changing the sampling rate
 % if isnumeric(model.filter.down)
 %     sr = model.filter.down * ones(size(new_sr)); % needs to be tested why not the values of prepdata?
@@ -342,6 +371,9 @@ for i=1:n_exp_cond
   end
 
   % Baselining data
+  if baseline_index > numel(tmp_data_new.data) || ~isfinite(tmp_data_new.data(baseline_index))
+      warning('ID:invalid_input', 'Baseline sample must be observed and inside the extracted window.'); return;
+  end
   tmp_data_new.data = tmp_data_new.data - tmp_data_new.data(baseline_index);
 
   % Dividing by the max value
@@ -364,8 +396,10 @@ fprintf('Fitting ...\n')
 for i=1:n_exp_cond
   raw_y = mean_data{1,i}.data;
 
-  n = model.window;
-  td = n / length(raw_y);
+  % Use the effective sample rate to define the fitting time grid.
+  td = 1 / sr(1); % seconds per sample
+  n = numel(raw_y) * td; % length of the window in seconds
+
 
   % Extending the size of the data vector in order to do the fitting,
   % because if size(raw_y)=[n 1], the convolution would produce a vector of
@@ -380,19 +414,19 @@ for i=1:n_exp_cond
 
   % Minimization of RSS
   warning off all
-  [~, fitted{1,i}.optargs, fitted{1,i}.fval, sts, fmincon_output] = ...
+  [~, fitted{1,i}.optargs, fitted{1,i}.fval, fsts, fmincon_output] = ...
     evalc('fmincon(RSS,model.if.args,[],[],[],[],model.if.lb,model.if.ub)'); % lb ub for opt. why not Nelder–Mead / fminsearch.!!?? like in the paper?
   warning on all
-  if sts == 0
+  if fsts == 0
     warning('ID:fmincon',['During the fitting process, ''fmincon'' exceeded', ...
       ' the number of iterations or the number of function evaluations.', ...
       ' Try to change the initial arguments and bounds to improve the fitting.'])
-  elseif sts == -1
+  elseif fsts == -1
     warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
       ' was terminated by an output function or a plot.']);
     fprintf('Here is the output of fmincon:\n');
     disp(fmincon_output);
-  elseif sts == -2
+  elseif fsts == -2
     warning('ID:fmincon',['During the fitting process, ''fmincon''', ...
       ' hasn''t found any feasible point.']);
     fprintf('Here is the output of fmincon:\n');
@@ -450,8 +484,8 @@ tam.fit.rss       = {tmp_fitted.fval};
 tam.fit.args      = {tmp_fitted.optargs};
 tam.fit.sr        = num2cell(sr(:).');
 
-tam.infos.duration     = model.window;
-tam.infos.durationinfo = 'duration in seconds'; % not always true! -> timeunits='samples'
+tam.infos.duration     =  window_seconds(1);
+tam.infos.durationinfo = 'duration in seconds';
 
 tam.timing        = model.timing;
 
