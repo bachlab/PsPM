@@ -373,8 +373,15 @@ end
 %% 9. TAM-specific checks
 % -------------------------------------------------------------------------
 if strcmpi(modeltype, 'tam')
-  if (~isfield(model, 'window') || isempty(model.window) || ~isnumeric(model.window))
-    warning('ID:invalid_input', 'Window is expected to be a numeric value.'); return;
+  % Checking model.timeunits
+  if ~isfield(model, 'timeunits') || ~ischar(model.timeunits) || ~ismember(model.timeunits, {'seconds', 'samples', 'markers'})
+    warning('ID:invalid_input', 'TAM timeunits must be seconds, samples, or markers.');
+    return;
+  end
+  % Checking model.window
+  if ~isfield(model, 'window') || ~isnumeric(model.window) || ~isscalar(model.window) || ~isreal(model.window) || ...
+    ~isfinite(model.window) || model.window <= 0 || (strcmp(model.timeunits, 'samples') && model.window ~= fix(model.window))
+    warning('ID:invalid_input', 'Window must be a positive finite real scalar (integer for samples).');   return;
   elseif ~isfield(model, 'modelspec')
     model.modelspec = settings.tam(1).modelspec;
   elseif ~ismember(model.modelspec, {settings.tam.modelspec})
@@ -428,11 +435,10 @@ if strcmpi(modeltype, 'tam')
   % Checking baseline
   if ~isfield(model,'baseline')
     model.baseline = 0;
-  elseif ~isnumeric(model.baseline)
-    warning('ID:invalid_input','''model.baseline'' has to be a numeric.'); return;
-  elseif model.baseline >= model.window || model.baseline < 0
-    warning('ID:invalid_input',['''model.baseline'' has to be positive ',...
-      'and smaller than ''model.window''.']); return;
+  elseif ~isnumeric(model.baseline) || ~isscalar(model.baseline) || ~isreal(model.baseline) || ~isfinite(model.baseline)
+    warning('ID:invalid_input','''model.baseline'' must be a finite real scalar in seconds.'); return;
+  elseif model.baseline < 0 || (~strcmp(model.timeunits, 'samples') && model.baseline >= model.window)   
+    warning('ID:invalid_input', 'Baseline must be nonnegative and smaller than the window duration.'); return;
   end
 
   % Checking standard experimental condition

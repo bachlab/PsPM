@@ -116,6 +116,8 @@ if isempty(settings)
   pspm_init;
 end
 tam = struct();
+sts = -1;
+
 % %% tmp filter check for testing
 % 
 % if isfield(model, 'filter')
@@ -169,8 +171,8 @@ n_file = numel(model.datafile);           % number of files
 % Loading data and sr
 fprintf('Getting data .');
 for iFile = 1:n_file
-    [sts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
-    if sts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
+    [lsts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
+    if lsts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
 
     % Filling up the data and the sampling rates
     y{iFile} = data.data(:);
@@ -181,6 +183,18 @@ end
 
 % Old sampling rate
 oldsr = sr;
+
+% Check that the baseline lies inside each session's window in seconds.
+if strcmp(model.timeunits, 'samples')
+    window_seconds = model.window ./ oldsr;
+else
+    window_seconds = model.window;
+end
+
+if any(model.baseline >= window_seconds) % Reject a baseline outside the window in any session.
+    warning('ID:invalid_input', 'Baseline must be smaller than the window duration in seconds.');
+    return;
+end
 
 % Checking if the sampling rate is the same for all samples.
 if n_file > 1 && any(diff(sr) ~= 0)    % not any(diff(sr) > 0) 
