@@ -405,25 +405,25 @@ if strcmpi(modeltype, 'tam')
       [~, basefn,~] = fileparts(model.if.fhandle);
       model.if.fhandle = str2func(basefn);
       clear basefn
-    elseif ~isa(model.bf.fhandle, 'function_handle')
-      warning('Basis function must be a string or function handle.'); return;
+    elseif ~isa(model.if.fhandle, 'function_handle')
+      warning('Input function must be a string or function handle.'); return;
     end
-    if ~isfield(model.if,'args') || isempty(model.if.args) || ~isnumeric(model.if.args)
+    if ~isfield(model.if, 'args') || ~isnumeric(model.if.args) || ~isvector(model.if.args) || ...
+        ~isreal(model.if.args) || any(~isfinite(model.if.args(:)))
       warning('ID:invalid_input',['Arguments for the input',...
         ' function must be a non-empty numeric array.']); return;
     end
-    if ~isfield(model.if,'lb') || ~isnumeric(model.if.lb) ...
-        || any(size(model.if.lb)~=size(model.if.args))
-      warning('ID:invalid_input',['The lower bounds for the input function',...
-        ' must be a numeric array of the same size than ''model.if.arg''.']); return;
+    if ~isfield(model.if, 'lb') || ~isnumeric(model.if.lb) ||  ~isreal(model.if.lb) || any(isnan(model.if.lb(:))) || ...
+        ~isequal(size(model.if.lb), size(model.if.args))
+        warning('ID:invalid_input', 'Lower bounds must be real numeric values without NaN and match the size of args.');
+        return;
     end
-    if ~isfield(model.if,'ub') || ~isnumeric(model.if.ub) ...
-        || any(size(model.if.ub)~=size(model.if.args))
-      warning('ID:invalid_input',['The upper bounds for the input function',...
-        ' must be a numeric array of the same size than ''model.if.arg''.']); return;
+    if ~isfield(model.if, 'ub') || ~isnumeric(model.if.ub) ||  ~isreal(model.if.ub) || any(isnan(model.if.ub(:))) || ...
+        ~isequal(size(model.if.ub), size(model.if.args))
+        warning('ID:invalid_input', 'Upper bounds must be real numeric values without NaN and match the size of args.');
+        return;
     end
-    if any(model.if.lb > model.if.ub) || any(model.if.lb > model.if.args) ...
-        || any(model.if.args > model.if.ub)
+    if any(model.if.lb > model.if.ub) || any(model.if.lb > model.if.args)    || any(model.if.args > model.if.ub)   
       warning('ID:invalid_input',['Input function''s parameters are inconsistent.',...
         ' They must respect: model.if.lb <= model.if.arg <= model.if.ub.']); return;
     end
@@ -441,6 +441,13 @@ if strcmpi(modeltype, 'tam')
     warning('ID:invalid_input', 'Baseline must be nonnegative and smaller than the window duration.'); return;
   end
 
+  % Read timing definitions before checking reference conditions.
+  [timing_sts, tam_timing] = pspm_get_timing('onsets', model.timing, model.timeunits);
+
+  if timing_sts < 1 || isempty(tam_timing)
+      warning('ID:invalid_input', 'TAM requires valid timing definitions.'); return;
+  end
+
   % Checking standard experimental condition
   std_cond_war_msg = ['The standard experimental condition must be',...
     ' either a valid experimental condition or an',...
@@ -450,13 +457,14 @@ if strcmpi(modeltype, 'tam')
   elseif ischar(model.std_exp_cond)
       % 'none' is explicitly allowed
       if ~strcmpi(model.std_exp_cond, 'none')
-          tmp_ind = strcmpi(model.std_exp_cond, model.timing{1}.names);
+          tmp_ind = strcmpi(model.std_exp_cond, tam_timing(1).names);
           if ~any(tmp_ind); warning('ID:invalid_input', std_cond_war_msg);   return;    end
       end
   elseif isnumeric(model.std_exp_cond)
-      % Must be one valid scalar integer index
-      if ~isscalar(model.std_exp_cond) || ~isfinite(model.std_exp_cond) || ...
-          model.std_exp_cond < 1 || model.std_exp_cond > numel(model.timing{1}.names)
+      % Check for an invalid reference condition index.
+      if ~isscalar(model.std_exp_cond) ||  ~isreal(model.std_exp_cond) || ...
+         ~isfinite(model.std_exp_cond) || model.std_exp_cond ~= fix(model.std_exp_cond) || ...
+          model.std_exp_cond < 1 || model.std_exp_cond > numel(tam_timing(1).names)
           warning('ID:invalid_input', std_cond_war_msg); return;
       end
   else
@@ -505,6 +513,11 @@ if strcmpi(modeltype, 'glm') || strcmpi(modeltype, 'tam')
         warning('ID:invalid_input', 'Channel number must be numeric or a modality short name.'); return;
     end
 
+end
+
+% Convert a TAM basis function name to a function handle.
+if strcmpi(modeltype, 'tam') && ischar(model.bf.fhandle)
+    model.bf.fhandle = str2func(model.bf.fhandle);
 end
 
 %% 10. General checks that require preceding GLM/TAM-specific checks in

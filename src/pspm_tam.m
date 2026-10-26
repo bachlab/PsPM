@@ -143,13 +143,13 @@ if model.invalid || options.invalid
 end
 
 %% Load timing definitions
-timing = model.timing;
+[timing_sts, multi] = pspm_get_timing('onsets', model.timing, model.timeunits);
 
-for iFile = 1:numel(timing)
-    if ischar(timing{iFile})
-        timing{iFile} = load(timing{iFile});
-    end
+if timing_sts < 1 || isempty(multi)
+    warning('ID:invalid_input', 'TAM requires valid timing definitions.');  return;
 end
+
+timing = num2cell(multi);
 
 %% Standard experimental condition
 std_exp_cond = [];
