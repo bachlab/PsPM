@@ -190,7 +190,7 @@ elseif ~iscell(model.missing)
 end
 if ~isfield(model, 'norm')
   model.norm = 0;
-elseif ~any(ismember(model.norm, [0, 1]))
+elseif ~(isnumeric(model.norm) || islogical(model.norm)) || ~isscalar(model.norm) || ~ismember(model.norm, [0 1])
   warning('ID:invalid_input', 'Normalisation must be specified as 0 or 1.'); return;
 end
 
@@ -475,7 +475,7 @@ if strcmpi(modeltype, 'tam')
   % Checking norm_max
   if ~isfield(model, 'norm_max')
     model.norm_max = 0;
-  elseif ~ismember(model.norm_max, [0, 1])
+  elseif  ~(isnumeric(model.norm_max) || islogical(model.norm_max)) || ~isscalar(model.norm_max) || ~ismember(model.norm_max, [0 1])
     warning('ID:invalid_input', '''model.norm_max'' has to be 0 or 1.'); return;
   end
 end
