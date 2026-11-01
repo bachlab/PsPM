@@ -203,6 +203,16 @@ for iFile = 1:n_file
     sr(iFile) = data.header.sr;
 
     fprintf('.');
+
+    % Mark excluded epochs as missing before further processing.
+    if ~isempty(model.missing{iFile})
+        [missing_sts, missing_epochs] = pspm_get_timing('missing', model.missing{iFile}, 'seconds');
+        if missing_sts < 1; return; end
+
+        missing_mask = pspm_epochs2logical(missing_epochs, numel(y{iFile}), sr(iFile));
+        y{iFile}(missing_mask ~= 0) = NaN;
+
+    end
 end
 
 % Old sampling rate
@@ -293,13 +303,28 @@ for k=1:n_file
           marker_chan = options.marker_chan;
       end
 
-      % pspm_extract_segments uses a different option name
+      % Check that the selected channel contains marker events.
+      [marker_sts, markers, ~, ~, marker_type_sts] = pspm_load_channel(model.datafile{k}, marker_chan, 'marker');
+      if marker_sts < 1 || marker_type_sts < 1; return; end
+    
+      % Convert marker indices to timestamps in seconds.
+      file_timing = timing{k};
+        
+      for iCond = 1:numel(file_timing.onsets)
+        indices = file_timing.onsets{iCond};
+        
+        if any(indices < 1 | indices > numel(markers.data))
+           warning('ID:invalid_input', 'Marker index is outside the available marker events.');  return;
+        end
+        
+        file_timing.onsets{iCond} = markers.data(indices);
+      end
+        
+      % Extract from the already loaded and masked pupil signal.
       fileopt = extrsgopt;
-      fileopt.marker_chan_num = marker_chan;
+      fileopt.timeunits = 'seconds';
 
-      % In file mode the raw pupil data are loaded again,
-      % so normalization must happen inside extract_segments.
-      [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, selected_channels{k}, timing{k}, fileopt);
+      [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), file_timing, fileopt);
   else
       [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), timing{k}, extrsgopt); % does it get znormed proparly?
   end
@@ -439,10 +464,16 @@ for i=1:n_exp_cond
   conv_y = [ raw_y ; zeros(size(raw_y,1)-1,size(raw_y,2))];
 
   % Predicted signal (LTI model)
-  predicted_y = @(x) conv(model.if.fhandle([td,n,x]),model.bf.fhandle([td, n, model.bf.args])).'; % warum .'
-
+  % Return the predicted signal as a column vector.
+  predicted_y = @(x) reshape( conv( model.if.fhandle([td, n, x]), model.bf.fhandle([td, n, model.bf.args])), [], 1);
+  
   % Residual Sum Square (RSS) calculation (basically error btw conv_y and predicted_y)
-  RSS = @(x) norm(conv_y - predicted_y(x), 2)^2;
+  % Compare only positions with observed data. To not generate NaN answer
+  observed = ~isnan(conv_y);
+  select_observed = @(values) values(observed);
+
+  % RSS = @(x) norm(conv_y - predicted_y(x), 2)^2;
+  RSS = @(x) norm( select_observed(conv_y) - select_observed(predicted_y(x)), 2)^2;
 
   % Minimization of RSS
   % warning off all
