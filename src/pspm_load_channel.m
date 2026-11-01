@@ -146,9 +146,13 @@ end
 
 % if channeltype is given, check if channel is of correct type
 if nargin > 2
+    % Preserve warning settings during the channel type check.
+    warning_state = warning;
+    restore_warnings = onCleanup(@() warning(warning_state));
     warning('off', 'all');
     chantype_sts = pspm_select_channels({data_struct}, channeltype);
-    warning('on', 'all');
+    clear restore_warnings;
+    
     if chantype_sts < 1
         warning('ID:unexpected_channeltype', ...
             'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.', ...
