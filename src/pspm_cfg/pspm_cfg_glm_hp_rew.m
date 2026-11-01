@@ -1,5 +1,5 @@
 function [glm_hp_rew] = pspm_cfg_glm_hp_rew
-% GLM HP FC
+% GLM HP reward conditioning
 
 % Initialise
 global settings

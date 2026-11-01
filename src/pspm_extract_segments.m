@@ -275,7 +275,9 @@ for c=1:numel(onsets)
   % create mean
   segments{c}.mean = mean(m, 1, 'omitnan');
   segments{c}.std = std(m, [], 1, 'omitnan');
-  segments{c}.sem = segments{c}.std./sqrt(size(segments{c}.data, 1));
+  % Use the observed trial count at each time point.
+  observed_trials = sum(~isnan(m), 1); % so that NaN are not influencing n
+  segments{c}.sem = segments{c}.std./sqrt(observed_trials); 
   segments{c}.trial_nan_percent = 100.0 * sum(isnan(m), 2)/size(m,2);
   segments{c}.total_nan_percent = 100.0 * sum(sum(isnan(m), 2))/numel(m);
   %   segments{c}.total_nan_percent = mean(segments{c}.trial_nan_percent);

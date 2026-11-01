@@ -55,7 +55,7 @@ lpfreq         = cfg_entry;
 lpfreq.name    = 'Cutoff frequency';
 lpfreq.tag     = 'freq';
 lpfreq.strtype = 'r';
-if isfield(default,'lpfreq')
+if isfield(default,'lpfreq') && isnumeric(default.lpfreq)
     lpfreq.val = {default.lpfreq};
 end
 lpfreq.num     = [1 1];
@@ -80,8 +80,13 @@ enable_lp.help   = {''};
 lowpass        = cfg_choice;
 lowpass.name   = 'Low-pass filter';
 lowpass.tag    = 'lowpass';
-lowpass.val    = {enable_lp};
+% lowpass.val    = {enable_lp};
 lowpass.values = {enable_lp, disable};
+if isfield(default,'lpfreq') && ischar(default.lpfreq) && strcmpi(default.lpfreq, 'none')
+    lowpass.val = {disable};
+else
+    lowpass.val = {enable_lp};
+end
 lowpass.help   = {''};
 
 % High pass

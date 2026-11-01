@@ -56,7 +56,7 @@ for i = 1:length(data)
 
     % Handle missing data
     if any(currentMissing)
-        currentData(currentMissing) = NaN;
+        currentData(currentMissing ~= 0) = NaN;
     end
 
     % Extract segments

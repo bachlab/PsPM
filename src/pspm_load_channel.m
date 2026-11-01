@@ -40,6 +40,9 @@ function [sts, data_struct, infos, pos_of_channel, chantype_sts] = ...
 %                      cell of a data cell array returned by pspm_load_data.
 %   *          infos : file infos as returned from pspm_load_data.
 %   * pos_of_channel : index of the returned channel.
+%   * chantype_sts   : 1 if channel matches channeltype, -1 if not;
+%                      NaN if not checked. A mismatch gives a warning
+%                      but does not change sts; check this output separately.
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 2024 by Dominik Bach (University of Bonn)
@@ -143,9 +146,13 @@ end
 
 % if channeltype is given, check if channel is of correct type
 if nargin > 2
+    % Preserve warning settings during the channel type check.
+    warning_state = warning;
+    restore_warnings = onCleanup(@() warning(warning_state));
     warning('off', 'all');
     chantype_sts = pspm_select_channels({data_struct}, channeltype);
-    warning('on', 'all');
+    clear restore_warnings;
+    
     if chantype_sts < 1
         warning('ID:unexpected_channeltype', ...
             'Channel type ''%s'' was expected. The retrieved channel is of type ''%s''.', ...
