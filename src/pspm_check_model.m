@@ -504,10 +504,15 @@ if strcmpi(modeltype, 'glm') || strcmpi(modeltype, 'tam')
 
     % check the channel definition
     if ~isfield(model, 'channel')
-        if strcmp(model.modality, 'psr')
+        if strcmp(model.modality, 'psr') % Pupil Size Response
             model.channel = 'pupil';
         else
             model.channel = model.modality;
+        end
+    elseif strcmpi(modeltype, 'tam') && iscell(model.channel)
+        % Check for one channel selection or one per session.
+        if numel(model.channel) ~= 1 && numel(model.channel) ~= nFile
+            warning('ID:invalid_input', 'Specify one channel or one per session.'); return;
         end
     elseif ~isnumeric(model.channel) && ~ismember(model.channel, {settings.channeltypes.type})
         warning('ID:invalid_input', 'Channel number must be numeric or a modality short name.'); return;

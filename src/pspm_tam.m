@@ -30,12 +30,14 @@ function [sts, tam] = pspm_tam(model, options)
 %   │               default, this is determined automatically from "modelspec"
 %   ├─────────.bf:  [optional] basis function/basis set with required subfields (see below)
 %   ├─────────.if:  [optional, struct] input function (function which will be fitted)
-%   ├────.channel:  [optional] allows to specify channel number or channel type.
-%   │               If there is only one element specified, this element
-%   │               will be applied to each datafile.
-%   │               DEFAULT: last channel of 'pupil' data type
+%   ├────.channel:  [optional] pupil channel selection.
+%   │               Specify a channel number or channel type for all sessions,
+%   │               or a cell array with one entry per session.
+%   │               A single-entry cell array applies to all sessions.
+%   │               Examples: 2, 'pupil', {2}, {2, 4}, {'pupil', 4}.
+%   │               DEFAULT: 'pupil', using PsPM's pupil channel selection.
 %   ├───────.norm:  [optional] allows to specify whether data should be zscored or not 
-%   │               per-session! (!!
+%   │               per-session! (!!!!!!))!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
 %   │               DEFAULT: 1
 %   ├─────.filter:  [optional] filter settings; modality specific default
 %   ├───.baseline:  [optional] allows to specify a baseline in 'seconds' which is
@@ -61,8 +63,13 @@ function [sts, tam] = pspm_tam(model, options)
 %   ├─────────.lb:  lower bounds, numeric array of the same size as .arg
 %   └─────────.ub:  upper bounds, numeric array of the same size as .arg
 %   ┌─────options
-%   ├.marker_chan:  marker channel number
-%   │               DEFAULT: 'marker' (i.e. last marker channel)
+%   ├.marker_chan:  [optional] marker channel selection; used only when
+%   │               model.timeunits is 'markers'.
+%   │               Specify a channel number or 'marker' for all sessions,
+%   │               or a cell array with one entry per session.
+%   │               A single-entry cell array applies to all sessions.
+%   │               Examples: 3, {3}, {3, 5}, {'marker', 5}.
+%   │               DEFAULT: 'marker' (first marker channel in each file).
 %   └──.overwrite:  (optional) overwrite existing model output;
 %                   [logical] (0 or 1)
 %                   Define whether to overwrite existing output files or not.
@@ -172,10 +179,25 @@ n_file = numel(model.datafile);           % number of files
 
 % Loading data and sr
 fprintf('Getting data .');
-for iFile = 1:n_file
-    [lsts, data] = pspm_load_channel(model.datafile{iFile}, model.channel, model.modality);
-    if lsts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
+selected_channels = cell(1, n_file);
 
+for iFile = 1:n_file
+    % Select the pupil channel for this session.
+    if iscell(model.channel)
+        if numel(model.channel) == 1
+            channel = model.channel{1};
+        else
+            channel = model.channel{iFile};
+        end
+    else
+        channel = model.channel;
+    end
+
+    selected_channels{iFile} = channel;
+
+    [lsts, data, ~, ~, channeltype_sts] = pspm_load_channel( model.datafile{iFile}, channel, model.modality);
+    if lsts < 1, warning('ID:load_data_fail', 'Problem encountered while loading data.'); return; end
+    if channeltype_sts < 1;     return;     end
     % Filling up the data and the sampling rates
     y{iFile} = data.data(:);
     sr(iFile) = data.header.sr;
@@ -255,9 +277,18 @@ for k=1:n_file
   end
   
   if strcmpi(model.timeunits, 'markers')
-      % marker channel for this session
+      if ~isfield(options, 'marker_chan')
+          options.marker_chan = 'marker';
+      end
       if iscell(options.marker_chan)
-          marker_chan = options.marker_chan{k};
+          if numel(options.marker_chan) ~= 1 && numel(options.marker_chan) ~= n_file
+              warning('ID:invalid_input', 'Specify one marker channel or one per session.'); return;
+          end
+          if numel(options.marker_chan) == 1
+              marker_chan = options.marker_chan{1};
+          else
+              marker_chan = options.marker_chan{k};
+          end
       else
           marker_chan = options.marker_chan;
       end
@@ -268,10 +299,9 @@ for k=1:n_file
 
       % In file mode the raw pupil data are loaded again,
       % so normalization must happen inside extract_segments.
-      [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, model.channel, timing{k}, fileopt);
+      [lsts, s] = pspm_extract_segments( 'file', model.datafile{k}, selected_channels{k}, timing{k}, fileopt);
   else
-      [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), timing{k}, extrsgopt); % wird es richtig gen znormed?
-
+      [lsts, s] = pspm_extract_segments('data', y{k}, sr(k), timing{k}, extrsgopt); % does it get znormed proparly?
   end
 
   if lsts<1, warning('ID:error_extract_segments','An error occured in pspm_extract_segments.'); return; end

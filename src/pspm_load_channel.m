@@ -40,6 +40,9 @@ function [sts, data_struct, infos, pos_of_channel, chantype_sts] = ...
 %                      cell of a data cell array returned by pspm_load_data.
 %   *          infos : file infos as returned from pspm_load_data.
 %   * pos_of_channel : index of the returned channel.
+%   * chantype_sts   : 1 if channel matches channeltype, -1 if not;
+%                      NaN if not checked. A mismatch gives a warning
+%                      but does not change sts; check this output separately.
 % ● History
 %   Written in 2019 by Eshref Yozdemir (University of Zurich)
 %   Updated in 2024 by Dominik Bach (University of Bonn)
