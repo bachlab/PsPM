@@ -348,7 +348,8 @@ for k=1:n_file
   for i=1:n_exp_cond
 
     cond_ind = find(strcmpi(condition_names{i}, timing{k}.names), 1); % condition index
-    if isempty(cond_ind); segm{k,i} = []; continue; end % 
+    if isempty(cond_ind); segm{k,i} = []; continue; end  % Skip conditions not found in this session.
+    if isempty(s.segments{cond_ind}.data);  segm{k,i} = []; continue; end % Skip conditions without extracted trials.
 
     tmp_data.mean = s.segments{cond_ind}.mean;  % why not eg 50x1 
     tmp_data.std = s.segments{cond_ind}.std;    % why not eg 50x1
@@ -363,6 +364,10 @@ for k=1:n_file
 
 end
 clear extrsg tmp_data s lsts
+
+% Check that every condition has trials in at least one session.
+sessions_per_condition = sum(~cellfun(@isempty, segm), 1);
+if any(sessions_per_condition == 0); warning('ID:invalid_input', 'Each condition requires trials in at least one session.'); return; end
 
 %% Downsample the data
 % if a filter was specified or if the data differ in sr
@@ -389,12 +394,20 @@ for i = 1:n_exp_cond
     end
 end
 
+% Check for missing or invalid effective sampling rates.
+if ~exist('new_sr', 'var') || numel(new_sr) ~= n_file ||  ~isreal(new_sr) || any(~isfinite(new_sr)) || any(new_sr <= 0)
+    warning('ID:invalid_input', 'Each session must provide trials and a valid effective sampling rate.');
+    return;
+end
+
+
 % Check for inconsistent effective sample rates across sessions.
 if any(abs(new_sr - new_sr(1)) > 1e-10)
     warning('ID:invalid_input', 'Sessions must have a common effective sample rate.');
     return;
 end
 sr = new_sr; 
+
 % % changing the sampling rate
 % if isnumeric(model.filter.down)
 %     sr = model.filter.down * ones(size(new_sr)); % needs to be tested why not the values of prepdata?
