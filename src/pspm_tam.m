@@ -202,6 +202,9 @@ for iFile = 1:n_file
     y{iFile} = data.data(:);
     sr(iFile) = data.header.sr;
 
+    % Check for invalid signal values; NaN is allowed for missing data.
+    if ~isreal(y{iFile}) || any(isinf(y{iFile})); warning('ID:invalid_input', 'TAM requires real signal values without Inf.');  return; end
+
     fprintf('.');
 
     % Mark excluded epochs as missing before further processing.
@@ -211,8 +214,14 @@ for iFile = 1:n_file
 
         missing_mask = pspm_epochs2logical(missing_epochs, numel(y{iFile}), sr(iFile));
         y{iFile}(missing_mask ~= 0) = NaN;
-
     end
+
+    % Check that observed signal values remain after exclusions.
+    observed_values = y{iFile}(~isnan(y{iFile}));
+    if isempty(observed_values);  warning('ID:invalid_input', 'TAM requires at least one observed signal value per session.'); return;  end
+    if model.norm && std(observed_values) == 0; warning('ID:invalid_input', 'Z-scoring requires nonzero signal variance.');    return;  end
+
+
 end
 
 % Old sampling rate
