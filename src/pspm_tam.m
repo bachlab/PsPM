@@ -202,6 +202,9 @@ for iFile = 1:n_file
     y{iFile} = data.data(:);
     sr(iFile) = data.header.sr;
 
+    % Check for an invalid sampling rate.
+    if ~isreal(sr(iFile)) || ~isfinite(sr(iFile)) || sr(iFile) <= 0; warning('ID:invalid_input', 'Sampling rate must be positive, finite, and real.'); return; end
+
     % Check for invalid signal values; NaN is allowed for missing data.
     if ~isreal(y{iFile}) || any(isinf(y{iFile})); warning('ID:invalid_input', 'TAM requires real signal values without Inf.');  return; end
 
@@ -442,13 +445,24 @@ for i=1:n_exp_cond
   end
   tmp_data_new.data = tmp_data_new.data - tmp_data_new.data(baseline_index);
 
-  % Dividing by the max value
-  if model.norm_max 
-    [tmp_max,tmp_max_ind] = max(tmp_data_new.data); % this does not give us FIRST PEAK but the highest value !!!
-    % maybe add     if tmp_max == 0 
-    tmp_data_new.data = tmp_data_new.data/tmp_max;
-    tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
-    tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
+  % % Dividing by the max value
+  % if model.norm_max 
+  %   [tmp_max,tmp_max_ind] = max(tmp_data_new.data); % this does not give us FIRST PEAK but the highest value !!!
+  %   % maybe add     if tmp_max == 0 
+  %   tmp_data_new.data = tmp_data_new.data/tmp_max;
+  %   tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
+  %   tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
+  % end
+  % Normalize the curve and dispersion by the positive maximum.
+  if model.norm_max
+      tmp_max = max(tmp_data_new.data, [], 'omitnan');
+
+      if ~isfinite(tmp_max) || tmp_max <= 0; warning('ID:invalid_input', 'Peak normalization requires a finite positive maximum.'); return; end
+
+      tmp_data_new.data = tmp_data_new.data / tmp_max;
+      tmp_data_new.std = tmp_data_new.std / abs(tmp_max);   %   tmp_data_new.std = tmp_data_new.std + tmp_data_new.std(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
+      tmp_data_new.sem = tmp_data_new.sem / abs(tmp_max);   %   tmp_data_new.sem = tmp_data_new.sem + tmp_data_new.sem(tmp_max_ind); % the error adds up . why not /abs(tmp_max)
+
   end
 
   mean_data{1,i} = tmp_data_new;
