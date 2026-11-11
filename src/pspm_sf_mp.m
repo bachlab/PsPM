@@ -14,7 +14,7 @@ function [sts, out] = pspm_sf_mp(model, options)
 %   ├─.threshold: threshold for SN detection (default 0.1 mcS)
 %   ├──.theta : a (1 x 5) vector of theta values for f_SF (default: read from pspm_sf_theta)
 %   ├──.fresp : maximum frequency of modelled responses (default 0.5 Hz).
-%   ├.dispwin : display result window (default 1).
+%   ├.dispwin : display result window (default 0).
 %   └.diagnostics:
 %               Add further diagnostics to the output. Is disabled if set to be false.
 %               If set to true this will add a further field 'D' to the output struct.
@@ -80,6 +80,12 @@ if exist('errmsg') == 1, warning(errmsg); return; end
 % options
 % ------------------------------------------------------------------------
 options = pspm_options(options, 'sf_mp');
+if options.invalid;  return; end
+if ~isnumeric(options.theta) || numel(options.theta) ~= 5 || any(~isfinite(options.theta)) % should be add in the future to pspm_options
+    warning('ID:invalid_input', 'options.theta must be a numeric vector with 5 finite elements.');
+    return
+end
+options.theta = options.theta(:)';
 
 % inversion settings in structure S
 % ------------------------------------------------------------------------
@@ -93,7 +99,7 @@ S.nsf = S.sfduration/S.dt;      % number of samples in modelled SF
 S.maxsf = S.n * S.dt * S.fresp; % maximum number of SF to account for
 S.sfsets = {[1, 0]};            % model single response only (latency 1, amplitude 0)
 S.tonicsets = {[],[]};          % no tonic response components
-S.theta = pspm_sf_theta;         % get SF CRF
+S.theta = options.theta;    % get SF CRF; from pspm_options not from pspm_sf_theta
 S.maxres = 0.001 * S.n;         % residual threshold per sample
 S.options = options;
 S.threshold = options.threshold;
@@ -254,7 +260,10 @@ out.y = y;
 out.yhat = Yhatprime;
 out.yhatraw = Yhat;
 out.threshold = S.threshold;
+out.theta = S.theta;
 out.time = toc(tstart);
+
+sts = 1;
 
 % diagnostic plot
 % -------------------------------------------------------------------------
