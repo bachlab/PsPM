@@ -45,7 +45,7 @@ PupilDiameterMax.help = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.Pupil
 % Island filter separation
 IslandFiltSeparation      = cfg_entry;
 IslandFiltSeparation.name = 'Island separation min distance (ms)';
-IslandFiltSeparation.tag  = 'islandFilter_islandSeparation_ms';
+IslandFiltSeparation.tag  = 'islandFilter_islandSeperation_ms';
 IslandFiltSeparation.num  = [1 1];
 IslandFiltSeparation.val  = {40};
 IslandFiltSeparation.help = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.islandFilter_islandSeperation_ms');
@@ -53,7 +53,7 @@ IslandFiltSeparation.help = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.i
 % Minimum valid island width in millisecond
 IslandFiltMinWidth        = cfg_entry;
 IslandFiltMinWidth.name   = 'Min valid island width (ms)';
-IslandFiltMinWidth.tag    = 'islandFilter_minIslandwidth_ms';
+IslandFiltMinWidth.tag    = 'islandFilter_minIslandWidth_ms';
 IslandFiltMinWidth.num    = [1 1];
 IslandFiltMinWidth.val    = {50};
 IslandFiltMinWidth.help   = pspm_cfg_help_format('pspm_pupil_pp_options', 'raw.islandFilter_minIslandWidth_ms');

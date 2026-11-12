@@ -7,9 +7,9 @@ if isfield(job, 'mode')
     glm_file = job.mode.mode_automatic.datafile{1};
   elseif isfield(job.mode, 'mode_manual')
     mode = 'file';
-    chan = pspm_cfg_channel_selector('run', job.mode.mode_manual);
+    chan = pspm_cfg_selector_channel('run', job.mode.mode_manual);
     % call common data & design selector
-    [model, options] = pspm_cfg_data_design_selector('run', job.mode.mode_manual);
+    [model, options] = pspm_cfg_selector_data_design('run', job.mode.mode_manual);
     data_fn = model.datafile;
     timing = model.timing;
     if isfield(model, 'missing')

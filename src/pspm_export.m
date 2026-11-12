@@ -72,6 +72,12 @@ elseif ~iscell(modelfile)
   return;
 end
 
+% check modelfile = {}
+if isempty(modelfile)
+    warning('ID:invalid_input', 'At least one model file must be specified.');
+    return;
+end
+
 % check target --
 if ~ischar(target)
     warning('ID:invalid_input', 'Target must be a char');
@@ -89,10 +95,6 @@ else
         warning('ID:invalid_input', 'Output file exists, and overwriting not allowed by user.');
         return
     end
-
-    % open or create file for reading and writing, discard contents
-    fid = fopen(target, 'w+');
-    if fid == -1, warning('Output file (%s) could not be opened.', target); return; end
 end
 
 % check statstype --
@@ -110,7 +112,7 @@ end
 if ~ischar(delim)
   warning('ID:invalid_input', 'Delimiter must be a char'); return;
 end
-
+delim = sprintf(strrep(delim, '%', '%%'));
 % check exclude_missing --
 if exclude_missing~=0 && exclude_missing~=1
   warning('ID:invalid_input', ['The value of options.exclude_missing ',...
@@ -122,23 +124,30 @@ end
 % load & check data --
 usenames = 1;
 excl_stats_contained = false(numel(modelfile),1);
+data = cell(numel(modelfile), 1);
 for iFile = 1:numel(modelfile)
-  [lsts, data(iFile), modeltype{iFile}] = pspm_load1(modelfile{iFile}, statstype);
+
+  [lsts, currentData, currentModeltype] = pspm_load1(modelfile{iFile}, statstype);
   if lsts < 1, return; end
+
+  data{iFile}= currentData;
+  modeltype{iFile} = currentModeltype;
+
+
   % set flag to indicate if exclude statistics are contained
-  if isfield(data(iFile),'stats_exclude') && isfield(data(iFile),'stats_missing')
+  if isfield(data{iFile},'stats_exclude') && isfield(data{iFile},'stats_missing')
     excl_stats_contained(iFile) = true;
   end
   if iFile > 1
     if ~strcmpi(modeltype{iFile}, modeltype{1})
       warning('First level files must use the same model (File 1: %s, File %2.0f: %s)', ...
         modeltype{1}, iFile, modeltype{iFile}); return;
-    elseif ~(ndims(data(iFile).stats) == ndims(data(1).stats)) || ...
-        ~all(size(data(iFile).stats) == size(data(1).stats))
+    elseif ~(ndims(data{iFile}.stats) == ndims(data{1}.stats)) || ...
+        ~all(size(data{iFile}.stats) == size(data{1}.stats))
       warning('First level files must have the same structure (File 1 vs. File %2.0f)', iFile);
       return;
-    elseif ~(numel(data(iFile).names) == numel(data(1).names)) || ...
-        ~all(strcmpi(data(iFile).names, data(1).names));
+    elseif ~(numel(data{iFile}.names) == numel(data{1}.names)) || ...
+        ~all(strcmpi(data{iFile}.names, data{1}.names));
       usenames = 0;
     end
   end
@@ -148,18 +157,18 @@ end
 if ~usenames
   outnames = {'Model files have different parameter names - name output suppressed.'};
 elseif strcmpi(modeltype{1}, 'GLM')
-  outnames = data(1).names;
+  outnames = data{1}.names;
 else
   if strcmpi(statstype, 'stats')
-    trlnames = data(1).trlnames;
+    trlnames = data{1}.trlnames;
   elseif strcmpi(statstype, 'cond')
-    trlnames = data(1).condnames;
+    trlnames = data{1}.condnames;
   end
   % combine with measure names
   cName = 1;
-  for iMsr = 1:size(data(1).stats, 2)
-    for iTrl = 1:size(data(1).stats, 1)
-      outnames{cName} = sprintf('%s - %s', trlnames{iTrl}, data(1).names{iMsr});
+  for iMsr = 1:size(data{1}.stats, 2)
+    for iTrl = 1:size(data{1}.stats, 1)
+      outnames{cName} = sprintf('%s - %s', trlnames{iTrl}, data{1}.names{iMsr});
       cName = cName + 1;
     end
   end
@@ -169,12 +178,12 @@ end
 % if exclude_missing & any exclude stats available: set condition stats to NaN
 % according to the exclude stat
 for iFile = 1:numel(data)
-  outdata(iFile, :) = data(iFile).stats(:);
+  outdata(iFile, :) = data{iFile}.stats(:);
   length_out = numel(outdata(iFile, :));
   if excl_stats_contained(iFile)&& exclude_missing
-    corr_cond_idx = find(data(iFile).stats_exclude);
-    if any(strcmpi(statstype, {'stats','recon'})) && ~isempty(data(iFile).stats_exclude_names)
-      idx_stats=cellfun(@(x) find(not(cellfun('isempty',strfind(outnames,x)))),data(iFile).stats_exclude_names,'UniformOutput',0);
+    corr_cond_idx = find(data{iFile}.stats_exclude);
+    if any(strcmpi(statstype, {'stats','recon'})) && ~isempty(data{iFile}.stats_exclude_names)
+      idx_stats=cellfun(@(x) find(not(cellfun('isempty',strfind(outnames,x)))),data{iFile}.stats_exclude_names,'UniformOutput',0);
       idx_stats_name=cell2mat(idx_stats);
       idx_stats_name = reshape(idx_stats_name,numel(idx_stats_name),1);
       corr_cond_idx =zeros(length_out,1);
@@ -203,26 +212,36 @@ else
 end
 
 
+if strcmp(target, 'screen')
+    fid = 1;
+else
+    fid = fopen(target, 'w+');
+    if fid == -1
+        warning('Output file (%s) could not be opened.', target);
+        return;
+    end
+
+    fileCleanup = onCleanup(@() fclose(fid)); 
+end
+
 % output --
 % header -
 fprintf(fid, 'Statistics for models of type ''%s'' (statistics type: %s) \n', modeltype{1}, statstypechar);
 % variable names -
 for iName = 1:numel(outnames)
-  fprintf(fid, sprintf('%s%s', outnames{iName}, delim));
+  fprintf(fid, '%s%s', outnames{iName}, delim); %fprintf(fid, sprintf('%s%s', outnames{iName}, delim)); % 
 end
 fprintf(fid, '\n');
 % data -
 for iRow = 1:size(outdata, 1)
   for iCol = 1:size(outdata, 2)
-    fprintf(fid, sprintf('%8.8f%s', outdata(iRow, iCol), delim));
+    fprintf(fid, '%8.8f%s', outdata(iRow, iCol), delim); %fprintf(fid, sprintf('%8.8f%s', outdata(iRow, iCol), delim)); % 
   end
   fprintf(fid, '\n');
 end
 fprintf(fid, '\n');
-% close file -
-if fid ~= 1
-  fclose(fid);
-end
+% % close file -> l.211    fileCleanup = onCleanup(@() fclose(fid));
+
 
 %% Return values
 sts = 1;

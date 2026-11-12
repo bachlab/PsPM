@@ -61,10 +61,19 @@ scr_expand_epochs.help    = pspm_cfg_help_format('pspm_scr_pp', 'options.expand_
 clipping_step_size                   = cfg_entry;
 clipping_step_size.name              = 'Step size for clipping detection';
 clipping_step_size.tag               = 'clipping_step_size';
-clipping_step_size.strtype           = 'r';
+clipping_step_size.strtype           = 'i';
 clipping_step_size.num               = [1 1];
-clipping_step_size.val               = {2};
+clipping_step_size.val               = {10};
 clipping_step_size.help              = pspm_cfg_help_format('pspm_scr_pp', 'options.clipping_step_size');
+
+% Window size for clipping detection
+clipping_window_size                 = cfg_entry;
+clipping_window_size.name            = 'Window size for clipping detection';
+clipping_window_size.tag             = 'clipping_window_size';
+clipping_window_size.strtype         = 'i';
+clipping_window_size.num             = [1 1];
+clipping_window_size.val             = {100};
+clipping_window_size.help            = pspm_cfg_help_format('pspm_scr_pp', 'options.clipping_window_size');
 
 % Threshold for clipping detection
 clipping_threshold                   = cfg_entry;
@@ -75,11 +84,31 @@ clipping_threshold.num               = [1 1];
 clipping_threshold.val               = {0.1};
 clipping_threshold.help              = pspm_cfg_help_format('pspm_scr_pp', 'options.clipping_threshold');
 
+
+% Baseline jump threshold
+baseline_jump                        = cfg_entry;
+baseline_jump.name                   = 'Baseline jump threshold';
+baseline_jump.tag                    = 'baseline_jump';
+baseline_jump.strtype                = 'r';
+baseline_jump.num                    = [1 1];
+baseline_jump.val                    = {1.5};
+baseline_jump.help                   = pspm_cfg_help_format('pspm_scr_pp', 'options.baseline_jump');
+
+% Include baseline alterations
+include_baseline                     = cfg_menu;
+include_baseline.name                = 'Include baseline alterations';
+include_baseline.tag                 = 'include_baseline';
+include_baseline.labels              = {'No', 'Yes'};
+include_baseline.values              = {0, 1};
+include_baseline.val                 = {0};
+include_baseline.help                = pspm_cfg_help_format('pspm_scr_pp', 'options.include_baseline');
+
+% Clipping detection
 clipping_detection         = cfg_exbranch;
 clipping_detection.name    = 'Clipping detection';
 clipping_detection.tag     = 'clipping_detection';
-clipping_detection.val     = {clipping_step_size, clipping_threshold};
-clipping_detection.help    = {'Specify parameters for clipping detection.'};
+clipping_detection.val     = { clipping_step_size, clipping_window_size, clipping_threshold, baseline_jump, include_baseline};
+clipping_detection.help    = {'Specify parameters for clipping and baseline detection.'};
 
 % Output
 output         = cfg_choice;
