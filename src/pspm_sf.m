@@ -178,10 +178,14 @@ if ~strcmpi(data.header.units, 'uS') && any(strcmpi('dcm', method))
 end
 % 3.4 Get missing epochs --
 if ~isempty(model.missing)
-    [~, missing{iFile}] = pspm_get_timing('missing', model.missing, 'seconds');
-    model.missing_data = zeros(size(y{2}));
-    missing_index = pspm_time2index(missing, sr(datatype(k)));
-    model.missing_data((missing_index(:,1)+1):(missing_index(:,2)+1)) = 1;
+    model.missing_data = cell(1, 2);
+    [~, missing] = pspm_get_timing('missing', model.missing, 'seconds');
+
+    for iType = 1:2
+        model.missing_data{iType} = zeros(size(y{iType})); % for both y{1} and y{2}
+        missing_index = pspm_time2index(missing, sr(iType), numel(y{iType}));
+        for iMiss = 1:size(missing_index, 1);  model.missing_data{iType}(missing_index(iMiss, 1):missing_index(iMiss, 2)) = 1;   end
+    end
 else
     missing= [];
 end
@@ -189,7 +193,7 @@ end
 if any(strcmp(model.timeunits, {'marker', 'markers'}))
     [sts, ndata] = pspm_load_channel(model.datafile, options.marker_chan_num, 'marker');
     if sts < 1, return;  end
-    events{iFile} = ndata.data(:);
+    events = ndata.data(:);
 end
 
 for iEpoch = 1:size(epochs, 1)
@@ -203,7 +207,7 @@ for iEpoch = 1:size(epochs, 1)
             case 'samples'
                 win = round(epochs(iEpoch, :) * sr(datatype(k)) / sr(1));
             case 'markers'
-                win = round(events{iFile}(epochs(iEpoch, :)) * sr(datatype(k)));
+                win = round(events(epochs(iEpoch, :)) * sr(datatype(k)));
             case 'whole'
                 win = [1 numel(y{datatype(k)})];
         end
@@ -232,7 +236,7 @@ for iEpoch = 1:size(epochs, 1)
 
         % 3.6.2 do the analysis and collect results --
         if ~isempty(model.missing)
-            model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data(win(1):win(end)));
+            model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data{datatype(k)}(win(1):win(end)));
         else
             model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
         end
