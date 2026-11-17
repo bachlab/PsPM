@@ -744,7 +744,7 @@ if ~options.getrf
       for n = (theta_n + 3 * u(2,1) + u(3,1) + 2 * u(4, 1) + 1):2:size(priors.SigmaTheta, 1), priors.SigmaTheta(n, n) = 1e-5; end
       for n = (theta_n + 3 * u(2,1) + u(3,1) + 2 * u(4, 1) + 2):2:size(priors.SigmaTheta, 1), priors.SigmaTheta(n, n) = 1e-5; end
       % allow no uncertainty for previous SCL change
-      if trl > 1
+      if trl > 1 && u(5, 1) > 0   
         priors.SigmaTheta((end-1):end, (end-1):end) = zeros(2);
       end
       % allow no uncertainty for dummy events
