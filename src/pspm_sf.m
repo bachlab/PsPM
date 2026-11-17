@@ -203,11 +203,11 @@ for iEpoch = 1:size(epochs, 1)
         fprintf('%s ', method{k});
         switch model.timeunits
             case 'seconds'
-                win = round(epochs(iEpoch, :) * sr(datatype(k)));
+                win = pspm_time2index(epochs(iEpoch, :), sr(datatype(k)));
             case 'samples'
-                win = round(epochs(iEpoch, :) * sr(datatype(k)) / sr(1));
+                win = pspm_time2index((epochs(iEpoch, :) - 1) / sr(1), sr(datatype(k)));  % bring it to the right downsample 
             case 'markers'
-                win = round(events(epochs(iEpoch, :)) * sr(datatype(k)));
+                win = pspm_time2index(events(epochs(iEpoch, :))', sr(datatype(k)));
             case 'whole'
                 win = [1 numel(y{datatype(k)})];
         end
@@ -225,33 +225,34 @@ for iEpoch = 1:size(epochs, 1)
             inv_flag = 0;
         end
         % 3.6.1 collect information --
-        sf.model{k}(iEpoch).modeltype = method{k};
+        sf.model{k}(iEpoch).modeltype  = method{k};
         sf.model{k}(iEpoch).boundaries = squeeze(epochs(iEpoch, :));
         sf.model{k}(iEpoch).timeunits  = model.timeunits;
         sf.model{k}(iEpoch).samples    = win;
         sf.model{k}(iEpoch).sr         = sr(datatype(k));
-        %
-        escr = y{datatype(k)}(win(1):win(end));
-        sf.model{k}(iEpoch).data = escr;
+        sf.model{k}(iEpoch).data       = [];
+        sf.model{k}(iEpoch).inv        = [];
+        sf.stats(iEpoch, k)            = NaN;
 
         % 3.6.2 do the analysis and collect results --
-        if ~isempty(model.missing)
-            model_analysis = struct('scr', escr, 'sr', sr(datatype(k)), 'missing_data', model.missing_data{datatype(k)}(win(1):win(end)));
-        else
+        if inv_flag
+            escr = y{datatype(k)}(win(1):win(end));
+            sf.model{k}(iEpoch).data = escr;
             model_analysis = struct('scr', escr, 'sr', sr(datatype(k)));
-        end
-        if inv_flag ~= 0
-            [sts, invrs] = fhandle{k}(model_analysis, options);
-            sf.model{k}(iEpoch).inv = invrs;
-        else
-            sf.model{k}(iEpoch).inv = [];
-        end
-        if inv_flag == 0
-            sf.stats(iEpoch, k) = NaN;
-        elseif any(strcmpi(method{k}, {'dcm', 'mp'}))
-            sf.stats(iEpoch, k)         = invrs.f;
-        else
-            sf.stats(iEpoch, k)         = invrs;
+            if ~isempty(model.missing)
+                model_analysis.missing_data = model.missing_data{datatype(k)}(win(1):win(end));
+            end
+            [lsts, invrs] = fhandle{k}(model_analysis, options);
+            if lsts < 1 || isempty(invrs)
+                warning('ID:invalid_result', '\nMethod %s failed for epoch %2.0f; result set to NaN.', method{k}, iEpoch);
+            else
+                sf.model{k}(iEpoch).inv = invrs;
+                if any(strcmpi(method{k}, {'dcm', 'mp'}))
+                    sf.stats(iEpoch, k) = invrs.f;
+                else
+                    sf.stats(iEpoch, k) = invrs;
+                end
+            end
         end
     end
     sf.trlnames{iEpoch} = sprintf('Epoch #%d', iEpoch);
