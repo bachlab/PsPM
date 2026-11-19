@@ -52,15 +52,24 @@ classdef pspm_pupil_pp_test < pspm_testcase
     end
     function check_upsampling_rate(this)
       for freq = [500 1000 1500]
+        opt = struct();
         opt.custom_settings.valid.interp_upsamplingFreq = freq;
         opt.channel = 1;
-        [~, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
+    
+        [sts, out_chan] = pspm_pupil_pp(this.pspm_input_filename, opt);
+        this.assertEqual(sts, 1);
+    
         testdata = load(this.pspm_input_filename);
         sr = testdata.data{opt.channel}.header.sr;
-        upsampling_factor = freq / sr;
-        this.verifyEqual(...
-          numel(testdata.data{opt.channel}.data) * upsampling_factor,...
-          numel(testdata.data{out_chan}.data));
+    
+        expected_samples = round( ...
+          numel(testdata.data{opt.channel}.data) * freq / sr);
+    
+        this.verifyEqual( ...
+          numel(testdata.data{out_chan}.data), expected_samples);
+    
+        this.verifyEqual( ...
+          testdata.data{out_chan}.header.sr, freq);
       end
     end
     function check_channel_combining(this)
@@ -98,6 +107,94 @@ classdef pspm_pupil_pp_test < pspm_testcase
       this.verifyEqual(testdata.data{out_chan}.header.segments{1}.name, 'seg1');
       this.verifyEqual(testdata.data{out_chan}.header.segments{2}.name, 'seg2');
     end
+    function check_interpolation_with_high_input_sampling_rate(this)
+        % Regression test for overlapping histc bin edges when the
+        % raw sampling rate exceeds the interpolation frequency.
+
+        input_sr = 2000;
+        output_sr = 1000;
+        duration = 10;
+
+        % Generate smooth, valid pupil data in mm.
+        t = (0:input_sr * duration - 1)' / input_sr;
+        pupil = 4 + 0.1 * sin(2 * pi * 0.5 * t);
+
+        % Create a temporary PsPM file with one pupil channel.
+        fn = [tempname '.mat'];
+
+        infos.duration = duration;
+        data = {struct( ...
+            'data', pupil, ...
+            'header', struct( ...
+            'chantype', 'pupil_r', ...
+            'units', 'mm', ...
+            'sr', input_sr))};
+
+        save(fn, 'infos', 'data');
+        this.addTeardown(@() delete(fn));
+
+        % Preprocess at a lower output sampling rate.
+        opt.channel = 1;
+        opt.channel_combine = 'none';
+        opt.channel_action = 'add';
+        opt.custom_settings.valid.interp_upsamplingFreq = output_sr;
+
+        [sts, out_chan] = pspm_pupil_pp(fn, opt);
+
+        % Check that processing and saving succeeded.
+        this.assertEqual(sts, 1);
+
+        [load_sts, ~, processed_data] = pspm_load_data(fn);
+
+        this.assertEqual(load_sts, 1);
+        this.assertEqual(numel(processed_data), 2);
+        this.assertEqual(out_chan, 2);
+
+        % Check output properties.
+        result = processed_data{out_chan};
+
+        this.verifyEqual(result.header.chantype, 'pupil_r');
+        this.verifyEqual(result.header.sr, output_sr);
+        this.verifyEqual(numel(result.data), duration * output_sr);
+
+        % Crucial: the output must contain actual valid values,
+        % not just an all-NaN fallback channel.
+        this.verifyGreaterThan(sum(isfinite(result.data)), 0);
+    end
+    function check_failed_interpolation_does_not_save_channel(this)
+        % Regression test: interpolation failure must not be reported
+        % as successful preprocessing.
+
+        sr = 2000;
+        duration = 10;
+        fn = [tempname '.mat'];
+
+        infos.duration = duration;
+        data = {struct( ...
+            'data', NaN(sr * duration, 1), ...
+            'header', struct( ...
+            'chantype', 'pupil_r', ...
+            'units', 'mm', ...
+            'sr', sr))};
+
+        save(fn, 'infos', 'data');
+        this.addTeardown(@() delete(fn));
+
+        opt = struct();
+        opt.channel = 1;
+        opt.channel_combine = 'none';
+        opt.channel_action = 'add';
+
+        [sts, out_chan] = pspm_pupil_pp(fn, opt);
+
+        [load_sts, ~, after] = pspm_load_data(fn);
+        this.assertEqual(load_sts, 1);
+
+        this.verifyEqual(sts, -1);
+        this.verifyEmpty(out_chan);
+        this.verifyEqual(numel(after), 1);
+    end
+
   end
   methods(TestClassTeardown)
     function restore(this)

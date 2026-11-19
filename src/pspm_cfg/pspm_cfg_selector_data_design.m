@@ -1,11 +1,11 @@
 function [out1, out2] = pspm_cfg_selector_data_design(modeltype, varargin)
-% pspm_cfg_data_design handles data and design specification for
+% pspm_cfg_selector_data_design handles data and design specification for
 % statistical models and data extraction. 
-% pspm_cfg_data_design(modeltype)
+% pspm_cfg_selector_data_design(modeltype)
 % modeltype: 'glm', 'dcm', 'extract'
 % varargin: further specification passed by glm
-% session_rep = pspm_cfg_data_design_selector(modeltype, varargin)
-% [model, options] = pspm_cfg_data_design_selector('run', varargin)
+% session_rep = pspm_cfg_selector_data_design(modeltype, varargin)
+% [model, options] = pspm_cfg_selector_data_design('run', varargin)
 
 % run mode ----------------------------------------------------------------
 if strcmpi(modeltype, 'run')
